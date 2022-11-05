@@ -98,6 +98,19 @@ void free_kpm_ind_msg(kpm_ind_msg_t* src)
     free(src->granulPeriod);
 }
 
+static byte_array_t* dup_byte_array(const byte_array_t* src)
+{
+  if (src == NULL)
+    return NULL;
+
+  byte_array_t* dst = malloc(sizeof(*dst));
+  assert(dst != NULL && "memory exhausted");
+  dst->len = src->len;
+  dst->buf = malloc(dst->len * sizeof(uint8_t));
+  memcpy(dst->buf, src->buf, src->len);
+  return dst;
+}
+
 kpm_ind_hdr_t cp_kpm_ind_hdr(kpm_ind_hdr_t const* src)
 {
   assert(src != NULL);
@@ -105,22 +118,10 @@ kpm_ind_hdr_t cp_kpm_ind_hdr(kpm_ind_hdr_t const* src)
 
   ret.collectStartTime = src->collectStartTime;
   
-  if (src->fileFormatversion){
-    ret.fileFormatversion = calloc (1, sizeof(adapter_PrintableString_t));
-    *(ret.fileFormatversion) = copy_byte_array(*(src->fileFormatversion));
-  }
-  if (src->senderName){
-    ret.senderName = calloc (1, sizeof(adapter_PrintableString_t));
-    *(ret.senderName) = copy_byte_array(*(src->senderName));
-  }
-  if (src->senderType){
-    ret.senderType = calloc (1, sizeof(adapter_PrintableString_t));
-    *(ret.senderType) = copy_byte_array(*(src->senderType));
-  }
-  if (src->vendorName){
-    ret.vendorName = calloc (1, sizeof(adapter_PrintableString_t));
-    *(ret.vendorName) = copy_byte_array(*(src->vendorName));
-  }
+  ret.fileFormatversion = dup_byte_array(src->fileFormatversion);
+  ret.senderName = dup_byte_array(src->senderName);
+  ret.senderType = dup_byte_array(src->senderType);
+  ret.vendorName = dup_byte_array(src->vendorName);
   return ret;
 }
 
@@ -219,23 +220,27 @@ void free_kpm_func_def(kpm_func_def_t* src)
  * ... more to be added in the future
  */
 
+static long* dup_long(const long* src)
+{
+  if (src == NULL)
+    return NULL;
+  long* dst = malloc(sizeof(*dst));
+  assert(dst != NULL && "memory exhausted");
+  *dst = *src;
+  return dst;
+}
+
 void cp_label_info(adapter_LabelInfoItem_t *dst, adapter_LabelInfoItem_t const *src) 
 {
   assert(src != NULL);
   assert(dst != NULL);
 
-  if (src->noLabel){
-    dst->noLabel = malloc(sizeof(*(dst->noLabel)));
-    assert (dst->noLabel != NULL && "Memory exhausted");
-    *(dst->noLabel) = *(src->noLabel);
-    return;
+  dst->noLabel = dup_long(src->noLabel);
+  if (src->plmn_id != NULL) {
+    dst->plmn_id = malloc(sizeof(*dst->plmn_id));
+    *dst->plmn_id = *src->plmn_id;
   }
-  if (src->plmnID != NULL) {
-    dst->plmnID = malloc(sizeof(*(dst->plmnID)));
-    *dst->plmnID = copy_byte_array(*(src->plmnID));
-  } else {
-    assert (0!=0 && "Programming error: should be null as the remaining fileds have not been implemented yet");
-  }
+
   // TO BE COMPLETED with the other fields
 }
 
@@ -245,27 +250,64 @@ void free_label_info(adapter_LabelInfoItem_t *l)
 
   if (l->noLabel)
     free (l->noLabel);
-  if (l->plmnID)
-    free_byte_array(*(l->plmnID));
+  if (l->plmn_id)
+    free(l->plmn_id);
  
-  // TO BE COMPLETED
-  // adapter_S_NSSAI_t	            *sliceID;	/* OPTIONAL */
-	// adapter_FiveQI_t	            *fiveQI;	/* OPTIONAL */
-	// adapter_QosFlowIdentifier_t	  *qFI;	    /* OPTIONAL */
-	// adapter_QCI_t	                *qCI;	    /* OPTIONAL */
-	// adapter_QCI_t	                *qCImax;	/* OPTIONAL */
-	// adapter_QCI_t	                *qCImin;	/* OPTIONAL */
-	// long	                        *aRPmax;	/* OPTIONAL */
-	// long	                        *aRPmin;	/* OPTIONAL */
-	// long	                        *bitrateRange;/* OPTIONAL */
-	// long	                        *layerMU_MIMO;/* OPTIONAL */
-	// long	                        *sUM;	    /* OPTIONAL */
-	// long	                        *distBinX;/* OPTIONAL */
-	// long	                        *distBinY;/* OPTIONAL */
-	// long	                        *distBinZ;/* OPTIONAL */
-	// long	                        *preLabelOverride;/* OPTIONAL */
-	// long	                        *startEndInd;	/* OPTIONAL */
-	// long	                        *min;	    /* OPTIONAL */
-	// long	                        *max;	    /* OPTIONAL */
-	// long	                        *avg;	    /* OPTIONAL */
+  if (l->sliceID != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->fiveQI != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->qFI != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->qCI != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->qCImax != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->qCImin != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->aRPmax != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->aRPmin != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->bitrateRange != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->layerMU_MIMO != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->sUM != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->distBinX != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->distBinY != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->distBinZ != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->preLabelOverride != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->startEndInd != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->min != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->max != NULL) {
+    assert(false && "not implemented");
+  }
+	if (l->avg != NULL) {
+    assert(false && "not implemented");
+  }
 }

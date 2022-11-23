@@ -110,7 +110,7 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
   for (size_t i = 0; i < msg->MeasInfo_len; ++i) {
     MeasInfo_t* mi = &msg->MeasInfo[i];
     assert(mi->meas_type == KPM_V2_MEASUREMENT_TYPE_NAME);
-    printf("%s ", mi->meas_name);
+    printf("%s ", (char *)(mi->meas_name.buf));
 
     assert(msg->MeasData[i].measRecord_len == 1);
     const adapter_MeasRecord_t* mdi = &msg->MeasData[i].measRecord[0];

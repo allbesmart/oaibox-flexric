@@ -85,10 +85,12 @@ static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const c
 	adapter_LabelInfoItem_t	dummylabelInfo = {.noLabel = &noLabelnum}; 
   MeasInfo_t dummy_MeasInfo = { 
     .meas_type = KPM_V2_MEASUREMENT_TYPE_NAME, 
-    .meas_name = strdup("test"),
+    .meas_name.buf = calloc(strlen("test") + 1, sizeof(char)),
+    .meas_name.len = strlen("test"),
     .labelInfo = &dummylabelInfo, 
     .labelInfo_len = 1
   };
+  memcpy(dummy_MeasInfo.meas_name.buf, "test", strlen("test"));
   kpm_action_def_t action_def = { 
     .ric_style_type = 1, 
     .granularity_period = 1,

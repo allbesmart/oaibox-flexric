@@ -44,7 +44,7 @@ void free_kpm_action_def(kpm_action_def_t* src)
     free(src->MeasInfo[i].labelInfo);
         
     if (src->MeasInfo[i].meas_type == KPM_V2_MEASUREMENT_TYPE_NAME)
-      free(src->MeasInfo[i].meas_name);
+      free_byte_array(src->MeasInfo[i].meas_name);
   }
   
   free(src->MeasInfo);
@@ -79,7 +79,7 @@ void free_kpm_ind_msg(kpm_ind_msg_t* src)
     for (i=0; i<src->MeasInfo_len; i++)
     {
       if (src->MeasInfo[i].meas_type ==  KPM_V2_MEASUREMENT_TYPE_NAME)
-        free(src->MeasInfo[i].meas_name);
+        free_byte_array(src->MeasInfo[i].meas_name);
       for (size_t j = 0; j< src->MeasInfo[i].labelInfo_len; j++)
         free_label_info(&src->MeasInfo[i].labelInfo[j]);
       free(src->MeasInfo[i].labelInfo);
@@ -142,11 +142,11 @@ kpm_ind_msg_t cp_kpm_ind_msg(kpm_ind_msg_t const* src) {
       {
         ret.MeasInfo[i].meas_type = src->MeasInfo[i].meas_type;
         if (ret.MeasInfo[i].meas_type == KPM_V2_MEASUREMENT_TYPE_NAME)
-          ret.MeasInfo[i].meas_name = strdup(src->MeasInfo[i].meas_name);
-        else 
+          ret.MeasInfo[i].meas_name = copy_byte_array(src->MeasInfo[i].meas_name);
+        else
           ret.MeasInfo[i].meas_id = src->MeasInfo[i].meas_id;
-        cp_label_info(&ret.MeasInfo[i].labelInfo[j], &src->MeasInfo[i].labelInfo[j]);
-      }  
+        cp_label_info(&ret.MeasInfo[i].labelInfo[j], &src->MeasInfo[i].labelInfo[j]);  
+      }
     }
   }
   
@@ -199,7 +199,7 @@ bool eq_kpm_ind_msg(kpm_ind_msg_t const* m0, kpm_ind_msg_t const* m1)
     if (mi0->meas_type != mi1->meas_type)
       return false;
     if (mi0->meas_type == KPM_V2_MEASUREMENT_TYPE_NAME) {
-      if (strcmp(mi0->meas_name, mi1->meas_name) != 0)
+      if (eq_byte_array(&(mi0->meas_name), &(mi1->meas_name)) != true)
         return false;
     } else {
       if (mi0->meas_id != mi1->meas_id)

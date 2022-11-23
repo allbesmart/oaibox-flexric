@@ -215,7 +215,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
                           ",measName=%s"
                           , i
                           , curMeasInfo->meas_type
-                          , curMeasInfo->meas_name
+                          , (char *)(curMeasInfo->meas_name.buf)
                           );
         assert(rc < (int)max && "Not enough space in the char array to write all the data");
         rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));

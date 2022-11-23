@@ -95,8 +95,10 @@ kpm_action_def_t kpm_dec_action_def_asn(size_t len, uint8_t const action_def[len
           case MeasurementType_PR_NOTHING:// manages backward compatibility
             continue;
           case MeasurementType_PR_measName:
-            ret.MeasInfo[i].meas_name = calloc(measType->choice.measName.size + 1, sizeof(char));
-            memcpy(ret.MeasInfo[i].meas_name, measType->choice.measName.buf, measType->choice.measName.size);
+            ret.MeasInfo[i].meas_name.buf = calloc(measType->choice.measName.size + 1, sizeof(char));
+            assert(ret.MeasInfo[i].meas_name.buf!=NULL && "Memory exhausted");
+            memcpy(ret.MeasInfo[i].meas_name.buf, measType->choice.measName.buf, measType->choice.measName.size);
+            ret.MeasInfo[i].meas_name.len = measType->choice.measName.size;
             ret.MeasInfo[i].meas_type = KPM_V2_MEASUREMENT_TYPE_NAME;
             break;
           case MeasurementType_PR_measID:
@@ -249,8 +251,10 @@ kpm_ind_msg_t kpm_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len])
         switch (mInfo->measType.present)
         {
         case MeasurementType_PR_measName:
-          ret.MeasInfo[i].meas_name = calloc(measType->choice.measName.size + 1, sizeof(char));
-          memcpy(ret.MeasInfo[i].meas_name, measType->choice.measName.buf, measType->choice.measName.size);
+          ret.MeasInfo[i].meas_name.buf = calloc(measType->choice.measName.size + 1, sizeof(char));
+          assert(ret.MeasInfo[i].meas_name.buf!=NULL && "Memory exhausted");
+          memcpy(ret.MeasInfo[i].meas_name.buf, measType->choice.measName.buf, measType->choice.measName.size);
+          ret.MeasInfo[i].meas_name.len = measType->choice.measName.size;
           ret.MeasInfo[i].meas_type =  KPM_V2_MEASUREMENT_TYPE_NAME; 
           break;
         case MeasurementType_PR_measID:

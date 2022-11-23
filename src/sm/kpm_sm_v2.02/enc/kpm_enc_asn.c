@@ -98,8 +98,8 @@ byte_array_t kpm_enc_action_def_asn(kpm_action_def_t const* action_def)
         mInfo->measType.present = meas_type == KPM_V2_MEASUREMENT_TYPE_NAME 
                                                ? MeasurementType_PR_measName : MeasurementType_PR_measID; 
         if (mInfo->measType.present == MeasurementType_PR_measName){
-          const size_t len = strlen(action_def->MeasInfo[i].meas_name);
-          ret = OCTET_STRING_fromBuf(&(mInfo->measType.choice.measName), action_def->MeasInfo[i].meas_name, len);
+          const size_t len = action_def->MeasInfo[i].meas_name.len;
+          ret = OCTET_STRING_fromBuf(&(mInfo->measType.choice.measName), (char *)(action_def->MeasInfo[i].meas_name.buf), len);
           assert(ret == 0);
         } else {
           mInfo->measType.choice.measID = action_def->MeasInfo[i].meas_id;
@@ -294,8 +294,8 @@ byte_array_t kpm_enc_ind_msg_asn(kpm_ind_msg_t const* ind_msg)
       switch (ind_msg->MeasInfo[i].meas_type){
         case KPM_V2_MEASUREMENT_TYPE_NAME:
           mInfo->measType.present = MeasurementType_PR_measName;
-          const size_t len = strlen(ind_msg->MeasInfo[i].meas_name);
-          ret1 = OCTET_STRING_fromBuf(&mInfo->measType.choice.measName, ind_msg->MeasInfo[i].meas_name, len);
+          const size_t len = ind_msg->MeasInfo[i].meas_name.len;
+          ret1 = OCTET_STRING_fromBuf(&(mInfo->measType.choice.measName), (char *)(ind_msg->MeasInfo[i].meas_name.buf), len);
           assert(ret1 == 0);
           break;
         case  KPM_V2_MEASUREMENT_TYPE_ID:

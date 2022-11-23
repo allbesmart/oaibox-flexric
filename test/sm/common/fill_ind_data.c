@@ -167,7 +167,9 @@ void fill_kpm_ind_data(kpm_ind_data_t* ind)
       mi1->meas_type = KPM_V2_MEASUREMENT_TYPE_NAME;
       char s[100];
       snprintf(s, 100, "RNTI %04x PrbDlUsage", (unsigned) (1111*i + 1111));
-      mi1->meas_name = strdup(s);
+      mi1->meas_name.buf = calloc(strlen(s) + 1, sizeof(char));
+      memcpy(mi1->meas_name.buf, s, strlen(s));
+      mi1->meas_name.len = strlen(s);
 
       const size_t ll_len = 1;
       mi1->labelInfo_len = ll_len;

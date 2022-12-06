@@ -170,10 +170,10 @@ void free_kpm_action_def(kpm_action_def_t* src);
  ************************************************/
 typedef struct {
   uint32_t collectStartTime;
-  char* fileformat_version;
-  char* sender_name;
-  char* sender_type;
-  char* vendor_name;
+  byte_array_t fileformat_version;
+  byte_array_t sender_name;
+  byte_array_t sender_type;
+  byte_array_t vendor_name;
 } kpm_ind_hdr_t;
 
 void          free_kpm_ind_hdr(kpm_ind_hdr_t* src);

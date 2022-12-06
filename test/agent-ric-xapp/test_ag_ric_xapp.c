@@ -103,7 +103,7 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
 
   const kpm_ind_hdr_t* hdr = &rd->kpm_stats.hdr;
   printf("received KPM indication at %d (sender '%s', type '%s', vendor '%s')\n",
-         hdr->collectStartTime, hdr->sender_name, hdr->sender_type, hdr->vendor_name);
+         hdr->collectStartTime, (char *)(hdr->sender_name.buf), (char *)(hdr->sender_type.buf), (char *)(hdr->vendor_name.buf));
 
   const kpm_ind_msg_t* msg = &rd->kpm_stats.msg;
   assert(msg->MeasInfo_len == msg->MeasData_len);

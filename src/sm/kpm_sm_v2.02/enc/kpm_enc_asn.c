@@ -185,31 +185,31 @@ byte_array_t kpm_enc_ind_hdr_asn(kpm_ind_hdr_t const* ind_hdr)
   uint32_t ts = htonl(ind_hdr->collectStartTime);
   INT32_TO_OCTET_STRING(ts, &ih_p->colletStartTime);
   int ret;
-  if (ind_hdr->fileformat_version != NULL){
+  if (ind_hdr->fileformat_version.buf != NULL){
     ih_p->fileFormatversion = calloc(1, sizeof(*ih_p->fileFormatversion));
-    const size_t len = strlen(ind_hdr->fileformat_version);
-    ret = OCTET_STRING_fromBuf(ih_p->fileFormatversion, ind_hdr->fileformat_version, len);
+    const size_t len = ind_hdr->fileformat_version.len;
+    ret = OCTET_STRING_fromBuf(ih_p->fileFormatversion, (char *)(ind_hdr->fileformat_version.buf), len);
     assert(ret == 0);
   }
 
-  if (ind_hdr->sender_name != NULL){
+  if (ind_hdr->sender_name.buf != NULL){
     ih_p->senderName = calloc(1, sizeof(*ih_p->senderName));
-    const size_t len = strlen(ind_hdr->sender_name);
-    ret = OCTET_STRING_fromBuf(ih_p->senderName, ind_hdr->sender_name, len);
+    const size_t len = ind_hdr->sender_name.len;
+    ret = OCTET_STRING_fromBuf(ih_p->senderName, (char *)(ind_hdr->sender_name.buf), len);
     assert(ret == 0);
   }
 
-  if (ind_hdr->sender_type != NULL){
+  if (ind_hdr->sender_type.buf != NULL){
     ih_p->senderType = calloc(1, sizeof(*ih_p->senderType));
-    const size_t len = strlen(ind_hdr->sender_type);
-    ret = OCTET_STRING_fromBuf(ih_p->senderType, ind_hdr->sender_type, len);
+    const size_t len = ind_hdr->sender_type.len;
+    ret = OCTET_STRING_fromBuf(ih_p->senderType, (char *)(ind_hdr->sender_type.buf), len);
     assert(ret == 0);
   }
 
-	if (ind_hdr->vendor_name != NULL) {
+	if (ind_hdr->vendor_name.buf != NULL) {
     ih_p->vendorName = calloc(1, sizeof(*ih_p->vendorName));
-    const size_t len = strlen(ind_hdr->vendor_name);
-    ret = OCTET_STRING_fromBuf(ih_p->vendorName, ind_hdr->vendor_name, len);
+    const size_t len = ind_hdr->vendor_name.len;
+    ret = OCTET_STRING_fromBuf(ih_p->vendorName, (char *)(ind_hdr->vendor_name.buf), len);
     assert(ret == 0);
   }
 

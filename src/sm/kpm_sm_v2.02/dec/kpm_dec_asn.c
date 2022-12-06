@@ -155,27 +155,31 @@ kpm_ind_hdr_t kpm_dec_ind_hdr_asn(size_t len, uint8_t const ind_hdr[len])
     ret.collectStartTime = ntohl(reversed_ts);
     
     if (hdr->fileFormatversion){
-      ret.fileformat_version = calloc(hdr->fileFormatversion->size + 1, sizeof(char));
-      assert(ret.fileformat_version != NULL && "Memory exhausted" );
-      memcpy(ret.fileformat_version, hdr->fileFormatversion->buf, hdr->fileFormatversion->size);
+      ret.fileformat_version.buf = calloc(hdr->fileFormatversion->size + 1, sizeof(char));
+      assert(ret.fileformat_version.buf != NULL && "Memory exhausted" );
+      memcpy(ret.fileformat_version.buf, hdr->fileFormatversion->buf, hdr->fileFormatversion->size);
+      ret.fileformat_version.len = hdr->fileFormatversion->size;
     }
 
     if (hdr->senderName){
-      ret.sender_name = calloc(hdr->senderName->size + 1, sizeof(char));
-      assert(ret.sender_name != NULL && "Memory exhausted" );
-      memcpy(ret.sender_name, hdr->senderName->buf, hdr->senderName->size);
+      ret.sender_name.buf = calloc(hdr->senderName->size + 1, sizeof(char));
+      assert(ret.sender_name.buf != NULL && "Memory exhausted" );
+      memcpy(ret.sender_name.buf, hdr->senderName->buf, hdr->senderName->size);
+      ret.sender_name.len = hdr->senderName->size;
     }
 
     if (hdr->senderType){
-      ret.sender_type = calloc(hdr->senderType->size + 1, sizeof(char));
-      assert(ret.sender_type != NULL && "Memory exhausted" );
-      memcpy(ret.sender_type, hdr->senderType->buf, hdr->senderType->size);
+      ret.sender_type.buf = calloc(hdr->senderType->size + 1, sizeof(char));
+      assert(ret.sender_type.buf != NULL && "Memory exhausted" );
+      memcpy(ret.sender_type.buf, hdr->senderType->buf, hdr->senderType->size);
+      ret.sender_type.len = hdr->senderType->size;
     }
 
     if (hdr->vendorName){
-      ret.vendor_name = calloc(hdr->vendorName->size + 1, sizeof(char));
-      assert(ret.vendor_name != NULL && "Memory exhausted" );
-      memcpy(ret.vendor_name, hdr->vendorName->buf, hdr->vendorName->size);
+      ret.vendor_name.buf = calloc(hdr->vendorName->size + 1, sizeof(char));
+      assert(ret.vendor_name.buf != NULL && "Memory exhausted" );
+      memcpy(ret.vendor_name.buf, hdr->vendorName->buf, hdr->vendorName->size);
+      ret.vendor_name.len = hdr->vendorName->size;
     }
   }
 

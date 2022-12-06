@@ -54,14 +54,14 @@ void free_kpm_action_def(kpm_action_def_t* src)
 void free_kpm_ind_hdr(kpm_ind_hdr_t* src)
 {
   assert(src != NULL);
-  if (src->fileformat_version != NULL)
-    free(src->fileformat_version);
-  if (src->sender_name != NULL)
-    free(src->sender_name);
-  if (src->sender_type != NULL)
-    free(src->sender_type);
-  if (src->vendor_name != NULL)
-    free(src->vendor_name);
+  if (src->fileformat_version.buf != NULL)
+    free_byte_array(src->fileformat_version);
+  if (src->sender_name.buf != NULL)
+    free_byte_array(src->sender_name);
+  if (src->sender_type.buf != NULL)
+    free_byte_array(src->sender_type);
+  if (src->vendor_name.buf != NULL)
+    free_byte_array(src->vendor_name);
 }
 
 void free_kpm_ind_msg(kpm_ind_msg_t* src) 
@@ -98,14 +98,14 @@ kpm_ind_hdr_t cp_kpm_ind_hdr(kpm_ind_hdr_t const* src)
 
   ret.collectStartTime = src->collectStartTime;
   
-  if (src->fileformat_version)
-    ret.fileformat_version = strdup(src->fileformat_version);
-  if (src->sender_name)
-    ret.sender_name = strdup(src->sender_name);
-  if (src->sender_type)
-    ret.sender_type = strdup(src->sender_type);
-  if (src->vendor_name)
-    ret.vendor_name = strdup(src->vendor_name);
+  if (src->fileformat_version.buf)
+    ret.fileformat_version = copy_byte_array(src->fileformat_version);
+  if (src->sender_name.buf)
+    ret.sender_name = copy_byte_array(src->sender_name);
+  if (src->sender_type.buf)
+    ret.sender_type = copy_byte_array(src->sender_type);
+  if (src->vendor_name.buf)
+    ret.vendor_name = copy_byte_array(src->vendor_name);
   return ret;
 }
 

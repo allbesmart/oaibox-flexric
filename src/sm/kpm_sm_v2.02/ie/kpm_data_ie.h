@@ -56,42 +56,26 @@ extern "C" {
 /* 
  * SEC 0: General data types that make the mapping between ASN data types and RIC ones
  */
-typedef byte_array_t              adapter_OCTET_STRING_t;
-typedef adapter_OCTET_STRING_t    adapter_PrintableString_t;
-typedef uint32_t                  adapter_TimeStamp_t; // IETF RFC 5905 , NTP spec, 4 bytes long
-
-typedef adapter_PrintableString_t adapter_MeasurementTypeName_t;
-typedef long	                    adapter_MeasurementTypeID_t;
-typedef byte_array_t              adapter_PLMNIdentity_t;   // 3 bytes size
-typedef uint64_t                  adapter_NRCellIdentity_t; // 36 bits size
- 
-
-typedef long                      adapter_QCI_t;
-typedef byte_array_t	            adapter_SST_t;// size = 1 byte
-typedef byte_array_t              adapter_SD_t; // size = 3 byte
 
 typedef struct S_NSSAI {
-	adapter_SST_t	  sST;
-	adapter_SD_t	  *sD;	/* OPTIONAL */
-} adapter_S_NSSAI_t;
+	byte_array_t	  sST;
+	byte_array_t	  *sD;	/* OPTIONAL */
+} S_NSSAI_t;
 
-typedef long	                    adapter_FiveQI_t; // values: 0..255
-typedef long	                    adapter_QosFlowIdentifier_t;
-typedef uint64_t                  adapter_EUTRACellIdentity_t; // 28 bit size
 /* 
- * Structure 'adapter_LabelInfoItem_t_t' defines the values of the subcounters that are applicable to an associated measurement type
+ * Structure 'LabelInformationItem_t_t' defines the values of the subcounters that are applicable to an associated measurement type
  * identified by measName or measID. All the fields are indicated as optional. If value is != NULL, it means presence of the optional 
  * field.
  */
-typedef struct adapter_LabelInfoItem_t {
+typedef struct LabelInformationItem_t {
   long	                        *noLabel;	/* OPTIONAL: looks like this is an enumeration datatype that accepts only true (0) */
 	plmn_t                        *plmn_id;  /* OPTIONAL */
-	adapter_S_NSSAI_t	            *sliceID;	/* OPTIONAL */
-	adapter_FiveQI_t	            *fiveQI;	/* OPTIONAL */
-	adapter_QosFlowIdentifier_t	  *qFI;	    /* OPTIONAL */
-	adapter_QCI_t	                *qCI;	    /* OPTIONAL */
-	adapter_QCI_t	                *qCImax;	/* OPTIONAL */
-	adapter_QCI_t	                *qCImin;	/* OPTIONAL */
+	S_NSSAI_t       	            *sliceID;	/* OPTIONAL */
+	long                          *fiveQI;	/* OPTIONAL */
+	long                      	  *qFI;	    /* OPTIONAL */
+	long        	                *qCI;	    /* OPTIONAL */
+	long        	                *qCImax;	/* OPTIONAL */
+	long        	                *qCImin;	/* OPTIONAL */
 	long	                        *aRPmax;	/* OPTIONAL */
 	long	                        *aRPmin;	/* OPTIONAL */
 	long	                        *bitrateRange;/* OPTIONAL */
@@ -105,11 +89,10 @@ typedef struct adapter_LabelInfoItem_t {
 	long	                        *min;	    /* OPTIONAL */
 	long	                        *max;	    /* OPTIONAL */
 	long	                        *avg;	    /* OPTIONAL */
-} adapter_LabelInfoItem_t;
+} LabelInformationItem_t;
 
-void free_label_info(adapter_LabelInfoItem_t *l);
-void cp_label_info(adapter_LabelInfoItem_t *dst, adapter_LabelInfoItem_t const *src);
-
+void free_label_info(LabelInformationItem_t *l);
+void cp_label_info(LabelInformationItem_t *dst, LabelInformationItem_t const *src);
 typedef enum {
     KPM_V2_MEASUREMENT_TYPE_NAME = 1, 
     KPM_V2_MEASUREMENT_TYPE_ID = 2
@@ -120,8 +103,8 @@ typedef struct MeasInfo_t {
 	meas_type_e meas_type;
   byte_array_t meas_name;
   long meas_id;
-	adapter_LabelInfoItem_t	         *labelInfo;   // list implemented as array having a maximum of 'maxnoofLabelInfo' items
-  size_t                         labelInfo_len;// length of the array labelInfo
+	LabelInformationItem_t	         *labelInfo;   // list implemented as array having a maximum of 'maxnoofLabelInfo' items
+  size_t                           labelInfo_len;// length of the array labelInfo
 } MeasInfo_t; 
 
 /*******************************************************
@@ -170,9 +153,9 @@ typedef struct kpm_action_def_t
   // If cellGlobalIDtype == choice_NOTHING, the field 'cellGlobalID' in asn format will be NULL
   cell_global_id_t cell_global_id;
 
-  adapter_NRCellIdentity_t      nRCellIdentity;
-  adapter_PLMNIdentity_t	      pLMNIdentity;
-	adapter_EUTRACellIdentity_t   eUTRACellIdentity;
+  uint64_t            nRCellIdentity;
+  byte_array_t	      pLMNIdentity;
+	uint64_t            eUTRACellIdentity;
 
 
   /* 
@@ -199,22 +182,22 @@ kpm_ind_hdr_t cp_kpm_ind_hdr(kpm_ind_hdr_t const* src);
  * SEC 4. RIC Indication Message as per $8.2.1.4.1
  **************************************************/
 
-typedef struct adapter_MeasRecord_t {
+typedef struct MeasRecord_t {
   enum {MeasRecord_int=1, MeasRecord_real,  MeasRecord_noval} type;
 	unsigned long	  int_val;
 	double	        real_val;
-} adapter_MeasRecord_t;
+} MeasRecord_t;
 
-typedef struct adapter_MeasDataItem_t {
+typedef struct MeasDataItem_t {
   size_t                    measRecord_len; // 1..
-	adapter_MeasRecord_t	    *measRecord; 
-	long	                    incompleteFlag;	// OPTIONAL: true(0) value indicates that the measurements record 
+	MeasRecord_t        	    *measRecord; 
+	long	                    *incompleteFlag;	// OPTIONAL: true(0) value indicates that the measurements record 
                                             // is not reliable asn we pass to ASN this info, -1 means that the flag is not present
-} adapter_MeasDataItem_t;
+} MeasDataItem_t;
 
 typedef struct {
   size_t                    MeasData_len; // 1..
-  adapter_MeasDataItem_t    *MeasData;
+  MeasDataItem_t            *MeasData;
 
   /* 
    * list implemented as array of length 'MeasInfo_len' containing measurement names like 'DL Transmitted Data Volume' or 
@@ -239,29 +222,29 @@ bool          eq_kpm_ind_msg(kpm_ind_msg_t const* m0, kpm_ind_msg_t const* m1);
  * SEC 5. RAN Function Definition as per $8.2.2.1
  *************************************************/
 typedef struct {
-  adapter_PrintableString_t	 ShortName;   // “ORAN-E2SM-KPM” aka SM_KPM_STR
-	adapter_PrintableString_t	 E2SM_OID;    // see cfr. O-RAN.WG3.E2SM-v02.01.pdf, table 5.1
-	adapter_PrintableString_t	 Description; // “KPM Monitor”
-	long	                     *ranFunction_Instance;	// OPTIONAL: it is suggested to be used when E2 Node declares
+  byte_array_t	 ShortName;   // “ORAN-E2SM-KPM” aka SM_KPM_STR
+	byte_array_t	 E2SM_OID;    // see cfr. O-RAN.WG3.E2SM-v02.01.pdf, table 5.1
+	byte_array_t	 Description; // “KPM Monitor”
+	long	         *ranFunction_Instance;	// OPTIONAL: it is suggested to be used when E2 Node declares
                                                     // multiple RAN Function ID supporting the same  E2SM specification
-} adapter_ranFunction_Name_t; // cfr. O-RAN.WG3.E2SM-v02.01.pdf, $6.2.2.1
+} ranFunction_Name_t; // cfr. O-RAN.WG3.E2SM-v02.01.pdf, $6.2.2.1
 
 typedef struct {
 // TODO
-} adapter_ric_EventTriggerStyleItem_t; 
+} ric_EventTriggerStyleItem_t; 
 
 typedef struct {
 // TODO
-} adapter_ric_ReportStyleItem_t; 
+} ric_ReportStyleItem_t;
 
 
 typedef struct {
-  adapter_ranFunction_Name_t ranFunction_Name; 
+  ranFunction_Name_t ranFunction_Name;
 
-  adapter_ric_EventTriggerStyleItem_t *ric_EventTriggerStyle_List; // OPTIONAL: used in action definition, only type 1 supported for the moment
+  ric_EventTriggerStyleItem_t *ric_EventTriggerStyle_List; // OPTIONAL: used in action definition, only type 1 supported for the moment
   size_t ric_EventTriggerStyle_List_len; // 0..maxnoofRICStyles 
   
-  adapter_ric_ReportStyleItem_t *ric_ReportStyle_List;    // OPTIONAL: used in indication message, only type 1 supported for the mome   
+  ric_ReportStyleItem_t *ric_ReportStyle_List;    // OPTIONAL: used in indication message, only type 1 supported for the mome   
   size_t ric_ReportStyle_List_len; // 0..maxnoofRICStyles
 } kpm_func_def_t;
 

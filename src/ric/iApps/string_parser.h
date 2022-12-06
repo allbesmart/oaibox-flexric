@@ -44,8 +44,8 @@ void to_string_slice(slice_ind_msg_t const* slice, int64_t tstamp, char* out, si
 
 void to_string_gtp_ngu(gtp_ngu_t_stats_t const* gtp, int64_t tstamp, char* out, size_t out_len);
 
-void to_string_kpm_measRecord(adapter_MeasRecord_t const* measRecord, size_t idx, char*out, size_t out_len);
+void to_string_kpm_measRecord(MeasRecord_t const* measRecord, size_t idx, char*out, size_t out_len);
 
-void to_string_kpm_labelInfo(adapter_LabelInfoItem_t const* labelInfo, size_t idx, char*out, size_t out_len);
+void to_string_kpm_labelInfo(LabelInformationItem_t const* labelInfo, size_t idx, char*out, size_t out_len);
 
 #endif

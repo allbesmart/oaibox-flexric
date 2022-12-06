@@ -896,9 +896,9 @@ int to_sql_string_gtp_NGUT(global_e2_node_id_t const* id,gtp_ngu_t_stats_t* gtp,
 
 static
 void to_sql_string_kpm_measRecord(global_e2_node_id_t const* id,  
-                                 adapter_MeasDataItem_t* kpm_measData, 
-                                 adapter_MeasRecord_t* kpm_measRecord, 
-                                 adapter_TimeStamp_t tstamp, 
+                                 MeasDataItem_t* kpm_measData, 
+                                 MeasRecord_t* kpm_measRecord, 
+                                 uint32_t tstamp, 
                                  char* out, 
                                  size_t out_len)
 {
@@ -924,7 +924,7 @@ void to_sql_string_kpm_measRecord(global_e2_node_id_t const* id,
         "%d," //mnc_digit_len   
         "%d," //nb_id 
         "'%s'," //cu_du_id
-        "%ld,"  //kpm_measData->incompleteFlag
+        "%p,"  //kpm_measData->incompleteFlag
         "NULL"  //kpm_measRecord->int_val
         ");" 
         , tstamp
@@ -934,7 +934,7 @@ void to_sql_string_kpm_measRecord(global_e2_node_id_t const* id,
         , id->plmn.mnc_digit_len
         , id->nb_id
         , id->cu_du_id ? c_cu_du_id : c_null
-        , kpm_measData->incompleteFlag
+        , (void *)kpm_measData->incompleteFlag
         // , granulPeriod
         );
     assert(rc < (int)max && "Not enough space in the char array to write all the data");
@@ -950,7 +950,7 @@ void to_sql_string_kpm_measRecord(global_e2_node_id_t const* id,
           "%d," //mnc_digit_len   
           "%d," //nb_id
           "'%s'," //cu_du_id
-          "%ld,"  //kpm_measData->incompleteFlag
+          "%p,"  //kpm_measData->incompleteFlag
           "%ld"  //kpm_measRecord->int_val
           ");" 
           , tstamp
@@ -960,7 +960,7 @@ void to_sql_string_kpm_measRecord(global_e2_node_id_t const* id,
           , id->plmn.mnc_digit_len
           , id->nb_id
           , id->cu_du_id ? c_cu_du_id : c_null
-          , kpm_measData->incompleteFlag
+          , (void *)kpm_measData->incompleteFlag
           , kpm_measRecord->int_val
           );
       assert(rc < (int)max && "Not enough space in the char array to write all the data");
@@ -975,7 +975,7 @@ void to_sql_string_kpm_measRecord(global_e2_node_id_t const* id,
           "%d," //mnc_digit_len   
           "%d," //nb_id 
           "'%s'," //cu_du_id
-          "%ld,"  //kpm_measData->incompleteFlag
+          "%p,"  //kpm_measData->incompleteFlag
           "%f"  //kpm_measRecord->real_val
           ");" 
           , tstamp
@@ -985,7 +985,7 @@ void to_sql_string_kpm_measRecord(global_e2_node_id_t const* id,
           , id->plmn.mnc_digit_len
           , id->nb_id
           , id->cu_du_id ? c_cu_du_id : c_null
-          , kpm_measData->incompleteFlag
+          , (void *)kpm_measData->incompleteFlag
           , kpm_measRecord->real_val
           );
       assert(rc < (int)max && "Not enough space in the char array to write all the data");
@@ -1000,7 +1000,7 @@ void to_sql_string_kpm_measRecord(global_e2_node_id_t const* id,
           "%d," //mnc_digit_len   
           "%d," //nb_id 
           "'%s'," //cu_du_id
-          "%ld,"  //kpm_measData->incompleteFlag
+          "%p,"  //kpm_measData->incompleteFlag
           "-1"  //kpm_measRecord->noVal
           ");" 
           , tstamp
@@ -1010,7 +1010,7 @@ void to_sql_string_kpm_measRecord(global_e2_node_id_t const* id,
           , id->plmn.mnc_digit_len
           , id->nb_id
           , id->cu_du_id ? c_cu_du_id : c_null
-          , kpm_measData->incompleteFlag
+          , (void *)kpm_measData->incompleteFlag
           );
       assert(rc < (int)max && "Not enough space in the char array to write all the data");
       return;
@@ -1156,10 +1156,10 @@ void write_kpm_stats(sqlite3* db, global_e2_node_id_t const* id, kpm_ind_data_t 
 
 
   for(size_t i = 0; i < ind_msg_kpm->MeasData_len; i++){
-    adapter_MeasDataItem_t* curMeasData = &ind_msg_kpm->MeasData[i];
+    MeasDataItem_t* curMeasData = &ind_msg_kpm->MeasData[i];
     if (curMeasData->measRecord_len > 0){
       for (size_t j = 0; j < curMeasData->measRecord_len; j++){
-        adapter_MeasRecord_t* curMeasRecord = &curMeasData->measRecord[j];
+        MeasRecord_t* curMeasRecord = &curMeasData->measRecord[j];
         memset(buffer, 0, sizeof(buffer));
         to_sql_string_kpm_measRecord(id, curMeasData, curMeasRecord, ind->hdr.collectStartTime, 
                                      buffer, 512);

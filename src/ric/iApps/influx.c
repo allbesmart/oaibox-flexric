@@ -129,7 +129,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
     int max = 1024;
 
     for(size_t i = 0; i < kpm->msg.MeasData_len; i++){
-      adapter_MeasDataItem_t* curMeasData = &kpm->msg.MeasData[i];
+      MeasDataItem_t* curMeasData = &kpm->msg.MeasData[i];
       
       if (i == 0 && kpm->msg.granulPeriod){
         int rc = snprintf(stats, max,  "kpm_stats: "
@@ -161,10 +161,10 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
       memset(stats, 0, sizeof(stats));
       int rc = snprintf(stats, max,
                         ",kpm_measData[%zu]"
-                        ",MeasData->incompleteFlag=%ld"
+                        ",MeasData->incompleteFlag=%p"
                         ",MeasData->measRecord_len=%zu"
                         , i
-                        , curMeasData->incompleteFlag
+                        , (void *)curMeasData->incompleteFlag
                         , curMeasData->measRecord_len
                         );
       assert(rc < (int)max && "Not enough space in the char array to write all the data");
@@ -172,7 +172,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
       assert(rc != -1);
 
       for(size_t j = 0; j < curMeasData->measRecord_len; j++){
-        adapter_MeasRecord_t* curMeasRecord = &(curMeasData->measRecord[j]);
+        MeasRecord_t* curMeasRecord = &(curMeasData->measRecord[j]);
         memset(stats, 0, sizeof(stats));
         to_string_kpm_measRecord(curMeasRecord, j, stats, max);
         rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
@@ -223,7 +223,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
       }
 
       for(size_t j = 0; j < curMeasInfo->labelInfo_len; ++j){
-        adapter_LabelInfoItem_t* curLabelInfo = &curMeasInfo->labelInfo[j];
+        LabelInformationItem_t* curLabelInfo = &curMeasInfo->labelInfo[j];
         memset(stats, 0, sizeof(stats));
         to_string_kpm_labelInfo(curLabelInfo, j, stats, max);
         int rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));

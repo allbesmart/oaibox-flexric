@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-static LabelInfoItem_t * cp_label_info_item_into_asn(adapter_LabelInfoItem_t const *src);
+static LabelInfoItem_t * cp_label_info_item_into_asn(LabelInformationItem_t const *src);
 
 /** Direction of the message: RIC --> E2 Node */
 byte_array_t kpm_enc_event_trigger_asn(kpm_event_trigger_t const* event_trigger) {
@@ -380,7 +380,7 @@ byte_array_t kpm_enc_func_def_asn(kpm_func_def_t const* func_def)
 }
 
 // beware that this function allocates dynamic memory.
-static LabelInfoItem_t * cp_label_info_item_into_asn(adapter_LabelInfoItem_t const *src)
+static LabelInfoItem_t * cp_label_info_item_into_asn(LabelInformationItem_t const *src)
 {
 
   LabelInfoItem_t * dst = calloc(1, sizeof(LabelInfoItem_t));

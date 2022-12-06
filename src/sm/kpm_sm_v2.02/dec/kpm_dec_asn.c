@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static void cp_label_info_item_from_asn(adapter_LabelInfoItem_t *dst, LabelInfoItem_t const *src);
+static void cp_label_info_item_from_asn(LabelInformationItem_t *dst, LabelInfoItem_t const *src);
 
 kpm_event_trigger_t kpm_dec_event_trigger_asn(size_t len, uint8_t const ev_tr[len])
 {
@@ -109,7 +109,7 @@ kpm_action_def_t kpm_dec_action_def_asn(size_t len, uint8_t const action_def[len
             break;
         }
         ret.MeasInfo[i].labelInfo_len = adf_p->measInfoList.list.array[i]->labelInfoList.list.count;
-        ret.MeasInfo[i].labelInfo = calloc(ret.MeasInfo[i].labelInfo_len, sizeof(adapter_LabelInfoItem_t));
+        ret.MeasInfo[i].labelInfo = calloc(ret.MeasInfo[i].labelInfo_len, sizeof(LabelInformationItem_t));
         assert (ret.MeasInfo[i].labelInfo != NULL && "Memory exhausted");
         for (size_t j = 0; j<ret.MeasInfo[i].labelInfo_len; j++)
           cp_label_info_item_from_asn(&ret.MeasInfo[i].labelInfo[j], adf_p->measInfoList.list.array[i]->labelInfoList.list.array[j]);       
@@ -206,14 +206,14 @@ kpm_ind_msg_t kpm_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len])
     E2SM_KPM_IndicationMessage_Format1_t *msg = pdu->indicationMessage_formats.choice.indicationMessage_Format1;
 
     // 1. MeasData
-    adapter_MeasDataItem_t *mData = calloc(msg->measData.list.count, sizeof(adapter_MeasDataItem_t));
+    MeasDataItem_t *mData = calloc(msg->measData.list.count, sizeof(MeasDataItem_t));
     ret.MeasData = mData;
     ret.MeasData_len = msg->measData.list.count;
     for (size_t i = 0; i< (size_t)msg->measData.list.count; i++)
     {
       MeasurementDataItem_t *item = msg->measData.list.array[i]; 
-      mData[i].incompleteFlag = (item->incompleteFlag) ? 0 : -1;
-      adapter_MeasRecord_t * rec = calloc(item->measRecord.list.count, sizeof(adapter_MeasRecord_t));
+      mData[i].incompleteFlag = (item->incompleteFlag) ? (void *)(0) : (void *)(-1);
+      MeasRecord_t * rec = calloc(item->measRecord.list.count, sizeof(MeasRecord_t));
       for (size_t j = 0; j < (size_t) item->measRecord.list.count; j++){
         switch (item->measRecord.list.array[j]->present){
 
@@ -265,7 +265,7 @@ kpm_ind_msg_t kpm_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len])
           break;
         }
         ret.MeasInfo[i].labelInfo_len = mInfo->labelInfoList.list.count;
-        ret.MeasInfo[i].labelInfo = calloc(ret.MeasInfo->labelInfo_len, sizeof(adapter_LabelInfoItem_t));
+        ret.MeasInfo[i].labelInfo = calloc(ret.MeasInfo->labelInfo_len, sizeof(LabelInformationItem_t));
         assert (ret.MeasInfo[i].labelInfo != NULL && "Memory exhausted");
         for (int j=0; j<mInfo->labelInfoList.list.count; j++)
           cp_label_info_item_from_asn(&ret.MeasInfo[i].labelInfo[j], mInfo->labelInfoList.list.array[j]);
@@ -297,9 +297,17 @@ kpm_func_def_t kpm_dec_func_def_asn(size_t len, uint8_t const func_def[len])
 
   xer_fprint(stderr, &asn_DEF_E2SM_KPM_RANfunction_Description, pdu);
   
-  BYTE_ARRAY_HEAP_CP_FROM_OCTET_STRING (ret.ranFunction_Name.Description, pdu->ranFunction_Name.ranFunction_Description);
-  BYTE_ARRAY_HEAP_CP_FROM_OCTET_STRING (ret.ranFunction_Name.E2SM_OID, pdu->ranFunction_Name.ranFunction_E2SM_OID);
-  BYTE_ARRAY_HEAP_CP_FROM_OCTET_STRING (ret.ranFunction_Name.ShortName,pdu->ranFunction_Name.ranFunction_ShortName);
+  ret.ranFunction_Name.Description.len = pdu->ranFunction_Name.ranFunction_Description.size;
+  ret.ranFunction_Name.Description.buf = malloc(ret.ranFunction_Name.Description.len);
+  memcpy(ret.ranFunction_Name.Description.buf, pdu->ranFunction_Name.ranFunction_Description.buf, ret.ranFunction_Name.Description.len);
+
+  ret.ranFunction_Name.E2SM_OID.len = pdu->ranFunction_Name.ranFunction_E2SM_OID.size;
+  ret.ranFunction_Name.E2SM_OID.buf = malloc(ret.ranFunction_Name.E2SM_OID.len);
+  memcpy(ret.ranFunction_Name.E2SM_OID.buf, pdu->ranFunction_Name.ranFunction_E2SM_OID.buf, ret.ranFunction_Name.E2SM_OID.len);
+  
+  ret.ranFunction_Name.ShortName.len = pdu->ranFunction_Name.ranFunction_ShortName.size;
+  ret.ranFunction_Name.ShortName.buf = malloc(ret.ranFunction_Name.ShortName.len);
+  memcpy(ret.ranFunction_Name.ShortName.buf, pdu->ranFunction_Name.ranFunction_ShortName.buf, ret.ranFunction_Name.ShortName.len);
   
   assert(pdu->ranFunction_Name.ranFunction_Instance == NULL && "Decoding of ranFunction_Instance not implemented yet");
   
@@ -312,7 +320,7 @@ kpm_func_def_t kpm_dec_func_def_asn(size_t len, uint8_t const func_def[len])
   return ret;
 }
 
-static void cp_label_info_item_from_asn(adapter_LabelInfoItem_t *dst, LabelInfoItem_t const *src)
+static void cp_label_info_item_from_asn(LabelInformationItem_t *dst, LabelInfoItem_t const *src)
 {
   assert(dst != NULL);
 

@@ -113,7 +113,7 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
     printf("%s ", (char *)(mi->meas_name.buf));
 
     assert(msg->MeasData[i].measRecord_len == 1);
-    const adapter_MeasRecord_t* mdi = &msg->MeasData[i].measRecord[0];
+    const MeasRecord_t* mdi = &msg->MeasData[i].measRecord[0];
     if (mdi->type == MeasRecord_int)
       printf(" %7ld ", mdi->int_val);
     else

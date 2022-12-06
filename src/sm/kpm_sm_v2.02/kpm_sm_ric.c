@@ -82,7 +82,7 @@ static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const c
 
   // Action Definition IE
   long noLabelnum = 0; 
-	adapter_LabelInfoItem_t	dummylabelInfo = {.noLabel = &noLabelnum}; 
+	LabelInformationItem_t	dummylabelInfo = {.noLabel = &noLabelnum}; 
   MeasInfo_t dummy_MeasInfo = { 
     .meas_type = KPM_V2_MEASUREMENT_TYPE_NAME, 
     .meas_name.buf = calloc(strlen("test") + 1, sizeof(char)),
@@ -102,7 +102,9 @@ static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const c
   const byte_array_t ba_ad = kpm_enc_action_def_asn(&action_def);
   data.action_def = ba_ad.buf;
   data.len_ad = ba_ad.len;
-  
+
+  free_byte_array(dummy_MeasInfo.meas_name);
+
   return data;
 }
 

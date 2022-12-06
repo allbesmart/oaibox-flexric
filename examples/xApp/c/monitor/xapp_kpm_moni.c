@@ -48,7 +48,7 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
     printf("%s ", (char *)(mi->meas_name.buf));
 
     if (msg->MeasData[i].measRecord_len == 2) {
-      const adapter_MeasRecord_t* mdi = msg->MeasData[i].measRecord;
+      const MeasRecord_t* mdi = msg->MeasData[i].measRecord;
       const long ctx = mdi[0].int_val;
       const long crx = mdi[1].int_val;
       if (i % 2 == 0){
@@ -63,7 +63,7 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
       printf(" TX %7ld RX %7ld", ctx, crx);
     } else {
       for (size_t j = 0; j < msg->MeasData[i].measRecord_len; ++j) {
-        const adapter_MeasRecord_t* mdi = &msg->MeasData[i].measRecord[j];
+        const MeasRecord_t* mdi = &msg->MeasData[i].measRecord[j];
         printf(" [%ld] %7ld", j, mdi->int_val);
       }
     }

@@ -142,10 +142,10 @@ void fill_kpm_ind_data(kpm_ind_data_t* ind)
 
     const size_t md_len = 4;
     ind->msg.MeasData_len = md_len;
-    adapter_MeasDataItem_t *KPMData = calloc(md_len, sizeof(*KPMData));
+    MeasDataItem_t *KPMData = calloc(md_len, sizeof(*KPMData));
 
     for (size_t i=0; i < md_len; i++){
-      KPMData[i].incompleteFlag =  -1;
+      KPMData[i].incompleteFlag =  (void *)(-1);
 
       KPMData[i].measRecord_len = 1;
       KPMData[i].measRecord = calloc(1, sizeof(*KPMData[i].measRecord));

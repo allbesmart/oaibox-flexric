@@ -121,11 +121,11 @@ kpm_ind_msg_t cp_kpm_ind_msg(kpm_ind_msg_t const* src) {
 
   if (src->MeasData_len) {
     ret.MeasData_len = src->MeasData_len;
-    ret.MeasData = calloc(src->MeasData_len, sizeof(adapter_MeasDataItem_t));
-    memcpy (ret.MeasData, src->MeasData, src->MeasData_len * sizeof(adapter_MeasDataItem_t));
+    ret.MeasData = calloc(src->MeasData_len, sizeof(MeasDataItem_t));
+    memcpy (ret.MeasData, src->MeasData, src->MeasData_len * sizeof(MeasDataItem_t));
     for (size_t i = 0; i<ret.MeasData_len; i++){
-      ret.MeasData[i].measRecord = calloc(src->MeasData[i].measRecord_len, sizeof(adapter_MeasRecord_t));
-      memcpy (ret.MeasData[i].measRecord, src->MeasData[i].measRecord, src->MeasData[i].measRecord_len * sizeof(adapter_MeasDataItem_t));
+      ret.MeasData[i].measRecord = calloc(src->MeasData[i].measRecord_len, sizeof(MeasRecord_t));
+      memcpy (ret.MeasData[i].measRecord, src->MeasData[i].measRecord, src->MeasData[i].measRecord_len * sizeof(MeasDataItem_t));
     }
   }
 
@@ -136,8 +136,8 @@ kpm_ind_msg_t cp_kpm_ind_msg(kpm_ind_msg_t const* src) {
     for (size_t i = 0; i<ret.MeasInfo_len; i++)
     {
       ret.MeasInfo[i].labelInfo_len = src->MeasInfo[i].labelInfo_len;
-      ret.MeasInfo[i].labelInfo = calloc(src->MeasInfo[i].labelInfo_len, sizeof(adapter_LabelInfoItem_t));
-      memcpy (ret.MeasInfo[i].labelInfo, src->MeasInfo[i].labelInfo, src->MeasInfo[i].labelInfo_len * sizeof(adapter_LabelInfoItem_t));
+      ret.MeasInfo[i].labelInfo = calloc(src->MeasInfo[i].labelInfo_len, sizeof(LabelInformationItem_t));
+      memcpy (ret.MeasInfo[i].labelInfo, src->MeasInfo[i].labelInfo, src->MeasInfo[i].labelInfo_len * sizeof(LabelInformationItem_t));
       for (size_t j = 0; j < src->MeasInfo[i].labelInfo_len; j++)
       {
         ret.MeasInfo[i].meas_type = src->MeasInfo[i].meas_type;
@@ -173,13 +173,13 @@ bool eq_kpm_ind_msg(kpm_ind_msg_t const* m0, kpm_ind_msg_t const* m1)
   if (m0->MeasData_len != m1->MeasData_len)
     return false;
   for (size_t i = 0; i < m0->MeasData_len; ++i) {
-    const adapter_MeasDataItem_t *mdi0 = &m0->MeasData[i];
-    const adapter_MeasDataItem_t *mdi1 = &m1->MeasData[i];
+    const MeasDataItem_t *mdi0 = &m0->MeasData[i];
+    const MeasDataItem_t *mdi1 = &m1->MeasData[i];
     if (mdi0->measRecord_len != mdi1->measRecord_len)
       return false;
     for (size_t j = 0; j < mdi0->measRecord_len; ++j) {
-      const adapter_MeasRecord_t *mr0 = &mdi0->measRecord[j];
-      const adapter_MeasRecord_t *mr1 = &mdi1->measRecord[j];
+      const MeasRecord_t *mr0 = &mdi0->measRecord[j];
+      const MeasRecord_t *mr1 = &mdi1->measRecord[j];
       if (mr0->type != mr1->type)
         return false;
       if (mr0->int_val != mr1->int_val)
@@ -208,8 +208,8 @@ bool eq_kpm_ind_msg(kpm_ind_msg_t const* m0, kpm_ind_msg_t const* m1)
     if (mi0->labelInfo_len != mi1->labelInfo_len)
       return false;
     for (size_t j = 0; j < mi0->labelInfo_len; ++j) {
-      const adapter_LabelInfoItem_t *lii0 = &mi0->labelInfo[0];
-      const adapter_LabelInfoItem_t *lii1 = &mi1->labelInfo[0];
+      const LabelInformationItem_t *lii0 = &mi0->labelInfo[0];
+      const LabelInformationItem_t *lii1 = &mi1->labelInfo[0];
       OPTIONAL_CHECK_EQUAL_SIMPLE_TYPE(lii0->noLabel, lii1->noLabel);
       // TODO additional checks missing
     }
@@ -264,7 +264,7 @@ static long* dup_long(const long* src)
   return dst;
 }
 
-void cp_label_info(adapter_LabelInfoItem_t *dst, adapter_LabelInfoItem_t const *src) 
+void cp_label_info(LabelInformationItem_t *dst, LabelInformationItem_t const *src) 
 {
   assert(src != NULL);
   assert(dst != NULL);
@@ -278,7 +278,7 @@ void cp_label_info(adapter_LabelInfoItem_t *dst, adapter_LabelInfoItem_t const *
   // TO BE COMPLETED with the other fields
 }
 
-void free_label_info(adapter_LabelInfoItem_t *l) 
+void free_label_info(LabelInformationItem_t *l) 
 {
   assert(l != NULL);
 

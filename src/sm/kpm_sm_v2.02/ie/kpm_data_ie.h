@@ -178,6 +178,7 @@ typedef struct {
 
 void          free_kpm_ind_hdr(kpm_ind_hdr_t* src);
 kpm_ind_hdr_t cp_kpm_ind_hdr(kpm_ind_hdr_t const* src);
+bool          eq_kpm_ind_hdr(kpm_ind_hdr_t const* hdr0, kpm_ind_hdr_t const* hdr1);
 /**************************************************
  * SEC 4. RIC Indication Message as per $8.2.1.4.1
  **************************************************/

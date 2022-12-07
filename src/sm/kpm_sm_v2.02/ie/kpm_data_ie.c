@@ -165,6 +165,27 @@ kpm_ind_msg_t cp_kpm_ind_msg(kpm_ind_msg_t const* src) {
         return false; \
   } while (0)
 
+bool eq_kpm_ind_hdr(kpm_ind_hdr_t const* hdr0, kpm_ind_hdr_t const* hdr1)
+{
+  assert(hdr0 != NULL);
+  assert(hdr1 != NULL);
+
+  if (hdr0 == hdr1) return true;
+
+  if (hdr0->collectStartTime != hdr1->collectStartTime) return false;
+
+  if (eq_byte_array(&hdr0->fileformat_version, &hdr1->fileformat_version) == false) return false;
+
+  if (eq_byte_array(&hdr0->sender_name, &hdr1->sender_name) == false) return false;
+
+  if (eq_byte_array(&hdr0->sender_type, &hdr1->sender_type) == false) return false;
+
+  if (eq_byte_array(&hdr0->vendor_name, &hdr1->vendor_name) == false) return false;
+
+  return true;
+}
+
+
 bool eq_kpm_ind_msg(kpm_ind_msg_t const* m0, kpm_ind_msg_t const* m1)
 {
   assert(m0 != NULL);

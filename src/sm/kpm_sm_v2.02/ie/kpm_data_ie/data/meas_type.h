@@ -7,7 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "../../../../util/byte_array.h"
+#include "../../../../../util/byte_array.h"
 
 typedef struct {
     enum {NAME_MEAS_TYPE, ID_MEAS_TYPE} type;

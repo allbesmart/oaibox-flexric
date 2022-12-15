@@ -18,7 +18,11 @@ typedef struct {
 
     cell_global_id_t* cell_global_id; /* OPTIONAL - 8.3.20 */
 
-} kpm_act_def_format_2_t;
+} kpm_act_def_format_3_t;
+
+
+
+
 
 #ifdef __cplusplus
 }
@@ -26,6 +30,5 @@ typedef struct {
 
 #endif
 
-
-
 // add for cell global at the end, when you see where you are going to define it
+

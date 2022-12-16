@@ -1,5 +1,5 @@
-#ifndef KPM_V2_MEASUREMENT_INFORMATIOIN_FORMAT_1_LIST_H
-#define KPM_V2_MEASUREMENT_INFORMATIOIN_FORMAT_1_LIST_H
+#ifndef MEASUREMENT_INFORMATION_FORMAT_1_LIST_KPM_V2_H
+#define MEASUREMENT_INFORMATION_FORMAT_1_LIST_KPM_V2_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,37 +11,14 @@ extern "C" {
 #include "label_info_lst.h"
 #include "meas_type.h"
 
-typedef enum{
-  NAME_MEAS_TYPE,
-  ID_MEAS_TYPE ,
 
-  END_MEAS_TYPE
-
-} meas_type_e ;
-
-
-typedef struct{
-
-  meas_type_e type;
-  union{
-    byte_array_t name; // 8.3.9
-    uint16_t id; // 8.3.10
-  };
- 
-  size_t label_info_lst_len;
-  label_info_lst_t* label_info_lst;  // list implemented as array having label_info_lst_len items
-
-} meas_info_format_1_lst_t;
-
-// **************************
-//  maybe this way is better ???
-
+/* Intermediate structure for 8.2.1.2.1  E2SM-KPM Action Definition Format 1 */ 
 typedef struct{
 
   meas_type_t meas_type;
  
-  size_t label_info_lst_len;
-  label_info_lst_t* label_info_lst;  // list implemented as array having label_info_lst_len items
+  size_t label_info_lst_len;  // [1, 2147483647]
+  label_info_lst_t* label_info_lst;  // 8.3.11
 
 } meas_info_format_1_lst_t;
 
@@ -52,3 +29,5 @@ typedef struct{
 #endif
 
 #endif
+
+// done

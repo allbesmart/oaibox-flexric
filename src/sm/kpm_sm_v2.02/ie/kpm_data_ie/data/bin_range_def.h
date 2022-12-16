@@ -1,5 +1,5 @@
-#ifndef KPM_V2_MEASUREMENT_BIN_INFORMATION_H
-#define KPM_V2_MEASUREMENT_BIN_INFORMATION_H
+#ifndef BIN_RANGE_DEFINITION_KPM_V2_H
+#define BIN_RANGE_DEFINITION_KPM_V2_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -8,10 +8,15 @@ extern "C" {
 #include <stdint.h>
 #include <stdlib.h>
 
+
+// 8.3.27  Bin Range Value
 typedef struct {
-  enum {BIN_RANGE_INTEGER, BIN_RANGE_REAL} value;
-  unsigned long int_value;
-  double real_value;
+  enum {INTEGER_BIN_RANGE, REAL_BIN_RANGE} value;
+  union {
+    unsigned long int_value;
+    double real_value;
+  };
+  
   
 } bin_range_value_t;
 
@@ -25,6 +30,7 @@ typedef struct {
 } bin_distr_t;
 
 
+// 8.3.26   Bin Range Definition
 typedef struct {
   size_t bin_x_lst_len;  // [1, 65535]
   bin_distr_t bin_x_lst;
@@ -44,3 +50,5 @@ typedef struct {
 #endif
 
 #endif
+
+// done

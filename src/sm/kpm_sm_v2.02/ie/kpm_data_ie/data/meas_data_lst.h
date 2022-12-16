@@ -1,23 +1,42 @@
-#ifndef KPM_V2_MEASUREMENT_DATA_LIST_H
-#define KPM_V2_MEASUREMENT_DATA_LIST_H
+#ifndef MEASUREMENT_DATA_LIST_KPM_V2_H
+#define MEASUREMENT_DATA_LIST_KPM_V2_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include <stdint.h>
 #include <stdlib.h>
 
-typedef struct {
-    enum {MeasRecord_int=1, MeasRecord_real,  MeasRecord_noval} type;
-	unsigned long   int_val;
-	double	        real_val;
-} meas_record_lst_t;
+#include "enum_value.h"
+
+/* Intermediate structures for  8.2.1.4  RIC INDICATION MESSAGE IE */
+
+typedef enum {
+	INTEGER_MEAS_VALUE,
+	REAL_MEAS_VALUE,
+	NO_VALUE_MEAS_VALUE,
+
+	END_MEAS_VALUE
+
+} meas_value_e;
 
 typedef struct {
-    size_t                    measRecord_len; // 1..
-	meas_record_lst_t        *measRecord; 
-	long	                 *incompleteFlag;	// OPTIONAL: true(0) value indicates that the measurements record 
-                                            // is not reliable asn we pass to ASN this info, -1 means that the flag is not present
+	meas_value_e value;
+	union {
+		uint32_t   int_val;  // [0..4294967295]
+		double	   real_val;
+		void*      no_value;  // ask Mikel !!!
+	};
+
+} meas_record_lst_t;
+
+
+typedef struct {
+    size_t                    meas_record_len;  // [1, 2147483647]
+	meas_record_lst_t        *meas_record_lst; 
+	enum_value_e	         *incomplete_flag;  // OPTIONAL, Indicates that the measurements record is not reliable.
+												// ask Mikel, pointer to enum
 } meas_data_lst_t;
 
 
@@ -26,3 +45,5 @@ typedef struct {
 #endif
 
 #endif
+
+// done

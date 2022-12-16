@@ -1,5 +1,9 @@
-#ifndef CELL_GLOBAL_ID_KPM_V2
-#define CELL_GLOBAL_ID_KPM_V2
+#ifndef CELL_GLOBAL_ID_KPM_V2_H
+#define CELL_GLOBAL_ID_KPM_V2_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "nr_cgi.h"
 #include "eutra_cgi.h"
@@ -9,7 +13,7 @@ typedef enum {
 	EUTRA_CGI_RAT_TYPE
 } rat_type_e; 
 
-
+// 6.2.2.5  Cell Global ID
 typedef struct{
   // CHOICE RAT type
   // Mandatory
@@ -23,7 +27,10 @@ typedef struct{
 } cell_global_id_t;
 
 
-
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif
+
+// done

@@ -1,15 +1,27 @@
 #ifndef EUTRA_CGI_KPM_V2_H
 #define EUTRA_CGI_KPM_V2_H
 
-#include <stdint.h>
-#include "../../../../../util/byte_array.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+#include <stdint.h>
+
+#include "../../../../lib/ap/e2ap_types/common/e2ap_plmn.h"
+
+
+//  6.2.3.11  E-UTRA CGI
 typedef struct{
 
-  byte_array_t plmn_id; 
-  uint8_t eutra_cell_id[4]; // bit string of 28
+  plmn_t plmn_id; // 6.2.3.1
+  uint8_t eutra_cell_id[4]; // bit string of 28 bits
 
 } eutra_cgi_t ;
 
+#ifdef __cplusplus
+}
 #endif
 
+#endif
+
+// done

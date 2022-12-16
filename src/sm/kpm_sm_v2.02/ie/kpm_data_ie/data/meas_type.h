@@ -1,5 +1,5 @@
-#ifndef KPM_V2_MEASUREMENT_TYPE_H
-#define KPM_V2_MEASUREMENT_TYPE_H
+#ifndef MEASUREMENT_TYPE_KPM_V2_H
+#define MEASUREMENT_TYPE_KPM_V2_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,7 +10,7 @@ extern "C" {
 #include "../../../../../util/byte_array.h"
 
 typedef struct {
-    enum {NAME_MEAS_TYPE, ID_MEAS_TYPE} type;
+    enum {NAME_MEAS_TYPE, ID_MEAS_TYPE, END_MEAS_TYPE} type;
     union {
         byte_array_t name; // 8.3.9
         uint16_t id; // 8.3.10
@@ -23,3 +23,5 @@ typedef struct {
 #endif
 
 #endif
+
+// done

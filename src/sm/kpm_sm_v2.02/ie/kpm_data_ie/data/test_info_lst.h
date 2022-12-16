@@ -1,5 +1,5 @@
-#ifndef KPM_V2_TEST_INFO_LIST_H
-#define KPM_V2_TEST_INFO_LIST_H
+#ifndef TEST_INFORMATION_LIST_KPM_V2_H
+#define TEST_INFORMATION_LIST_KPM_V2_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,58 +9,87 @@ extern "C" {
 #include <stdlib.h>
 
 typedef enum {
-    GBR,
-    AMBR,
-    IsStat,
-    IsCatM,
-    DL_RSRP,
-    DL_RSRQ,
-    UL_RSRP,
-    CQI,
-    fiveQI,
-    QCI,
-    S_NSSAI
+    GBR_TEST_COND_TYPE,
+    AMBR_TEST_COND_TYPE,
+    IsStat_TEST_COND_TYPE,
+    IsCatM_TEST_COND_TYPE,
+    DL_RSRP_TEST_COND_TYPE,
+    DL_RSRQ_TEST_COND_TYPE,
+    UL_RSRP_TEST_COND_TYPE,
+    CQI_TEST_COND_TYPE,
+    fiveQI_TEST_COND_TYPE,
+    QCI_TEST_COND_TYPE,
+    S_NSSAI_TEST_COND_TYPE,
 
-} test_cond_type_t;
+    END_TEST_COND_TYPE
+
+} test_cond_type_e;
 
 typedef enum {
-    equal,
-    greaterthan,
-    lessthan,
-    contains,
-    present
+    TRUE_TEST_COND_TYPE,
+
+    END_TEST_COND_TYPE
+
+} cond_type_e;
+
+typedef enum {
+    EQUAL_TEST_COND,
+    GREATERTHAN_TEST_COND,
+    LESSTHAN_TEST_COND,
+    CONTAINS_TEST_COND,
+    PRESENT_TEST_COND,
 
     /* This type is extensible */
 
-} test_cond_t;
+    END_TEST_COND
+
+} test_cond_e;
 
 typedef enum {
-    
-    /* To be filled */
+    INTEGER_TEST_COND_VALUE,
+    ENUMERATED_TEST_COND_VALUE,
+    BOOLEAN_TEST_COND_VALUE,
+    BIT_STRING_TEST_COND_VALUE,
+    OCTET_STRING_TEST_COND_VALUE,
+    PRINTABLE_STRING_TEST_COND_VALUE,
+    REAL_TEST_COND_VALUE,
 
-} test_cond_value_t;
+    END_TEST_COND_VALUE
 
+} test_cond_value_e;
+
+
+// 8.3.22   Test Condition Information
 typedef struct {
     
-    test_cond_type_t test_cond_type;
+    test_cond_type_e test_cond_type;
     union {
-        long *GBR;
-        long *AMBR;
-        long *IsStat;
-        long *IsCatM;
-        long *DL_RSRP;
-        long *DL_RSRQ;
-        long *UL_RSRP;
-        long *CQI;
-        long *fiveQI;
-        long *QCI;
-        long *S_NSSAI;
+        cond_type_e GBR;
+        cond_type_e AMBR;
+        cond_type_e IsStat;
+        cond_type_e IsCatM;
+        cond_type_e DL_RSRP;
+        cond_type_e DL_RSRQ;
+        cond_type_e UL_RSRP;
+        cond_type_e CQI;
+        cond_type_e fiveQI;
+        cond_type_e QCI;
+        cond_type_e S_NSSAI;
 
     };
     
-    test_cond_t test_cond;  /* OPTIONAL */
+    test_cond_e test_cond;  /* OPTIONAL */
 
-    test_cond_value_t test_cond_value;  /* OPTIONAL */
+    test_cond_value_e test_cond_value;  /* 8.3.23, OPTIONAL */
+    union {
+        int64_t int_value;
+        int64_t enum_value;
+        bool bool_value;
+        byte_array_t bit_string_value; // bit_string to be created, it is not the type of byte_array; ask Mikel
+        byte_array_t octet_string_value;
+        byte_array_t printable_string_value;
+        double real_value_value;
+    };
 
 } test_info_lst_t;
 
@@ -70,3 +99,5 @@ typedef struct {
 #endif
 
 #endif
+
+// done

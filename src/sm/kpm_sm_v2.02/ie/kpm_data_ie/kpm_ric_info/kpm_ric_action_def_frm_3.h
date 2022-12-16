@@ -1,5 +1,5 @@
-#ifndef KPM_V2_ACTION_DEFINITION_FORMAT_3_H
-#define KPM_V2_ACTION_DEFINITION_FORMAT_3_H
+#ifndef ACTION_DEFINITION_FORMAT_3_KPM_V2_H
+#define ACTION_DEFINITION_FORMAT_3_KPM_V2_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,6 +9,9 @@ extern "C" {
 #include <stdint.h>
 
 #include "../data/meas_info_frm_3_lst.h"
+#include "../data/cell_global_id.h"
+
+//  8.2.1.2.3  E2SM-KPM Action Definition Format 3
 
 typedef struct {
     size_t meas_info_lst_len;  // [1, 65535]
@@ -22,13 +25,10 @@ typedef struct {
 
 
 
-
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif
 
-// add for cell global at the end, when you see where you are going to define it
-
+// done

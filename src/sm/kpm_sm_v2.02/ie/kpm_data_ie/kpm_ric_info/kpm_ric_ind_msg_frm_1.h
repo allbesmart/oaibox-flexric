@@ -1,5 +1,5 @@
-#ifndef KPM_V2_RIC_INDICATION_MESSAGE_FORMAT_1_H
-#define KPM_V2_RIC_INDICATION_MESSAGE_FORMAT_1_H
+#ifndef RIC_INDICATION_MESSAGE_FORMAT_1_KPM_V2_H
+#define RIC_INDICATION_MESSAGE_FORMAT_1_KPM_V2_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -7,17 +7,18 @@ extern "C" {
 
 #include <stdlib.h>
 #include "../data/meas_data_lst.h"
-#include "../data/meas_info_lst.h"
+#include "../data/meas_info_frm_1_lst.h"
 
+//  8.2.1.4.1  E2SM-KPM Indication Message Format 1
 
 typedef struct {
-    size_t                    MeasData_len; // 1..
-    meas_data_lst_t          *MeasData;
+    size_t                    meas_data_lst_len; // [1, 65535]
+    meas_data_lst_t          *meas_data_lst;
 
-    size_t                    MeasInfo_len; 
-    meas_info_lst_t          *MeasInfo;    // OPTIONAL, MeasInfo_len can be zero
+    size_t                    meas_info_lst_len; // [0, 65535]
+    meas_info_format_1_lst_t *meas_info_lst;    // OPTIONAL, meas_info_lst_len can be zero
 
-    unsigned long            *granulPeriod;	/* OPTIONAL */
+    uint32_t                 *gran_period_ms;  // 8.3.8  -  OPTIONAL
 
 } kpm_ind_msg_format_1_t;
 
@@ -30,3 +31,5 @@ bool                eq_kpm_ind_msg(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg
 #endif
 
 #endif
+
+// done

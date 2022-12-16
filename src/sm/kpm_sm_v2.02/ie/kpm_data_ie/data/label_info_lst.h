@@ -1,5 +1,5 @@
-#ifndef KPM_V2_LABEL_INFO_LIST_H
-#define KPM_V2_LABEL_INFO_LIST_H
+#ifndef LABEL_INFORMATION_LIST_KPM_V2_H
+#define LABEL_INFORMATION_LIST_KPM_V2_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -7,44 +7,48 @@ extern "C" {
 
 #include "../../../../util/byte_array.h"
 #include "../../../../lib/ap/e2ap_types/common/e2ap_plmn.h"
+#include "../../../../lib/ap/e2ap_types/common/e2ap_s_nssai.h"
+#include "enum_value.h"
 
-typedef struct S_NSSAI {
-    byte_array_t	  sST;
-	byte_array_t	  *sD;	/* OPTIONAL */
-} S_NSSAI_t;
+typedef enum {
+	START_IND,
+	END_IND,
 
-/* 
- * Structure 'label_info_lst_t' defines the values of the subcounters that are applicable to an associated measurement type
- * identified by measName or measID. All the fields are indicated as optional. If value is != NULL, it means presence of the optional 
- * field.
- */
+	END_START_END_IND
 
+} start_end_ind_e;
+
+
+//  8.3.11   Measurement Label
 typedef struct{
-    long	                    *noLabel;	/* OPTIONAL: looks like this is an enumeration datatype that accepts only true (0) */
-	plmn_t                      *plmn_id;  /* OPTIONAL */
-	S_NSSAI_t       	        *sliceID;	/* OPTIONAL */
-	long            	        *fiveQI;	/* OPTIONAL */
-	long                      	*qFI;	    /* OPTIONAL */
-	long        	            *qCI;	    /* OPTIONAL */
-	long        	            *qCImax;	/* OPTIONAL */
-	long        	            *qCImin;	/* OPTIONAL */
-	long	                    *aRPmax;	/* OPTIONAL */
-	long	                    *aRPmin;	/* OPTIONAL */
-	long	                    *bitrateRange;/* OPTIONAL */
-	long	                    *layerMU_MIMO;/* OPTIONAL */
-	long	                    *sUM;	    /* OPTIONAL */
-	long                        *distBinX;/* OPTIONAL */
-	long	                    *distBinY;/* OPTIONAL */
-	long	                    *distBinZ;/* OPTIONAL */
-	long	                    *preLabelOverride;/* OPTIONAL */
-	long	                    *startEndInd;	/* OPTIONAL */
-	long	                    *min;	    /* OPTIONAL */
-	long	                    *max;	    /* OPTIONAL */
-	long                        *avg;	    /* OPTIONAL */
+    enum_value_e  	      *noLabel;			/* OPTIONAL */
+	plmn_t                *plmn_id;   		/* OPTIONAL */
+	S_NSSAI_t       	  *sliceID;			/* OPTIONAL */
+	uint8_t            	  *fiveQI;			/* OPTIONAL */
+	uint8_t               *qFI[8];			/* OPTIONAL, INTEGER (0..63, …) */
+	uint8_t        	      *qCI;	    		/* OPTIONAL */
+	uint8_t        	      *qCImax;			/* OPTIONAL */
+	uint8_t        	      *qCImin;			/* OPTIONAL */
+	uint8_t	              *aRPmax[2];		/* OPTIONAL, INTEGER (1.. 15, …) */
+	uint8_t	              *aRPmin[2];		/* OPTIONAL, INTEGER (1.. 15, …) */
+	uint16_t	          *bitrateRange;	/* OPTIONAL */
+	uint16_t	          *layerMU_MIMO;	/* OPTIONAL */
+	enum_value_e  	      *sUM;	    		/* OPTIONAL */
+	uint16_t              *distBinX;		/* OPTIONAL */
+	uint16_t	          *distBinY;		/* OPTIONAL */
+	uint16_t	          *distBinZ;		/* OPTIONAL */
+	enum_value_e  	      *preLabelOverride;	/* OPTIONAL */
+	start_end_ind_e	      *startEndInd;		/* OPTIONAL */
+	enum_value_e  	      *min;	    		/* OPTIONAL */
+	enum_value_e  	      *max;	    		/* OPTIONAL */
+	enum_value_e          *avg;	    		/* OPTIONAL */
+	uint16_t  			  *ssbIndex;		/* OPTIONAL */
+	uint16_t  			  *nonGoB_beamformModeIndex;  /* OPTIONAL */
+	uint8_t   			  *mimoModeIndex[1];    /* OPTIONAL, 1 = SU-MIMO, 2 = MU-MIMO */
+
 
 } label_info_lst_t;
-// ask Mikel: why is everything defined as long?
-// e.g, qCI is an integer(0,..,255)
+
 
 
 void cp_label_info(label_info_lst_t *dst, label_info_lst_t const *src);
@@ -56,3 +60,5 @@ void free_label_info(label_info_lst_t *l);
 #endif
 
 #endif
+
+// done

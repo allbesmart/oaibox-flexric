@@ -8,9 +8,10 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../../../../lib/ap/e2ap_types/common/e2ap_plmn.h"
+#include "plmn_identity.h"
 
 //  6.2.3.7  NR CGI
+
 typedef struct{
   plmn_t plmn_id;  // 6.2.3.1
   uint8_t nr_cell_id[5]; // bit string of 36 bits

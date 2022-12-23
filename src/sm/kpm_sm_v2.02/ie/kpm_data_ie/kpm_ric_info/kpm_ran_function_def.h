@@ -1,5 +1,5 @@
-#ifndef KPM_V2_RAN_FUNCTION_DEFINITION_H
-#define KPM_V2_RAN_FUNCTION_DEFINITION_H
+#ifndef RAN_FUNCTION_DEFINITION_KPM_V2_H
+#define RAN_FUNCTION_DEFINITION_KPM_V2_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,15 +10,7 @@ extern "C" {
 #include "kpm_ric_ind_hdr.h"
 #include "kpm_ric_ind_msg.h"
 
-
-typedef struct {
-    byte_array_t	 short_name;
-	byte_array_t	 E2SM_OID;
-	byte_array_t	 description;
-	long	        *instance;	/* OPTIONAL: it is suggested to be used when E2 Node declares
-                                   multiple RAN Function ID supporting the same  E2SM specification */
-} ran_function_name_t;
-
+#include "../../../../lib/e2sm_common_ie/sm_common_ie/ran_function_name.h"
 
 typedef struct {
     style_ric_event_trigger_e style_type; // 8.3.3
@@ -70,9 +62,6 @@ typedef struct {
 } kpm_ran_function_def_t;
 
 
-
-// add in c file ric_event_trigger_style_item default values, see 7.3.1
-
 // do I need separate messages for RIC Subscription and RIC Indication as defined in kpm_data_ie.h
 // and kpm_setup_data_t ???
 
@@ -81,3 +70,5 @@ typedef struct {
 #endif
 
 #endif
+
+// done

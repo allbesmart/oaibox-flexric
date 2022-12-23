@@ -78,9 +78,9 @@ typedef struct {
 
     };
     
-    test_cond_e test_cond;  /* OPTIONAL */
+    test_cond_e *test_cond;  /* OPTIONAL */
 
-    test_cond_value_e test_cond_value;  /* 8.3.23, OPTIONAL */
+    test_cond_value_e *test_cond_value;  /* 8.3.23, OPTIONAL */
     union {
         int64_t int_value;
         int64_t enum_value;

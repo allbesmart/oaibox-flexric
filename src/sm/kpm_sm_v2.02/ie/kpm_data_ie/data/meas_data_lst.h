@@ -36,7 +36,7 @@ typedef struct {
     size_t                    meas_record_len;  // [1, 2147483647]
 	meas_record_lst_t        *meas_record_lst; 
 	enum_value_e	         *incomplete_flag;  // OPTIONAL, Indicates that the measurements record is not reliable.
-												// ask Mikel, pointer to enum
+
 } meas_data_lst_t;
 
 

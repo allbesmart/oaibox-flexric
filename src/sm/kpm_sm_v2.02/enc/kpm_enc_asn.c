@@ -29,6 +29,16 @@
 #include "../ie/asn/E2SM-KPM-RANfunction-Description.h"
 #include "../ie/asn/RANfunction-Name.h"
 
+#include "enc_asn/enc_ric_event_trigger_frm_1.h"
+
+#include "enc_asn/enc_ric_action_def_frm_1.h"
+#include "enc_asn/enc_ric_action_def_frm_2.h"
+#include "enc_asn/enc_ric_action_def_frm_3.h"
+#include "enc_asn/enc_ric_action_def_frm_4.h"
+#include "enc_asn/enc_ric_action_def_frm_5.h"
+
+#include "enc_asn/enc_ric_ind_hdr_frm_1.h"
+
 #include "kpm_enc_asn.h"
 #include "../../../util/conversions.h"
 
@@ -37,18 +47,29 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-static LabelInfoItem_t * cp_label_info_item_into_asn(LabelInformationItem_t const *src);
 
-/** Direction of the message: RIC --> E2 Node */
-byte_array_t kpm_enc_event_trigger_asn(kpm_event_trigger_t const* event_trigger) {
+/* Encoding Event Trigger IE
+ * Direction of the message: RIC --> E2 Node
+ */
+byte_array_t kpm_enc_event_trigger_asn(kpm_event_trigger_def_t const* event_trigger) {
 
   assert(event_trigger != NULL);
+
   E2SM_KPM_EventTriggerDefinition_t *pdu = calloc(1, sizeof(E2SM_KPM_EventTriggerDefinition_t));
+
   assert ( pdu != NULL && "Memory exhausted" );
-  pdu->eventDefinition_formats.present = E2SM_KPM_EventTriggerDefinition__eventDefinition_formats_PR_eventDefinition_Format1;
-  pdu->eventDefinition_formats.choice.eventDefinition_Format1 = calloc (1, sizeof(E2SM_KPM_EventTriggerDefinition_Format1_t));
-  assert (pdu->eventDefinition_formats.choice.eventDefinition_Format1 != NULL && "Memory exhausted" );
-  pdu->eventDefinition_formats.choice.eventDefinition_Format1->reportingPeriod = event_trigger->ms;
+
+
+  switch (pdu->eventDefinition_formats.present)
+  {
+  case E2SM_KPM_EventTriggerDefinition__eventDefinition_formats_PR_eventDefinition_Format1:
+    pdu->eventDefinition_formats.choice.eventDefinition_Format1 = kpm_enc_event_trigger_def_frm_1_asn(&event_trigger->kpm_ric_event_trigger_format_1);
+    break;
+  
+  default:
+    assert("Non valid KPM RIC Event Trigger Format");
+  }
+  
   
   byte_array_t ba = {.buf = malloc(2048), .len = 2048}; 
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
@@ -62,95 +83,52 @@ byte_array_t kpm_enc_event_trigger_asn(kpm_event_trigger_t const* event_trigger)
 }
 
 /* Encoding Action Definition IE
- * Limitation: for now it will just manage action definition of type 1 (RIC style type = 1). 
  * Direction of the message: RIC -> E2 Node
  */
-byte_array_t kpm_enc_action_def_asn(kpm_action_def_t const* action_def) 
+byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def) 
 {
   assert(action_def != NULL);
+
   E2SM_KPM_ActionDefinition_t *pdu = calloc(1, sizeof(E2SM_KPM_ActionDefinition_t));
+  
   assert (pdu != NULL && "Memory exhausted");
  
-  assert ((action_def->ric_style_type > 0 && action_def->ric_style_type < 6) && 
-          "Not valid RIC style Type"); // range defined in $7.4.1
-  pdu->ric_Style_Type = action_def->ric_style_type;
+  assert ((action_def->type >= 1 && action_def->type <= 5) && "Not valid KPM RIC Action Definition Format");
+
+
+  pdu->ric_Style_Type = action_def->type;
   
-  pdu->actionDefinition_formats.present = action_def->ric_style_type;
+  pdu->actionDefinition_formats.present = action_def->type;
+
+  /* Action Definition Formats */
   switch (pdu->actionDefinition_formats.present) 
   {
     case E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format1:
-    
-      // 1. measInfoList: it has to have at list one element
-      pdu->actionDefinition_formats.choice.actionDefinition_Format1 = calloc (1, sizeof(E2SM_KPM_ActionDefinition_Format1_t));
-      E2SM_KPM_ActionDefinition_Format1_t * adf_p = pdu->actionDefinition_formats.choice.actionDefinition_Format1;
-      assert (adf_p != NULL && "Memory exhausted" );
-      
-      int ret;
-      assert((action_def->MeasInfo_len <= maxnoofMeasurementInfo && action_def->MeasInfo_len > 0) 
-              && "Number of measures not allowed");
-      for (size_t i = 0; i<action_def->MeasInfo_len; i++)
-      {
-        MeasurementInfoItem_t *mInfo = calloc(1, sizeof(MeasurementInfoItem_t));
-        assert (mInfo != NULL && "Memory exhausted");
-        const meas_type_e meas_type =  action_def->MeasInfo[i].meas_type;
-        assert(meas_type == KPM_V2_MEASUREMENT_TYPE_NAME || meas_type == KPM_V2_MEASUREMENT_TYPE_ID  );
-
-        mInfo->measType.present = meas_type == KPM_V2_MEASUREMENT_TYPE_NAME 
-                                               ? MeasurementType_PR_measName : MeasurementType_PR_measID; 
-        if (mInfo->measType.present == MeasurementType_PR_measName){
-          const size_t len = action_def->MeasInfo[i].meas_name.len;
-          ret = OCTET_STRING_fromBuf(&(mInfo->measType.choice.measName), (char *)(action_def->MeasInfo[i].meas_name.buf), len);
-          assert(ret == 0);
-        } else {
-          mInfo->measType.choice.measID = action_def->MeasInfo[i].meas_id;
-        }
-        
-        assert((action_def->MeasInfo[i].labelInfo_len <= maxnoofLabelInfo && action_def->MeasInfo[i].labelInfo_len > 0) 
-                && "Number of labels not allowed");
-        
-        for (size_t j = 0; j<action_def->MeasInfo[i].labelInfo_len; j++)
-        {
-          LabelInfoItem_t * labels = cp_label_info_item_into_asn(&action_def->MeasInfo[i].labelInfo[j]);
-          int rc1 = ASN_SEQUENCE_ADD(&mInfo->labelInfoList.list, labels);
-          assert(rc1 == 0);
-        }
-        int rc2 = ASN_SEQUENCE_ADD(&adf_p->measInfoList.list, mInfo);
-        assert(rc2 == 0);
-      }
-
-      // 2. granular period
-      adf_p->granulPeriod = action_def->granularity_period;
-     
-      cell_global_id_t const cell_global_id = action_def->cell_global_id; 
-      // 3. cell Global ID (optional)
-      if (cell_global_id == KPMV2_CELL_ID_CHOICE_NOTHING){
-        break; // 
-        // FIX ME this is a bug. cellGlobalID needs to be heap allocated rather than using a break
-        adf_p->cellGlobalID->present = CGI_PR_NOTHING;
-      } else if (cell_global_id == KPMV2_CELL_ID_CHOICE_NR_CGI) {
-        adf_p->cellGlobalID->present = CGI_PR_nR_CGI;
-          ret = OCTET_STRING_fromBuf( &adf_p->cellGlobalID->choice.nR_CGI->pLMNIdentity, 
-                                      (const char *)action_def->pLMNIdentity.buf, 
-                                      action_def->pLMNIdentity.len);
-          assert(ret == 0);
-
-          NR_CELL_ID_TO_BIT_STRING(action_def->nRCellIdentity, &adf_p->cellGlobalID->choice.nR_CGI->nRCellIdentity);
-      } else if (cell_global_id == KPMV2_CELL_ID_CHOICE_EUTRA_CGI ){
-        adf_p->cellGlobalID->present = CGI_PR_eUTRA_CGI;
-        ret = OCTET_STRING_fromBuf(&adf_p->cellGlobalID->choice.eUTRA_CGI->pLMNIdentity, 
-                                   (const char *)action_def->pLMNIdentity.buf, 
-                                   action_def->pLMNIdentity.len);
-        assert(ret == 0);
-
-        NR_CELL_ID_TO_BIT_STRING(action_def->eUTRACellIdentity, &adf_p->cellGlobalID->choice.eUTRA_CGI->eUTRACellIdentity);
-      } else {
-        assert(0!=0 && "Unknown cellGlobalIDtype");
-      }
-
+      pdu->actionDefinition_formats.choice.actionDefinition_Format1 = kpm_enc_action_def_frm_1_asn(&action_def->frm_1);
       break;
-    default: 
-      assert(0!=0 && "Unexpected action definition format. Only type 1 is suppoorted");
+
+    case E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format2:
+      pdu->actionDefinition_formats.choice.actionDefinition_Format2 = kpm_enc_action_def_frm_2_asn(&action_def->frm_2);
+      break;
+      
+    case E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format3:
+      pdu->actionDefinition_formats.choice.actionDefinition_Format3 = kpm_enc_action_def_frm_3_asn(&action_def->frm_3);
+      break;
+    
+    case E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format4:
+      pdu->actionDefinition_formats.choice.actionDefinition_Format4 = kpm_enc_action_def_frm_4_asn(&action_def->frm_4);
+      break;
+
+    case E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format5:
+      pdu->actionDefinition_formats.choice.actionDefinition_Format5 = kpm_enc_action_def_frm_5_asn(&action_def->frm_5);
+      break;
+
+    default:
+      assert(false && "Non valid KPM RIC Action Definition Format");
   }
+
+
+
 
   /* XXX-tuning: 
    * below bytearray sizing needs to be reviewed and made dynamic. It looks too small for the general case of action definition.
@@ -178,40 +156,18 @@ byte_array_t kpm_enc_ind_hdr_asn(kpm_ind_hdr_t const* ind_hdr)
   E2SM_KPM_IndicationHeader_t *pdu = calloc(1,sizeof(E2SM_KPM_IndicationHeader_t));
   assert( pdu !=NULL && "Memory exhausted" );
 
-  pdu->indicationHeader_formats.present = E2SM_KPM_IndicationHeader__indicationHeader_formats_PR_indicationHeader_Format1;
-  pdu->indicationHeader_formats.choice.indicationHeader_Format1 = calloc(1, sizeof(E2SM_KPM_IndicationHeader_Format1_t));
-  E2SM_KPM_IndicationHeader_Format1_t *ih_p = pdu->indicationHeader_formats.choice.indicationHeader_Format1;
+
+  switch (pdu->indicationHeader_formats.present)
+  {
+  case E2SM_KPM_IndicationHeader__indicationHeader_formats_PR_indicationHeader_Format1:
+    pdu->indicationHeader_formats.choice.indicationHeader_Format1 = kpm_enc_ind_hdr_frm_1_asn(&ind_hdr->kpm_ric_ind_hdr_format_1);
+    break;
   
-  uint32_t ts = htonl(ind_hdr->collectStartTime);
-  INT32_TO_OCTET_STRING(ts, &ih_p->colletStartTime);
-  int ret;
-  if (ind_hdr->fileformat_version.buf != NULL){
-    ih_p->fileFormatversion = calloc(1, sizeof(*ih_p->fileFormatversion));
-    const size_t len = ind_hdr->fileformat_version.len;
-    ret = OCTET_STRING_fromBuf(ih_p->fileFormatversion, (char *)(ind_hdr->fileformat_version.buf), len);
-    assert(ret == 0);
+  default:
+    assert(false && "Non valid KPM RIC Indication Header Format");
   }
-
-  if (ind_hdr->sender_name.buf != NULL){
-    ih_p->senderName = calloc(1, sizeof(*ih_p->senderName));
-    const size_t len = ind_hdr->sender_name.len;
-    ret = OCTET_STRING_fromBuf(ih_p->senderName, (char *)(ind_hdr->sender_name.buf), len);
-    assert(ret == 0);
-  }
-
-  if (ind_hdr->sender_type.buf != NULL){
-    ih_p->senderType = calloc(1, sizeof(*ih_p->senderType));
-    const size_t len = ind_hdr->sender_type.len;
-    ret = OCTET_STRING_fromBuf(ih_p->senderType, (char *)(ind_hdr->sender_type.buf), len);
-    assert(ret == 0);
-  }
-
-	if (ind_hdr->vendor_name.buf != NULL) {
-    ih_p->vendorName = calloc(1, sizeof(*ih_p->vendorName));
-    const size_t len = ind_hdr->vendor_name.len;
-    ret = OCTET_STRING_fromBuf(ih_p->vendorName, (char *)(ind_hdr->vendor_name.buf), len);
-    assert(ret == 0);
-  }
+  
+  
 
   byte_array_t  ba = {.buf = malloc(2048), .len = 2048};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
@@ -224,6 +180,9 @@ byte_array_t kpm_enc_ind_hdr_asn(kpm_ind_hdr_t const* ind_hdr)
 
   return ba;
 }
+
+
+
 /* 
  * Encoding of Indication Message IE. 
  * Limitation: just format 1 is implemented further to Action Definition IE type 1 constraint
@@ -342,7 +301,7 @@ byte_array_t kpm_enc_ind_msg_asn(kpm_ind_msg_t const* ind_msg)
  * Encoding of Function Definition IE. 
  * Direction: NodeE2 -> RIC 
  */
-byte_array_t kpm_enc_func_def_asn(kpm_func_def_t const* func_def)  
+byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)  
 {
   assert(func_def != NULL);
   
@@ -378,88 +337,3 @@ byte_array_t kpm_enc_func_def_asn(kpm_func_def_t const* func_def)
 
   return ba;
 }
-
-// beware that this function allocates dynamic memory.
-static LabelInfoItem_t * cp_label_info_item_into_asn(LabelInformationItem_t const *src)
-{
-
-  LabelInfoItem_t * dst = calloc(1, sizeof(LabelInfoItem_t));
-  assert (dst != NULL && "Memory exhausted");
-
-  if (src->noLabel != NULL) {
-    assert(*src->noLabel == 0 && "has only one value (true)");
-    dst->measLabel.noLabel = malloc (sizeof(*(dst->measLabel.noLabel)));
-    assert (dst->measLabel.noLabel != NULL && "Memory exhausted");
-    *(dst->measLabel.noLabel) = *(src->noLabel); 
-    /* 
-     * specification mentions that if 'noLabel' is included, other elements in the same datastructure 
-     * 'LabelInfoItem_t' shall not be included.
-     */
-    return dst;
-  }      
-
-  if (src->plmn_id != NULL){
-    dst->measLabel.plmnID = calloc(1, sizeof(*dst->measLabel.plmnID));
-    MCC_MNC_TO_PLMNID(src->plmn_id->mcc, src->plmn_id->mnc, src->plmn_id->mnc_digit_len, dst->measLabel.plmnID);
-  }
-
-  if (src->sliceID != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->fiveQI != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->qFI != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->qCI != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->qCImax != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->qCImin != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->aRPmax != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->aRPmin != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->bitrateRange != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->layerMU_MIMO != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->sUM != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->distBinX != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->distBinY != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->distBinZ != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->preLabelOverride != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->startEndInd != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->min != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->max != NULL) {
-    assert(false && "not implemented");
-  }
-  if (src->avg != NULL) {
-    assert(false && "not implemented");
-  }
-
-  return dst;
-} 

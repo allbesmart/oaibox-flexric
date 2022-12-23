@@ -5,15 +5,19 @@
 extern "C" {
 #endif
 
-#include "nr_cgi.h"
-#include "eutra_cgi.h"
+#include "../3gpp_derived_ie/nr_cgi.h"
+#include "../3gpp_derived_ie/eutra_cgi.h"
 
 typedef enum {
 	NR_CGI_RAT_TYPE,
-	EUTRA_CGI_RAT_TYPE
+	EUTRA_CGI_RAT_TYPE,
+
+  END_CGI_RAT_TYPE
+
 } rat_type_e; 
 
 // 6.2.2.5  Cell Global ID
+
 typedef struct{
   // CHOICE RAT type
   // Mandatory

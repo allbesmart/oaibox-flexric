@@ -8,7 +8,7 @@ extern "C" {
 #include <stdlib.h>
 
 #include "enum_value.h"
-#include "ue_id.h"
+#include "../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
 
 typedef enum {
     NONE_MATCHED_UE,
@@ -20,7 +20,7 @@ typedef enum {
 
 typedef struct {
     size_t ue_lst_len;
-    ue_id_kpmv2_t *ue_lst;  // 8.3.24
+    ue_id_t *ue_lst;  // 8.3.24
 
 } ue_lst_t;
 

@@ -5,9 +5,8 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
-#include <stdlib.h>
-#include "../../../../util/byte_array.h"
+#include "kpm_ric_ind_hdr_frm_1.h"
+
 
 typedef enum {
   FORMAT_1_INDICATION_HEADER = 1,
@@ -16,15 +15,15 @@ typedef enum {
 
 } format_ind_hdr_e;
 
+
 // 8.2.1.3    RIC INDICATION HEADER IE
-// 8.2.1.3.1  E2SM-KPM Indication Header Format 1
 
 typedef struct {
-  uint32_t collectStartTime;  // 8.3.12
-  byte_array_t *fileformat_version;  /* OPTIONAL */
-  byte_array_t *sender_name;         /* OPTIONAL */
-  byte_array_t *sender_type;         /* OPTIONAL */
-  byte_array_t *vendor_name;         /* OPTIONAL */
+  format_ind_hdr_e type;
+  union {
+    kpm_ric_ind_hdr_format_1_t kpm_ric_ind_hdr_format_1;
+  };
+  
 
 } kpm_ind_hdr_t;
 

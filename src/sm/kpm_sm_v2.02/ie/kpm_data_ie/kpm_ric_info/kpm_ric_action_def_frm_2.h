@@ -8,7 +8,7 @@ extern "C" {
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "../data/ue_id.h"
+#include "../../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
 #include "kpm_ric_action_def_frm_1.h"
 
 //  8.2.1.2.2  E2SM-KPM Action Definition Format 2
@@ -25,4 +25,4 @@ typedef struct {
 
 #endif
 
-// to finish ue_id
+// done

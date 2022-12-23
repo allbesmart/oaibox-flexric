@@ -20,64 +20,36 @@
  */
 
 
-#include "e2ap_plmn.h"
+#ifndef PLMN_IDENTITY_H
+#define PLMN_IDENTITY_H
 
-#include <assert.h>
-#include <stddef.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
-plmn_t cp_plmn(const plmn_t* src)
-{
-  assert(src != NULL);
+#include <stdbool.h>
+#include <stdint.h>
 
-  plmn_t dst = {0};
 
-  dst.mcc = src->mcc;
-  dst.mnc = src->mnc;
-  dst.mnc_digit_len = src->mnc_digit_len;
 
-  return dst;
+typedef struct {
+  uint16_t mcc;
+  uint16_t mnc;
+  uint8_t mnc_digit_len;
+} plmn_t;
+
+bool eq_plmn(const plmn_t* m0, const plmn_t* m1);
+
+plmn_t cp_plmn(const plmn_t* src);
+
+int cmp_plmn(const plmn_t* m0, const plmn_t* m1);
+
+#ifdef __cplusplus
 }
-
-bool eq_plmn(const plmn_t* m0, const plmn_t* m1)
-{
-  if(m0 == m1) return true;
-
-  if(m0 == NULL || m1 == NULL) return false;
-
-  if(m0->mcc != m1->mcc) 
-    return false;
-
-  if(m0->mnc != m1->mnc)
-    return false;
-
-  if(m0->mnc_digit_len != m1->mnc_digit_len)
-    return false;
-
-  return true;
-}
+#endif
 
 
-int cmp_plmn(const plmn_t* m0, const plmn_t* m1)
-{
-  assert(m0 != NULL);
-  assert(m1 != NULL);
+#endif
 
-  if(m0->mcc < m1->mcc)
-    return -1;
-  else if(m0->mcc > m1->mcc )
-    return 1;
-
-  if(m0->mnc < m1->mnc)
-    return -1;
-  else if(m0->mnc > m1->mnc )
-    return 1;
-
-  if(m0->mnc_digit_len < m1->mnc_digit_len)
-    return -1;
-  else if(m0->mnc_digit_len  > m1->mnc_digit_len)
-    return 1;
-
-  return 0;
-}
-
+// done

@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "matching_cond_frm_3_lst.h"
-#include "ue_id.h"
+#include "../../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
 #include "ue_id_gran_period_lst.h"
 
 /* Intermediate structure for  8.2.1.4.2  E2SM-KPM Indication Message Format 2 */
@@ -18,7 +18,7 @@ typedef struct {
     matching_condition_format_3_lst_t *matching_cond_lst;
 
     size_t ue_id_matched_lst_len;  // [0, 65535]
-    ue_id_kpmv2_t *ue_id_matched_lst;
+    ue_id_t *ue_id_matched_lst;
 
     size_t ue_id_gran_period_lst_len;  // [0, 65535]
     ue_id_gran_period_lst_t *ue_id_gran_period_lst;

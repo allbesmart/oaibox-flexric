@@ -10,7 +10,7 @@ extern "C" {
 
 #include "../data/meas_info_frm_1_lst.h"
 #include "../data/meas_bin_range_info_lst.h"
-#include "../data/cell_global_id.h"
+#include "../../../../lib/e2sm_common_ie/sm_common_ie/cell_global_id.h"
 
 
 // 8.2.1.2.1  E2SM-KPM Action Definition Format 1

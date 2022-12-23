@@ -7,7 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 
-#include "../../../../lib/ap/e2ap_types/common/e2ap_plmn.h"
+#include "plmn_identity.h"
 
 
 //  6.2.3.11  E-UTRA CGI

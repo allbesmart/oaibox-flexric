@@ -13,8 +13,8 @@ extern "C" {
 // 6.2.3.12   S-NSSAI
 
 typedef struct S_NSSAI {
-    byte_array_t	  sST;
-	byte_array_t	  *sD;	/* OPTIONAL */
+    uint8_t	  sST;
+	uint8_t	  *sD[3];	/* OPTIONAL */
 } S_NSSAI_t;
 
 
@@ -25,3 +25,4 @@ typedef struct S_NSSAI {
 
 #endif
 
+// done

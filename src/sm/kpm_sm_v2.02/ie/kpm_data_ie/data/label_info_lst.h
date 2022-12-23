@@ -6,8 +6,8 @@ extern "C" {
 #endif
 
 #include "../../../../util/byte_array.h"
-#include "../../../../lib/ap/e2ap_types/common/e2ap_plmn.h"
-#include "../../../../lib/ap/e2ap_types/common/e2ap_s_nssai.h"
+#include "../../../../lib/e2sm_common_ie/3gpp_derived_ie/plmn_identity.h"
+#include "../../../../lib/e2sm_common_ie/3gpp_derived_ie/s_nssai.h"
 #include "enum_value.h"
 
 typedef enum {
@@ -25,12 +25,12 @@ typedef struct{
 	plmn_t                *plmn_id;   		/* OPTIONAL */
 	S_NSSAI_t       	  *sliceID;			/* OPTIONAL */
 	uint8_t            	  *fiveQI;			/* OPTIONAL */
-	uint8_t               *qFI[8];			/* OPTIONAL, INTEGER (0..63, …) */
+	uint8_t               *qFI;				/* OPTIONAL, INTEGER (0..63, …) */
 	uint8_t        	      *qCI;	    		/* OPTIONAL */
 	uint8_t        	      *qCImax;			/* OPTIONAL */
 	uint8_t        	      *qCImin;			/* OPTIONAL */
-	uint8_t	              *aRPmax[2];		/* OPTIONAL, INTEGER (1.. 15, …) */
-	uint8_t	              *aRPmin[2];		/* OPTIONAL, INTEGER (1.. 15, …) */
+	uint8_t	              *aRPmax;			/* OPTIONAL, INTEGER (1.. 15, …) */
+	uint8_t	              *aRPmin;			/* OPTIONAL, INTEGER (1.. 15, …) */
 	uint16_t	          *bitrateRange;	/* OPTIONAL */
 	uint16_t	          *layerMU_MIMO;	/* OPTIONAL */
 	enum_value_e  	      *sUM;	    		/* OPTIONAL */
@@ -44,7 +44,7 @@ typedef struct{
 	enum_value_e          *avg;	    		/* OPTIONAL */
 	uint16_t  			  *ssbIndex;		/* OPTIONAL */
 	uint16_t  			  *nonGoB_beamformModeIndex;  /* OPTIONAL */
-	uint8_t   			  *mimoModeIndex[1];    /* OPTIONAL, 1 = SU-MIMO, 2 = MU-MIMO */
+	uint8_t   			  *mimoModeIndex;    /* OPTIONAL, 1 = SU-MIMO, 2 = MU-MIMO  ask Mikel */
 
 
 } label_info_lst_t;

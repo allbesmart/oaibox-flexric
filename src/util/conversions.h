@@ -420,14 +420,26 @@ do {                                                                    \
 /* TS 38.473 v15.1.1 section 9.3.1.12:
  * NR CELL ID
  */
+// #define NR_CELL_ID_TO_BIT_STRING(mACRO, bITsTRING)      \
+// do {                                                    \
+//     (bITsTRING)->buf = calloc(5, sizeof(uint8_t));      \
+//     (bITsTRING)->buf[0] = ((mACRO) >> 28) & 0xff;       \
+//     (bITsTRING)->buf[1] = ((mACRO) >> 20) & 0xff;       \
+//     (bITsTRING)->buf[2] = ((mACRO) >> 12) & 0xff;       \
+//     (bITsTRING)->buf[3] = ((mACRO) >> 4)  & 0xff;       \
+//     (bITsTRING)->buf[4] = ((mACRO) & 0x0f) << 4;        \
+//     (bITsTRING)->size = 5;                              \
+//     (bITsTRING)->bits_unused = 4;                       \
+// } while(0)
+
 #define NR_CELL_ID_TO_BIT_STRING(mACRO, bITsTRING)      \
 do {                                                    \
     (bITsTRING)->buf = calloc(5, sizeof(uint8_t));      \
-    (bITsTRING)->buf[0] = ((mACRO) >> 28) & 0xff;       \
-    (bITsTRING)->buf[1] = ((mACRO) >> 20) & 0xff;       \
-    (bITsTRING)->buf[2] = ((mACRO) >> 12) & 0xff;       \
-    (bITsTRING)->buf[3] = ((mACRO) >> 4)  & 0xff;       \
-    (bITsTRING)->buf[4] = ((mACRO) & 0x0f) << 4;        \
+    (bITsTRING)->buf[0] = mACRO[0] & 0xff;       \
+    (bITsTRING)->buf[1] = mACRO[1] & 0xff;       \
+    (bITsTRING)->buf[2] = mACRO[2] & 0xff;       \
+    (bITsTRING)->buf[3] = mACRO[3] & 0xff;       \
+    (bITsTRING)->buf[4] = mACRO[4] & 0x0f;        \
     (bITsTRING)->size = 5;                              \
     (bITsTRING)->bits_unused = 4;                       \
 } while(0)

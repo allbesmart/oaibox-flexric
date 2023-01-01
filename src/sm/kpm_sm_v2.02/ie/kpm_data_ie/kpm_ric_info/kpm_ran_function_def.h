@@ -62,8 +62,6 @@ typedef struct {
 } kpm_ran_function_def_t;
 
 
-// do I need separate messages for RIC Subscription and RIC Indication as defined in kpm_data_ie.h
-// and kpm_setup_data_t ???
 
 #ifdef __cplusplus
 }

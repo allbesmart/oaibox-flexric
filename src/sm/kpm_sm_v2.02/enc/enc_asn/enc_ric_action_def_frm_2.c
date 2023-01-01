@@ -2,7 +2,6 @@
 
 #include "enc_ric_action_def_frm_2.h"
 #include "enc_ric_action_def_frm_1.h"
-#include "../../ie/asn/E2SM-KPM-ActionDefinition-Format2.h"
 
 
 E2SM_KPM_ActionDefinition_Format2_t * kpm_enc_action_def_frm_2_asn(const kpm_act_def_format_2_t * act_def_frm_2) 

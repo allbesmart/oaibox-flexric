@@ -26,14 +26,14 @@ typedef struct {
 	union {
 		uint32_t   int_val;  // [0..4294967295]
 		double	   real_val;
-		void*      no_value;  // ask Mikel !!!
+		void*      no_value; 
 	};
 
 } meas_record_lst_t;
 
 
 typedef struct {
-    size_t                    meas_record_len;  // [1, 2147483647]
+    size_t                    meas_record_len;  // [1, 65535]
 	meas_record_lst_t        *meas_record_lst; 
 	enum_value_e	         *incomplete_flag;  // OPTIONAL, Indicates that the measurements record is not reliable.
 

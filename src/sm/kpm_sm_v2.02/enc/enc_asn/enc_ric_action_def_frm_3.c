@@ -15,7 +15,7 @@ E2SM_KPM_ActionDefinition_Format3_t * kpm_enc_action_def_frm_3_asn(const kpm_act
     
     act_def_frm_3_asn->measCondList = kpm_enc_meas_info_cond_asn(&act_def_frm_3->meas_info_lst, act_def_frm_3->meas_info_lst_len);
 
-    // 2. Granularity Period : [0, 4294967295]
+    // 2. Granularity Period : [1, 4294967295]
     
     act_def_frm_3_asn->granulPeriod = act_def_frm_3->gran_period_ms;
     assert(act_def_frm_3->gran_period_ms >= min_val_GranularityPeriod && act_def_frm_3->gran_period_ms <= max_val_GranularityPeriod);

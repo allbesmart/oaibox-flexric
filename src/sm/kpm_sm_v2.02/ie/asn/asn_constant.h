@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-#define min_val_GranularityPeriod (0)
+#define min_val_GranularityPeriod (1)
 #define max_val_GranularityPeriod (4294967295)
 #define maxnoofCells (16384)
 #define maxnoofRICStyles (63)

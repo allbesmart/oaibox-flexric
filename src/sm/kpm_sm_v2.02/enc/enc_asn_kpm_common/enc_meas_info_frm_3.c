@@ -37,8 +37,7 @@ MeasurementCondList_t kpm_enc_meas_info_cond_asn(const meas_info_format_3_lst_t 
         }
 
 
-        assert((meas_info_cond[i].matching_cond_lst_len <= maxnoofLabelInfo && meas_info_cond[i].matching_cond_lst_len >= 1) 
-                && "Number of labels not allowed");
+        assert(meas_info_cond[i].matching_cond_lst_len <= maxnoofConditionInfo && meas_info_cond[i].matching_cond_lst_len >= 1);
 
         for (size_t j = 0; j<meas_info_cond[i].matching_cond_lst_len; j++)
         {

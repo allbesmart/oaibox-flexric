@@ -8,6 +8,7 @@ extern "C" {
 #include "matching_cond_frm_3_lst.h"
 #include "../../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
 #include "ue_id_gran_period_lst.h"
+#include "meas_type.h"
 
 /* Intermediate structure for  8.2.1.4.2  E2SM-KPM Indication Message Format 2 */
 

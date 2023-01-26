@@ -61,7 +61,7 @@ kpm_event_trigger_def_t kpm_dec_event_trigger_asn(size_t len, uint8_t const ev_t
   {
   case E2SM_KPM_EventTriggerDefinition__eventDefinition_formats_PR_eventDefinition_Format1:
     ret.type = FORMAT_1_RIC_EVENT_TRIGGER;
-    ret.kpm_ric_event_trigger_format_1 = *kpm_dec_event_trigger_def_frm_1_asn(&pdu->eventDefinition_formats.choice.eventDefinition_Format1);
+    ret.kpm_ric_event_trigger_format_1 = kpm_dec_event_trigger_def_frm_1_asn(&pdu->eventDefinition_formats.choice.eventDefinition_Format1);
     break;
   
   default:
@@ -98,17 +98,17 @@ kpm_act_def_t kpm_dec_action_def_asn(size_t len, uint8_t const action_def[len])
   {
     case E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format1:
       ret.type = FORMAT_1_ACTION_DEFINITION;
-      ret.frm_1 = *kpm_dec_action_def_frm_1_asn(&pdu->actionDefinition_formats.choice.actionDefinition_Format1);
+      ret.frm_1 = kpm_dec_action_def_frm_1_asn(&pdu->actionDefinition_formats.choice.actionDefinition_Format1);
       break;
 
     case E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format2:
       ret.type = FORMAT_2_ACTION_DEFINITION;
-      ret.frm_2 = *kpm_dec_action_def_frm_2_asn(&pdu->actionDefinition_formats.choice.actionDefinition_Format2);
+      ret.frm_2 = kpm_dec_action_def_frm_2_asn(&pdu->actionDefinition_formats.choice.actionDefinition_Format2);
       break;
 
     case E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format3:
       ret.type = FORMAT_3_ACTION_DEFINITION;
-      ret.frm_3 = *kpm_dec_action_def_frm_3_asn(&pdu->actionDefinition_formats.choice.actionDefinition_Format3);
+      ret.frm_3 = kpm_dec_action_def_frm_3_asn(&pdu->actionDefinition_formats.choice.actionDefinition_Format3);
       break;
 
     case E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format4:

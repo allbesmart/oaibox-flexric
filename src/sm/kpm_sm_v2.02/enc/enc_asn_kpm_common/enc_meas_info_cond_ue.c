@@ -6,13 +6,12 @@
 #include "enc_asn_kpm_common/enc_matching_cond_frm_3.h"
 #include "../../ie/kpm_data_ie/data/meas_type.h"
 
-MeasurementCondUEidList_t * kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_ue_lst_t * meas_cond_ue, const size_t meas_cond_ue_len)
+MeasurementCondUEidList_t kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_ue_lst_t * meas_cond_ue, const size_t meas_cond_ue_len)
 {
     assert((meas_cond_ue_len <= maxnoofMeasurementInfo && meas_cond_ue_len >= 1) 
               && "Number of measures not allowed");
     
-    MeasurementCondUEidList_t * meas_cond_ue_asn = calloc(1, sizeof(MeasurementCondUEidList_t));
-    assert(meas_cond_ue_asn != NULL && "Memory exhausted");
+    MeasurementCondUEidList_t meas_cond_ue_asn={0};
 
 
     for (size_t i = 0; i<meas_cond_ue_len; i++)
@@ -43,7 +42,7 @@ MeasurementCondUEidList_t * kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_u
         for (size_t j = 0; j<meas_cond_ue[i].matching_cond_lst_len; j++)
         {
             MatchingCondItem_t * matching_cond = kpm_enc_matching_cond_asn(&meas_cond_ue[i].matching_cond_lst[j]);
-            int rc1 = ASN_SEQUENCE_ADD(&meas_cond_ue_asn->list, matching_cond);
+            int rc1 = ASN_SEQUENCE_ADD(&meas_cond_ue_asn.list, matching_cond);
             assert(rc1 == 0);
         }
 
@@ -66,11 +65,11 @@ MeasurementCondUEidList_t * kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_u
         }
 
 
-        int rc1 = ASN_SEQUENCE_ADD(&meas_cond_ue_asn->list, cond_ue_item);
+        int rc1 = ASN_SEQUENCE_ADD(&meas_cond_ue_asn.list, cond_ue_item);
         assert(rc1 == 0);
     }
 
 
-    return &meas_cond_ue_asn;
+    return meas_cond_ue_asn;
 
 }

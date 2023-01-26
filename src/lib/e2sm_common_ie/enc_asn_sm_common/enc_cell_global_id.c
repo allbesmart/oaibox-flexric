@@ -3,6 +3,10 @@
 #include "../../ap/ie/asn/OCTET_STRING.h"
 #include "../../../../util/conversions.h"
 
+#include "../../../sm/kpm_sm_v2.02/ie/asn/CGI.h"
+#include "../../../sm/kpm_sm_v2.02/ie/asn/NR-CGI.h"
+#include "../../../sm/kpm_sm_v2.02/ie/asn/EUTRA-CGI.h"
+
 #include "enc_cell_global_id.h"
 
 
@@ -13,33 +17,35 @@ CGI_t * enc_cell_global_id_asn(const cell_global_id_t * cell_global_id)
     CGI_t * cell_global_id_asn = calloc(1, sizeof(CGI_t));
     assert(cell_global_id_asn != NULL && "Memory exhausted");
 
-    int ret;
 
     switch (cell_global_id->type)
     {
       case NR_CGI_RAT_TYPE:
         cell_global_id_asn->present = CGI_PR_nR_CGI;
         cell_global_id_asn->choice.nR_CGI = calloc(1, sizeof(NR_CGI_t));
+        PLMNIdentity_t * plmnID = calloc(1, sizeof(cell_global_id_asn->choice.nR_CGI->pLMNIdentity));
+        plmnID = &cell_global_id_asn->choice.nR_CGI->pLMNIdentity;
+
+        MCC_MNC_TO_PLMNID(cell_global_id->nr_cgi.plmn_id.mcc, cell_global_id->nr_cgi.plmn_id.mnc, cell_global_id->nr_cgi.plmn_id.mnc_digit_len, plmnID);
+        MACRO_GNB_ID_TO_CELL_IDENTITY(cell_global_id->nr_cgi.nr_cell_id, &cell_global_id_asn->choice.nR_CGI->nRCellIdentity);
 
 
-        ret = OCTET_STRING_fromBuf( &cell_global_id_asn->choice.nR_CGI->pLMNIdentity, 
-                                      (const char *)cell_global_id->nr_cgi.plmn_id, 
-                                      action_def->pLMNIdentity.len);
-        assert(ret == 0);
-        NR_CELL_ID_TO_BIT_STRING(cell_global_id->nr_cgi.nr_cell_id, &cell_global_id_asn->choice.nR_CGI.nr);
 
       case EUTRA_CGI_RAT_TYPE:
         cell_global_id_asn->present = CGI_PR_eUTRA_CGI;
-        ret = OCTET_STRING_fromBuf(&cell_global_id_asn->choice.eUTRA_CGI->pLMNIdentity, 
-                                   (const char *)action_def->pLMNIdentity.buf, 
-                                   action_def->pLMNIdentity.len);
-        assert(ret == 0);
-        NR_CELL_ID_TO_BIT_STRING(action_def->eUTRACellIdentity, &cell_global_id_asn->choice.eUTRA_CGI->eUTRACellIdentity);
+        cell_global_id_asn->choice.eUTRA_CGI = calloc(1, sizeof(EUTRA_CGI_t));
+        PLMNIdentity_t * plmnID = calloc(1, sizeof(cell_global_id_asn->choice.eUTRA_CGI->pLMNIdentity));
+        plmnID = &cell_global_id_asn->choice.eUTRA_CGI->pLMNIdentity;
+
+        MCC_MNC_TO_PLMNID(cell_global_id->eutra.plmn_id.mcc, cell_global_id->eutra.plmn_id.mnc, cell_global_id->eutra.plmn_id.mnc_digit_len, plmnID);
+        MACRO_ENB_ID_TO_CELL_IDENTITY(cell_global_id->eutra.eutra_cell_id, &cell_global_id_asn->choice.eUTRA_CGI->eUTRACellIdentity);
+
     }
 
-    return &cell_global_id_asn;  // ask Mikel about reference
-
-    // to finish
-
+    return &cell_global_id_asn;
 
 }
+
+// to finish, check cell identity
+// ask Mikel
+// this is sent first to e2 node, and then shorten code (first 32 bits max of cell global id)

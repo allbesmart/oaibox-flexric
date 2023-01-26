@@ -45,7 +45,7 @@ typedef struct{
   //  M-NG-RAN node UE XnAP ID
   // C- ifDCSetup
   // 6.2.3.19
-  uint32_t ng_ran_node_ue_xnap_id;
+  uint32_t *ng_ran_node_ue_xnap_id;
 
 
   // Global gNB ID
@@ -58,7 +58,7 @@ typedef struct{
   // Global NG-RAN Node ID
   // C-ifDCSetup
   // 6.2.3.2
-  global_ng_ran_node_id_t global_ng_ran_node_id;
+  global_ng_ran_node_id_t *global_ng_ran_node_id;
 
 
 

@@ -23,7 +23,7 @@ typedef enum{
 	NG_ENB_UE_ID,
 	NG_ENB_DU_UE_ID,
 	EN_GNB_UE_ID,
-  E_NB_UE_ID,
+  ENB_UE_ID,
 
   END_UE_ID
 

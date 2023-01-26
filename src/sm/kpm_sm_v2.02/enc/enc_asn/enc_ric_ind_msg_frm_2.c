@@ -16,7 +16,7 @@ E2SM_KPM_IndicationMessage_Format2_t * kpm_enc_ind_msg_frm_2_asn(const kpm_ind_m
 
 
     //  2. Measurement Condition UE : [1, 65535]
-    ind_msg_asn->measCondUEidList = *kpm_enc_meas_info_cond_ue_asn(&ind_msg->meas_info_cond_ue_lst, ind_msg->meas_info_cond_ue_lst_len);
+    ind_msg_asn->measCondUEidList = kpm_enc_meas_info_cond_ue_asn(&ind_msg->meas_info_cond_ue_lst, ind_msg->meas_info_cond_ue_lst_len);
 
 
     //  3. Granularity Period  -  OPTIONAL

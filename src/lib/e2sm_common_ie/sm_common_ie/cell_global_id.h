@@ -1,5 +1,5 @@
-#ifndef CELL_GLOBAL_ID_KPM_V2_H
-#define CELL_GLOBAL_ID_KPM_V2_H
+#ifndef CELL_GLOBAL_ID_H
+#define CELL_GLOBAL_ID_H
 
 #ifdef __cplusplus
 extern "C" {

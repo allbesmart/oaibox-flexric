@@ -278,6 +278,7 @@ do {                                                                   \
         ((aSN)->buf[2] << 12) | ((aSN)->buf[3]<<4) | ((aSN)->buf[4]>>4);  \
 } while(0)
 
+
 #define MCC_HUNDREDS(vALUE) \
     ((vALUE) / 100)
 /* When MNC is only composed of 2 digits, set the hundreds unit to 0xf */
@@ -420,26 +421,14 @@ do {                                                                    \
 /* TS 38.473 v15.1.1 section 9.3.1.12:
  * NR CELL ID
  */
-// #define NR_CELL_ID_TO_BIT_STRING(mACRO, bITsTRING)      \
-// do {                                                    \
-//     (bITsTRING)->buf = calloc(5, sizeof(uint8_t));      \
-//     (bITsTRING)->buf[0] = ((mACRO) >> 28) & 0xff;       \
-//     (bITsTRING)->buf[1] = ((mACRO) >> 20) & 0xff;       \
-//     (bITsTRING)->buf[2] = ((mACRO) >> 12) & 0xff;       \
-//     (bITsTRING)->buf[3] = ((mACRO) >> 4)  & 0xff;       \
-//     (bITsTRING)->buf[4] = ((mACRO) & 0x0f) << 4;        \
-//     (bITsTRING)->size = 5;                              \
-//     (bITsTRING)->bits_unused = 4;                       \
-// } while(0)
-
 #define NR_CELL_ID_TO_BIT_STRING(mACRO, bITsTRING)      \
 do {                                                    \
     (bITsTRING)->buf = calloc(5, sizeof(uint8_t));      \
-    (bITsTRING)->buf[0] = mACRO[0] & 0xff;       \
-    (bITsTRING)->buf[1] = mACRO[1] & 0xff;       \
-    (bITsTRING)->buf[2] = mACRO[2] & 0xff;       \
-    (bITsTRING)->buf[3] = mACRO[3] & 0xff;       \
-    (bITsTRING)->buf[4] = mACRO[4] & 0x0f;        \
+    (bITsTRING)->buf[0] = ((mACRO) >> 28) & 0xff;       \
+    (bITsTRING)->buf[1] = ((mACRO) >> 20) & 0xff;       \
+    (bITsTRING)->buf[2] = ((mACRO) >> 12) & 0xff;       \
+    (bITsTRING)->buf[3] = ((mACRO) >> 4)  & 0xff;       \
+    (bITsTRING)->buf[4] = ((mACRO) & 0x0f) << 4;        \
     (bITsTRING)->size = 5;                              \
     (bITsTRING)->bits_unused = 4;                       \
 } while(0)
@@ -496,31 +485,69 @@ do {                                                                    \
             ((bITsTRING)->buf[7]);                                      \
 } while (0)
 
-/* TS 36.413 v10.9.0 section 9.2.1.37:
- * Macro eNB ID:
- * Equal to the 20 leftmost bits of the Cell
- * Identity IE contained in the E-UTRAN CGI
- * IE (see subclause 9.2.1.38) of each cell
- * served by the eNB.
- */
+
+/* Global gNB ID
+   TS 38.413, clause 9.3.1.6
+*/
+#define MACRO_GNB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \
+do {                                                    \
+    (bITsTRING)->buf = calloc(4, sizeof(uint8_t));      \
+    (bITsTRING)->buf[0] = ((mACRO) >> 20);              \
+    (bITsTRING)->buf[1] = (mACRO) >> 12;                \
+    (bITsTRING)->buf[2] = (mACRO) >> 4;                 \
+    (bITsTRING)->buf[3] = ((mACRO) & 0x0f) << 4;        \
+    (bITsTRING)->size = 4;                              \
+    (bITsTRING)->bits_unused = 0;                       \
+} while(0)
+
+#define BIT_STRING_TO_MACRO_GNB_ID(aSN, vALUE)            \
+do {                                                      \
+    assert((aSN)->bits_unused == 4);                      \
+    vALUE = ((aSN)->buf[0] << 20) | ((aSN)->buf[1] << 12) \
+          | ((aSN)->buf[2] << 4) | ((aSN)->buf[3] >> 4);  \
+} while(0)
+
+/* NR CGI
+   TS 38.413 section 9.3.1.7
+*/
+#define MACRO_GNB_ID_TO_CELL_IDENTITY(mACRO, cELL_iD, bITsTRING) \
+do {                                                    \
+    (bITsTRING)->buf = calloc(5, sizeof(uint8_t));      \
+    (bITsTRING)->buf[0] = ((mACRO) >> 20);              \
+    (bITsTRING)->buf[1] = (mACRO) >> 12;                 \
+    (bITsTRING)->buf[2] = (mACRO) >> 4;        \
+    (bITsTRING)->buf[3] = (((mACRO) & 0x0f) << 4) | ((cELL_iD) >> 4);        \
+    (bITsTRING)->buf[4] = ((cELL_iD) & 0x0f) << 4;        \
+    (bITsTRING)->size = 5;                              \
+    (bITsTRING)->bits_unused = 4;                       \
+} while(0)
+
+
+
+/* Global eNB ID
+  This IE is used to globally identify an eNB.
+  Derived from TS 36.413 [10] clause 9.2.1.37.
+*/
 #define MACRO_ENB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \
 do {                                                    \
     (bITsTRING)->buf = calloc(3, sizeof(uint8_t));      \
-    (bITsTRING)->buf[0] = ((mACRO) >> 12);              \
+    (bITsTRING)->buf[0] = (mACRO) >> 12;               \
     (bITsTRING)->buf[1] = (mACRO) >> 4;                 \
     (bITsTRING)->buf[2] = ((mACRO) & 0x0f) << 4;        \
     (bITsTRING)->size = 3;                              \
     (bITsTRING)->bits_unused = 4;                       \
 } while(0)
 
+// for decoding, to finish the others also
 #define BIT_STRING_TO_MACRO_ENB_ID(aSN, vALUE)            \
 do {                                                      \
     assert((aSN)->bits_unused == 4);                      \
     vALUE = ((aSN)->buf[0] << 12) | ((aSN)->buf[1] << 4) \
           | ((aSN)->buf[2] >> 4);  \
 } while(0)
+// for decoding, to finish the others also
 
-#define MACRO_GNB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \
+#define HOME_ENB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \
 do {                                                    \
     (bITsTRING)->buf = calloc(4, sizeof(uint8_t));      \
     (bITsTRING)->buf[0] = ((mACRO) >> 20);              \
@@ -531,18 +558,28 @@ do {                                                    \
     (bITsTRING)->bits_unused = 4;                       \
 } while(0)
 
-#define BIT_STRING_TO_MACRO_GNB_ID(aSN, vALUE)            \
-do {                                                      \
-    assert((aSN)->bits_unused == 4);                      \
-    vALUE = ((aSN)->buf[0] << 20) | ((aSN)->buf[1] << 12) \
-          | ((aSN)->buf[2] << 4) | ((aSN)->buf[3] >> 4);  \
+#define SHORT_MACRO_ENB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \
+do {                                                    \
+    (bITsTRING)->buf = calloc(3, sizeof(uint8_t));      \
+    (bITsTRING)->buf[0] = (mACRO) >> 12;               \
+    (bITsTRING)->buf[1] = (mACRO) >> 4;                 \
+    (bITsTRING)->buf[2] = ((mACRO) & 0x0f) << 4;        \
+    (bITsTRING)->size = 3;                              \
+    (bITsTRING)->bits_unused = 6;                       \
 } while(0)
 
-/* TS 36.413 v10.9.0 section 9.2.1.38:
- * E-UTRAN CGI/Cell Identity
- * The leftmost bits of the Cell
- * Identity correspond to the eNB
- * ID (defined in subclause 9.2.1.37).
+#define LONG_MACRO_ENB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \
+do {                                                    \
+    (bITsTRING)->buf = calloc(3, sizeof(uint8_t));      \
+    (bITsTRING)->buf[0] = (mACRO) >> 12;               \
+    (bITsTRING)->buf[1] = (mACRO) >> 4;                 \
+    (bITsTRING)->buf[2] = ((mACRO) & 0x0f) << 4;        \
+    (bITsTRING)->size = 3;                              \
+    (bITsTRING)->bits_unused = 3;                       \
+} while(0)
+
+/* E-UTRAN CGI
+  TS 36.413 v10.9.0 section 9.2.1.38
  */
 #define MACRO_ENB_ID_TO_CELL_IDENTITY(mACRO, cELL_iD, bITsTRING) \
 do {                                                    \
@@ -555,17 +592,44 @@ do {                                                    \
     (bITsTRING)->bits_unused = 4;                       \
 } while(0)
 
-#define MACRO_GNB_ID_TO_CELL_IDENTITY(mACRO, cELL_iD, bITsTRING) \
+
+/* Global ng-eNB ID
+  This IE is used to globally identify an ng-eNB.
+  Derived from TS 38.413 [6] clause 9.3.1.8.
+*/
+#define MACRO_NG_ENB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \
 do {                                                    \
-    (bITsTRING)->buf = calloc(5, sizeof(uint8_t));      \
-    (bITsTRING)->buf[0] = ((mACRO) >> 20);              \
-    (bITsTRING)->buf[1] = (mACRO) >> 12;                 \
-    (bITsTRING)->buf[2] = (mACRO) >> 4;        \
-    (bITsTRING)->buf[3] = (((mACRO) & 0x0f) << 4) | ((cELL_iD) >> 4);        \
-    (bITsTRING)->buf[4] = ((cELL_iD) & 0x0f) << 4;        \
-    (bITsTRING)->size = 5;                              \
+    (bITsTRING)->buf = calloc(3, sizeof(uint8_t));      \
+    (bITsTRING)->buf[0] = (mACRO) >> 12;               \
+    (bITsTRING)->buf[1] = (mACRO) >> 4;                 \
+    (bITsTRING)->buf[2] = ((mACRO) & 0x0f) << 4;        \
+    (bITsTRING)->size = 3;                              \
     (bITsTRING)->bits_unused = 4;                       \
 } while(0)
+
+#define SHORT_MACRO_NG_ENB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \
+do {                                                    \
+    (bITsTRING)->buf = calloc(3, sizeof(uint8_t));      \
+    (bITsTRING)->buf[0] = (mACRO) >> 12;               \
+    (bITsTRING)->buf[1] = (mACRO) >> 4;                 \
+    (bITsTRING)->buf[2] = ((mACRO) & 0x0f) << 4;        \
+    (bITsTRING)->size = 3;                              \
+    (bITsTRING)->bits_unused = 6;                       \
+} while(0)
+
+#define LONG_MACRO_NG_ENB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \
+do {                                                    \
+    (bITsTRING)->buf = calloc(3, sizeof(uint8_t));      \
+    (bITsTRING)->buf[0] = (mACRO) >> 12;               \
+    (bITsTRING)->buf[1] = (mACRO) >> 4;                 \
+    (bITsTRING)->buf[2] = ((mACRO) & 0x0f) << 4;        \
+    (bITsTRING)->size = 3;                              \
+    (bITsTRING)->bits_unused = 3;                       \
+} while(0)
+
+
+
+
 
 
 /* Used to format an uint32_t containing an ipv4 address */

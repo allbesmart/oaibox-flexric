@@ -19,7 +19,7 @@ typedef struct {
 
     gnb_type_id_e type;
     union {
-        uint32_t gnb_id:9;  // bit string size (22..32) check with Mikel
+        uint32_t gnb_id;  // bit string size (22..32) ask Mikel
     };
     
 

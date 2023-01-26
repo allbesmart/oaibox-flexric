@@ -16,12 +16,12 @@ typedef struct {
     // 6.2.3.22
     // C-if CU DU separated
     // ng-eNB-CU UE W1AP ID
-    uint32_t ng_enb_cu_ue_w1ap_id;
+    uint32_t *ng_enb_cu_ue_w1ap_id;
 
     // 6.2.3.19
     // C- ifDCSetup
     // M-NG-RAN node UE XnAP ID
-    uint32_t ng_ran_node_ue_xnap_id;
+    uint32_t *ng_ran_node_ue_xnap_id;
 
     // OPTIONAL
     // This IE shall not be used. Global NG-RAN Node ID IE shall replace this IE
@@ -30,7 +30,7 @@ typedef struct {
     // Global NG-RAN Node ID
     // C-ifDCSetup
     // 6.2.3.2
-    global_ng_ran_node_id_t global_ng_ran_node_id;
+    global_ng_ran_node_id_t *global_ng_ran_node_id;
 
 } ng_enb_t;
 

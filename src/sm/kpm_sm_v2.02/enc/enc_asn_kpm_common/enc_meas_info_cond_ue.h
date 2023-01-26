@@ -8,7 +8,7 @@ extern "C" {
 #include "../../ie/asn/MeasurementCondUEidList.h"
 #include "../../ie/kpm_data_ie/data/meas_info_cond_ue_lst.h"
 
-MeasurementCondUEidList_t * kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_ue_lst_t * meas_cond_ue, const size_t meas_cond_ue_len);
+MeasurementCondUEidList_t kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_ue_lst_t * meas_cond_ue, const size_t meas_cond_ue_len);
 
 #ifdef __cplusplus
 }

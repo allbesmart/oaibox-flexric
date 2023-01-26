@@ -40,7 +40,7 @@ meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEi
 
         for (size_t j = 0; j<meas_cond_ue[i].matching_cond_lst_len; j++)
         {
-            meas_cond_ue[i].matching_cond_lst[j] = *kpm_dec_matching_cond_asn(&cond_ue_item_asn->matchingCond.list.array[j]);
+            meas_cond_ue[i].matching_cond_lst[j] = kpm_dec_matching_cond_asn(&cond_ue_item_asn->matchingCond.list.array[j]);
         }
 
 

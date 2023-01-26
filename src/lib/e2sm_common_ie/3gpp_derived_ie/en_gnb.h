@@ -29,7 +29,7 @@ typedef struct {
     // 6.2.3.21
     // gNB-CU UE F1AP ID
     // C-ifCUDUseparated 
-    uint32_t gnb_cu_ue_f1ap_lst;  // pointer or no if conditioned
+    uint32_t *gnb_cu_ue_f1ap_lst;
 
     // gNB-CU-CP UE E1AP ID List
     // C-ifCPUPseparated 

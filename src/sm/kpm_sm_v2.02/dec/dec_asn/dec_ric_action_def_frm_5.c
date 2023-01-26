@@ -20,7 +20,7 @@ kpm_act_def_format_5_t kpm_dec_action_def_frm_5_asn(const E2SM_KPM_ActionDefinit
     }
 
 
-    act_def.action_def_format_1 = *kpm_dec_action_def_frm_1_asn(&act_def_asn->subscriptionInfo);
+    act_def.action_def_format_1 = kpm_dec_action_def_frm_1_asn(&act_def_asn->subscriptionInfo);
 
     return act_def;
 }

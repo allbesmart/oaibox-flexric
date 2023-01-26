@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdbool.h>
 
 #include "enc_matching_cond_frm_4.h"
 #include "enc_test_info.h"

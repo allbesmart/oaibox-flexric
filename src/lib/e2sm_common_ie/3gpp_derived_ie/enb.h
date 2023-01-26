@@ -25,7 +25,7 @@ typedef struct {
     // 6.2.3.23
     // C-ifDCSetup
     // MeNB UE X2AP ID
-    uint16_t enb_ue_x2ap_id;  // INTEGER (0..4095), ask Mikel
+    uint16_t *enb_ue_x2ap_id;  // INTEGER (0..4095), ask Mikel
 
     // 6.2.3.24
     // C-ifDCSetup
@@ -34,7 +34,7 @@ typedef struct {
 
     // 6.2.3.9
     // C-ifDCSetup
-    global_enb_id_t global_enb_id;
+    global_enb_id_t *global_enb_id;
 
 } enb_t;
 

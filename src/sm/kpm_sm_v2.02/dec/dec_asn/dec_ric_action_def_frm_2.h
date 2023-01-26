@@ -10,7 +10,7 @@ extern "C" {
 
 
 
-kpm_act_def_format_2_t * kpm_dec_action_def_frm_2_asn(const E2SM_KPM_ActionDefinition_Format2_t * act_def_asn);
+kpm_act_def_format_2_t kpm_dec_action_def_frm_2_asn(const E2SM_KPM_ActionDefinition_Format2_t * act_def_asn);
 
 
 #ifdef __cplusplus

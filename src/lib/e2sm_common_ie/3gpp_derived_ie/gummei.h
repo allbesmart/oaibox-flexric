@@ -15,7 +15,7 @@ typedef struct {
 
     plmn_t plmn_id;
 
-    uint8_t mme_group_id[2];
+    uint16_t mme_group_id;
 
     uint8_t mme_code;
 

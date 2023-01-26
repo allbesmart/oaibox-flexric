@@ -39,7 +39,7 @@ meas_info_format_3_lst_t * kpm_dec_meas_info_cond_asn(const MeasurementCondList_
         for (size_t j = 0; j<meas_info_cond[i].matching_cond_lst_len; j++)
         {
 
-            meas_info_cond[i].matching_cond_lst[j] = *kpm_dec_matching_cond_asn(&meas_info_cond_asn->list.array[i]->matchingCond.list.array[j]);
+            meas_info_cond[i].matching_cond_lst[j] = kpm_dec_matching_cond_asn(&meas_info_cond_asn->list.array[i]->matchingCond.list.array[j]);
 
         }
 

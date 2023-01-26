@@ -14,7 +14,7 @@ extern "C" {
 typedef struct{
 
   plmn_t plmn_id; // 6.2.3.1
-  uint8_t eutra_cell_id[4]; // bit string of 28 bits
+  uint32_t eutra_cell_id; // bit string of 28 bits
 
 } eutra_cgi_t ;
 

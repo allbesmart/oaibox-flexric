@@ -25,9 +25,9 @@ typedef struct {
 
     ng_enb_type_id_e type;
     union {
-        uint8_t  macro_ng_enb_id[3];
-        uint8_t  short_macro_ng_enb_id[3];
-        uint8_t  long_macro_ng_enb_id[3];
+        uint32_t  macro_ng_enb_id;
+        uint32_t  short_macro_ng_enb_id;
+        uint32_t  long_macro_ng_enb_id;
     };
 
 } global_ng_enb_id_t;

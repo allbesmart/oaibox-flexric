@@ -74,9 +74,13 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
     // RAN UE ID
     // Optional
 
-    gnb_asn->ran_UEID->buf = calloc(8, sizeof(*gnb_asn->ran_UEID->buf));
-    gnb_asn->ran_UEID->buf = gnb->ran_ue_id;
-    gnb_asn->ran_UEID->size = sizeof(gnb->ran_ue_id);
+    if (gnb->ran_ue_id != NULL)
+    {
+        gnb_asn->ran_UEID->buf = calloc(8, sizeof(*gnb_asn->ran_UEID->buf));
+        gnb_asn->ran_UEID->buf = gnb->ran_ue_id;
+        gnb_asn->ran_UEID->size = sizeof(gnb->ran_ue_id);
+    }
+    
 
 
     //  M-NG-RAN node UE XnAP ID

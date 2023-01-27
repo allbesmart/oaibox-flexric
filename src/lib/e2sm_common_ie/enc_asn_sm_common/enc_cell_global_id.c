@@ -27,7 +27,7 @@ CGI_t * enc_cell_global_id_asn(const cell_global_id_t * cell_global_id)
         plmnID = &cell_global_id_asn->choice.nR_CGI->pLMNIdentity;
 
         MCC_MNC_TO_PLMNID(cell_global_id->nr_cgi.plmn_id.mcc, cell_global_id->nr_cgi.plmn_id.mnc, cell_global_id->nr_cgi.plmn_id.mnc_digit_len, plmnID);
-        MACRO_GNB_ID_TO_CELL_IDENTITY(cell_global_id->nr_cgi.nr_cell_id, &cell_global_id_asn->choice.nR_CGI->nRCellIdentity);
+        NR_CELL_ID_TO_BIT_STRING(cell_global_id->nr_cgi.nr_cell_id, &cell_global_id_asn->choice.nR_CGI->nRCellIdentity);
 
 
 
@@ -38,14 +38,10 @@ CGI_t * enc_cell_global_id_asn(const cell_global_id_t * cell_global_id)
         plmnID = &cell_global_id_asn->choice.eUTRA_CGI->pLMNIdentity;
 
         MCC_MNC_TO_PLMNID(cell_global_id->eutra.plmn_id.mcc, cell_global_id->eutra.plmn_id.mnc, cell_global_id->eutra.plmn_id.mnc_digit_len, plmnID);
-        MACRO_ENB_ID_TO_CELL_IDENTITY(cell_global_id->eutra.eutra_cell_id, &cell_global_id_asn->choice.eUTRA_CGI->eUTRACellIdentity);
+        EUTRA_CELL_ID_TO_BIT_STRING(cell_global_id->eutra.eutra_cell_id, &cell_global_id_asn->choice.eUTRA_CGI->eUTRACellIdentity);
 
     }
 
     return &cell_global_id_asn;
 
 }
-
-// to finish, check cell identity
-// ask Mikel
-// this is sent first to e2 node, and then shorten code (first 32 bits max of cell global id)

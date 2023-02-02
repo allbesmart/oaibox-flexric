@@ -37,7 +37,7 @@
 typedef struct{
 
   sm_agent_t base;
-  kpm_enc_asn_t enc;
+//  kpm_enc_asn_t enc;
 
   #ifdef ASN
     kpm_enc_asn_t enc;

@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include "matching_cond_frm_3_lst.h"
-#include "../../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
+#include "../../../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
 #include "ue_id_gran_period_lst.h"
 #include "meas_type.h"
 

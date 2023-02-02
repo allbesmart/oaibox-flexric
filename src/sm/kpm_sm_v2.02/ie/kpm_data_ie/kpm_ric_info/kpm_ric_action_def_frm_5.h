@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "../../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
+#include "../../../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
 #include "kpm_ric_action_def_frm_1.h"
 
 //  8.2.1.2.5  E2SM-KPM Action Definition Format 5

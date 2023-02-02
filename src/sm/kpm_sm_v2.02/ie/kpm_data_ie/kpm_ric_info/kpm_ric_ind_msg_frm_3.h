@@ -7,7 +7,7 @@ extern "C" {
 
 #include <stdlib.h>
 
-#include "../../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
+#include "../../../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
 #include "kpm_ric_ind_msg_frm_1.h"
 
 typedef struct {

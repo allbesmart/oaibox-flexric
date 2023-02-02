@@ -10,7 +10,7 @@ extern "C" {
 #include "kpm_ric_ind_hdr.h"
 #include "kpm_ric_ind_msg.h"
 
-#include "../../../../lib/e2sm_common_ie/sm_common_ie/ran_function_name.h"
+#include "../../../../../lib/e2sm_common_ie/sm_common_ie/ran_function_name.h"
 
 typedef struct {
     style_ric_event_trigger_e style_type; // 8.3.3

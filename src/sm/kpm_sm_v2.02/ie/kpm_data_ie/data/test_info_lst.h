@@ -21,14 +21,14 @@ typedef enum {
     QCI_TEST_COND_TYPE,
     S_NSSAI_TEST_COND_TYPE,
 
-    END_TEST_COND_TYPE
+    END_TEST_COND_TYPE_KPM_V2
 
 } test_cond_type_e;
 
 typedef enum {
     TRUE_TEST_COND_TYPE,
 
-    END_TEST_COND_TYPE
+    END_COND_TYPE_KPM_V2
 
 } cond_type_e;
 

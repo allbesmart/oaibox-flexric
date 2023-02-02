@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include "../../../../util/byte_array.h"
+#include "../../../../../util/byte_array.h"
 
 // 8.2.1.3.1  E2SM-KPM Indication Header Format 1
 

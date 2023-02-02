@@ -8,7 +8,7 @@ extern "C" {
 #include <stdlib.h>
 
 #include "enum_value.h"
-#include "../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
+#include "../../../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
 
 typedef enum {
     NONE_MATCHED_UE,

@@ -5,9 +5,9 @@
 extern "C" {
 #endif
 
-#include "../../../../util/byte_array.h"
-#include "../../../../lib/e2sm_common_ie/3gpp_derived_ie/plmn_identity.h"
-#include "../../../../lib/e2sm_common_ie/3gpp_derived_ie/s_nssai.h"
+#include "../../../../../util/byte_array.h"
+#include "../../../../../lib/e2sm_common_ie/3gpp_derived_ie/plmn_identity.h"
+#include "../../../../../lib/e2sm_common_ie/3gpp_derived_ie/s_nssai.h"
 #include "enum_value.h"
 
 typedef enum {

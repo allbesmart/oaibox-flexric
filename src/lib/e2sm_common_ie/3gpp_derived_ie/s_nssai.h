@@ -8,7 +8,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../../../../util/byte_array.h"
+#include "../../../util/byte_array.h"
 
 // 6.2.3.12   S-NSSAI
 

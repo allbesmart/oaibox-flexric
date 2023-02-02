@@ -18,7 +18,11 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
                       ../../../src/sm/kpm_sm_v2.02/kpm_sm_ric.c 
                       ../../../src/sm/kpm_sm_v2.02/enc/kpm_enc_asn.c 
                       ../../../src/sm/kpm_sm_v2.02/dec/kpm_dec_asn.c 
-                      ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.c 
+                      ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_indication.c  
+                      ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_subscription.c  
+
+                      #../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.c 
+
                       ../../../src/util/alg_ds/alg/defer.c
                       ../../../src/util/alg_ds/alg/eq_float.c
                       ../../../src/util/byte_array.c

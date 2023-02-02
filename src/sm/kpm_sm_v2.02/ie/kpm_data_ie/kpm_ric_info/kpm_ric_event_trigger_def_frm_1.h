@@ -15,7 +15,6 @@ typedef struct {
 
 } kpm_ric_event_trigger_format_1_t;
 
-
 #ifdef __cplusplus
 }
 #endif

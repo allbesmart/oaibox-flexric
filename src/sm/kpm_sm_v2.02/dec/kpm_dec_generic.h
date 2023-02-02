@@ -26,7 +26,7 @@
 
 #include "kpm_dec_asn.h"
 //#include "kpm_dec_fb.h"
-#include "kpm_dec_plain.h"
+// #include "kpm_dec_plain.h"
 
 /////////////////////////////////////////////////////////////////////
 // 9 Information Elements that are interpreted by the SM according
@@ -35,12 +35,12 @@
 
 
 #define kpm_dec_event_trigger(T,U,V) _Generic ((T), \
-                           kpm_enc_plain_t*: kpm_dec_event_trigger_plain, \
+                           /* kpm_enc_plain_t*: kpm_dec_event_trigger_plain,*/  \
                            kpm_enc_asn_t*: kpm_dec_event_trigger_asn, \
                            default: kpm_dec_event_trigger_asn) (U,V)
                           
 #define kpm_dec_action_def(T,U,V) _Generic ((T), \
-                           kpm_enc_plain_t*: kpm_dec_action_def_plain, \
+                           /* kpm_enc_plain_t*: kpm_dec_action_def_plain,*/  \
                            kpm_enc_asn_t*: kpm_dec_action_def_asn, \
                            default: kpm_dec_action_def_asn) (U,V)
 

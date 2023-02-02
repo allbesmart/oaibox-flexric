@@ -28,11 +28,6 @@ typedef struct {
 } kpm_ind_hdr_t;
 
 
-void                free_kpm_ind_hdr(kpm_ind_hdr_t* src);
-kpm_ind_hdr_t   cp_kpm_ind_hdr(kpm_ind_hdr_t const* src);
-bool                eq_kpm_ind_hdr(kpm_ind_hdr_t const* hdr0, kpm_ind_hdr_t const* hdr1);
-
-
 #ifdef __cplusplus
 }
 #endif

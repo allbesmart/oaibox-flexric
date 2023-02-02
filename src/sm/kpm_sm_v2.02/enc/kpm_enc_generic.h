@@ -25,8 +25,8 @@
 #ifndef KPM_ENCRYPTION_GENERIC
 #define KPM_ENCRYPTION_GENERIC 
 
- #include "kpm_enc_asn.h"
-#include "kpm_enc_plain.h"
+#include "kpm_enc_asn.h"
+// #include "kpm_enc_plain.h"
 
 /////////////////////////////////////////////////////////////////////
 // 9 Information Elements that are interpreted by the SM according
@@ -34,7 +34,7 @@
 /////////////////////////////////////////////////////////////////////
 
 #define kpm_enc_event_trigger(T,U) _Generic ((T), \
-                           kpm_enc_plain_t*: kpm_enc_event_trigger_plain, \
+                           /* kpm_enc_plain_t*: kpm_enc_event_trigger_plain, */ \
                            kpm_enc_asn_t*: kpm_enc_event_trigger_asn,\
                            default: kpm_enc_event_trigger_asn) (U)
 

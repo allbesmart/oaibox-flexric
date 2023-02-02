@@ -20,6 +20,14 @@ typedef struct {
 
 } kpm_ric_ind_hdr_format_1_t;
 
+
+void free_kpm_ind_hdr_frm_1(kpm_ric_ind_hdr_format_1_t* src);
+
+kpm_ric_ind_hdr_format_1_t cp_kpm_ind_hdr_frm_1(kpm_ric_ind_hdr_format_1_t const* src);
+
+bool eq_kpm_ind_hdr_frm_1(kpm_ric_ind_hdr_format_1_t const* hdr0, kpm_ric_ind_hdr_format_1_t const* hdr1);
+
+
 #ifdef __cplusplus
 }
 #endif

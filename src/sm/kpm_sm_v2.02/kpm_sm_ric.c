@@ -30,18 +30,22 @@
 #include "enc/kpm_enc_generic.h"
 #include "dec/kpm_dec_generic.h"
 
+#include "fill_ric_subscription_data/on_ric_subscription.h"
+
 typedef struct{
   sm_ric_t base;
-
-#ifdef ASN
   kpm_enc_asn_t enc;
-#elif FLATBUFFERS 
-  static_assert(false, "Flatbuffer not implemented");
-#elif PLAIN
-  kpm_enc_plain_t enc;
-#else
-  static_assert(false, "No encryption type selected");
-#endif
+
+  #ifdef ASN
+    kpm_enc_asn_t enc;
+  #elif FLATBUFFERS 
+    static_assert(false, "Flatbuffer not implemented");
+  #elif PLAIN
+    kpm_enc_plain_t enc;
+  #else
+    static_assert(false, "No encryption type selected");
+  #endif
+
 } sm_kpm_ric_t;
 
 /**
@@ -54,56 +58,25 @@ static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const c
   assert(cmd != NULL); 
   sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;  
  
-  kpm_event_trigger_t ev = {0};
 
-  const int max_str_sz = 10;
-  if(strncmp(cmd, "1_ms", max_str_sz) == 0 ){
-    ev.ms = 1;
-  } else if (strncmp(cmd, "2_ms", max_str_sz) == 0 ) {
-    ev.ms = 2;
-  } else if (strncmp(cmd, "5_ms", max_str_sz) == 0 ) {
-    ev.ms = 5;
-  } else if (strncmp(cmd, "10_ms", max_str_sz) == 0 ) {
-    ev.ms = 10;
-  } else if (strncmp(cmd, "100_ms", max_str_sz) == 0 ) {
-    ev.ms = 100;
-  } else if (strncmp(cmd, "1000_ms", max_str_sz) == 0 ) {
-    ev.ms = 1000;
-  } else {
-    assert(0 != 0 && "Invalid input");
-  }
-  const byte_array_t ba = kpm_enc_event_trigger(&sm->enc, &ev); 
+  // CHOOSE THE RIC STYLE TYPE [1..5]
 
-  sm_subs_data_t data = {0}; 
+  int ric_style_type = 1;
+
+  kpm_ric_subscription_t *subscription = NULL;
+  fill_kpm_subscription_data(&subscription, ric_style_type, &cmd);
+
+  const byte_array_t ba = kpm_enc_event_trigger(&sm->enc, &subscription->kpm_event_trigger_def); 
+
+  const byte_array_t ba_ad = kpm_enc_action_def(&sm->enc, &subscription->kpm_act_def);
   
-  // Event trigger IE
+  sm_subs_data_t data = {0}; 
+
   data.event_trigger = ba.buf;
   data.len_et = ba.len;
 
-  // Action Definition IE
-  long noLabelnum = 0; 
-	LabelInformationItem_t	dummylabelInfo = {.noLabel = &noLabelnum}; 
-  MeasInfo_t dummy_MeasInfo = { 
-    .meas_type = KPM_V2_MEASUREMENT_TYPE_NAME, 
-    .meas_name.buf = calloc(strlen("test") + 1, sizeof(char)),
-    .meas_name.len = strlen("test"),
-    .labelInfo = &dummylabelInfo, 
-    .labelInfo_len = 1
-  };
-  memcpy(dummy_MeasInfo.meas_name.buf, "test", strlen("test"));
-  kpm_action_def_t action_def = { 
-    .ric_style_type = 1, 
-    .granularity_period = 1,
-    .MeasInfo = &dummy_MeasInfo,
-    .MeasInfo_len = 1, 
-    .cell_global_id = KPMV2_CELL_ID_CHOICE_NOTHING
-  };
-
-  const byte_array_t ba_ad = kpm_enc_action_def_asn(&action_def);
   data.action_def = ba_ad.buf;
   data.len_ad = ba_ad.len;
-
-  free_byte_array(dummy_MeasInfo.meas_name);
 
   return data;
 }
@@ -128,8 +101,8 @@ sm_ag_if_rd_t on_indication_kpm_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t* da
 
   sm_ag_if_rd_t rd_if = {.type = KPM_STATS_V0};
 
-  rd_if.kpm_stats.msg = kpm_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
-  rd_if.kpm_stats.hdr = kpm_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
+  rd_if.kpm_stats.kpm_ind_msg = kpm_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+  rd_if.kpm_stats.kpm_ind_hdr = kpm_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
 
   return rd_if;
 }
@@ -139,10 +112,9 @@ void free_ind_data_kpm_sm_ric(void* msg)
 {
   assert(msg != NULL);
 
-  kpm_ind_data_t* ind  = (kpm_ind_data_t*)msg;
+  kpm_ric_indication_t* ind  = (kpm_ric_indication_t*)msg;
 
-  free_kpm_ind_hdr(&ind->hdr); 
-  free_kpm_ind_msg(&ind->msg); 
+  free_kpm_ind_data(&ind);
 }
 
 static
@@ -153,7 +125,7 @@ void ric_on_e2_setup_kpm_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* dat
 
   sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;
  
-  kpm_func_def_t fdef = kpm_dec_func_def(&sm->enc, data->len_rfd, data->ran_fun_def);
+  kpm_ran_function_def_t fdef = kpm_dec_func_def(&sm->enc, data->len_rfd, data->ran_fun_def);
   // we do nothing with function definition for the moment, so we can free here with defer()
   free_kpm_func_def(&fdef);
   

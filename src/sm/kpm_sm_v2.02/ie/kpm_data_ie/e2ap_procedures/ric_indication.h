@@ -21,4 +21,10 @@ typedef struct {
 
 #endif
 
+void free_kpm_ind_data(kpm_ric_indication_t* ind);
+
+kpm_ric_indication_t cp_kpm_ind_data(kpm_ric_indication_t const* src);
+
+bool eq_kpm_ind_data(kpm_ric_indication_t const* ind0, kpm_ric_indication_t const* ind1);
+
 // done

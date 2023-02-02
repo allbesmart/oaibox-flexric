@@ -53,7 +53,7 @@ typedef struct{
 
 void cp_label_info(label_info_lst_t *dst, label_info_lst_t const *src);
 void free_label_info(label_info_lst_t *l);
-
+bool eq_label_info(const label_info_lst_t *l1, const label_info_lst_t *l2);
 
 #ifdef __cplusplus
 }

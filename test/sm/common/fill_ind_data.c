@@ -28,6 +28,8 @@
 #include <string.h>
 #include <time.h>
 
+#include "../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_indication.h"
+
 static
 int64_t time_now_us(void)
 {
@@ -104,105 +106,93 @@ void fill_mac_ind_data(mac_ind_data_t* ind)
   }
 }
 
-void fill_kpm_ind_data(kpm_ind_data_t* ind)
-{
-  assert(ind != NULL);
+// void fill_kpm_ind_data(kpm_ric_indication_t* ind)
+// {
+//   assert(ind != NULL);
   
-  srand(time(0));
 
-  int64_t t = time_now_us();
-  ind->hdr.collectStartTime = t / 1000000; // needs to be truncated to 32 bits to arrive to a resolution of seconds
-  ind->hdr.fileformat_version.buf = NULL;
 
-  ind->hdr.sender_name.buf = calloc(strlen("My OAI-CU") + 1, sizeof(char));
-  memcpy(ind->hdr.sender_name.buf, "My OAI-CU", strlen("My OAI-CU"));
-  ind->hdr.sender_name.len = strlen("My OAI-CU");
+//   // Indication Header
+
+
   
-  ind->hdr.sender_type.buf = calloc(strlen("CU") + 1, sizeof(char));
-  memcpy(ind->hdr.sender_type.buf, "CU", strlen("CU"));
-  ind->hdr.sender_type.len = strlen("CU");
+//   //if (rand()%100 == 0)
+//   //{
+//   //  adapter_MeasDataItem_t *KPMData = calloc(1, sizeof(adapter_MeasDataItem_t));
+//   //  KPMData[0].measRecord_len = 1;
+//   //  KPMData[0].incompleteFlag = 0;
 
-  ind->hdr.vendor_name.buf = calloc(strlen("OAI") + 1, sizeof(char));
-  memcpy(ind->hdr.vendor_name.buf, "OAI", strlen("OAI"));
-  ind->hdr.vendor_name.len = strlen("OAI");
+//   //  adapter_MeasRecord_t * KPMRecord = calloc(KPMData[0].measRecord_len, sizeof(adapter_MeasRecord_t));
+//   //  KPMData[0].measRecord = KPMRecord;
+//   //  for (size_t i=0; i<KPMData[0].measRecord_len ; i++){
+//   //    KPMRecord[i].type = MeasRecord_int;
+//   //    KPMRecord[i].int_val = 0;
+//   //  }
 
-  //if (rand()%100 == 0)
-  //{
-  //  adapter_MeasDataItem_t *KPMData = calloc(1, sizeof(adapter_MeasDataItem_t));
-  //  KPMData[0].measRecord_len = 1;
-  //  KPMData[0].incompleteFlag = 0;
+//   //  ind->msg.MeasData = KPMData;
+//   //  ind->msg.MeasData_len = 1;
 
-  //  adapter_MeasRecord_t * KPMRecord = calloc(KPMData[0].measRecord_len, sizeof(adapter_MeasRecord_t));
-  //  KPMData[0].measRecord = KPMRecord;
-  //  for (size_t i=0; i<KPMData[0].measRecord_len ; i++){
-  //    KPMRecord[i].type = MeasRecord_int;
-  //    KPMRecord[i].int_val = 0;
-  //  }
+//   //  ind->msg.MeasInfo_len = 0;
+//   //  ind->msg.MeasInfo = NULL;
+//   //  ind->msg.granulPeriod = NULL;
 
-  //  ind->msg.MeasData = KPMData;
-  //  ind->msg.MeasData_len = 1;
+//   //} else {
+//   {
 
-  //  ind->msg.MeasInfo_len = 0;
-  //  ind->msg.MeasInfo = NULL;
-  //  ind->msg.granulPeriod = NULL;
+//     const size_t md_len = 4;
+//     ind->msg.MeasData_len = md_len;
+//     MeasDataItem_t *KPMData = calloc(md_len, sizeof(*KPMData));
 
-  //} else {
-  {
+//     for (size_t i=0; i < md_len; i++){
+//       KPMData[i].incompleteFlag =  (void *)(-1);
 
-    const size_t md_len = 4;
-    ind->msg.MeasData_len = md_len;
-    MeasDataItem_t *KPMData = calloc(md_len, sizeof(*KPMData));
+//       KPMData[i].measRecord_len = 1;
+//       KPMData[i].measRecord = calloc(1, sizeof(*KPMData[i].measRecord));
+//       KPMData[i].measRecord[0].type = MeasRecord_int;
+//       KPMData[i].measRecord[0].int_val = i + 3;
+//     }
 
-    for (size_t i=0; i < md_len; i++){
-      KPMData[i].incompleteFlag =  (void *)(-1);
+//     ind->msg.MeasData = KPMData;
 
-      KPMData[i].measRecord_len = 1;
-      KPMData[i].measRecord = calloc(1, sizeof(*KPMData[i].measRecord));
-      KPMData[i].measRecord[0].type = MeasRecord_int;
-      KPMData[i].measRecord[0].int_val = i + 3;
-    }
-
-    ind->msg.MeasData = KPMData;
-
-    ind->msg.granulPeriod = NULL;
+//     ind->msg.granulPeriod = NULL;
     
-    const size_t mi_len = 4;
-    ind->msg.MeasInfo_len = mi_len;
-    ind->msg.MeasInfo = calloc(mi_len, sizeof(MeasInfo_t));
-    assert(ind->msg.MeasInfo != NULL && "Memory exhausted" );
+//     const size_t mi_len = 4;
+//     ind->msg.MeasInfo_len = mi_len;
+//     ind->msg.MeasInfo = calloc(mi_len, sizeof(MeasInfo_t));
+//     assert(ind->msg.MeasInfo != NULL && "Memory exhausted" );
     
-    for (size_t i = 0; i < mi_len; ++i) {
-      MeasInfo_t* mi1 = &ind->msg.MeasInfo[i];
-      mi1->meas_type = KPM_V2_MEASUREMENT_TYPE_NAME;
-      char s[100];
-      snprintf(s, 100, "RNTI %04x PrbDlUsage", (unsigned) (1111*i + 1111));
-      mi1->meas_name.buf = calloc(strlen(s) + 1, sizeof(char));
-      memcpy(mi1->meas_name.buf, s, strlen(s));
-      mi1->meas_name.len = strlen(s);
+//     for (size_t i = 0; i < mi_len; ++i) {
+//       MeasInfo_t* mi1 = &ind->msg.MeasInfo[i];
+//       mi1->meas_type = KPM_V2_MEASUREMENT_TYPE_NAME;
+//       char s[100];
+//       snprintf(s, 100, "RNTI %04x PrbDlUsage", (unsigned) (1111*i + 1111));
+//       mi1->meas_name.buf = calloc(strlen(s) + 1, sizeof(char));
+//       memcpy(mi1->meas_name.buf, s, strlen(s));
+//       mi1->meas_name.len = strlen(s);
 
-      const size_t ll_len = 1;
-      mi1->labelInfo_len = ll_len;
-      mi1->labelInfo = calloc(ll_len, sizeof(*mi1->labelInfo));
-      //assert(mi1->labelInfo != NULL && "memory exhausted");
-      //mi1->labelInfo[0].noLabel = calloc(1, sizeof(long));
-      //*mi1->labelInfo[0].noLabel = 0; // 0 means true and that nothing else follows
-      mi1->labelInfo[0].plmn_id = malloc(sizeof(*mi1->labelInfo[0].plmn_id));
-      *mi1->labelInfo[0].plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
-    }
+//       const size_t ll_len = 1;
+//       mi1->labelInfo_len = ll_len;
+//       mi1->labelInfo = calloc(ll_len, sizeof(*mi1->labelInfo));
+//       //assert(mi1->labelInfo != NULL && "memory exhausted");
+//       //mi1->labelInfo[0].noLabel = calloc(1, sizeof(long));
+//       //*mi1->labelInfo[0].noLabel = 0; // 0 means true and that nothing else follows
+//       mi1->labelInfo[0].plmn_id = malloc(sizeof(*mi1->labelInfo[0].plmn_id));
+//       *mi1->labelInfo[0].plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+//     }
 
-    //MeasInfo_t* info2 = &ind->msg.MeasInfo[1];
-    //assert(info2 != NULL && "memory exhausted");
-    //info2->meas_type = KPM_V2_MEASUREMENT_TYPE_ID;
-    //info2->measID = 1L;
-    //info2->labelInfo_len = 1;
-    //info2->labelInfo = calloc(info2->labelInfo_len, sizeof(adapter_LabelInfoItem_t));
-    //assert(info2->labelInfo != NULL && "memory exhausted");
-    //adapter_LabelInfoItem_t* label2 = &info2->labelInfo[0];
-    //label2->noLabel = calloc(1, sizeof(long));
-    //assert(label2->noLabel != NULL && "memory exhausted");
-    //*(label2->noLabel) = 0;
-  }
-}
+//     //MeasInfo_t* info2 = &ind->msg.MeasInfo[1];
+//     //assert(info2 != NULL && "memory exhausted");
+//     //info2->meas_type = KPM_V2_MEASUREMENT_TYPE_ID;
+//     //info2->measID = 1L;
+//     //info2->labelInfo_len = 1;
+//     //info2->labelInfo = calloc(info2->labelInfo_len, sizeof(adapter_LabelInfoItem_t));
+//     //assert(info2->labelInfo != NULL && "memory exhausted");
+//     //adapter_LabelInfoItem_t* label2 = &info2->labelInfo[0];
+//     //label2->noLabel = calloc(1, sizeof(long));
+//     //assert(label2->noLabel != NULL && "memory exhausted");
+//     //*(label2->noLabel) = 0;
+//   }
+// }
 
 void fill_rlc_ind_data(rlc_ind_data_t* ind)
 {

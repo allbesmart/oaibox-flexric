@@ -29,7 +29,7 @@ typedef struct{
 
 } kpm_act_def_format_1_t ;
 
-void free_kpm_action_def(kpm_act_def_format_1_t* src);
+void free_kpm_action_def_frm_1(kpm_act_def_format_1_t* src);
 
 #ifdef __cplusplus
 }

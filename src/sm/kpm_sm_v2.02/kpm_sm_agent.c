@@ -37,17 +37,18 @@
 typedef struct{
 
   sm_agent_t base;
-
-#ifdef ASN
   kpm_enc_asn_t enc;
-#elif FLATBUFFERS 
-  //pdcp_enc_fb_t enc;
-  static_assert(false, "Encryption FLATBUFFERS not implemented yet");
-#elif PLAIN
-  kpm_enc_plain_t enc;
-#else
-  static_assert(false, "No encryption type selected");
-#endif
+
+  #ifdef ASN
+    kpm_enc_asn_t enc;
+  #elif FLATBUFFERS 
+    //pdcp_enc_fb_t enc;
+    static_assert(false, "Encryption FLATBUFFERS not implemented yet");
+  #elif PLAIN
+    kpm_enc_plain_t enc;
+  #else
+    static_assert(false, "No encryption type selected");
+  #endif
 } sm_kpm_agent_t;
 
 // O-RAN.WG3.E2SM-KPM-v02.02, $8.2.1.1.1
@@ -59,15 +60,17 @@ subscribe_timer_t on_subscription_kpm_sm_ag(sm_agent_t* sm_agent, const sm_subs_
 
   sm_kpm_agent_t* sm = (sm_kpm_agent_t*)sm_agent;
  
-  kpm_event_trigger_t ev = kpm_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  kpm_ric_subscription_t subscription = {0};
 
-  subscribe_timer_t timer = {.ms = ev.ms};
+  subscription.kpm_event_trigger_def = kpm_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+
+  subscribe_timer_t timer = {.ms = subscription.kpm_event_trigger_def.kpm_ric_event_trigger_format_1.report_period_ms};
 
 // XXX: Leaving 'acd' doing nothing for the moment. We need to fix the logic upper layer and change 
 // the signature of this function
   if (data->len_ad != 0){
-    kpm_action_def_t acd = kpm_dec_action_def(&sm->enc, data->len_ad, data->action_def);
-    free_kpm_action_def(&acd);
+    subscription.kpm_act_def = kpm_dec_action_def(&sm->enc, data->len_ad, data->action_def);
+    free_kpm_subscription_data(&subscription);
   }
   
   return timer;
@@ -86,15 +89,15 @@ static sm_ind_data_t on_indication_kpm_sm_ag(sm_agent_t* sm_agent)
   rd_if.type = KPM_STATS_V0;
   sm->base.io.read(&rd_if); 
 
-  kpm_ind_data_t* ind = &rd_if.kpm_stats;
-  defer({ free_kpm_ind_hdr(&ind->hdr) ;});
-  defer({ free_kpm_ind_msg(&ind->msg) ;});
+  kpm_ric_indication_t* ind = &rd_if.kpm_stats;
+  //defer({ free_kpm_ind_data(&ind) ;});
+  free_kpm_ind_data(&ind);
 
-  byte_array_t ba_hdr = kpm_enc_ind_hdr(&sm->enc, &rd_if.kpm_stats.hdr);
+  byte_array_t ba_hdr = kpm_enc_ind_hdr(&sm->enc, &rd_if.kpm_stats.kpm_ind_hdr);
   ret.ind_hdr = ba_hdr.buf;
   ret.len_hdr = ba_hdr.len;
 
-  byte_array_t ba = kpm_enc_ind_msg(&sm->enc, &rd_if.kpm_stats.msg);
+  byte_array_t ba = kpm_enc_ind_msg(&sm->enc, &rd_if.kpm_stats.kpm_ind_msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 
@@ -114,17 +117,17 @@ sm_e2_setup_t on_e2_setup_kpm_sm_ag(sm_agent_t* sm_agent)
 
   sm_e2_setup_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
 
-  kpm_func_def_t func_def = {0};
+  kpm_e2_setup_t e2_setup_msg = {0};
   
-  func_def.ranFunction_Name.Description.buf = (uint8_t *)SM_KPM_DESCRIPTION;
-  func_def.ranFunction_Name.Description.len = strlen(SM_KPM_DESCRIPTION);
-  func_def.ranFunction_Name.ShortName.buf = (uint8_t *)SM_KPM_STR;
-  func_def.ranFunction_Name.ShortName.len = strlen(SM_KPM_STR);
+  e2_setup_msg.kpm_ran_function_def.ran_function_Name.description.buf = (uint8_t *)SM_KPM_DESCRIPTION;
+  e2_setup_msg.kpm_ran_function_def.ran_function_Name.description.len = strlen(SM_KPM_DESCRIPTION);
+  e2_setup_msg.kpm_ran_function_def.ran_function_Name.short_name.buf = (uint8_t *)SM_KPM_STR;
+  e2_setup_msg.kpm_ran_function_def.ran_function_Name.short_name.len = strlen(SM_KPM_STR);
   
-  func_def.ranFunction_Name.E2SM_OID.buf = (uint8_t *)SM_KPM_OID;
-  func_def.ranFunction_Name.E2SM_OID.len = strlen(SM_KPM_OID);
+  e2_setup_msg.kpm_ran_function_def.ran_function_Name.E2SM_OID.buf = (uint8_t *)SM_KPM_OID;
+  e2_setup_msg.kpm_ran_function_def.ran_function_Name.E2SM_OID.len = strlen(SM_KPM_OID);
   
-  byte_array_t ba = kpm_enc_func_def(&sm->enc, &func_def);
+  byte_array_t ba = kpm_enc_func_def(&sm->enc, &e2_setup_msg.kpm_ran_function_def);
   setup.ran_fun_def = ba.buf;
   setup.len_rfd = ba.len;
   

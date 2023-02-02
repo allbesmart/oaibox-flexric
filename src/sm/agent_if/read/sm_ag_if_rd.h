@@ -32,8 +32,10 @@
 #include "../../slice_sm/ie/slice_data_ie.h"
 #include "../../tc_sm/ie/tc_data_ie.h"
 #include "../../gtp_sm/ie/gtp_data_ie.h"
-#include "../../kpm_sm_v2.02/ie/kpm_data_ie.h"
-
+#include "../../kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/e2_setup.h"
+#include "../../kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_indication.h"
+#include "../../kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_service_update.h"
+#include "../../kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_subscription.h"
 typedef enum{
   MAC_STATS_V0,
   RLC_STATS_V0,
@@ -54,7 +56,7 @@ typedef struct{
     slice_ind_data_t slice_stats;
     tc_ind_data_t tc_stats;
     gtp_ind_data_t gtp_stats;
-    kpm_ind_data_t kpm_stats;
+    kpm_ric_indication_t kpm_stats;
   };
   sm_ag_if_rd_e type;
 } sm_ag_if_rd_t;

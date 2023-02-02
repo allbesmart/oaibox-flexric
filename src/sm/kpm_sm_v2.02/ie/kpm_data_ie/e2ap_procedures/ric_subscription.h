@@ -15,6 +15,9 @@ typedef struct {
 
 } kpm_ric_subscription_t;
 
+void free_kpm_subscription_data(kpm_ric_subscription_t* subscription);
+
+
 #ifdef __cplusplus
 }
 #endif

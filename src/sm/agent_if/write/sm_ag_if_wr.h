@@ -30,7 +30,13 @@
 #include "../../slice_sm/ie/slice_data_ie.h"
 #include "../../tc_sm/ie/tc_data_ie.h"
 #include "../../gtp_sm/ie/gtp_data_ie.h"
-#include "../../kpm_sm_v2.02/ie/kpm_data_ie.h"
+#include "../../kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/e2_setup.h"
+#include "../../kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_indication.h"
+#include "../../kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_service_update.h"
+#include "../../kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_subscription.h"
+
+
+
 
 typedef enum{
   SUBSCRIBE_TIMER = 0,
@@ -45,7 +51,7 @@ typedef enum{
 
 typedef struct {
   union{
-    subscribe_timer_t sub_timer;  
+    subscribe_timer_t sub_timer;
     mac_ctrl_req_data_t mac_ctrl;
     rlc_ctrl_req_data_t rlc_ctrl;
     pdcp_ctrl_req_data_t pdcp_req_ctrl;

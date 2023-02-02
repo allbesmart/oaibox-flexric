@@ -22,9 +22,12 @@ typedef struct {
 
 } kpm_ind_msg_format_1_t;
 
-void                free_kpm_ind_msg(kpm_ind_msg_format_1_t* src);
-kpm_ind_msg_format_1_t  cp_kpm_ind_msg(kpm_ind_msg_format_1_t const* src);
-bool                eq_kpm_ind_msg(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1_t const* m1);
+void free_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t* src);
+
+bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1_t const* m1);
+
+kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src);
+
 
 #ifdef __cplusplus
 }

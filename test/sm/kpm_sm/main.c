@@ -6,7 +6,7 @@
 #include "../../../src/sm/kpm_sm_v2.02/kpm_sm_ric.h"
 #include "../../../src/sm/kpm_sm_v2.02/kpm_sm_id.h"
 #include "../../../src/util/alg_ds/alg/defer.h"
-#include "../common/fill_ind_data.h"
+#include "fill_kpm_ind_data/fill_kpm_ind_data.h"
 
 
 #include <assert.h>
@@ -19,7 +19,7 @@
 #include <pthread.h>
 
 // 'cp' is buffer in  reception to compare the received indication message against the sent one
-static kpm_ind_data_t cp; 
+static kpm_ric_indication_t cp; 
 #define Logme printf
 
 
@@ -30,9 +30,12 @@ static void read_RAN(sm_ag_if_rd_t* read)
   assert(read != NULL);
   assert(read->type == KPM_STATS_V0);
 
-  fill_kpm_ind_data(&read->kpm_stats); 
-  cp.hdr = cp_kpm_ind_hdr(&read->kpm_stats.hdr);
-  cp.msg = cp_kpm_ind_msg(&read->kpm_stats.msg);
+  // CHOOSE THE RIC STYLE TYPE [1..5]
+
+  int ric_style_type = 1;
+
+  fill_kpm_ind_data(&read->kpm_stats, ric_style_type); 
+  cp = cp_kpm_ind_data(&read->kpm_stats);
 }
 
 static 
@@ -105,17 +108,14 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   Logme ("[IE RIC Indication Message] correctly decoded\n");
 
   // check for indication message correctness
-  kpm_ind_data_t* data = &msg.kpm_stats;
+  kpm_ric_indication_t* data = &msg.kpm_stats;
   assert(msg.type == KPM_STATS_V0);
-  assert(eq_kpm_ind_msg(&cp.msg, &data->msg) == true && "Failure checking for correctness in indication data IE");
+  assert(eq_kpm_ind_data(&cp, &data) == true && "Failure checking for correctness in indication data IE");
     
-  free_kpm_ind_hdr(&data->hdr); 
-  free_kpm_ind_msg(&data->msg); 
-
+  free_kpm_ind_data(&data);
   free_sm_ind_data(&sm_data);
+  free_kpm_ind_data(&cp);
 
-  free_kpm_ind_hdr(&cp.hdr);
-  free_kpm_ind_msg(&cp.msg);
 }
 
 int main()

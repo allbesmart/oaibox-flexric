@@ -94,3 +94,20 @@ void free_label_info(label_info_lst_t *l)
     assert(false && "not implemented");
   }
 }
+
+
+bool eq_label_info(const label_info_lst_t *l1, const label_info_lst_t *l2)
+{
+  assert(l1 != NULL);
+  assert(l2 != NULL);
+
+  if (l1->noLabel != l2->noLabel)
+    return false;
+  
+  if (l1->plmn_id != l2->plmn_id)
+    return false;
+
+  // the rest of optional parameters not yet implemented
+
+  return true;
+}

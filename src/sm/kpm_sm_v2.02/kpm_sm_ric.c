@@ -63,8 +63,7 @@ static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const c
 
   int ric_style_type = 1;
 
-  kpm_ric_subscription_t *subscription = NULL;
-  fill_kpm_subscription_data(&subscription, ric_style_type, &cmd);
+  kpm_ric_subscription_t *subscription = fill_kpm_subscription_data(ric_style_type, cmd);
 
   const byte_array_t ba = kpm_enc_event_trigger(&sm->enc, &subscription->kpm_event_trigger_def); 
 
@@ -114,7 +113,7 @@ void free_ind_data_kpm_sm_ric(void* msg)
 
   kpm_ric_indication_t* ind  = (kpm_ric_indication_t*)msg;
 
-  free_kpm_ind_data(&ind);
+  free_kpm_ind_data(ind);
 }
 
 static

@@ -269,7 +269,7 @@ void test_ric_indication()
 void test_e2_setup_request()
 {
 
-  plmn_t plmn = {
+  e2ap_plmn_t plmn = {
     .mcc = 10,
     .mnc = 15,
     .mnc_digit_len = 2
@@ -315,7 +315,7 @@ void test_e2_setup_request()
 
 void test_e2_setup_response()
 {
-  plmn_t plmn = {
+  e2ap_plmn_t plmn = {
     .mcc = 10,
     .mnc = 15,
     .mnc_digit_len = 2

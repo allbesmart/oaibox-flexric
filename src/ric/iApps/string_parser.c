@@ -434,7 +434,7 @@ void to_string_gtp_ngu(gtp_ngu_t_stats_t const* gtp, int64_t tstamp , char* out,
   assert(rc < (int)max && "Not enough space in the char array to write all the data");
 }
 
-void to_string_kpm_labelInfo(LabelInformationItem_t const* labelInfo, size_t idx,  char *out, size_t out_len)
+void to_string_kpm_labelInfo(label_info_lst_t const* labelInfo, size_t idx,  char *out, size_t out_len)
 {
   assert(labelInfo != NULL);
   
@@ -447,7 +447,7 @@ void to_string_kpm_labelInfo(LabelInformationItem_t const* labelInfo, size_t idx
   begp += nprinted;
 
   if (labelInfo->noLabel) {
-    nprinted = snprintf(begp, avail, "(noLabel = %ld)", *(labelInfo->noLabel));
+    nprinted = snprintf(begp, avail, "(noLabel = %d)", *(labelInfo->noLabel));
     assert((nprinted > 0) && ((size_t) nprinted < avail) && "Not enough space in the char array to write all the data");
     avail -= nprinted;
     begp += nprinted;
@@ -513,15 +513,17 @@ void to_string_kpm_labelInfo(LabelInformationItem_t const* labelInfo, size_t idx
     */
 }
 
-void to_string_kpm_measRecord(MeasRecord_t const* measRecord, size_t idx, char *out, size_t out_len)
+void to_string_kpm_measRecord(meas_record_lst_t const* measRecord, size_t idx, char *out, size_t out_len)
 {
   assert(measRecord != NULL);
   int rc = 0;
-  if (measRecord->type == MeasRecord_int){
-    rc = snprintf(out, out_len, ",Record[%lu]=%ld", idx, measRecord->int_val);
-  } else if(measRecord->type == MeasRecord_real){
-    rc = snprintf(out, out_len, ",Record[%lu]=%ld", idx, measRecord->int_val);
-  } else {
+  if (measRecord->value == INTEGER_MEAS_VALUE){
+    rc = snprintf(out, out_len, ",Record[%lu]=%d", idx, measRecord->int_val);
+  } 
+  else if(measRecord->value == REAL_MEAS_VALUE){
+    rc = snprintf(out, out_len, ",Record[%lu]=%f", idx, measRecord->real_val);
+  } 
+  else {
     rc = snprintf(out, out_len, ",Record[%lu]=nulltype", idx); 
   }
 

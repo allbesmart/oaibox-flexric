@@ -28,7 +28,6 @@
 #include <string.h>
 #include <time.h>
 
-#include "../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_indication.h"
 
 static
 int64_t time_now_us(void)

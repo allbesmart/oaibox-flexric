@@ -30,11 +30,8 @@ static void read_RAN(sm_ag_if_rd_t* read)
   assert(read != NULL);
   assert(read->type == KPM_STATS_V0);
 
-  // CHOOSE THE RIC STYLE TYPE [1..5]
 
-  int ric_style_type = 1;
-
-  fill_kpm_ind_data(&read->kpm_stats, ric_style_type); 
+  fill_kpm_ind_data(&read->kpm_stats); 
   cp = cp_kpm_ind_data(&read->kpm_stats);
 }
 
@@ -110,9 +107,9 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   // check for indication message correctness
   kpm_ric_indication_t* data = &msg.kpm_stats;
   assert(msg.type == KPM_STATS_V0);
-  assert(eq_kpm_ind_data(&cp, &data) == true && "Failure checking for correctness in indication data IE");
+  assert(eq_kpm_ind_data(&cp, data) == true && "Failure checking for correctness in indication data IE");
     
-  free_kpm_ind_data(&data);
+  free_kpm_ind_data(data);
   free_sm_ind_data(&sm_data);
   free_kpm_ind_data(&cp);
 

@@ -30,11 +30,6 @@ if(E2AP_ENCODING STREQUAL "ASN")
   target_compile_options(test_e2ap_enc_dec_asn PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter)
   target_include_directories(test_e2ap_enc_dec_asn PRIVATE "../../src/lib/ap/ie/asn/")
 
-  add_executable(test_kpm_enc_dec_ind_hdr_asn test_kpm_enc_dec_ind_hdr_asn.c)
-  target_link_libraries(test_kpm_enc_dec_ind_hdr_asn kpm_sm)
-
-  add_executable(test_kpm_enc_dec_ind_msg_asn test_kpm_enc_dec_ind_msg_asn.c)
-  target_link_libraries(test_kpm_enc_dec_ind_msg_asn kpm_sm)
 
 ###########################
 # E2AP Flatbuffers Encoding

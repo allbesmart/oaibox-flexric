@@ -91,7 +91,7 @@ static sm_ind_data_t on_indication_kpm_sm_ag(sm_agent_t* sm_agent)
 
   kpm_ric_indication_t* ind = &rd_if.kpm_stats;
   //defer({ free_kpm_ind_data(&ind) ;});
-  free_kpm_ind_data(&ind);
+  free_kpm_ind_data(ind);
 
   byte_array_t ba_hdr = kpm_enc_ind_hdr(&sm->enc, &rd_if.kpm_stats.kpm_ind_hdr);
   ret.ind_hdr = ba_hdr.buf;

@@ -236,17 +236,17 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
 
   //  RAN Function Name
   int ret = OCTET_STRING_fromBuf(&pdu->ranFunction_Name.ranFunction_Description, 
-                              func_def->ran_function_Name.description.buf, 
+                              (char *)func_def->ran_function_Name.description.buf, 
                               func_def->ran_function_Name.description.len);
   assert(ret == 0);
   
   ret = OCTET_STRING_fromBuf(&pdu->ranFunction_Name.ranFunction_E2SM_OID, 
-                              func_def->ran_function_Name.E2SM_OID.buf, 
+                              (char *)func_def->ran_function_Name.E2SM_OID.buf, 
                               func_def->ran_function_Name.E2SM_OID.len);
   assert(ret == 0);
   
   ret = OCTET_STRING_fromBuf(&pdu->ranFunction_Name.ranFunction_ShortName, 
-                              func_def->ran_function_Name.short_name.buf, 
+                              (char *)func_def->ran_function_Name.short_name.buf, 
                               func_def->ran_function_Name.short_name.len);
   assert(ret == 0);
   

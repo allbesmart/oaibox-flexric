@@ -94,6 +94,34 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
   return ans;
 }
 
+static void sm_cb_kpm_ind_msg_frm_1(const kpm_ind_msg_format_1_t * msg)
+{
+  assert(msg != NULL);
+
+  // TO DO BETTER
+
+  for (size_t i = 0; i < msg->meas_info_lst_len; ++i) {
+    meas_info_format_1_lst_t* mi = &msg->meas_info_lst[i];
+    assert(mi->meas_type.type == NAME_MEAS_TYPE);
+    printf("%s ", (char *)(mi->meas_type.name.buf));
+
+    assert(msg->meas_data_lst[i].meas_record_len == 1);
+    const meas_record_lst_t* mdi = &msg->meas_data_lst[i].meas_record_lst[0];
+    if (mdi->value == INTEGER_MEAS_VALUE)
+      printf(" %7d ", mdi->int_val);
+    else
+      printf(" %7.3f ", mdi->real_val);
+
+    assert(mi->label_info_lst_len == 1);
+    if (mi->label_info_lst[0].plmn_id != NULL) {
+      const plmn_t* plmn = mi->label_info_lst[0].plmn_id;
+      printf(" (PLMN %03d.%0*d)",
+             plmn->mcc, plmn->mnc_digit_len, plmn->mnc);
+    }
+    printf("\n");
+  }
+
+}
 
 static
 void sm_cb_kpm(sm_ag_if_rd_t const* rd)
@@ -101,31 +129,41 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
   assert(rd != NULL);
   assert(rd->type == KPM_STATS_V0); 
 
-  const kpm_ind_hdr_t* hdr = &rd->kpm_stats.hdr;
-  printf("received KPM indication at %d (sender '%s', type '%s', vendor '%s')\n",
-         hdr->collectStartTime, (char *)(hdr->sender_name.buf), (char *)(hdr->sender_type.buf), (char *)(hdr->vendor_name.buf));
+  // kpm_ric_indication_t * read_kpm_ind = calloc(1, sizeof(kpm_ric_indication_t));
+  // read_kpm_ind = &rd->kpm_stats;
 
-  const kpm_ind_msg_t* msg = &rd->kpm_stats.msg;
-  assert(msg->MeasInfo_len == msg->MeasData_len);
-  for (size_t i = 0; i < msg->MeasInfo_len; ++i) {
-    MeasInfo_t* mi = &msg->MeasInfo[i];
-    assert(mi->meas_type == KPM_V2_MEASUREMENT_TYPE_NAME);
-    printf("%s ", (char *)(mi->meas_name.buf));
+  kpm_ric_indication_t read_kpm_ind = rd->kpm_stats;
+  // Indication Header
+  
+  switch (read_kpm_ind.kpm_ind_hdr.type)
+  {
+  case FORMAT_1_INDICATION_HEADER:
+    printf("received KPM indication at %d (sender '%s', type '%s', vendor '%s')\n",
+         read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.collectStartTime, (char *)(read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.sender_name->buf), (char *)(read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.sender_type->buf), (char *)(read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.vendor_name->buf));
+    break;
+  
+  default:
+    assert(false && "Unknown Indication Header Type");
+  }
 
-    assert(msg->MeasData[i].measRecord_len == 1);
-    const MeasRecord_t* mdi = &msg->MeasData[i].measRecord[0];
-    if (mdi->type == MeasRecord_int)
-      printf(" %7ld ", mdi->int_val);
-    else
-      printf(" %7.3f ", mdi->real_val);
+  // Indication Message
+  
+  switch (read_kpm_ind.kpm_ind_msg.type)
+  {
+  case FORMAT_1_INDICATION_MESSAGE:
+    sm_cb_kpm_ind_msg_frm_1(&read_kpm_ind.kpm_ind_msg.frm_1);
+    break;
+  
+  // case FORMAT_2_INDICATION_MESSAGE:
+  //   sm_cb_kpm_ind_msg_frm_2(&read_kpm_ind->kpm_ind_msg.frm_2);
+  //   break;
 
-    assert(mi->labelInfo_len == 1);
-    if (mi->labelInfo[0].plmn_id != NULL) {
-      const plmn_t* plmn = mi->labelInfo[0].plmn_id;
-      printf(" (PLMN %03d.%0*d)",
-             plmn->mcc, plmn->mnc_digit_len, plmn->mnc);
-    }
-    printf("\n");
+  // case FORMAT_3_INDICATION_MESSAGE:
+  //   sm_cb_kpm_ind_msg_frm_3(&read_kpm_ind->kpm_ind_msg.frm_3);
+  //   break;
+
+  default:
+    assert(false && "Unknown Indication Message Type");
   }
 }
 

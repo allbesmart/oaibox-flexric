@@ -355,7 +355,7 @@ void publish_ind_msg(near_ric_t* ric,  uint16_t ran_func_id, sm_ag_if_rd_t* d)
   fflush(stdout);
   const e2_setup_request_t* req = &msg->u_msgs.e2_stp_req;
 
-  const plmn_t* plmn = &req->id.plmn;
+  const e2ap_plmn_t* plmn = &req->id.plmn;
   const char* ran_type = get_ngran_name(req->id.type);
   if (NODE_IS_MONOLITHIC(req->id.type))
     printf("[E2AP] Received SETUP-REQUEST from PLMN %3d.%*d Node ID %d RAN type %s\n", plmn->mcc, plmn->mnc_digit_len, plmn->mnc, req->id.nb_id, ran_type);

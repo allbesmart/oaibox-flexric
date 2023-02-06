@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
+
+
 project (TEST_KPM_SM)
 set(CMAKE_BUILD_TYPE Debug)
 set (CMAKE_C_FLAGS "-Wall -Wextra --std=gnu11 -g -fno-omit-frame-pointer") 
@@ -18,15 +20,12 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
                       ../../../src/sm/kpm_sm_v2.02/kpm_sm_ric.c 
                       ../../../src/sm/kpm_sm_v2.02/enc/kpm_enc_asn.c 
                       ../../../src/sm/kpm_sm_v2.02/dec/kpm_dec_asn.c 
-                      ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_indication.c  
-                      ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/e2ap_procedures/ric_subscription.c  
-
-                      #../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.c 
-
+                      ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.c 
                       ../../../src/util/alg_ds/alg/defer.c
                       ../../../src/util/alg_ds/alg/eq_float.c
                       ../../../src/util/byte_array.c
-                      ../common/fill_ind_data.c
+                      fill_kpm_ind_data/fill_kpm_ind_data.c
+                      ../../../src/sm/kpm_sm_v2.02/fill_ric_subscription_data/on_ric_subscription.c
                       ${asn_sources}
                       )
                         

@@ -19,7 +19,7 @@ set(SM_ENCODING_KPM_SRC
                       ../../util/alg_ds/ds/seq_container/seq_ring.c 
                       ../../util/alg_ds/ds/assoc_container/assoc_rb_tree.c
                       ../../util/alg_ds/ds/assoc_container/bimap.c
-                      #ie/kpm_data_ie.c
+                      ie/kpm_data_ie.c
                       )
 
 if(SM_ENCODING_KPM STREQUAL "PLAIN")

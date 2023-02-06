@@ -45,7 +45,6 @@ void fill_tc_ind_data(tc_ind_data_t* ind_msg);
 void fill_tc_ctrl(tc_ctrl_req_data_t* ctrl);
 
 void fill_gtp_ind_data(gtp_ind_data_t* ind);
-void fill_kpm_ind_data(kpm_ind_data_t* ind);
 
 #endif
 

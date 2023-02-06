@@ -5,16 +5,19 @@
 #include "fill_kpm_action_def_frm_1.h"
 
 
-void fill_kpm_subscription_data(kpm_ric_subscription_t * subscription, const int ric_style_type, const char* cmd)
+kpm_ric_subscription_t * fill_kpm_subscription_data(const int ric_style_type, const char* cmd)
 {
-    assert(subscription != NULL);
     assert(cmd != NULL);
+
+    kpm_ric_subscription_t * subscription = calloc(1, sizeof(kpm_ric_subscription_t));
+    assert(subscription != NULL && "Memory exhausted");
+
 
     switch (ric_style_type)
     {
     case 1:
         subscription->kpm_event_trigger_def.type = FORMAT_1_RIC_EVENT_TRIGGER;
-        fill_kpm_event_trigger_frm_1(&subscription->kpm_event_trigger_def.kpm_ric_event_trigger_format_1, &cmd);
+        fill_kpm_event_trigger_frm_1(&subscription->kpm_event_trigger_def.kpm_ric_event_trigger_format_1, cmd);
         break;
     
     default:
@@ -53,5 +56,5 @@ void fill_kpm_subscription_data(kpm_ric_subscription_t * subscription, const int
         assert(false && "Unknown Action Definition Type");
     }
 
-
+    return subscription;
 }

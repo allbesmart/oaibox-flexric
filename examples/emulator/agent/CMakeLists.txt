@@ -9,9 +9,11 @@
 
 add_executable(emu_agent_gnb
                   test_agent.c
-                  ../../../test/sm/common/fill_ind_data.c)
+                  ../../../test/sm/common/fill_ind_data.c
+                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
+                  )
 
-target_link_libraries(emu_agent_gnb
+                  target_link_libraries(emu_agent_gnb
                       PUBLIC
                       e2_agent
                       ${FlatCC} 
@@ -27,7 +29,9 @@ target_compile_definitions(emu_agent_gnb PRIVATE TEST_AGENT_GNB)
 
 add_executable(emu_agent_gnb_cu
                 test_agent.c
-                ../../../test/sm/common/fill_ind_data.c)
+                ../../../test/sm/common/fill_ind_data.c
+                ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
+                )
 
 target_link_libraries(emu_agent_gnb_cu
                         PUBLIC
@@ -45,7 +49,9 @@ target_compile_definitions(emu_agent_gnb_cu PRIVATE TEST_AGENT_GNB_CU)
 
 add_executable(emu_agent_gnb_du
                 test_agent.c
-                ../../../test/sm/common/fill_ind_data.c)
+                ../../../test/sm/common/fill_ind_data.c
+                ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
+                )
 
 target_link_libraries(emu_agent_gnb_du
                         PUBLIC
@@ -63,7 +69,9 @@ target_compile_definitions(emu_agent_gnb_du PRIVATE TEST_AGENT_GNB_DU)
 
 add_executable(emu_agent_enb
                 test_agent.c
-                ../../../test/sm/common/fill_ind_data.c)
+                ../../../test/sm/common/fill_ind_data.c
+                ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
+                )
 
 target_link_libraries(emu_agent_enb
                         PUBLIC

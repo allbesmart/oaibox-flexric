@@ -387,7 +387,7 @@ void test_error_indication()
 
 void test_setup_rquest()
 {
-  plmn_t plmn = {
+  e2ap_plmn_t plmn = {
     .mcc = 10,
     .mnc = 15,
     .mnc_digit_len = 2
@@ -436,7 +436,7 @@ void test_setup_rquest()
 
 void test_setup_response()
 {
-  plmn_t plmn = {
+  e2ap_plmn_t plmn = {
     .mcc = 10,
     .mnc = 15,
     .mnc_digit_len = 2
@@ -785,7 +785,7 @@ void test_e42_setup_response()
   time_t t;
   srand((unsigned) time(&t));
 
-  plmn_t plmn = {
+  e2ap_plmn_t plmn = {
     .mcc = 10,
     .mnc = 15,
     .mnc_digit_len = 2
@@ -845,7 +845,7 @@ void test_e42_setup_response()
 static
 void test_e42_subscription_request()
 {
-  plmn_t plmn = {
+  e2ap_plmn_t plmn = {
     .mcc = 10,
     .mnc = 15,
     .mnc_digit_len = 2
@@ -931,7 +931,7 @@ void test_e42_subscription_delete_request()
 static
 void test_e42_control_request()
 {
-  plmn_t plmn = {
+  e2ap_plmn_t plmn = {
     .mcc = 10,
     .mnc = 15,
     .mnc_digit_len = 2

@@ -5,10 +5,13 @@
 #include "fill_ind_msg_frm_1.h"
 
 
-void fill_kpm_ind_data(kpm_ric_indication_t* ind, const int ric_style_type)
+void fill_kpm_ind_data(kpm_ric_indication_t* ind)
 {
     assert(ind != NULL);
   
+    // CHOOSE THE RIC STYLE TYPE [1..5]
+
+    int ric_style_type = 1;
 
     switch (ric_style_type)
     {

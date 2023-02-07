@@ -41,18 +41,19 @@ byte_array_t kpm_enc_event_trigger_asn(kpm_event_trigger_def_t const* event_trig
   assert(event_trigger != NULL);
 
   E2SM_KPM_EventTriggerDefinition_t *pdu = calloc(1, sizeof(E2SM_KPM_EventTriggerDefinition_t));
-
-  assert ( pdu != NULL && "Memory exhausted" );
+  assert(pdu != NULL && "Memory exhausted" );
 
 
   switch (event_trigger->type)
   {
-  case FORMAT_1_RIC_EVENT_TRIGGER:
+  case FORMAT_1_RIC_EVENT_TRIGGER:{
     pdu->eventDefinition_formats.present = E2SM_KPM_EventTriggerDefinition__eventDefinition_formats_PR_eventDefinition_Format1;
     pdu->eventDefinition_formats.choice.eventDefinition_Format1 = kpm_enc_event_trigger_def_frm_1_asn(&event_trigger->kpm_ric_event_trigger_format_1);
     break;
-  default:
+                                  }
+  default:{
     assert("Non valid KPM RIC Event Trigger Format");
+          }
   }
   
   

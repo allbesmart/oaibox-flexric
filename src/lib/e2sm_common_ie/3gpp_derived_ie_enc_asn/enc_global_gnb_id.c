@@ -1,11 +1,11 @@
 #include <assert.h>
 
-#include "../../../../util/conversions.h"
+#include "../../../util/conversions.h"
 
 
 #include "enc_global_gnb_id.h"
 
-GlobalGNB_ID_t * enc_global_gnb_id_asn(const global_gnb_id_t * global_gnb_id)
+GlobalGNB_ID_t* enc_global_gnb_id_asn(const global_gnb_id_t * global_gnb_id)
 {
     GlobalGNB_ID_t * global_gnb_id_asn = calloc(1, sizeof(GlobalGNB_ID_t));
     assert (global_gnb_id_asn != NULL && "Memory exhausted");
@@ -27,5 +27,5 @@ GlobalGNB_ID_t * enc_global_gnb_id_asn(const global_gnb_id_t * global_gnb_id)
     }
     
 
-    return &global_gnb_id_asn;
+    return global_gnb_id_asn;
 }

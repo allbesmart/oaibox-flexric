@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #include "kpm_ric_event_trigger_def_frm_1.h"
 
 typedef enum {
@@ -15,7 +17,7 @@ typedef enum {
 } style_ric_event_trigger_e;
 
 typedef enum {
-    FORMAT_1_RIC_EVENT_TRIGGER = 1,
+    FORMAT_1_RIC_EVENT_TRIGGER,
 
     END_FORMAT_RIC_EVENT_TRIGGER
 
@@ -31,6 +33,10 @@ typedef struct {
     };
 
 } kpm_event_trigger_def_t;
+
+void free_kpm_event_trigger_def(kpm_event_trigger_def_t* src);
+
+bool eq_kpm_event_trigger_def( kpm_event_trigger_def_t const* m0,  kpm_event_trigger_def_t const* m1);
 
 
 

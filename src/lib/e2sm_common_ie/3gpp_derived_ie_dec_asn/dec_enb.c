@@ -1,6 +1,6 @@
 #include <assert.h>
 
-#include "../../../../util/conversions.h"
+#include "../../../util/conversions.h"
 
 #include "dec_enb.h"
 #include "dec_global_enb_id.h"

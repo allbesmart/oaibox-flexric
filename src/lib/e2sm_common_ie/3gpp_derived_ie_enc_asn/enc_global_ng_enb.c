@@ -1,6 +1,6 @@
 #include <assert.h>
 
-#include "../../../../util/conversions.h"
+#include "../../../util/conversions.h"
 
 #include "enc_global_ng_enb.h"
 
@@ -41,5 +41,5 @@ GlobalNgENB_ID_t * enc_global_ng_enb_asn(const global_ng_enb_id_t * global_ng_en
     }
     
 
-    return &global_ng_enb_id_asn;
+    return global_ng_enb_id_asn;
 }

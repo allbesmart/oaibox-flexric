@@ -1,6 +1,6 @@
 #include <assert.h>
 
-#include "../../../../util/conversions.h"
+#include "../../../util/conversions.h"
 #include "../../../sm/kpm_sm_v2.02/ie/asn/asn_constant.h"
 #include "../../../sm/kpm_sm_v2.02/ie/asn/asn_SEQUENCE_OF.h"
 #include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-F1AP-ID-List.h"
@@ -20,9 +20,13 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
 
 
     // AMF UE NGAP ID
-    gnb_asn->amf_UE_NGAP_ID.buf = calloc(8, sizeof(*gnb_asn->amf_UE_NGAP_ID.buf));
-    gnb_asn->amf_UE_NGAP_ID.buf = gnb->amf_ue_ngap_id;
-    gnb_asn->amf_UE_NGAP_ID.size = sizeof(gnb->amf_ue_ngap_id);
+    gnb_asn->amf_UE_NGAP_ID.buf = calloc(8, sizeof(uint8_t));
+    assert(gnb_asn->amf_UE_NGAP_ID.buf != NULL && "Memory exhausted");
+
+// Do not pass the ownership of the data one is pointer, the other no
+    //gnb_asn->amf_UE_NGAP_ID.buf = gnb->amf_ue_ngap_id;
+    memcpy(gnb_asn->amf_UE_NGAP_ID.buf, &gnb->amf_ue_ngap_id, 8);
+    gnb_asn->amf_UE_NGAP_ID.size = 8;
 
 
     // GUAMI
@@ -105,6 +109,5 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
     gnb_asn->globalNG_RANNode_ID = enc_global_ng_ran_asn(&gnb->global_ng_ran_node_id);
 
 
-    return &gnb_asn;
-
+    return gnb_asn;
 }

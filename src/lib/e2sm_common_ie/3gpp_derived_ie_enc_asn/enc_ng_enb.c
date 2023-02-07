@@ -1,6 +1,6 @@
 #include <assert.h>
 
-#include "../../../../util/conversions.h"
+#include "../../../util/conversions.h"
 
 #include "enc_ng_enb.h"
 #include "enc_global_ng_ran.h"
@@ -61,5 +61,5 @@ UEID_NG_ENB_t * enc_ng_eNB_UE_asn(const ng_enb_t * ng_enb)
     ng_enb_asn->globalNG_RANNode_ID = enc_global_ng_ran_asn(&ng_enb->global_ng_ran_node_id);
 
 
-    return &ng_enb_asn;
+    return ng_enb_asn;
 }

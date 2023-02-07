@@ -1,6 +1,6 @@
 #include <assert.h>
 
-#include "../../../../util/conversions.h"
+#include "../../../util/conversions.h"
 
 #include "dec_ng_enb.h"
 #include "dec_global_ng_enb.h"
@@ -11,10 +11,9 @@ ng_enb_t dec_ng_eNB_UE_asn(const UEID_NG_ENB_t * ng_enb_asn)
 {
     ng_enb_t ng_enb = {0};
 
-
     // AMF UE NGAP ID
-    ng_enb.amf_ue_ngap_id = ng_enb_asn->amf_UE_NGAP_ID;
-
+    memcpy(&ng_enb.amf_ue_ngap_id, ng_enb_asn->amf_UE_NGAP_ID.buf, 8);
+    assert(ng_enb.amf_ue_ngap_id < (1UL << 40) );
 
     // GUAMI
 

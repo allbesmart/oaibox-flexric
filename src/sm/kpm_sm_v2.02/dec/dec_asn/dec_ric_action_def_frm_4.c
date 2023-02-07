@@ -15,7 +15,7 @@ kpm_act_def_format_4_t kpm_dec_action_def_frm_4_asn(const E2SM_KPM_ActionDefinit
 
     for (size_t i = 0; i<act_def.matching_cond_lst_len; i++)
     {
-        act_def.matching_cond_lst[i] = kpm_dec_matching_cond_frm_4_asn(&act_def_asn->matchingUeCondList.list.array[i]);
+        act_def.matching_cond_lst[i] = kpm_dec_matching_cond_frm_4_asn(act_def_asn->matchingUeCondList.list.array[i]);
     }
 
     act_def.action_def_format_1 = kpm_dec_action_def_frm_1_asn(&act_def_asn->subscriptionInfo);

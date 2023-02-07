@@ -61,5 +61,5 @@ meas_data_lst_t * kpm_dec_meas_data_asn(const MeasurementData_t meas_data_asn, c
 
     }
     
-    return &meas_data;
+    return meas_data;
 }

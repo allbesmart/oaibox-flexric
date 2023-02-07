@@ -48,6 +48,6 @@ CGI_t * enc_cell_global_id_asn(const cell_global_id_t * cell_global_id)
           assert(0!=0 && "Unknown type");
     }
 
-    return &cell_global_id_asn;
+    return cell_global_id_asn;
 
 }

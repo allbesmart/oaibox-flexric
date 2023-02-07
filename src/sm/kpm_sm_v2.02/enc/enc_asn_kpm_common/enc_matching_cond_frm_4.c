@@ -21,5 +21,5 @@ MatchingUeCondPerSubItem_t * kpm_enc_matching_cond_frm_4_asn(const matching_cond
     }
 
 
-    return &matching_cond_asn;
+    return matching_cond_asn;
 }

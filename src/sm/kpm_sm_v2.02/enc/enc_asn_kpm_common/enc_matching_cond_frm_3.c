@@ -12,7 +12,9 @@ MatchingCondItem_t * kpm_enc_matching_cond_asn(const matching_condition_format_3
     if (matching_cond->cond_type == LABEL_INFO)
     {
         matching_item_asn->present = MatchingCondItem_PR_measLabel;
-        matching_item_asn->choice.measLabel = kpm_enc_label_info_asn(&matching_cond->label_info_lst);
+        
+        LabelInfoItem_t * labels = kpm_enc_label_info_asn(&matching_cond->label_info_lst);
+        matching_item_asn->choice.measLabel = &labels->measLabel;
     }
     else if (matching_cond->cond_type == TEST_INFO)
     {
@@ -30,6 +32,6 @@ MatchingCondItem_t * kpm_enc_matching_cond_asn(const matching_condition_format_3
     }
     
 
-    return &matching_item_asn;
+    return matching_item_asn;
 
 }

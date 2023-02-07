@@ -31,6 +31,9 @@ meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEi
             meas_cond_ue[i].meas_type.type = ID_MEAS_TYPE;
             meas_cond_ue[i].meas_type.id = cond_ue_item_asn->measType.choice.measID;
             break;
+
+        default:
+            assert(0!=0 && "Unknown Measurement Type" );
         }
 
 
@@ -40,7 +43,7 @@ meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEi
 
         for (size_t j = 0; j<meas_cond_ue[i].matching_cond_lst_len; j++)
         {
-            meas_cond_ue[i].matching_cond_lst[j] = kpm_dec_matching_cond_asn(&cond_ue_item_asn->matchingCond.list.array[j]);
+            meas_cond_ue[i].matching_cond_lst[j] = kpm_dec_matching_cond_asn(cond_ue_item_asn->matchingCond.list.array[j]);
         }
 
 
@@ -61,5 +64,5 @@ meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEi
     }
 
 
-    return &meas_cond_ue;
+    return meas_cond_ue;
 }

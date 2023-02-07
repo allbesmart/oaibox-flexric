@@ -32,5 +32,5 @@ E2SM_KPM_ActionDefinition_Format4_t * kpm_enc_action_def_frm_4_asn(const kpm_act
 
     act_def_frm_4_asn->subscriptionInfo = *kpm_enc_action_def_frm_1_asn(&act_def_frm_4->action_def_format_1);
 
-    return &act_def_frm_4_asn;
+    return act_def_frm_4_asn;
 }

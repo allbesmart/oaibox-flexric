@@ -28,6 +28,7 @@
 #include "../../src/util/alg_ds/alg/defer.h"
 #include "../../src/util/time_now_us.h"
 #include "../sm/common/fill_ind_data.h"
+#include "../sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.h"
 
 #include <stdlib.h>
 #include <stdio.h>

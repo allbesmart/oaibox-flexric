@@ -32,5 +32,5 @@ E2SM_KPM_IndicationMessage_Format3_t * kpm_enc_ind_msg_frm_3_asn(const kpm_ind_m
     }
 
 
-    return &ind_msg_asn;
+    return ind_msg_asn;
 }

@@ -44,13 +44,13 @@ bool eq_kpm_ind_hdr_frm_1(kpm_ric_ind_hdr_format_1_t const* hdr0, kpm_ric_ind_hd
 
   if (hdr0->collectStartTime != hdr1->collectStartTime) return false;
 
-  if (eq_byte_array(&hdr0->fileformat_version, &hdr1->fileformat_version) == false) return false;
+  if (eq_byte_array(hdr0->fileformat_version, hdr1->fileformat_version) == false) return false;
 
-  if (eq_byte_array(&hdr0->sender_name, &hdr1->sender_name) == false) return false;
+  if (eq_byte_array(hdr0->sender_name, hdr1->sender_name) == false) return false;
 
-  if (eq_byte_array(&hdr0->sender_type, &hdr1->sender_type) == false) return false;
+  if (eq_byte_array(hdr0->sender_type, hdr1->sender_type) == false) return false;
 
-  if (eq_byte_array(&hdr0->vendor_name, &hdr1->vendor_name) == false) return false;
+  if (eq_byte_array(hdr0->vendor_name, hdr1->vendor_name) == false) return false;
 
   return true;
 }

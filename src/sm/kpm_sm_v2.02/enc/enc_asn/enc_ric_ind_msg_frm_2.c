@@ -12,21 +12,21 @@ E2SM_KPM_IndicationMessage_Format2_t * kpm_enc_ind_msg_frm_2_asn(const kpm_ind_m
 
 
     //  1. Measurement Data : [1, 65535]
-    ind_msg_asn->measData = kpm_enc_meas_data_asn(&ind_msg->meas_data_lst, ind_msg->meas_data_lst_len);
+    ind_msg_asn->measData = kpm_enc_meas_data_asn(ind_msg->meas_data_lst, ind_msg->meas_data_lst_len);
 
 
     //  2. Measurement Condition UE : [1, 65535]
-    ind_msg_asn->measCondUEidList = kpm_enc_meas_info_cond_ue_asn(&ind_msg->meas_info_cond_ue_lst, ind_msg->meas_info_cond_ue_lst_len);
+    ind_msg_asn->measCondUEidList = kpm_enc_meas_info_cond_ue_asn(ind_msg->meas_info_cond_ue_lst, ind_msg->meas_info_cond_ue_lst_len);
 
 
     //  3. Granularity Period  -  OPTIONAL
     if (ind_msg->gran_period_ms)
     {
         ind_msg_asn->granulPeriod = malloc(sizeof(*ind_msg_asn->granulPeriod));
-        ind_msg_asn->granulPeriod = ind_msg->gran_period_ms;
-        assert(ind_msg_asn->granulPeriod >= min_val_GranularityPeriod && ind_msg_asn->granulPeriod <= max_val_GranularityPeriod);
+        ind_msg_asn->granulPeriod = (unsigned long *)ind_msg->gran_period_ms;
+        assert(*ind_msg_asn->granulPeriod >= min_val_GranularityPeriod && *ind_msg_asn->granulPeriod <= max_val_GranularityPeriod);
     }
         
 
-    return &ind_msg_asn;
+    return ind_msg_asn;
 }

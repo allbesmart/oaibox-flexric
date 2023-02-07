@@ -27,7 +27,7 @@ kpm_act_def_format_3_t kpm_dec_action_def_frm_3_asn(const E2SM_KPM_ActionDefinit
 
     // 3. Cell Global ID - OPTIONAL
 
-    act_def.cell_global_id = dec_cell_global_id_asn(&act_def_asn->cellGlobalID);
+    act_def.cell_global_id = dec_cell_global_id_asn(act_def_asn->cellGlobalID);
 
 
     return act_def;

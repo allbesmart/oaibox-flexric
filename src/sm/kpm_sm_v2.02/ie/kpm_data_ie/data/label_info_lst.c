@@ -3,22 +3,23 @@
 #include <stdio.h>
 #include "label_info_lst.h"
 
-static long* dup_long(const long* src)
-{
-  if (src == NULL)
-    return NULL;
-  long* dst = malloc(sizeof(*dst));
-  assert(dst != NULL && "memory exhausted");
-  *dst = *src;
-  return dst;
-}
+// static long* dup_long(const long* src)
+// {
+//   if (src == NULL)
+//     return NULL;
+//   long* dst = malloc(sizeof(*dst));
+//   assert(dst != NULL && "memory exhausted");
+//   *dst = *src;
+//   return dst;
+// }
 
 void cp_label_info(label_info_lst_t *dst, label_info_lst_t const *src) 
 {
   assert(src != NULL);
   assert(dst != NULL);
 
-  dst->noLabel = dup_long(src->noLabel);
+  dst->noLabel = calloc(1, sizeof(enum_value_e));
+  dst->noLabel = src->noLabel;
   if (src->plmn_id != NULL) {
     dst->plmn_id = malloc(sizeof(*dst->plmn_id));
     *dst->plmn_id = *src->plmn_id;

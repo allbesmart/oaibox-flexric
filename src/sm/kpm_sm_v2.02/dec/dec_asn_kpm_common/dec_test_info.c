@@ -79,5 +79,5 @@ test_info_lst_t * kpm_dec_test_info_asn(const TestCondInfo_t * test_info_asn)
         assert(false && "Test Condition Value not yet implemented");
     }
 
-    return &test_info;
+    return test_info;
 }

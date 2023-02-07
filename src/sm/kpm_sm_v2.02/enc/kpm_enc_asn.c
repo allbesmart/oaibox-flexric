@@ -77,11 +77,8 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
   E2SM_KPM_ActionDefinition_t *pdu = calloc(1, sizeof(E2SM_KPM_ActionDefinition_t));
   
   assert (pdu != NULL && "Memory exhausted");
- 
-  assert ((action_def->type >= 1 && action_def->type <= 5) && "Not valid KPM RIC Action Definition Format");
 
-
-  pdu->ric_Style_Type = action_def->type;
+  pdu->ric_Style_Type = (long)action_def->type;
   
  
   /* Action Definition Formats */

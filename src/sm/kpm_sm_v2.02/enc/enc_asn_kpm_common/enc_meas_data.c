@@ -40,7 +40,7 @@ MeasurementData_t kpm_enc_meas_data_asn(const meas_data_lst_t * meas_data, const
                 break;
               case NO_VALUE_MEAS_VALUE:
                 mRecord->present = MeasurementRecordItem_PR_noValue;
-                mRecord->choice.noValue = NULL;
+                mRecord->choice.noValue = 0;
                 break;
               default:
                 assert(false && "Non valid Measurement Record type");
@@ -57,7 +57,7 @@ MeasurementData_t kpm_enc_meas_data_asn(const meas_data_lst_t * meas_data, const
         {
             mData->incompleteFlag = malloc(sizeof(*mData->incompleteFlag));
             assert(mData->incompleteFlag != NULL && "Memory exhausted");
-            mData->incompleteFlag = meas_data[i].incomplete_flag;  // ask Mikel
+            mData->incompleteFlag = (long *)meas_data[i].incomplete_flag;
         }
         else
         {

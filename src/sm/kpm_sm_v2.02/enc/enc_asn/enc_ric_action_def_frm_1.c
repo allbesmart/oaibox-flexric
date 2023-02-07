@@ -15,7 +15,7 @@ E2SM_KPM_ActionDefinition_Format1_t * kpm_enc_action_def_frm_1_asn(const kpm_act
 
     // 1. Measurement Information List Format 1 : [1, 65535]
 
-    act_def_frm_1_asn->measInfoList = kpm_enc_meas_info_asn(&act_def_frm_1->meas_info_lst, act_def_frm_1->meas_info_lst_len);
+    act_def_frm_1_asn->measInfoList = kpm_enc_meas_info_asn(act_def_frm_1->meas_info_lst, act_def_frm_1->meas_info_lst_len);
 
 
     // 2. Granularity Period : [1, 4294967295]
@@ -25,8 +25,10 @@ E2SM_KPM_ActionDefinition_Format1_t * kpm_enc_action_def_frm_1_asn(const kpm_act
      
 
     // 3. Cell Global ID - OPTIONAL
-
-    act_def_frm_1_asn->cellGlobalID = enc_cell_global_id_asn(act_def_frm_1->cell_global_id);
+    if (act_def_frm_1->cell_global_id != NULL)
+    {
+      act_def_frm_1_asn->cellGlobalID = enc_cell_global_id_asn(act_def_frm_1->cell_global_id);
+    }
     
     
     // 4. Measurement Bin Range Information List : [0, 65535]
@@ -37,5 +39,5 @@ E2SM_KPM_ActionDefinition_Format1_t * kpm_enc_action_def_frm_1_asn(const kpm_act
     }
 
 
-    return &act_def_frm_1_asn;  // ask Mikel
+    return act_def_frm_1_asn;
 }

@@ -50,5 +50,5 @@ E2SM_KPM_IndicationHeader_Format1_t * kpm_enc_ind_hdr_frm_1_asn(const kpm_ric_in
         assert(ret == 0);
     }
 
-    return &ind_hdr_asn;
+    return ind_hdr_asn;
 }

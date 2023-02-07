@@ -14,12 +14,12 @@ LabelInfoItem_t * kpm_enc_label_info_asn(const label_info_lst_t * label_info)
     if (label_info->noLabel == TRUE_ENUM_VALUE) {
       label_info_asn->measLabel.noLabel = malloc (sizeof(*(label_info_asn->measLabel.noLabel)));
       assert (label_info_asn->measLabel.noLabel != NULL && "Memory exhausted");
-      *(label_info_asn->measLabel.noLabel) = *(label_info->noLabel);  // ask Mikel if this sintax is ok, 0 is equal to true
+      label_info_asn->measLabel.noLabel = (long *)label_info->noLabel;
       /* 
        * specification mentions that if 'noLabel' is included, other elements in the same datastructure 
        * 'LabelInfoItem_t' shall not be included.
        */
-      return &label_info_asn;
+      return label_info_asn;
     }      
     else
     {

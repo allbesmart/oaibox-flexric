@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "kpm_ric_ind_msg_frm_1.h"
 
 // Equality implemented as euristics for the moment. This function is used in test framework.
@@ -58,25 +59,28 @@ bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1
     for (size_t j = 0; j < m0->meas_data_lst[i].meas_record_len; ++j)
     {
       
-      if (m0->meas_data_lst[i].meas_record_lst->value != m1->meas_data_lst[i].meas_record_lst->value)
+      if (m0->meas_data_lst[i].meas_record_lst[j].value != m1->meas_data_lst[i].meas_record_lst[j].value)
         return false;
 
-      switch (m0->meas_data_lst[i].meas_record_lst->value)
+      switch (m0->meas_data_lst[i].meas_record_lst[j].value)
       {
-      case INTEGER_MEAS_VALUE:
-        if (m0->meas_data_lst[i].meas_record_lst->int_val != m1->meas_data_lst[i].meas_record_lst->int_val)
-          return false;
-      
-      case REAL_MEAS_VALUE:
-        if (fabs(m0->meas_data_lst[i].meas_record_lst->real_val - m1->meas_data_lst[i].meas_record_lst->real_val) > 0.0001f)
-          return false;
+        case INTEGER_MEAS_VALUE:
+          if (m0->meas_data_lst[i].meas_record_lst[j].int_val != m1->meas_data_lst[i].meas_record_lst[j].int_val)
+            return false;
+          break;
 
-      case NO_VALUE_MEAS_VALUE:
-        if (m0->meas_data_lst[i].meas_record_lst->no_value != m1->meas_data_lst[i].meas_record_lst->no_value)
-          return false;
+        case REAL_MEAS_VALUE:
+          if (fabs(m0->meas_data_lst[i].meas_record_lst[j].real_val - m1->meas_data_lst[i].meas_record_lst[j].real_val) > 0.0001f)
+            return false;
+          break;
 
-      default:
-        assert(false && "Unknown Measurement Value");
+        case NO_VALUE_MEAS_VALUE:
+          if (m0->meas_data_lst[i].meas_record_lst[j].no_value != m1->meas_data_lst[i].meas_record_lst[j].no_value)
+            return false;
+          break;
+
+        default:
+          assert(false && "Unknown Measurement Value");
       }
 
       

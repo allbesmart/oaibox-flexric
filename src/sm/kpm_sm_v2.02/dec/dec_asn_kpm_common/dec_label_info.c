@@ -17,7 +17,7 @@ label_info_lst_t * kpm_dec_label_info_asn(const LabelInfoItem_t * label_info_asn
         * 'LabelInfoItem_t' shall not be included.
         */
 
-        return &label_info;
+        return label_info;
     }
 
 
@@ -84,5 +84,5 @@ label_info_lst_t * kpm_dec_label_info_asn(const LabelInfoItem_t * label_info_asn
         assert(false && "not implemented");
     }
 
-    return &label_info;
+    return label_info;
 }

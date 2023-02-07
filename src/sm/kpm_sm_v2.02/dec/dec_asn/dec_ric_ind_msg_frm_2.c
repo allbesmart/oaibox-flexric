@@ -26,8 +26,8 @@ kpm_ind_msg_format_2_t kpm_dec_ind_msg_frm_2_asn(const E2SM_KPM_IndicationMessag
     if (ind_msg_asn->granulPeriod != NULL)
     {
         ind_msg.gran_period_ms = malloc(sizeof(*ind_msg.gran_period_ms));
-        ind_msg.gran_period_ms = ind_msg_asn->granulPeriod;
-        assert(ind_msg.gran_period_ms >= min_val_GranularityPeriod && ind_msg.gran_period_ms <= max_val_GranularityPeriod);
+        ind_msg.gran_period_ms = (uint32_t *)ind_msg_asn->granulPeriod;
+        assert(*ind_msg.gran_period_ms >= min_val_GranularityPeriod && *ind_msg.gran_period_ms <= max_val_GranularityPeriod);
     }
 
     return ind_msg;

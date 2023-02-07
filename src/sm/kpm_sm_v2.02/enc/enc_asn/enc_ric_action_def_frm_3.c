@@ -13,7 +13,7 @@ E2SM_KPM_ActionDefinition_Format3_t * kpm_enc_action_def_frm_3_asn(const kpm_act
 
     // 1. Measurement Information List Format 3 : [1, 65535]
     
-    act_def_frm_3_asn->measCondList = kpm_enc_meas_info_cond_asn(&act_def_frm_3->meas_info_lst, act_def_frm_3->meas_info_lst_len);
+    act_def_frm_3_asn->measCondList = kpm_enc_meas_info_cond_asn(act_def_frm_3->meas_info_lst, act_def_frm_3->meas_info_lst_len);
 
     // 2. Granularity Period : [1, 4294967295]
     
@@ -22,9 +22,12 @@ E2SM_KPM_ActionDefinition_Format3_t * kpm_enc_action_def_frm_3_asn(const kpm_act
      
 
     // 3. Cell Global ID - OPTIONAL
+    if (act_def_frm_3->cell_global_id != NULL)
+    {
+        act_def_frm_3_asn->cellGlobalID = enc_cell_global_id_asn(act_def_frm_3->cell_global_id);
+    }
+    
 
-    act_def_frm_3_asn->cellGlobalID = enc_cell_global_id_asn(act_def_frm_3->cell_global_id);
 
-
-    return &act_def_frm_3_asn;   
+    return act_def_frm_3_asn;   
 }

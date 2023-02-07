@@ -10,6 +10,6 @@ E2SM_KPM_EventTriggerDefinition_Format1_t * kpm_enc_event_trigger_def_frm_1_asn(
     event_trigger_asn->reportingPeriod = event_trigger->report_period_ms;
 
 
-    return &event_trigger_asn;
+    return event_trigger_asn;
 
 }

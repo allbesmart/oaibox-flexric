@@ -11,6 +11,8 @@ add_executable(emu_agent_gnb
                   test_agent.c
                   ../../../test/sm/common/fill_ind_data.c
                   ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
+                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_hdr_frm_1.c
+                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_msg_frm_1.c
                   )
 
                   target_link_libraries(emu_agent_gnb
@@ -31,6 +33,9 @@ add_executable(emu_agent_gnb_cu
                 test_agent.c
                 ../../../test/sm/common/fill_ind_data.c
                 ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
+                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_hdr_frm_1.c
+                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_msg_frm_1.c
+ 
                 )
 
 target_link_libraries(emu_agent_gnb_cu
@@ -51,6 +56,9 @@ add_executable(emu_agent_gnb_du
                 test_agent.c
                 ../../../test/sm/common/fill_ind_data.c
                 ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
+                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_hdr_frm_1.c
+                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_msg_frm_1.c
+ 
                 )
 
 target_link_libraries(emu_agent_gnb_du
@@ -71,6 +79,9 @@ add_executable(emu_agent_enb
                 test_agent.c
                 ../../../test/sm/common/fill_ind_data.c
                 ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
+                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_hdr_frm_1.c
+                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_msg_frm_1.c
+ 
                 )
 
 target_link_libraries(emu_agent_enb

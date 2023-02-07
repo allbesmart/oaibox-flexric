@@ -8,6 +8,9 @@ extern "C" {
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "../../../../../util/byte_array.h"
+
+
 typedef enum {
     GBR_TEST_COND_TYPE,
     AMBR_TEST_COND_TYPE,

@@ -24,6 +24,9 @@
 #ifndef CONVERSIONS_H_
 #define CONVERSIONS_H_
 
+#include <stdint.h>
+#include <stdlib.h>
+
 /* Endianness conversions for 16 and 32 bits integers from host to network order */
 #if (BYTE_ORDER == LITTLE_ENDIAN)
 # define hton_int32(x)   \
@@ -238,19 +241,19 @@ do {                                         \
 
 #define OCTET_STRING_TO_INT8(aSN, x)    \
 do {                                    \
-    DevCheck((aSN)->size == 1, (aSN)->size, 0, 0);           \
+    assert((aSN)->size == 1); \
     BUFFER_TO_INT8((aSN)->buf, x);    \
 } while(0)
 
 #define OCTET_STRING_TO_INT16(aSN, x)   \
 do {                                    \
-    DevCheck((aSN)->size == 2 || (aSN)->size == 3, (aSN)->size, 0, 0);           \
+    assert((aSN)->size == 2 || (aSN)->size == 3 ); \
     BUFFER_TO_INT16((aSN)->buf, x);    \
 } while(0)
 
 #define OCTET_STRING_TO_INT24(aSN, x)   \
 do {                                    \
-    DevCheck((aSN)->size == 2 || (aSN)->size == 3, (aSN)->size, 0, 0);           \
+    assert((aSN)->size == 2 || (aSN)->size == 3); \
     BUFFER_TO_INT24((aSN)->buf, x);    \
 } while(0)
 
@@ -278,7 +281,7 @@ do {                                    \
 
 #define MCC_TO_BUFFER(mCC, bUFFER)      \
 do {                                    \
-    DevAssert(bUFFER != NULL);          \
+    assert(bUFFER != NULL); \
     (bUFFER)[0] = MCC_HUNDREDS(mCC);    \
     (bUFFER)[1] = MCC_MNC_DECIMAL(mCC); \
     (bUFFER)[2] = MCC_MNC_DIGIT(mCC);   \
@@ -307,7 +310,7 @@ do {                                                                            
 #define MCC_MNC_TO_TBCD(mCC, mNC, mNCdIGITlENGTH, tBCDsTRING)        \
 do {                                                                 \
     char _buf[3];                                                    \
-     DevAssert((mNCdIGITlENGTH == 3) || (mNCdIGITlENGTH == 2));      \
+     assert((mNCdIGITlENGTH == 3) || (mNCdIGITlENGTH == 2) ); \
     _buf[0] = (MCC_MNC_DECIMAL(mCC) << 4) | MCC_HUNDREDS(mCC);       \
     _buf[1] = (MNC_HUNDREDS(mNC,mNCdIGITlENGTH) << 4) | MCC_MNC_DIGIT(mCC);\
     _buf[2] = (MCC_MNC_DIGIT(mNC) << 4) | MCC_MNC_DECIMAL(mNC);      \
@@ -317,7 +320,7 @@ do {                                                                 \
 #define TBCD_TO_MCC_MNC(tBCDsTRING, mCC, mNC, mNCdIGITlENGTH)    \
 do {                                                             \
     int mNC_hundred;                                             \
-    DevAssert((tBCDsTRING)->size == 3);                          \
+    assert((tBCDsTRING)->size == 3); \
     mNC_hundred = (((tBCDsTRING)->buf[1] & 0xf0) >> 4);          \
     if (mNC_hundred == 0xf) {                                    \
         mNC_hundred = 0;                                         \
@@ -396,8 +399,8 @@ do {                                                    \
 
 #define BIT_STRING_TO_TRANSPORT_LAYER_ADDRESS_IPv4(bITsTRING, mACRO)    \
 do {                                                                    \
-    DevCheck((bITsTRING)->size == 4, (bITsTRING)->size, 4, 0);          \
-    DevCheck((bITsTRING)->bits_unused == 0, (bITsTRING)->bits_unused, 0, 0); \
+    assert((bITsTRING)->size == 4); \
+    assert((bITsTRING)->bits_unused == 0); \
     mACRO = ((bITsTRING)->buf[0] << 24) +                               \
             ((bITsTRING)->buf[1] << 16) +                               \
             ((bITsTRING)->buf[2] << 8) +                                \
@@ -445,8 +448,8 @@ do {                                                    \
 
 #define BIT_STRING_TO_MaskedIMEISV(bITsTRING, mACRO)    \
 do {                                                                    \
-    DevCheck((bITsTRING)->size == 8, (bITsTRING)->size, 8, 0);          \
-    DevCheck((bITsTRING)->bits_unused == 0, (bITsTRING)->bits_unused, 0, 0); \
+    assert((bITsTRING)->size == 8); \
+    assert((bITsTRING)->bits_unused == 0); \
     mACRO = ((bITsTRING)->buf[0] << 56) +                               \
             ((bITsTRING)->buf[1] << 48) +                               \
             ((bITsTRING)->buf[2] << 40) +                               \
@@ -496,7 +499,7 @@ do {                                                    \
 
 #define BIT_STRING_TO_NR_CELL_ID(aSN, vALUE)                     \
 do {                                                                   \
-    DevCheck((aSN)->bits_unused == 4, (aSN)->bits_unused, 4, 0);       \
+    assert((aSN)->bits_unused == 4);       \
     vALUE = ((aSN)->buf[0] << 28) | ((aSN)->buf[1] << 20) |            \
         ((aSN)->buf[2] << 12) | ((aSN)->buf[3]<<4) | ((aSN)->buf[4]>>4);  \
 } while(0)
@@ -591,7 +594,7 @@ do {                                                    \
 
 #define BIT_STRING_TO_EUTRA_CELL_ID(aSN, vALUE)                     \
 do {                                                                \
-    DevCheck((aSN)->bits_unused == 4, (aSN)->bits_unused, 4, 0);    \
+    assert((aSN)->bits_unused == 4); \
     vALUE = ((aSN)->buf[0] << 20) | ((aSN)->buf[1] << 12) |         \
         ((aSN)->buf[2] << 4) | (aSN)->buf[3];                       \
 } while(0)

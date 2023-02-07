@@ -1,11 +1,11 @@
 #include <assert.h>
 #include "../../ie/asn/asn_constant.h"
 
-#include "enc_meas_info_cond_ue.h"
-#include "../../ie/asn/MeasurementCondUEidItem.h"
-#include "enc_asn_kpm_common/enc_matching_cond_frm_3.h"
 #include "../../ie/kpm_data_ie/data/meas_type.h"
+#include "../../ie/asn/MeasurementCondUEidItem.h"
 
+#include "enc_meas_info_cond_ue.h"
+#include "enc_matching_cond_frm_3.h"
 MeasurementCondUEidList_t kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_ue_lst_t * meas_cond_ue, const size_t meas_cond_ue_len)
 {
     assert((meas_cond_ue_len <= maxnoofMeasurementInfo && meas_cond_ue_len >= 1) 

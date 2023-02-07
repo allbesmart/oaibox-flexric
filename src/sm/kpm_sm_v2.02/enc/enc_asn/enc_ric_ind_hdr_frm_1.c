@@ -1,6 +1,9 @@
 #include <assert.h>
+#include <stdint.h>
+#include <stdlib.h>
 
 #include "../../../../util/conversions.h"
+
 
 #include "enc_ric_ind_hdr_frm_1.h"
 

@@ -9,6 +9,14 @@ add_executable(xapp_tc_all
                 ../../../../src/sm/tc_sm/ie/tc_data_ie.c
                 ../../../../src/sm/gtp_sm/ie/gtp_data_ie.c
                 ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/data/label_info_lst.c
+
+
                 )
 
 target_link_libraries(xapp_tc_all
@@ -30,6 +38,14 @@ add_executable(xapp_tc_codel
                 ../../../../src/sm/tc_sm/ie/tc_data_ie.c
                 ../../../../src/sm/gtp_sm/ie/gtp_data_ie.c
                 ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/data/label_info_lst.c
+
+
                 )
 
 target_link_libraries(xapp_tc_codel
@@ -50,6 +66,14 @@ add_executable(xapp_tc_partition
                 ../../../../src/sm/tc_sm/ie/tc_data_ie.c
                 ../../../../src/sm/gtp_sm/ie/gtp_data_ie.c
                 ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/data/label_info_lst.c
+
+
                 )
 
 target_link_libraries(xapp_tc_partition
@@ -71,6 +95,14 @@ add_executable(xapp_tc_ecn
                 ../../../../src/sm/tc_sm/ie/tc_data_ie.c
                 ../../../../src/sm/gtp_sm/ie/gtp_data_ie.c
                 ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.c
+                        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/data/label_info_lst.c
+
+
                 )
 
 target_link_libraries(xapp_tc_ecn
@@ -92,6 +124,16 @@ add_executable(xapp_tc_osi_codel
                 ../../../../src/sm/tc_sm/ie/tc_data_ie.c
                 ../../../../src/sm/gtp_sm/ie/gtp_data_ie.c
                 ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.c
+
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
+        ../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/data/label_info_lst.c
+
+
+
                 )
 
 target_link_libraries(xapp_tc_osi_codel

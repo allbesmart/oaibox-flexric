@@ -3,7 +3,7 @@
 
 #include "dec_meas_info_cond_ue.h"
 #include "../../ie/asn/MeasurementCondUEidItem.h"
-#include "dec_asn_kpm_common/dec_matching_cond_frm_3.h"
+#include "../dec_asn_kpm_common/dec_matching_cond_frm_3.h"
 
 meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEidList_t meas_cond_ue_asn, const size_t meas_cond_ue_len)
 {

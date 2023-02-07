@@ -20,6 +20,13 @@ set(SM_ENCODING_KPM_SRC
                       ../../util/alg_ds/ds/assoc_container/assoc_rb_tree.c
                       ../../util/alg_ds/ds/assoc_container/bimap.c
                       ie/kpm_data_ie.c
+
+                      ie/kpm_data_ie/data/label_info_lst.c
+                      ie/kpm_data_ie/kpm_ric_info/kpm_ran_function_def.c
+                      ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
+                      ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
+                      ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+
                       )
 
 if(SM_ENCODING_KPM STREQUAL "PLAIN")

@@ -47,5 +47,5 @@ GlobalENB_ID_t * enc_global_enb_id_asn(const global_enb_id_t * global_enb_id)
     }
 
 
-    return &global_enb_id_asn;
+    return global_enb_id_asn;
 }

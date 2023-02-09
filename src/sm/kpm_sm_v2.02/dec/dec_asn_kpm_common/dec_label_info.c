@@ -4,26 +4,27 @@
 
 #include "../../../../util/conversions.h"
 
-label_info_lst_t * kpm_dec_label_info_asn(const LabelInfoItem_t * label_info_asn)
+label_info_lst_t kpm_dec_label_info_asn(const LabelInfoItem_t * label_info_asn)
 {
-    label_info_lst_t * label_info = calloc(1, sizeof(label_info_lst_t));
-    assert (label_info != NULL && "Memory exhausted");
+    label_info_lst_t label_info = {0};
+    // calloc(1, sizeof(label_info_lst_t));
+    // assert (label_info != NULL && "Memory exhausted");
 
-    if (label_info_asn->measLabel.noLabel == 0)
-    {
-        label_info->noLabel = TRUE_ENUM_VALUE;
+    // if (label_info_asn->measLabel.noLabel == 0)
+    // {
+    //     label_info->noLabel = TRUE_ENUM_VALUE;
  
-        /* specification mentions that if 'noLabel' is included, other elements in the same datastructure 
-        * 'LabelInfoItem_t' shall not be included.
-        */
+    //     /* specification mentions that if 'noLabel' is included, other elements in the same datastructure 
+    //     * 'LabelInfoItem_t' shall not be included.
+    //     */
 
-        return label_info;
-    }
+    //     return label_info;
+    // }
 
 
     if (label_info_asn->measLabel.plmnID != NULL) {
-        label_info->plmn_id = malloc(sizeof(*label_info->plmn_id));
-        PLMNID_TO_MCC_MNC(label_info_asn->measLabel.plmnID, label_info->plmn_id->mcc, label_info->plmn_id->mnc, label_info->plmn_id->mnc_digit_len);
+        label_info.plmn_id = calloc(1, sizeof(*label_info.plmn_id));
+        PLMNID_TO_MCC_MNC(label_info_asn->measLabel.plmnID, label_info.plmn_id->mcc, label_info.plmn_id->mnc, label_info.plmn_id->mnc_digit_len);
     }
 
     if (label_info_asn->measLabel.sliceID != NULL) {

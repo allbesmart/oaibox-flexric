@@ -11,7 +11,7 @@ LabelInfoItem_t * kpm_enc_label_info_asn(const label_info_lst_t * label_info)
     LabelInfoItem_t * label_info_asn = calloc(1, sizeof(LabelInfoItem_t));
     assert (label_info_asn != NULL && "Memory exhausted");
 
-    if (label_info->noLabel == TRUE_ENUM_VALUE) {
+    if (label_info->noLabel != NULL && label_info->noLabel == TRUE_ENUM_VALUE) {
       label_info_asn->measLabel.noLabel = malloc (sizeof(*(label_info_asn->measLabel.noLabel)));
       assert (label_info_asn->measLabel.noLabel != NULL && "Memory exhausted");
       label_info_asn->measLabel.noLabel = (long *)label_info->noLabel;
@@ -21,10 +21,10 @@ LabelInfoItem_t * kpm_enc_label_info_asn(const label_info_lst_t * label_info)
        */
       return label_info_asn;
     }      
-    else
-    {
-      assert(label_info->noLabel == TRUE_ENUM_VALUE && "has only one value (true)");
-    }
+    // else
+    // {
+    //   assert(label_info->noLabel == TRUE_ENUM_VALUE && "has only one value (true)");
+    // }
 
     if (label_info->plmn_id != NULL){
       label_info_asn->measLabel.plmnID = calloc(1, sizeof(*label_info_asn->measLabel.plmnID));

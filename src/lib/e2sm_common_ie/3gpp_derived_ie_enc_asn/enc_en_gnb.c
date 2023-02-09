@@ -2,6 +2,7 @@
 
 #include "../../../sm/kpm_sm_v2.02/ie/asn/asn_constant.h"
 #include "../../../sm/kpm_sm_v2.02/ie/asn/asn_SEQUENCE_OF.h"
+#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-CP-E1AP-ID-Item.h"
 #include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
 
 #include "enc_en_gnb.h"
@@ -22,7 +23,7 @@ UEID_EN_GNB_t * enc_en_gNB_UE_asn(const en_gnb_t * en_gnb)
     if (en_gnb->enb_ue_x2ap_id_extension != NULL)
     {
         en_gnb_asn->m_eNB_UE_X2AP_ID_Extension = calloc(1, sizeof(*en_gnb_asn->m_eNB_UE_X2AP_ID_Extension));
-        en_gnb_asn->m_eNB_UE_X2AP_ID_Extension = en_gnb->enb_ue_x2ap_id_extension;
+        en_gnb_asn->m_eNB_UE_X2AP_ID_Extension = (long *)en_gnb->enb_ue_x2ap_id_extension;
     }
 
 
@@ -35,7 +36,7 @@ UEID_EN_GNB_t * enc_en_gNB_UE_asn(const en_gnb_t * en_gnb)
     if (en_gnb->gnb_cu_ue_f1ap_lst != NULL)
     {
         en_gnb_asn->gNB_CU_UE_F1AP_ID = calloc(1, sizeof(*en_gnb_asn->gNB_CU_UE_F1AP_ID));
-        en_gnb_asn->gNB_CU_UE_F1AP_ID = en_gnb->gnb_cu_ue_f1ap_lst;
+        en_gnb_asn->gNB_CU_UE_F1AP_ID = (unsigned long *)en_gnb->gnb_cu_ue_f1ap_lst;
     }
 
 
@@ -47,8 +48,8 @@ UEID_EN_GNB_t * enc_en_gNB_UE_asn(const en_gnb_t * en_gnb)
 
         for (size_t i = 0; i < en_gnb->gnb_cu_cp_ue_e1ap_lst_len; i++)
         {
-            UEID_GNB_CU_CP_E1AP_ID_List_t * e1_item = calloc(1, sizeof(UEID_GNB_CU_CP_E1AP_ID_List_t));
-            e1_item = en_gnb->gnb_cu_cp_ue_e1ap_lst[i];
+            UEID_GNB_CU_CP_E1AP_ID_Item_t * e1_item = calloc(1, sizeof(UEID_GNB_CU_CP_E1AP_ID_Item_t));
+            e1_item->gNB_CU_CP_UE_E1AP_ID = (unsigned long)en_gnb->gnb_cu_cp_ue_e1ap_lst[i];
             int rc1 = ASN_SEQUENCE_ADD(&en_gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list, e1_item);
             assert(rc1 == 0);
         }
@@ -60,9 +61,9 @@ UEID_EN_GNB_t * enc_en_gNB_UE_asn(const en_gnb_t * en_gnb)
     // Optional
 
     en_gnb_asn->ran_UEID->buf = calloc(8, sizeof(*en_gnb_asn->ran_UEID->buf));
-    en_gnb_asn->ran_UEID->buf = en_gnb->ran_ue_id;
+    memcpy(&en_gnb_asn->ran_UEID->buf, en_gnb->ran_ue_id, 8);
     en_gnb_asn->ran_UEID->size = sizeof(en_gnb->ran_ue_id);
 
 
-    return &en_gnb_asn;
+    return en_gnb_asn;
 }

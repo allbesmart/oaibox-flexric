@@ -67,6 +67,9 @@ typedef struct{
 
 } kpm_act_def_t;
 
+void free_kpm_action_def(kpm_act_def_t * src);
+
+bool eq_kpm_action_def(kpm_act_def_t const * m0, kpm_act_def_t const * m1);
 
 #ifdef __cplusplus
 }

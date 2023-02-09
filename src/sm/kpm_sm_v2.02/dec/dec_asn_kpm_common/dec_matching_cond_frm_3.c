@@ -14,7 +14,7 @@ matching_condition_format_3_lst_t kpm_dec_matching_cond_asn(const MatchingCondIt
         matching_cond.cond_type = LABEL_INFO;
         LabelInfoItem_t * labels = calloc(1, sizeof(LabelInfoItem_t));
         labels->measLabel = *matching_cond_asn->choice.measLabel;
-        matching_cond.label_info_lst = *kpm_dec_label_info_asn(labels);
+        matching_cond.label_info_lst = kpm_dec_label_info_asn(labels);
     }
     else if (matching_cond_asn->present == MatchingCondItem_PR_testCondInfo)
     {

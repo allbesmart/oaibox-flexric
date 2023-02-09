@@ -43,7 +43,7 @@ meas_info_format_1_lst_t * kpm_dec_meas_info_asn(const MeasurementInfoList_t * m
 
         for (size_t j = 0; j<meas_info[i].label_info_lst_len; j++)
         {
-            meas_info[i].label_info_lst[j] = *kpm_dec_label_info_asn(meas_info_asn->list.array[i]->labelInfoList.list.array[j]);
+            meas_info[i].label_info_lst[j] = kpm_dec_label_info_asn(meas_info_asn->list.array[i]->labelInfoList.list.array[j]);
 
         }
 

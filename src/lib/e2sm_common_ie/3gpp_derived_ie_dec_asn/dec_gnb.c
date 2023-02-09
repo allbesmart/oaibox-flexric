@@ -14,7 +14,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     gnb_t gnb = {0};
 
     // AMF UE NGAP ID
-    gnb.amf_ue_ngap_id = gnb_asn->amf_UE_NGAP_ID.buf;
+    memcpy(&gnb.amf_ue_ngap_id, gnb_asn->amf_UE_NGAP_ID.buf, 8);
 
 
     // GUAMI
@@ -39,7 +39,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 
         for (size_t i = 0; i < gnb.gnb_cu_ue_f1ap_lst_len; i++)
         {
-            gnb.gnb_cu_ue_f1ap_lst[i] = gnb_asn->gNB_CU_UE_F1AP_ID_List->list.array[i];
+            memcpy(&gnb.gnb_cu_ue_f1ap_lst[i], gnb_asn->gNB_CU_UE_F1AP_ID_List->list.array[i], 1);
         }
     }
     else
@@ -59,7 +59,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 
         for (size_t i = 0; i < gnb.gnb_cu_cp_ue_e1ap_lst_len; i++)
         {
-            gnb.gnb_cu_cp_ue_e1ap_lst[i] = gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.array[i];
+            memcpy(&gnb.gnb_cu_cp_ue_e1ap_lst[i], gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.array[i], 1);
         }
     }
     else
@@ -73,7 +73,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     if (gnb_asn->ran_UEID->buf != NULL)
     {
         gnb.ran_ue_id = calloc(1, sizeof(*gnb.ran_ue_id));
-        gnb.ran_ue_id = gnb_asn->ran_UEID->buf;
+        memcpy(gnb.ran_ue_id, gnb_asn->ran_UEID->buf, 1);
     }
     
 
@@ -83,7 +83,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     if (gnb_asn->m_NG_RAN_UE_XnAP_ID != NULL)
     {
         gnb.ng_ran_node_ue_xnap_id = calloc(1, sizeof(*gnb.ng_ran_node_ue_xnap_id));
-        gnb.ng_ran_node_ue_xnap_id = gnb_asn->m_NG_RAN_UE_XnAP_ID;
+        memcpy(gnb.ng_ran_node_ue_xnap_id, gnb_asn->m_NG_RAN_UE_XnAP_ID, 1);
     }
     
 
@@ -91,13 +91,13 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     // 6.2.3.3
     // Optional
 
-    gnb.global_gnb_id = dec_global_gnb_id_asn(&gnb_asn->globalGNB_ID);
+    gnb.global_gnb_id = dec_global_gnb_id_asn(gnb_asn->globalGNB_ID);
 
 
     // Global NG-RAN Node ID
     // C-ifDCSetup
 
-    gnb.global_ng_ran_node_id = dec_global_ng_ran_asn(&gnb_asn->globalNG_RANNode_ID);
+    gnb.global_ng_ran_node_id = dec_global_ng_ran_asn(gnb_asn->globalNG_RANNode_ID);
 
 
     return gnb;

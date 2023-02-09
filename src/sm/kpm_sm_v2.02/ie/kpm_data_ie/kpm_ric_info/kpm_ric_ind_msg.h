@@ -31,6 +31,10 @@ typedef struct
     
 } kpm_ind_msg_t;
 
+void free_kpm_ind_msg(kpm_ind_msg_t * src);
+
+bool eq_kpm_ind_msg(kpm_ind_msg_t const * m0, kpm_ind_msg_t const * m1);
+
 
 #ifdef __cplusplus
 }

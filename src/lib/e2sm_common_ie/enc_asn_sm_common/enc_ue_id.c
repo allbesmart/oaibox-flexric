@@ -58,5 +58,5 @@ UEID_t * enc_ue_id_asn(const ue_id_t * ue_id)
     }
 
 
-    return &ue_id_asn;
+    return ue_id_asn;
 }

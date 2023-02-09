@@ -26,5 +26,5 @@ GlobalNGRANNodeID_t * enc_global_ng_ran_asn(const global_ng_ran_node_id_t * glob
     }
 
 
-    return &global_ng_ran_asn;
+    return global_ng_ran_asn;
 }

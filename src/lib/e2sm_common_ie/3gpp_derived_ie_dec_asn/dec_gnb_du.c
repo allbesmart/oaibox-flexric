@@ -16,7 +16,7 @@ gnb_du_t dec_gNB_DU_UE_asn(const UEID_GNB_DU_t * gnb_du_asn)
     if (gnb_du_asn->ran_UEID->buf != NULL)
     {
         gnb_du.ran_ue_id = calloc(1, sizeof(*gnb_du.ran_ue_id));
-        gnb_du.ran_ue_id = gnb_du_asn->ran_UEID->buf;
+        memcpy(gnb_du.ran_ue_id, gnb_du_asn->ran_UEID->buf, 1);
     }
 
     return gnb_du;

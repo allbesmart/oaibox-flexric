@@ -47,10 +47,13 @@ file(GLOB SRC_LIB_3GPP_ENC_ASN_COMMON
 )
 
 
+file(GLOB SRC_LIB_KPM_RIC_INFO
+    ${CMAKE_CURRENT_SOURCE_DIR}/../ie/kpm_data_ie/kpm_ric_info/*.c
+)
 
-
-
-
+file(GLOB SRC_LIB_KPM_RIC_INFO_COMMON
+    ${CMAKE_CURRENT_SOURCE_DIR}/../ie/kpm_data_ie/data/*.c
+)
 
 
 option(CODE_COVERAGE "Code coverage" ON)
@@ -69,15 +72,19 @@ endif()
 add_executable(test_kpm_mir   
                           main.c 
                           fill_rnd_data_kpm.c 
-                          ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_event_trigger_frm_1.c
+                        #   ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_event_trigger_frm_1.c
+                            
+                        #   ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_action_def.c
+                        #   ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_action_def_frm_1.c
+                        #   ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_action_def_frm_2.c
+                        #   ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_action_def_frm_3.c
+                        #   ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_action_def_frm_4.c
+                        #   ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_action_def_frm_5.c
 
-                          ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_action_def_frm_2.c
-                          ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_action_def_frm_3.c
-                          ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_action_def_frm_4.c
-                          ${CMAKE_CURRENT_SOURCE_DIR}/../dec/dec_asn/dec_ric_action_def_frm_5.c
+                          ${SRC_LIB_KPM_RIC_INFO}
+                          ${SRC_LIB_KPM_RIC_INFO_COMMON}
 
-
-                          ${CMAKE_CURRENT_SOURCE_DIR}/../ie/kpm_data_ie/kpm_ric_info/kpm_ric_event_trigger_def.c
+                        #   ${CMAKE_CURRENT_SOURCE_DIR}/../ie/kpm_data_ie/kpm_ric_info/kpm_ric_event_trigger_def.c
                           ${CMAKE_CURRENT_SOURCE_DIR}/../dec/kpm_dec_asn.c
                           ${CMAKE_CURRENT_SOURCE_DIR}/../enc/kpm_enc_asn.c
                           ${CMAKE_CURRENT_SOURCE_DIR}/../../../util/alg_ds/alg/defer.c
@@ -110,7 +117,10 @@ add_executable(test_kpm_mir
                           #$<TARGET_OBJECTS:f1ap_types_obj> 
                           )
 
-                        target_link_libraries(test_kpm_mir  -lm)
+
+
+                          target_link_libraries(test_kpm_mir  -lm)
+
 
 target_compile_options(test_kpm_mir PUBLIC "-DASN_DISABLE_OER_SUPPORT -DPDU")
 

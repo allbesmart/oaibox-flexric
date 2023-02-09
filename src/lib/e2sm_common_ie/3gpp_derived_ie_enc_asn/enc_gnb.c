@@ -3,7 +3,9 @@
 #include "../../../util/conversions.h"
 #include "../../../sm/kpm_sm_v2.02/ie/asn/asn_constant.h"
 #include "../../../sm/kpm_sm_v2.02/ie/asn/asn_SEQUENCE_OF.h"
+#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-CP-F1AP-ID-Item.h"
 #include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-F1AP-ID-List.h"
+#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-CP-E1AP-ID-Item.h"
 #include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
 
 #include "enc_global_gnb_id.h"
@@ -50,8 +52,8 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
 
         for (size_t i = 0; i < gnb->gnb_cu_ue_f1ap_lst_len; i++)
         {
-            UEID_GNB_CU_F1AP_ID_List_t * f1_item = calloc(1, sizeof(UEID_GNB_CU_F1AP_ID_List_t));
-            f1_item = gnb->gnb_cu_ue_f1ap_lst[i];
+            UEID_GNB_CU_CP_F1AP_ID_Item_t * f1_item = calloc(1, sizeof(UEID_GNB_CU_CP_F1AP_ID_Item_t));
+            f1_item->gNB_CU_UE_F1AP_ID = (unsigned long)gnb->gnb_cu_ue_f1ap_lst[i];
             int rc1 = ASN_SEQUENCE_ADD(&gnb_asn->gNB_CU_UE_F1AP_ID_List->list, f1_item);
             assert(rc1 == 0);
         }
@@ -67,8 +69,8 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
 
         for (size_t i = 0; i < gnb->gnb_cu_cp_ue_e1ap_lst_len; i++)
         {
-            UEID_GNB_CU_CP_E1AP_ID_List_t * e1_item = calloc(1, sizeof(UEID_GNB_CU_CP_E1AP_ID_List_t));
-            e1_item = gnb->gnb_cu_cp_ue_e1ap_lst[i];
+            UEID_GNB_CU_CP_E1AP_ID_Item_t * e1_item = calloc(1, sizeof(UEID_GNB_CU_CP_E1AP_ID_Item_t));
+            e1_item->gNB_CU_CP_UE_E1AP_ID = gnb->gnb_cu_cp_ue_e1ap_lst[i];
             int rc1 = ASN_SEQUENCE_ADD(&gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list, e1_item);
             assert(rc1 == 0);
         }
@@ -81,7 +83,7 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
     if (gnb->ran_ue_id != NULL)
     {
         gnb_asn->ran_UEID->buf = calloc(8, sizeof(*gnb_asn->ran_UEID->buf));
-        gnb_asn->ran_UEID->buf = gnb->ran_ue_id;
+        memcpy(&gnb_asn->ran_UEID->buf, gnb->ran_ue_id, 8);
         gnb_asn->ran_UEID->size = sizeof(gnb->ran_ue_id);
     }
     
@@ -93,7 +95,7 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
     if (gnb->ng_ran_node_ue_xnap_id != NULL)
     {
         gnb_asn->m_NG_RAN_UE_XnAP_ID = calloc(1, sizeof(*gnb_asn->m_NG_RAN_UE_XnAP_ID));
-        gnb_asn->m_NG_RAN_UE_XnAP_ID = gnb->ng_ran_node_ue_xnap_id;
+        gnb_asn->m_NG_RAN_UE_XnAP_ID = (unsigned long *)gnb->ng_ran_node_ue_xnap_id;
     }
 
 
@@ -101,12 +103,12 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
     // 6.2.3.3
     // Optional
 
-    gnb_asn->globalGNB_ID = enc_global_gnb_id_asn(&gnb->global_gnb_id);
+    gnb_asn->globalGNB_ID = enc_global_gnb_id_asn(gnb->global_gnb_id);
 
 
     // Global NG-RAN Node ID
     // C-ifDCSetup
-    gnb_asn->globalNG_RANNode_ID = enc_global_ng_ran_asn(&gnb->global_ng_ran_node_id);
+    gnb_asn->globalNG_RANNode_ID = enc_global_ng_ran_asn(gnb->global_ng_ran_node_id);
 
 
     return gnb_asn;

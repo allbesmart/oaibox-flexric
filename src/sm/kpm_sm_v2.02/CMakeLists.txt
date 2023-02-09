@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15) # setting this is required
 project(kpm_sm)            # this sets the project name
 
-
+add_subdirectory(test)
 # KPM Service Model
 #set(SM_ENCODING_KPM "ASN" CACHE STRING "The KPM SM encoding to use")
 #set_property(CACHE SM_ENCODING_KPM PROPERTY STRINGS "ASN")

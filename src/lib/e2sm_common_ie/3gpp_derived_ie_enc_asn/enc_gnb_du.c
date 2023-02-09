@@ -18,8 +18,8 @@ UEID_GNB_DU_t * enc_gNB_DU_UE_asn(const gnb_du_t * gnb_du)
     // Optional
 
     gnb_du_asn->ran_UEID->buf = calloc(8, sizeof(*gnb_du_asn->ran_UEID->buf));
-    gnb_du_asn->ran_UEID->buf = gnb_du->ran_ue_id;
+    memcpy(gnb_du_asn->ran_UEID->buf, gnb_du->ran_ue_id, 8);
     gnb_du_asn->ran_UEID->size = sizeof(gnb_du->ran_ue_id);
 
-    return &gnb_du_asn;
+    return gnb_du_asn;
 }

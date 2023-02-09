@@ -80,42 +80,50 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
   assert (pdu != NULL && "Memory exhausted");
 
   pdu->ric_Style_Type = (long)action_def->type;
-  
+  printf("this works 1\n");
  
   /* Action Definition Formats */
   switch (action_def->type) 
   {
     case FORMAT_1_ACTION_DEFINITION:
+    {
+      printf("this works 2\n");
       pdu->actionDefinition_formats.present = E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format1;
       pdu->actionDefinition_formats.choice.actionDefinition_Format1 = kpm_enc_action_def_frm_1_asn(&action_def->frm_1);
       break;
-
+    }
     case FORMAT_2_ACTION_DEFINITION:
+    {
       pdu->actionDefinition_formats.present = E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format2;
       pdu->actionDefinition_formats.choice.actionDefinition_Format2 = kpm_enc_action_def_frm_2_asn(&action_def->frm_2);
       break;
-      
+    }
     case FORMAT_3_ACTION_DEFINITION:
+    {
       pdu->actionDefinition_formats.present = E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format3;
       pdu->actionDefinition_formats.choice.actionDefinition_Format3 = kpm_enc_action_def_frm_3_asn(&action_def->frm_3);
       break;
-    
+    }
     case FORMAT_4_ACTION_DEFINITION:
+    {
       pdu->actionDefinition_formats.present = E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format4;
       pdu->actionDefinition_formats.choice.actionDefinition_Format4 = kpm_enc_action_def_frm_4_asn(&action_def->frm_4);
       break;
-
+    }
     case FORMAT_5_ACTION_DEFINITION:
+    {
       pdu->actionDefinition_formats.present = E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format5;
       pdu->actionDefinition_formats.choice.actionDefinition_Format5 = kpm_enc_action_def_frm_5_asn(&action_def->frm_5);
       break;
-
+    }
     default:
+    {
       assert(false && "Non valid KPM RIC Action Definition Format");
+    }
   }
 
 
-
+  printf("this works 3\n");
 
   /* XXX-tuning: 
    * below bytearray sizing needs to be reviewed and made dynamic. It looks too small for the general case of action definition.
@@ -128,7 +136,9 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
   assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
   ba.len = er.encoded;
 
-  ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, pdu);
+  printf("this works 4\n");
+
+  //ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, pdu);
 
   return ba;
 }

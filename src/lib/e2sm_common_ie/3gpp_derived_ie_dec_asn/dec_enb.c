@@ -29,7 +29,7 @@ enb_t dec_eNB_UE_asn(const UEID_ENB_t * enb_asn)
     if (enb_asn->m_eNB_UE_X2AP_ID != NULL)
     {
         enb.enb_ue_x2ap_id = calloc(1, sizeof(*enb.enb_ue_x2ap_id));
-        enb.enb_ue_x2ap_id = enb_asn->m_eNB_UE_X2AP_ID;
+        memcpy(enb.enb_ue_x2ap_id, enb_asn->m_eNB_UE_X2AP_ID, 1);
     }
 
 
@@ -38,13 +38,13 @@ enb_t dec_eNB_UE_asn(const UEID_ENB_t * enb_asn)
     if (enb_asn->m_eNB_UE_X2AP_ID_Extension != NULL)
     {
         enb.enb_ue_x2ap_id_extension = calloc(1, sizeof(*enb.enb_ue_x2ap_id_extension));
-        enb.enb_ue_x2ap_id_extension = enb_asn->m_eNB_UE_X2AP_ID_Extension;
+        memcpy(enb.enb_ue_x2ap_id_extension, enb_asn->m_eNB_UE_X2AP_ID_Extension, 1);
     }
 
 
     // Global eNB ID
     // C-ifDCSetup
-    enb.global_enb_id = dec_global_enb_id_asn(&enb_asn->globalENB_ID);
+    enb.global_enb_id = dec_global_enb_id_asn(enb_asn->globalENB_ID);
 
 
     return enb;

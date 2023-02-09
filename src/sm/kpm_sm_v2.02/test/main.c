@@ -11,7 +11,6 @@
 
 #include <time.h>
 
-#define Logme printf
 
 void test_kpm_ric_event_trigger_def_asn(void)
 {
@@ -79,27 +78,27 @@ int main()
 
   // Test off all the functions
 
-  Logme("KPM SM enc/dec test launched\n");
+  printf("KPM SM enc/dec test launched\n");
 
   // Event Trigger
   test_kpm_ric_event_trigger_def_asn();
 
-  Logme("KPM Event Trigger test succeeded\n");
+  printf("KPM Event Trigger test succeeded\n");
 
   // Action Definition
   test_kpm_act_def();
 
-  Logme("KPM Action Definition test succeeded\n");
+  printf("KPM Action Definition test succeeded\n");
 
   // Indication Header
   test_kpm_ind_hdr();
 
-  Logme("KPM Indication Header test succeeded\n");
+  printf("KPM Indication Header test succeeded\n");
 
   // Indication Message
   test_kpm_ind_msg();
 
-  Logme("KPM Indication Message test succeeded\n");
+  printf("KPM Indication Message test succeeded\n");
 
   return EXIT_SUCCESS;
 }

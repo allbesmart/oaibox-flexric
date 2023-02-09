@@ -13,7 +13,9 @@ MeasurementData_t kpm_enc_meas_data_asn(const meas_data_lst_t * meas_data, const
     assert((meas_data_len <= maxnoofMeasurementRecord && meas_data_len >= 1) 
               && "Number of measures not allowed");
     
-    MeasurementData_t meas_data_asn;
+    MeasurementData_t meas_data_asn = {0};
+    //  calloc(1, sizeof(MeasurementData_t));
+    // assert(meas_data_asn != NULL && "Memory exhausted");
 
     for (size_t i = 0; i<meas_data_len; i++)
     {
@@ -53,15 +55,12 @@ MeasurementData_t kpm_enc_meas_data_asn(const meas_data_lst_t * meas_data, const
 
 
         // Incomplete Flag - OPTIONAL
-        if (meas_data[i].incomplete_flag == TRUE_ENUM_VALUE)
+        if (meas_data[i].incomplete_flag != NULL)
         {
-            mData->incompleteFlag = malloc(sizeof(*mData->incompleteFlag));
+            assert(meas_data[i].incomplete_flag == TRUE_ENUM_VALUE && "has only one value (true)");
+            mData->incompleteFlag = calloc(1, sizeof(*mData->incompleteFlag));
             assert(mData->incompleteFlag != NULL && "Memory exhausted");
-            mData->incompleteFlag = (long *)meas_data[i].incomplete_flag;
-        }
-        else
-        {
-            assert(meas_data[i].incomplete_flag == 0 && "has only one value (true)");
+            mData->incompleteFlag = 0;
         }
 
 

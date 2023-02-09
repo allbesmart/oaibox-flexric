@@ -11,7 +11,7 @@ MeasurementInfoList_t kpm_enc_meas_info_asn(const meas_info_format_1_lst_t *meas
     assert((meas_info_len <= maxnoofMeasurementInfo && meas_info_len >= 1) 
               && "Number of measures not allowed");
     
-    MeasurementInfoList_t meas_list_asn;
+    MeasurementInfoList_t meas_list_asn = {0};
 
     int ret;
 

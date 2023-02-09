@@ -29,6 +29,9 @@ file(GLOB SRC_ENC_ASN_COMMON
     ${CMAKE_CURRENT_SOURCE_DIR}/../enc/enc_asn_kpm_common/*.c
 )
 
+# file(GLOB SRC_LIB_3GPP_DERIVED_IE
+#     ${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/e2sm_common_ie/3gpp_derived_ie/plmn_identity.c
+# )
 
 file(GLOB SRC_LIB_DEC_ASN_COMMON
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/e2sm_common_ie/dec_asn_sm_common/*.c
@@ -54,6 +57,7 @@ file(GLOB SRC_LIB_KPM_RIC_INFO
 file(GLOB SRC_LIB_KPM_RIC_INFO_COMMON
     ${CMAKE_CURRENT_SOURCE_DIR}/../ie/kpm_data_ie/data/*.c
 )
+
 
 
 option(CODE_COVERAGE "Code coverage" ON)
@@ -103,7 +107,7 @@ add_executable(test_kpm_mir
                           ${SRC_LIB_3GPP_ENC_ASN_COMMON} 
                           ${SRC_LIB_3GPP_DEC_ASN_COMMON} 
 
-
+                          ${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/e2sm_common_ie/3gpp_derived_ie/plmn_identity.c
 
                           #kpm_dec_action_def_frm_1_asn
                           #kpm_dec_event_trigger_def_frm_1_asn

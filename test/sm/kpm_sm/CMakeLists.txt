@@ -74,6 +74,7 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
                 ../../../src/sm/kpm_sm_v2.02/dec/dec_asn/dec_ric_action_def_frm_3.c
                 ../../../src/sm/kpm_sm_v2.02/dec/dec_asn/dec_ric_action_def_frm_4.c
                 ../../../src/sm/kpm_sm_v2.02/dec/dec_asn/dec_ric_action_def_frm_5.c
+                ../../../src/lib/e2sm_common_ie/3gpp_derived_ie/plmn_identity.c
 
                 # Why test and src?
                 ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_hdr_frm_1.c

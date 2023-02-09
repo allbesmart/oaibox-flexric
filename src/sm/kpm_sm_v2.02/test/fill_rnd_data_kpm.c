@@ -26,7 +26,7 @@ kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
   kpm_act_def_format_1_t action_def_frm_1 = {0};
 
   // Measurement Information
-  action_def_frm_1.meas_info_lst_len = 4;
+  action_def_frm_1.meas_info_lst_len = 1;
   action_def_frm_1.meas_info_lst = calloc(action_def_frm_1.meas_info_lst_len, sizeof(meas_info_format_1_lst_t));
   assert(action_def_frm_1.meas_info_lst != NULL && "Memory exhausted" );
   
@@ -38,7 +38,7 @@ kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
       memcpy(action_def_frm_1.meas_info_lst[i].meas_type.name.buf, "test", strlen("test"));
       action_def_frm_1.meas_info_lst[i].meas_type.name.len = strlen("test");
       // Label Information
-      action_def_frm_1.meas_info_lst[i].label_info_lst_len = 2;
+      action_def_frm_1.meas_info_lst[i].label_info_lst_len = 1;
       action_def_frm_1.meas_info_lst[i].label_info_lst = calloc(action_def_frm_1.meas_info_lst[i].label_info_lst_len, sizeof(label_info_lst_t));
       assert(action_def_frm_1.meas_info_lst[i].label_info_lst != NULL && "Memory exhausted" );
       for (size_t j = 0; j < action_def_frm_1.meas_info_lst[i].label_info_lst_len; j++)
@@ -110,16 +110,20 @@ kpm_ric_ind_hdr_format_1_t fill_kpm_ind_hdr_frm_1(void)
 
   int64_t t = time_now_us();
   hdr_frm_1.collectStartTime = t / 1000000; // needs to be truncated to 32 bits to arrive to a resolution of seconds
-  hdr_frm_1.fileformat_version->buf = NULL;
   
+  hdr_frm_1.fileformat_version = NULL;
+  
+  hdr_frm_1.sender_name = calloc(1, sizeof(byte_array_t));
   hdr_frm_1.sender_name->buf = calloc(strlen("My OAI-CU") + 1, sizeof(char));
   memcpy(hdr_frm_1.sender_name->buf, "My OAI-CU", strlen("My OAI-CU"));
   hdr_frm_1.sender_name->len = strlen("My OAI-CU");
   
+  hdr_frm_1.sender_type = calloc(1, sizeof(byte_array_t));
   hdr_frm_1.sender_type->buf = calloc(strlen("CU") + 1, sizeof(char));
   memcpy(hdr_frm_1.sender_type->buf, "CU", strlen("CU"));
   hdr_frm_1.sender_type->len = strlen("CU");
   
+  hdr_frm_1.vendor_name = calloc(1, sizeof(byte_array_t));
   hdr_frm_1.vendor_name->buf = calloc(strlen("OAI") + 1, sizeof(char));
   memcpy(hdr_frm_1.vendor_name->buf, "OAI", strlen("OAI"));
   hdr_frm_1.vendor_name->len = strlen("OAI");
@@ -142,8 +146,8 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
   kpm_ind_msg_format_1_t msg_frm_1 = {0};
   
   // Measurement Data
-  msg_frm_1.meas_data_lst_len = 4;
-  msg_frm_1.meas_data_lst = calloc(msg_frm_1.meas_data_lst_len, sizeof(meas_data_lst_t));
+  msg_frm_1.meas_data_lst_len = 1;
+  msg_frm_1.meas_data_lst = calloc(msg_frm_1.meas_data_lst_len, sizeof(*msg_frm_1.meas_data_lst));
   assert(msg_frm_1.meas_data_lst != NULL && "Memory exhausted" );
   
   for (size_t i = 0; i < msg_frm_1.meas_data_lst_len; i++)
@@ -152,11 +156,11 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
       msg_frm_1.meas_data_lst[i].incomplete_flag = NULL;
       
       // Measurement Record
-      msg_frm_1.meas_data_lst[i].meas_record_len = 2;
+      msg_frm_1.meas_data_lst[i].meas_record_len = 1;
       msg_frm_1.meas_data_lst[i].meas_record_lst = calloc(msg_frm_1.meas_data_lst[i].meas_record_len, sizeof(meas_record_lst_t));
       assert(msg_frm_1.meas_data_lst[i].meas_record_lst != NULL && "Memory exhausted" );
       
-      for (size_t j = 0; j < msg_frm_1.meas_data_lst[i].meas_record_len; i++)
+      for (size_t j = 0; j < msg_frm_1.meas_data_lst[i].meas_record_len; j++)
       {
           msg_frm_1.meas_data_lst[i].meas_record_lst[j].no_value = INTEGER_MEAS_VALUE;
           msg_frm_1.meas_data_lst[i].meas_record_lst[j].int_val = i+j;
@@ -167,7 +171,7 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
   msg_frm_1.gran_period_ms = NULL;
   
   // Measurement Information - OPTIONAL
-  msg_frm_1.meas_info_lst_len = 4;
+  msg_frm_1.meas_info_lst_len = 1;
   msg_frm_1.meas_info_lst = calloc(msg_frm_1.meas_info_lst_len, sizeof(meas_info_format_1_lst_t));
   assert(msg_frm_1.meas_info_lst != NULL && "Memory exhausted" );
   

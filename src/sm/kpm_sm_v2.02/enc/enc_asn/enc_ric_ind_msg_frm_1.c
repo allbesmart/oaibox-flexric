@@ -19,6 +19,7 @@ E2SM_KPM_IndicationMessage_Format1_t * kpm_enc_ind_msg_frm_1_asn(const kpm_ind_m
     //  2. Measurement Information List : [0, 65535], OPTIONAL
     if (ind_msg->meas_info_lst_len != 0)
     {
+        ind_msg_asn->measInfoList = calloc(ind_msg->meas_info_lst_len, sizeof(MeasurementInfoList_t));
         *ind_msg_asn->measInfoList = kpm_enc_meas_info_asn(ind_msg->meas_info_lst, ind_msg->meas_info_lst_len);
     }
     else

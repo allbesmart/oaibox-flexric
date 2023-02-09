@@ -7,14 +7,29 @@
 void free_kpm_ind_hdr_frm_1(kpm_ric_ind_hdr_format_1_t* src)
 {
   assert(src != NULL);
-  if (src->fileformat_version->buf != NULL)
+  if (src->fileformat_version != NULL)
+  {
     free_byte_array(*src->fileformat_version);
-  if (src->sender_name->buf != NULL)
+    free(src->fileformat_version);
+  }
+    
+  if (src->sender_name != NULL)
+  {
     free_byte_array(*src->sender_name);
-  if (src->sender_type->buf != NULL)
+    free(src->sender_name);
+  }
+    
+  if (src->sender_type != NULL)
+  {
     free_byte_array(*src->sender_type);
-  if (src->vendor_name->buf != NULL)
+    free(src->sender_type);
+  }
+    
+  if (src->vendor_name != NULL)
+  {
     free_byte_array(*src->vendor_name);
+    free(src->vendor_name);
+  }
 }
 
 kpm_ric_ind_hdr_format_1_t cp_kpm_ind_hdr_frm_1(kpm_ric_ind_hdr_format_1_t const* src)
@@ -24,13 +39,13 @@ kpm_ric_ind_hdr_format_1_t cp_kpm_ind_hdr_frm_1(kpm_ric_ind_hdr_format_1_t const
 
   ret.collectStartTime = src->collectStartTime;
   
-  if (src->fileformat_version->buf)
+  if (src->fileformat_version)
     *ret.fileformat_version = copy_byte_array(*src->fileformat_version);
-  if (src->sender_name->buf)
+  if (src->sender_name)
     *ret.sender_name = copy_byte_array(*src->sender_name);
-  if (src->sender_type->buf)
+  if (src->sender_type)
     *ret.sender_type = copy_byte_array(*src->sender_type);
-  if (src->vendor_name->buf)
+  if (src->vendor_name)
     *ret.vendor_name = copy_byte_array(*src->vendor_name);
   return ret;
 }

@@ -18,7 +18,7 @@ E2SM_KPM_IndicationHeader_Format1_t * kpm_enc_ind_hdr_frm_1_asn(const kpm_ric_in
 
     int ret;
 
-    if (ind_hdr->fileformat_version->buf != NULL){
+    if (ind_hdr->fileformat_version != NULL){
         ind_hdr_asn->fileFormatversion = calloc(1, sizeof(*ind_hdr_asn->fileFormatversion));
 
         const size_t len = ind_hdr->fileformat_version->len;
@@ -26,7 +26,7 @@ E2SM_KPM_IndicationHeader_Format1_t * kpm_enc_ind_hdr_frm_1_asn(const kpm_ric_in
         assert(ret == 0);
     }
 
-    if (ind_hdr->sender_name->buf != NULL){
+    if (ind_hdr->sender_name != NULL){
         ind_hdr_asn->senderName = calloc(1, sizeof(*ind_hdr_asn->senderName));
 
         const size_t len = ind_hdr->sender_name->len;
@@ -34,7 +34,7 @@ E2SM_KPM_IndicationHeader_Format1_t * kpm_enc_ind_hdr_frm_1_asn(const kpm_ric_in
         assert(ret == 0);
     }
 
-    if (ind_hdr->sender_type->buf != NULL){
+    if (ind_hdr->sender_type != NULL){
         ind_hdr_asn->senderType = calloc(1, sizeof(*ind_hdr_asn->senderType));
 
         const size_t len = ind_hdr->sender_type->len;
@@ -42,7 +42,7 @@ E2SM_KPM_IndicationHeader_Format1_t * kpm_enc_ind_hdr_frm_1_asn(const kpm_ric_in
         assert(ret == 0);
     }
 
-	if (ind_hdr->vendor_name->buf != NULL) {
+	if (ind_hdr->vendor_name != NULL) {
         ind_hdr_asn->vendorName = calloc(1, sizeof(*ind_hdr_asn->vendorName));
 
         const size_t len = ind_hdr->vendor_name->len;

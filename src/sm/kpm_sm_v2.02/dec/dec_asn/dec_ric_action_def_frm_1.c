@@ -26,8 +26,10 @@ kpm_act_def_format_1_t kpm_dec_action_def_frm_1_asn(const  E2SM_KPM_ActionDefini
 
 
     // 3. Cell Global ID - OPTIONAL
-
-    act_def.cell_global_id = dec_cell_global_id_asn(act_def_asn->cellGlobalID);
+    if (act_def.cell_global_id != NULL)
+    {
+        act_def.cell_global_id = dec_cell_global_id_asn(act_def_asn->cellGlobalID);
+    }
 
 
     // 4. Measurement Bin Range Information List : [0, 65535]

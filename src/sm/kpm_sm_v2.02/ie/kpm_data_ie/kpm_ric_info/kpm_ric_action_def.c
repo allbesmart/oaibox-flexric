@@ -12,6 +12,10 @@ void free_kpm_action_def(kpm_act_def_t * src)
     case FORMAT_1_ACTION_DEFINITION:
         free_kpm_action_def_frm_1(&src->frm_1);
         break;
+
+    case FORMAT_2_ACTION_DEFINITION:
+        free_kpm_action_def_frm_2(&src->frm_2);
+        break;
     
     // to be filled with other formats
 
@@ -35,6 +39,11 @@ bool eq_kpm_action_def(kpm_act_def_t const * m0, kpm_act_def_t const * m1)
     {
     case FORMAT_1_ACTION_DEFINITION:
         if (eq_kpm_action_def_frm_1(&m0->frm_1, &m1->frm_1) != true)
+            return false;
+        break;
+
+    case FORMAT_2_ACTION_DEFINITION:
+        if (eq_kpm_action_def_frm_2(&m0->frm_2, &m1->frm_2) != true)
             return false;
         break;
     

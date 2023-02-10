@@ -29,9 +29,13 @@ file(GLOB SRC_ENC_ASN_COMMON
     ${CMAKE_CURRENT_SOURCE_DIR}/../enc/enc_asn_kpm_common/*.c
 )
 
-# file(GLOB SRC_LIB_3GPP_DERIVED_IE
-#     ${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/e2sm_common_ie/3gpp_derived_ie/plmn_identity.c
-# )
+file(GLOB SRC_LIB_3GPP_DERIVED_IE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/e2sm_common_ie/3gpp_derived_ie/*.c
+)
+
+file(GLOB SRC_LIB_SM_COMMON_IE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/e2sm_common_ie/sm_common_ie/*.c
+)
 
 file(GLOB SRC_LIB_DEC_ASN_COMMON
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/e2sm_common_ie/dec_asn_sm_common/*.c
@@ -87,6 +91,9 @@ add_executable(test_kpm_mir
 
                           ${SRC_LIB_KPM_RIC_INFO}
                           ${SRC_LIB_KPM_RIC_INFO_COMMON}
+                          ${SRC_LIB_SM_COMMON_IE}
+                          ${SRC_LIB_3GPP_DERIVED_IE}
+
 
                         #   ${CMAKE_CURRENT_SOURCE_DIR}/../ie/kpm_data_ie/kpm_ric_info/kpm_ric_event_trigger_def.c
                           ${CMAKE_CURRENT_SOURCE_DIR}/../dec/kpm_dec_asn.c
@@ -107,7 +114,6 @@ add_executable(test_kpm_mir
                           ${SRC_LIB_3GPP_ENC_ASN_COMMON} 
                           ${SRC_LIB_3GPP_DEC_ASN_COMMON} 
 
-                          ${CMAKE_CURRENT_SOURCE_DIR}/../../../lib/e2sm_common_ie/3gpp_derived_ie/plmn_identity.c
 
                           #kpm_dec_action_def_frm_1_asn
                           #kpm_dec_event_trigger_def_frm_1_asn

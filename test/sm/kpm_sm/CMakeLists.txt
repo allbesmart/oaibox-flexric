@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
 
-
 project (TEST_KPM_SM)
 set(CMAKE_BUILD_TYPE Debug)
 set (CMAKE_C_FLAGS "-Wall -Wextra --std=gnu11 -g -fno-omit-frame-pointer") 
@@ -9,10 +8,16 @@ set(SM_ENCODING_KPM "PLAIN" CACHE STRING "The SM encoding to use")
 set_property(CACHE SM_ENCODING_KPM PROPERTY STRINGS "PLAIN" "ASN" "FLATBUFFERS")
 message(STATUS "Selected SM_ENCODING_KPM: ${SM_ENCODING_KPM} for tests")
 
+
+
 if(SM_ENCODING_KPM STREQUAL "ASN")
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}../ie/asn/ )
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   file(GLOB asn_sources "../../../src/sm/kpm_sm_v2.02/ie/asn/*.c")
+  file(GLOB SRC_LIB_3GPP_DEC_ASN_COMMON
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../src/lib/e2sm_common_ie/3gpp_derived_ie_dec_asn/*.c)
+  file(GLOB SRC_LIB_3GPP_ENC_ASN_COMMON
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../src/lib/e2sm_common_ie/3gpp_derived_ie_enc_asn/*.c)
   add_executable(test_kpm_sm 
                       main.c 
                       ../../../src/sm/sm_proc_data.c 
@@ -29,8 +34,8 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
                       ../../../src/sm/kpm_sm_v2.02/enc/enc_asn/enc_ric_ind_hdr_frm_1.c
                       ../../../src/sm/kpm_sm_v2.02/enc/enc_asn/enc_ric_ind_msg_frm_2.c
 
-
-
+                      ${SRC_LIB_3GPP_DEC_ASN_COMMON}
+                      ${SRC_LIB_3GPP_ENC_ASN_COMMON}
 
                       ../../../src/sm/kpm_sm_v2.02/dec/kpm_dec_asn.c 
                       ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.c 
@@ -43,6 +48,7 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
                 ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
                 ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
                 ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
+                ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_2.c
                 ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/data/label_info_lst.c
                 ../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ran_function_def.c
                 ../../../src/sm/kpm_sm_v2.02/enc/enc_asn/enc_ric_event_trigger_frm_1.c
@@ -75,6 +81,9 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
                 ../../../src/sm/kpm_sm_v2.02/dec/dec_asn/dec_ric_action_def_frm_4.c
                 ../../../src/sm/kpm_sm_v2.02/dec/dec_asn/dec_ric_action_def_frm_5.c
                 ../../../src/lib/e2sm_common_ie/3gpp_derived_ie/plmn_identity.c
+                ../../../src/lib/e2sm_common_ie/sm_common_ie/ue_id.c
+                ../../../src/lib/e2sm_common_ie/enc_asn_sm_common/enc_ue_id.c
+                ../../../src/lib/e2sm_common_ie/dec_asn_sm_common/dec_ue_id.c
 
                 # Why test and src?
                 ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_hdr_frm_1.c

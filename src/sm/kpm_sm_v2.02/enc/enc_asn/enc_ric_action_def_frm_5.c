@@ -4,6 +4,7 @@
 
 #include "enc_ric_action_def_frm_5.h"
 #include "enc_ric_action_def_frm_1.h"
+#include "../../../../lib/e2sm_common_ie/enc_asn_sm_common/enc_ue_id.h"
 
 
 E2SM_KPM_ActionDefinition_Format5_t * kpm_enc_action_def_frm_5_asn(const kpm_act_def_format_5_t * act_def_frm_5)
@@ -15,9 +16,9 @@ E2SM_KPM_ActionDefinition_Format5_t * kpm_enc_action_def_frm_5_asn(const kpm_act
 
     for (size_t i = 0; i < act_def_frm_5->ue_id_lst_len; i++)
     {
-
-        /* to be filled : UE_id */
-
+        UEID_t ue_item = enc_ue_id_asn(&act_def_frm_5->ue_id_lst[i]);
+        int rc1 = ASN_SEQUENCE_ADD(&act_def_frm_5_asn->matchingUEidList.list, &ue_item);
+        assert(rc1 == 0);
     }
 
 

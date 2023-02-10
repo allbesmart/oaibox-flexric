@@ -43,6 +43,10 @@ typedef struct {
 	
 } ue_id_t;
 
+void free_ue_id(ue_id_t * src);
+
+bool eq_ue_id(ue_id_t const * m0, ue_id_t const * m1);
+
 #ifdef __cplusplus
 }
 #endif

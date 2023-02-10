@@ -63,7 +63,7 @@ bool eq_kpm_action_def_frm_1(kpm_act_def_format_1_t const * m0, kpm_act_def_form
     if (m0->meas_info_lst[i].label_info_lst_len != m1->meas_info_lst[i].label_info_lst_len)
       return false;
     
-    for (size_t j = 0; j < m0->meas_info_lst[i].label_info_lst_len; ++j)
+    for (size_t j = 0; j < m0->meas_info_lst[i].label_info_lst_len; j++)
     {
       if (eq_label_info(&m0->meas_info_lst[i].label_info_lst[j], &m1->meas_info_lst[i].label_info_lst[j]) != true)
         return false;

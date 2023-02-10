@@ -155,9 +155,9 @@ void free_kpm_subscription_data(kpm_ric_subscription_t* subscription)
         free_kpm_action_def_frm_1(&subscription->kpm_act_def.frm_1);
         break;
 
-    // case FORMAT_2_ACTION_DEFINITION:
-    //     free_kpm_action_def_frm_2(&subscription->kpm_act_def.frm_2);
-    //     break;
+    case FORMAT_2_ACTION_DEFINITION:
+        free_kpm_action_def_frm_2(&subscription->kpm_act_def.frm_2);
+        break;
 
     // case FORMAT_3_ACTION_DEFINITION:
     //     free_kpm_action_def_frm_3(&subscription->kpm_act_def.frm_3);

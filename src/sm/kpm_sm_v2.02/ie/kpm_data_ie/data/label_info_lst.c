@@ -18,8 +18,12 @@ void cp_label_info(label_info_lst_t *dst, label_info_lst_t const *src)
   assert(src != NULL);
   assert(dst != NULL);
 
-  dst->noLabel = calloc(1, sizeof(enum_value_e));
-  dst->noLabel = src->noLabel;
+  if (src->noLabel != NULL)
+  {
+    dst->noLabel = calloc(1, sizeof(enum_value_e));
+    dst->noLabel = src->noLabel;
+  }
+  
   if (src->plmn_id != NULL) {
     dst->plmn_id = malloc(sizeof(*dst->plmn_id));
     *dst->plmn_id = *src->plmn_id;
@@ -33,7 +37,7 @@ void free_label_info(label_info_lst_t *l)
   assert(l != NULL);
 
   if (l->noLabel)
-    free (l->noLabel);
+    free(l->noLabel);
   if (l->plmn_id)
     free(l->plmn_id);
  

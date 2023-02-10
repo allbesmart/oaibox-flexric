@@ -63,12 +63,58 @@ kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
   return action_def_frm_1;
 }
 
+kpm_act_def_format_2_t fill_kpm_action_def_frm_2(void)
+{
+  kpm_act_def_format_2_t action_def_frm_2 = {0};
+
+  // UE ID
+  action_def_frm_2.ue_id.type = GNB_UE_ID;
+  gnb_t gnb = {0};
+  gnb.amf_ue_ngap_id = 1;
+  gnb.guami.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+  
+  gnb.guami.amf_region_id = 1;  // 48 example in spec
+  gnb.guami.amf_set_id = 1;  // 001 example in spec
+  gnb.guami.amf_ptr = 1;  // 12 example in spec
+
+  gnb.gnb_cu_ue_f1ap_lst_len = 1;
+  gnb.gnb_cu_ue_f1ap_lst = calloc(gnb.gnb_cu_ue_f1ap_lst_len, sizeof(uint32_t));
+  for (size_t i = 0; i < gnb.gnb_cu_ue_f1ap_lst_len; i++)
+  {
+    gnb.gnb_cu_ue_f1ap_lst[i] = i;
+  }
+
+  gnb.gnb_cu_cp_ue_e1ap_lst_len = 1;
+  gnb.gnb_cu_cp_ue_e1ap_lst = calloc(gnb.gnb_cu_cp_ue_e1ap_lst_len, sizeof(uint32_t));
+  for (size_t i = 0; i < gnb.gnb_cu_cp_ue_e1ap_lst_len; i++)
+  {
+    gnb.gnb_cu_cp_ue_e1ap_lst[i] = i;
+  }
+
+  gnb.ran_ue_id = NULL;
+  gnb.ng_ran_node_ue_xnap_id = NULL;
+  gnb.global_gnb_id = NULL;
+  gnb.global_ng_ran_node_id = NULL;
+
+  action_def_frm_2.ue_id.gnb = gnb;
+
+  // Action Definition Format 1
+
+  action_def_frm_2.action_def_format_1 = fill_kpm_action_def_frm_1();
+
+  return action_def_frm_2;
+}
+
 kpm_act_def_t fill_kpm_action_def(void)
 {
   kpm_act_def_t action_def = {0};
 
-  action_def.type = FORMAT_1_ACTION_DEFINITION;
-  action_def.frm_1 = fill_kpm_action_def_frm_1();
+
+  // action_def.type = FORMAT_1_ACTION_DEFINITION;
+  // action_def.frm_1 = fill_kpm_action_def_frm_1();
+
+  action_def.type = FORMAT_2_ACTION_DEFINITION;
+  action_def.frm_2 = fill_kpm_action_def_frm_2();
 
   return action_def;
 }
@@ -146,7 +192,7 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
   kpm_ind_msg_format_1_t msg_frm_1 = {0};
   
   // Measurement Data
-  msg_frm_1.meas_data_lst_len = 1;
+  msg_frm_1.meas_data_lst_len = 1 + rand()%10;  // to check with random list length
   msg_frm_1.meas_data_lst = calloc(msg_frm_1.meas_data_lst_len, sizeof(*msg_frm_1.meas_data_lst));
   assert(msg_frm_1.meas_data_lst != NULL && "Memory exhausted" );
   
@@ -156,13 +202,13 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
       msg_frm_1.meas_data_lst[i].incomplete_flag = NULL;
       
       // Measurement Record
-      msg_frm_1.meas_data_lst[i].meas_record_len = 1;
+      msg_frm_1.meas_data_lst[i].meas_record_len = 1 + rand()%10;  // to check with random list length
       msg_frm_1.meas_data_lst[i].meas_record_lst = calloc(msg_frm_1.meas_data_lst[i].meas_record_len, sizeof(meas_record_lst_t));
       assert(msg_frm_1.meas_data_lst[i].meas_record_lst != NULL && "Memory exhausted" );
       
       for (size_t j = 0; j < msg_frm_1.meas_data_lst[i].meas_record_len; j++)
       {
-          msg_frm_1.meas_data_lst[i].meas_record_lst[j].no_value = INTEGER_MEAS_VALUE;
+          msg_frm_1.meas_data_lst[i].meas_record_lst[j].value = INTEGER_MEAS_VALUE;
           msg_frm_1.meas_data_lst[i].meas_record_lst[j].int_val = i+j;
       }
   }
@@ -194,6 +240,8 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
       {
           msg_frm_1.meas_info_lst[i].label_info_lst[j].plmn_id = malloc(sizeof(plmn_t));
           *msg_frm_1.meas_info_lst[i].label_info_lst[j].plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+          // msg_frm_1.meas_info_lst[i].label_info_lst[j].noLabel = malloc(sizeof(enum_value_e));
+          // msg_frm_1.meas_info_lst[i].label_info_lst[j].noLabel = TRUE_ENUM_VALUE;
       }
   }
 

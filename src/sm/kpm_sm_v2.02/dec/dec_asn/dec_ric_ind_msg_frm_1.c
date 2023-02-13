@@ -20,7 +20,7 @@ kpm_ind_msg_format_1_t kpm_dec_ind_msg_frm_1_asn(const E2SM_KPM_IndicationMessag
     if (ind_msg_asn->measInfoList->list.count != 0)
     {
         ind_msg.meas_info_lst_len = ind_msg_asn->measInfoList->list.count;
-        ind_msg.meas_info_lst = kpm_dec_meas_info_asn(ind_msg_asn->measInfoList, ind_msg.meas_info_lst_len);
+        ind_msg.meas_info_lst = kpm_dec_meas_info_asn(ind_msg_asn->measInfoList);
     }
     else
     {

@@ -21,20 +21,19 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
     UEID_GNB_t * gnb_asn = calloc(1, sizeof(UEID_GNB_t));
     assert(gnb_asn != NULL && "Memory exhausted");
 
-
+   // 6.2.3.16
+   // Mandatory
     // AMF UE NGAP ID
-    gnb_asn->amf_UE_NGAP_ID.buf = calloc(8, sizeof(uint8_t));
+    gnb_asn->amf_UE_NGAP_ID.buf = calloc(5, sizeof(uint8_t));
     assert(gnb_asn->amf_UE_NGAP_ID.buf != NULL && "Memory exhausted");
 
 // Do not pass the ownership of the data one is pointer, the other no
     //gnb_asn->amf_UE_NGAP_ID.buf = gnb->amf_ue_ngap_id;
-    memcpy(gnb_asn->amf_UE_NGAP_ID.buf, &gnb->amf_ue_ngap_id, 8);
-    gnb_asn->amf_UE_NGAP_ID.size = 8;
+    memcpy(gnb_asn->amf_UE_NGAP_ID.buf, &gnb->amf_ue_ngap_id, 5);
+    gnb_asn->amf_UE_NGAP_ID.size = 5;
 
 
     // GUAMI
-
-
     MCC_MNC_TO_PLMNID(gnb->guami.plmn_id.mcc, gnb->guami.plmn_id.mnc, gnb->guami.plmn_id.mnc_digit_len, &gnb_asn->guami.pLMNIdentity);
 
     AMF_REGION_TO_BIT_STRING(gnb->guami.amf_region_id, &gnb_asn->guami.aMFRegionID);

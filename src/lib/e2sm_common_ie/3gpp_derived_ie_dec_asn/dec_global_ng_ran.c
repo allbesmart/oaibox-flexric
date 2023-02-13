@@ -6,6 +6,8 @@
 
 global_ng_ran_node_id_t * dec_global_ng_ran_asn(const GlobalNGRANNodeID_t * global_ng_ran_asn)
 {
+  assert(global_ng_ran_asn != NULL);
+
     global_ng_ran_node_id_t * global_ng_ran = calloc(1, sizeof(global_ng_ran_node_id_t));
     assert (global_ng_ran != NULL && "Memory exhausted");
 

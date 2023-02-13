@@ -737,4 +737,5 @@ SupportedSULFreqBandItem ::= SEQUENCE {
     freqBandIndicatorNr         INTEGER (1..1024,...),
     ...
 }
+
 END

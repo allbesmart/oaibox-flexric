@@ -13,8 +13,11 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 {
     gnb_t gnb = {0};
 
+    // 6.2.3.16
+    // Mandatory
     // AMF UE NGAP ID
-    memcpy(&gnb.amf_ue_ngap_id, gnb_asn->amf_UE_NGAP_ID.buf, 8);
+    assert(gnb_asn->amf_UE_NGAP_ID.buf != NULL);
+    memcpy(&gnb.amf_ue_ngap_id, gnb_asn->amf_UE_NGAP_ID.buf, 5);
 
 
     // GUAMI
@@ -30,7 +33,6 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 
     // gNB-CU UE F1AP ID List
     // C-ifCUDUseparated 
-
     if (gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count != 0)
     {
         assert(gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count >= 1 && gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count <= maxF1APid);
@@ -70,10 +72,15 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 
     // RAN UE ID
     // Optional
-    if (gnb_asn->ran_UEID->buf != NULL)
+    if (gnb_asn->ran_UEID != NULL)
     {
         gnb.ran_ue_id = calloc(1, sizeof(*gnb.ran_ue_id));
-        memcpy(gnb.ran_ue_id, gnb_asn->ran_UEID->buf, 1);
+        assert(gnb.ran_ue_id != NULL && "Memory exhausted" );
+        
+        assert(gnb_asn->ran_UEID->buf != NULL);
+        assert(gnb_asn->ran_UEID->size == 8);
+
+        memcpy(gnb.ran_ue_id, gnb_asn->ran_UEID->buf, 8);
     }
     
 
@@ -90,14 +97,14 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     // Global gNB ID
     // 6.2.3.3
     // Optional
-
-    gnb.global_gnb_id = dec_global_gnb_id_asn(gnb_asn->globalGNB_ID);
+    if(gnb_asn->globalGNB_ID != NULL)
+      gnb.global_gnb_id = dec_global_gnb_id_asn(gnb_asn->globalGNB_ID);
 
 
     // Global NG-RAN Node ID
     // C-ifDCSetup
-
-    gnb.global_ng_ran_node_id = dec_global_ng_ran_asn(gnb_asn->globalNG_RANNode_ID);
+    if(gnb_asn->globalNG_RANNode_ID != NULL)
+      gnb.global_ng_ran_node_id = dec_global_ng_ran_asn(gnb_asn->globalNG_RANNode_ID);
 
 
     return gnb;

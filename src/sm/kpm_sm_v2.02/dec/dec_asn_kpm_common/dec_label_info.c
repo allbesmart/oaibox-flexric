@@ -6,6 +6,7 @@
 
 label_info_lst_t kpm_dec_label_info_asn(const LabelInfoItem_t * label_info_asn)
 {
+    assert(label_info_asn != NULL);
     label_info_lst_t label_info = {0};
     // calloc(1, sizeof(label_info_lst_t));
     // assert (label_info != NULL && "Memory exhausted");
@@ -23,7 +24,7 @@ label_info_lst_t kpm_dec_label_info_asn(const LabelInfoItem_t * label_info_asn)
 
 
     if (label_info_asn->measLabel.plmnID != NULL) {
-        label_info.plmn_id = calloc(1, sizeof(*label_info.plmn_id));
+        label_info.plmn_id = calloc(1, sizeof( plmn_t ));  
         PLMNID_TO_MCC_MNC(label_info_asn->measLabel.plmnID, label_info.plmn_id->mcc, label_info.plmn_id->mnc, label_info.plmn_id->mnc_digit_len);
     }
 

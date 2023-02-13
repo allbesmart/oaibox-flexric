@@ -16,7 +16,7 @@ kpm_act_def_format_1_t kpm_dec_action_def_frm_1_asn(const  E2SM_KPM_ActionDefini
               && "Number of measures not allowed");
     
     act_def.meas_info_lst_len = act_def_asn->measInfoList.list.count;
-    act_def.meas_info_lst = kpm_dec_meas_info_asn(&act_def_asn->measInfoList, act_def.meas_info_lst_len);
+    act_def.meas_info_lst = kpm_dec_meas_info_asn(&act_def_asn->measInfoList);
 
 
     // 2. Granularity Period : [1, 4294967295]

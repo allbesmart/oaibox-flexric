@@ -26,32 +26,39 @@ kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
   kpm_act_def_format_1_t action_def_frm_1 = {0};
 
   // Measurement Information
-  action_def_frm_1.meas_info_lst_len = 1;
+  // [1, 65535]
+  // mir: Here there is a bug. uncomment the following line i.e., (rand() % 65535)
+  action_def_frm_1.meas_info_lst_len = 64; //(rand() % 65535) + 1;
+                                            
   action_def_frm_1.meas_info_lst = calloc(action_def_frm_1.meas_info_lst_len, sizeof(meas_info_format_1_lst_t));
   assert(action_def_frm_1.meas_info_lst != NULL && "Memory exhausted" );
   
   for (size_t i = 0; i < action_def_frm_1.meas_info_lst_len; i++)
   {
+    meas_info_format_1_lst_t* meas_info = &action_def_frm_1.meas_info_lst[i];
       // Measurement Type
-      action_def_frm_1.meas_info_lst[i].meas_type.type = NAME_MEAS_TYPE;
-      action_def_frm_1.meas_info_lst[i].meas_type.name.buf = calloc(strlen("test") + 1, sizeof(char));
-      memcpy(action_def_frm_1.meas_info_lst[i].meas_type.name.buf, "test", strlen("test"));
-      action_def_frm_1.meas_info_lst[i].meas_type.name.len = strlen("test");
+      meas_info->meas_type.type = NAME_MEAS_TYPE;
+      meas_info->meas_type.name.buf = calloc(strlen("test") + 1, sizeof(char));
+      memcpy(meas_info->meas_type.name.buf, "test", strlen("test"));
+      meas_info->meas_type.name.len = strlen("test");
       // Label Information
-      action_def_frm_1.meas_info_lst[i].label_info_lst_len = 1;
-      action_def_frm_1.meas_info_lst[i].label_info_lst = calloc(action_def_frm_1.meas_info_lst[i].label_info_lst_len, sizeof(label_info_lst_t));
-      assert(action_def_frm_1.meas_info_lst[i].label_info_lst != NULL && "Memory exhausted" );
-      for (size_t j = 0; j < action_def_frm_1.meas_info_lst[i].label_info_lst_len; j++)
+      // [1, 2147483647]
+     meas_info->label_info_lst_len = 2 ; // With the real number, we can run out of memory i.e., 2147483647
+     meas_info->label_info_lst = calloc(meas_info->label_info_lst_len, sizeof(label_info_lst_t));
+      assert(meas_info->label_info_lst != NULL && "Memory exhausted" );
+      for (size_t j = 0; j < meas_info->label_info_lst_len; j++)
       {
-          action_def_frm_1.meas_info_lst[i].label_info_lst[j].plmn_id = malloc(sizeof(plmn_t));
-          *action_def_frm_1.meas_info_lst[i].label_info_lst[j].plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
-          // action_def_frm_1.meas_info_lst[i].label_info_lst[j].noLabel = malloc(sizeof(enum_value_e));
-          // action_def_frm_1.meas_info_lst[i].label_info_lst[j].noLabel = TRUE_ENUM_VALUE;
+        meas_info->label_info_lst[j].plmn_id = malloc(sizeof(plmn_t));
+        assert(meas_info->label_info_lst[j].plmn_id  != NULL);
+
+        *meas_info->label_info_lst[j].plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+        // action_def_frm_1.meas_info_lst[i].label_info_lst[j].noLabel = malloc(sizeof(enum_value_e));
+        // action_def_frm_1.meas_info_lst[i].label_info_lst[j].noLabel = TRUE_ENUM_VALUE;
       }
   }
   
   // Granularity Period
-  action_def_frm_1.gran_period_ms = 1;
+  action_def_frm_1.gran_period_ms = rand();
   
   // Cell Global ID - OPTIONAL
   action_def_frm_1.cell_global_id = NULL;

@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.15) # setting this is required
 project(kpm_sm)            # this sets the project name
 
+add_subdirectory(dec)
+add_subdirectory(enc)
+add_subdirectory(ie)
 add_subdirectory(test)
 # KPM Service Model
 #set(SM_ENCODING_KPM "ASN" CACHE STRING "The KPM SM encoding to use")
@@ -21,11 +24,12 @@ set(SM_ENCODING_KPM_SRC
                       ../../util/alg_ds/ds/assoc_container/bimap.c
                       ie/kpm_data_ie.c
 
-                      ie/kpm_data_ie/data/label_info_lst.c
-                      ie/kpm_data_ie/kpm_ric_info/kpm_ran_function_def.c
-                      ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
-                      ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
-                      ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+                      $<TARGET_OBJECTS:kpm_data_ie_obj>
+                      # ie/kpm_data_ie/data/label_info_lst.c
+                      # ie/kpm_data_ie/kpm_ric_info/kpm_ran_function_def.c
+                      # ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
+                      # ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
+                      # ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
 
                       )
 
@@ -40,6 +44,8 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
   add_subdirectory(ie/asn)
   add_library(kpm_sm SHARED
                       $<TARGET_OBJECTS:e2sm_kpm_asn1_obj>
+                      $<TARGET_OBJECTS:kpm_e2sm_specific_ie_dec_asn_obj>
+                      $<TARGET_OBJECTS:kpm_e2sm_specific_ie_enc_asn_obj>
                       ${SM_ENCODING_KPM_SRC}
                       enc/kpm_enc_asn.c 
                       dec/kpm_dec_asn.c 

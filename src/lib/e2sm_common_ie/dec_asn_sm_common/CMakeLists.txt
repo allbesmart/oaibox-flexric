@@ -2,8 +2,12 @@ set(SM_COMMON_DEC_ASN_SRCS
     dec_cell_global_id.c
     dec_ue_id.c)
 
-add_library(sm_common_dec_asn_obj OBJECT ${SM_COMMON_DEC_ASN_SRCS})
+add_library(sm_common_dec_asn_obj OBJECT
+                                ${SM_COMMON_DEC_ASN_SRCS}
+                                $<TARGET_OBJECTS:e2sm_kpm_asn1_obj>)
 
+target_link_libraries(sm_common_dec_asn_obj PRIVATE
+                                e2sm_kpm_asn1_obj)
 
 target_include_directories(sm_common_dec_asn_obj PUBLIC
                                          "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"

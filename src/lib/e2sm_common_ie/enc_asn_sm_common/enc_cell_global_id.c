@@ -1,7 +1,8 @@
 #include <assert.h>
 #include <stdlib.h>
-#include "../../ap/ie/asn/OCTET_STRING.h"
+// #include "../../ap/ie/asn/OCTET_STRING.h"
 #include "../../../util/conversions.h"
+#include "../../../sm/kpm_sm_v2.02/ie/asn/OCTET_STRING.h"
 
 #include "../../../sm/kpm_sm_v2.02/ie/asn/CGI.h"
 #include "../../../sm/kpm_sm_v2.02/ie/asn/NR-CGI.h"

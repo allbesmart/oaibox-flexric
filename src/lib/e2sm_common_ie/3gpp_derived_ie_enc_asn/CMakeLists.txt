@@ -11,9 +11,13 @@ set(3GPP_DERIVED_IE_ENC_ASN_SRCS
     enc_ng_enb_du.c
     enc_ng_enb.c)
 
-add_library(3gpp_derived_ie_enc_asn_obj OBJECT ${3GPP_DERIVED_IE_ENC_ASN_SRCS})
+add_library(3gpp_derived_ie_enc_asn_obj OBJECT
+                                        ${3GPP_DERIVED_IE_ENC_ASN_SRCS}
+                                        $<TARGET_OBJECTS:e2sm_kpm_asn1_obj>)
 
-
+target_link_libraries(3gpp_derived_ie_enc_asn_obj PRIVATE
+                                        e2sm_kpm_asn1_obj)
+                                        
 target_include_directories(3gpp_derived_ie_enc_asn_obj PUBLIC
                                          "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
                                          )

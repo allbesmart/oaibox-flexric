@@ -1,5 +1,13 @@
-file(GLOB KPM_ENC_COMMON_ASN_SRCS *.c)
-# file(GLOB asn_sources "../../ie/asn/*.c")
+set(KPM_ENC_COMMON_ASN_SRCS 
+  enc_label_info.c
+  enc_matching_cond_frm_3.c
+  enc_matching_cond_frm_4.c
+  enc_meas_data.c
+  enc_meas_info_cond_ue.c
+  enc_meas_info_frm_1.c
+  enc_meas_info_frm_3.c
+  enc_test_info.c
+  )
 
 add_library(kpm_enc_common_asn_obj OBJECT
                                 ${KPM_ENC_COMMON_ASN_SRCS}
@@ -8,9 +16,5 @@ add_library(kpm_enc_common_asn_obj OBJECT
 target_link_libraries(kpm_enc_common_asn_obj PRIVATE
                                             e2sm_kpm_asn1_obj)
 
-target_include_directories(kpm_enc_common_asn_obj PUBLIC
-                                         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-                                         )
-              
 target_compile_options(kpm_enc_common_asn_obj PUBLIC "-DASN_DISABLE_OER_SUPPORT")
 target_compile_options(kpm_enc_common_asn_obj PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter -fPIC)

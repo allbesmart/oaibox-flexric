@@ -18,9 +18,6 @@ add_library(3gpp_derived_ie_enc_asn_obj OBJECT
 target_link_libraries(3gpp_derived_ie_enc_asn_obj PRIVATE
                                         e2sm_kpm_asn1_obj)
                                         
-target_include_directories(3gpp_derived_ie_enc_asn_obj PUBLIC
-                                         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-                                         )
               
 target_compile_options(3gpp_derived_ie_enc_asn_obj PUBLIC "-DASN_DISABLE_OER_SUPPORT")
 target_compile_options(3gpp_derived_ie_enc_asn_obj PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter -fPIC)

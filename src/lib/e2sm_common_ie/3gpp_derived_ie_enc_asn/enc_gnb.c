@@ -27,8 +27,6 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
     gnb_asn->amf_UE_NGAP_ID.buf = calloc(5, sizeof(uint8_t));
     assert(gnb_asn->amf_UE_NGAP_ID.buf != NULL && "Memory exhausted");
 
-// Do not pass the ownership of the data one is pointer, the other no
-    //gnb_asn->amf_UE_NGAP_ID.buf = gnb->amf_ue_ngap_id;
     memcpy(gnb_asn->amf_UE_NGAP_ID.buf, &gnb->amf_ue_ngap_id, 5);
     gnb_asn->amf_UE_NGAP_ID.size = 5;
 
@@ -55,7 +53,7 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
         for (size_t i = 0; i < gnb->gnb_cu_ue_f1ap_lst_len; i++)
         {
             UEID_GNB_CU_CP_F1AP_ID_Item_t * f1_item = calloc(1, sizeof(UEID_GNB_CU_CP_F1AP_ID_Item_t));
-            f1_item->gNB_CU_UE_F1AP_ID = gnb->gnb_cu_ue_f1ap_lst[i];
+            memcpy(&f1_item->gNB_CU_UE_F1AP_ID, &gnb->gnb_cu_ue_f1ap_lst[i], 1);
             int rc1 = ASN_SEQUENCE_ADD(&gnb_asn->gNB_CU_UE_F1AP_ID_List->list, f1_item);
             assert(rc1 == 0);
         }
@@ -74,7 +72,7 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
         for (size_t i = 0; i < gnb->gnb_cu_cp_ue_e1ap_lst_len; i++)
         {
             UEID_GNB_CU_CP_E1AP_ID_Item_t * e1_item = calloc(1, sizeof(UEID_GNB_CU_CP_E1AP_ID_Item_t));
-            e1_item->gNB_CU_CP_UE_E1AP_ID = gnb->gnb_cu_cp_ue_e1ap_lst[i];
+            memcpy(&e1_item->gNB_CU_CP_UE_E1AP_ID, &gnb->gnb_cu_cp_ue_e1ap_lst[i], 1);
             int rc1 = ASN_SEQUENCE_ADD(&gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list, e1_item);
             assert(rc1 == 0);
         }
@@ -88,8 +86,8 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
     {
         gnb_asn->ran_UEID = calloc(1, sizeof(*gnb_asn->ran_UEID));
         gnb_asn->ran_UEID->buf = calloc(8, sizeof(*gnb_asn->ran_UEID->buf));
-        memcpy(&gnb_asn->ran_UEID->buf, gnb->ran_ue_id, 8);
-        gnb_asn->ran_UEID->size = sizeof(gnb->ran_ue_id);
+        memcpy(gnb_asn->ran_UEID->buf, gnb->ran_ue_id, 8);
+        gnb_asn->ran_UEID->size = 8;
     }
     
 
@@ -100,7 +98,7 @@ UEID_GNB_t * enc_gNB_UE_asn(const gnb_t * gnb)
     if (gnb->ng_ran_node_ue_xnap_id != NULL)
     {
         gnb_asn->m_NG_RAN_UE_XnAP_ID = calloc(1, sizeof(*gnb_asn->m_NG_RAN_UE_XnAP_ID));
-        gnb_asn->m_NG_RAN_UE_XnAP_ID = (unsigned long *)gnb->ng_ran_node_ue_xnap_id;
+        memcpy(gnb_asn->m_NG_RAN_UE_XnAP_ID, gnb->ng_ran_node_ue_xnap_id, 1);
     }
 
 

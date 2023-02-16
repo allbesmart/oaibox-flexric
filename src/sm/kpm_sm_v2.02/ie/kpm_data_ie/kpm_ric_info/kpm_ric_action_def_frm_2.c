@@ -9,10 +9,11 @@ void free_kpm_action_def_frm_2(kpm_act_def_format_2_t * src)
     assert(src != NULL);
 
     // UE ID
-    free(&src->ue_id);
+    free_ue_id(&src->ue_id);
 
     // Action Definition 
     free_kpm_action_def_frm_1(&src->action_def_format_1);
+
 }
 
 

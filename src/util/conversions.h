@@ -547,7 +547,7 @@ do {                                                      \
 #define SHORT_MACRO_ENB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \
 do {                                                    \
     (bITsTRING)->buf = calloc(3, sizeof(uint8_t));      \
-    (bITsTRING)->buf[0] = (mACRO) >> 12;               \
+    (bITsTRING)->buf[0] = (mACRO) >> 10;               \
     (bITsTRING)->buf[1] = (mACRO) >> 4;                 \
     (bITsTRING)->buf[2] = ((mACRO) & 0x0f) << 4;        \
     (bITsTRING)->size = 3;                              \
@@ -557,8 +557,8 @@ do {                                                    \
 #define BIT_STRING_TO_SHORT_MACRO_ENB_ID(aSN, vALUE)            \
 do {                                                      \
     assert((aSN)->bits_unused == 6);                      \
-    vALUE = ((aSN)->buf[0] << 12) | ((aSN)->buf[1] << 4) \
-          | ((aSN)->buf[2] >> 4);  \
+    vALUE = ((aSN)->buf[0] << 10) | ((aSN)->buf[1] << 2) \
+          | ((aSN)->buf[2] >> 2);  \
 } while(0)
 
 #define LONG_MACRO_ENB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \

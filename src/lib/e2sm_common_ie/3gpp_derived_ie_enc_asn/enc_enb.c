@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include "../../../util/conversions.h"
+#include "../../../sm/kpm_sm_v2.02/ie/asn/asn_constant.h"
 
 #include "enc_enb.h"
 #include "enc_global_enb_id.h"
@@ -12,7 +13,7 @@ UEID_ENB_t * enc_eNB_UE_asn(const enb_t * enb)
 
     // Mandatory
     // MME UE S1AP ID
-    enb_asn->mME_UE_S1AP_ID = enb->mme_ue_s1ap_id;
+    memcpy(&enb_asn->mME_UE_S1AP_ID, &enb->mme_ue_s1ap_id, 1);
 
     // Mandatory
     // GUMMEI
@@ -28,7 +29,9 @@ UEID_ENB_t * enc_eNB_UE_asn(const enb_t * enb)
     if (enb->enb_ue_x2ap_id != NULL)
     {
         enb_asn->m_eNB_UE_X2AP_ID = calloc(1, sizeof(*enb_asn->m_eNB_UE_X2AP_ID));
-        enb_asn->m_eNB_UE_X2AP_ID = (long *)enb->enb_ue_x2ap_id;
+        memcpy(enb_asn->m_eNB_UE_X2AP_ID, enb->enb_ue_x2ap_id, 1);
+        assert(enb_asn->m_eNB_UE_X2AP_ID >= min_val_ENB_UE_X2AP_ID && enb_asn->m_eNB_UE_X2AP_ID <= max_val_ENB_UE_X2AP_ID);
+
     }
 
 
@@ -37,13 +40,15 @@ UEID_ENB_t * enc_eNB_UE_asn(const enb_t * enb)
     if (enb->enb_ue_x2ap_id_extension != NULL)
     {
         enb_asn->m_eNB_UE_X2AP_ID_Extension = calloc(1, sizeof(*enb_asn->m_eNB_UE_X2AP_ID_Extension));
-        enb_asn->m_eNB_UE_X2AP_ID_Extension = (long *)enb->enb_ue_x2ap_id_extension;
+        memcpy(enb_asn->m_eNB_UE_X2AP_ID_Extension, enb->enb_ue_x2ap_id_extension, 1);
+        assert(enb_asn->m_eNB_UE_X2AP_ID_Extension >= min_val_ENB_UE_X2AP_ID && enb_asn->m_eNB_UE_X2AP_ID_Extension <= max_val_ENB_UE_X2AP_ID);
     }
 
 
     // Global eNB ID
     // C-ifDCSetup
-    enb_asn->globalENB_ID = enc_global_enb_id_asn(enb->global_enb_id);
+    if (enb->global_enb_id != NULL)
+      enb_asn->globalENB_ID = enc_global_enb_id_asn(enb->global_enb_id);
 
 
     return enb_asn;

@@ -12,7 +12,8 @@ ng_enb_t dec_ng_eNB_UE_asn(const UEID_NG_ENB_t * ng_enb_asn)
     ng_enb_t ng_enb = {0};
 
     // AMF UE NGAP ID
-    memcpy(&ng_enb.amf_ue_ngap_id, ng_enb_asn->amf_UE_NGAP_ID.buf, 8);
+    assert(ng_enb_asn->amf_UE_NGAP_ID.buf != NULL);
+    memcpy(&ng_enb.amf_ue_ngap_id, ng_enb_asn->amf_UE_NGAP_ID.buf, 5);
     assert(ng_enb.amf_ue_ngap_id < (1UL << 40) );
 
     // GUAMI
@@ -48,12 +49,14 @@ ng_enb_t dec_ng_eNB_UE_asn(const UEID_NG_ENB_t * ng_enb_asn)
 
     // Global NG eNB
     // Optional
-    ng_enb.global_ng_enb_id = dec_global_ng_enb_asn(ng_enb_asn->globalNgENB_ID);
+    if (ng_enb_asn->globalNgENB_ID != NULL)
+      ng_enb.global_ng_enb_id = dec_global_ng_enb_asn(ng_enb_asn->globalNgENB_ID);
 
 
     // Global NG-RAN Node ID
     // C-ifDCSetup
-    ng_enb.global_ng_ran_node_id = dec_global_ng_ran_asn(ng_enb_asn->globalNG_RANNode_ID);
+    if (ng_enb_asn->globalNG_RANNode_ID != NULL)
+      ng_enb.global_ng_ran_node_id = dec_global_ng_ran_asn(ng_enb_asn->globalNG_RANNode_ID);
 
     return ng_enb;
 }

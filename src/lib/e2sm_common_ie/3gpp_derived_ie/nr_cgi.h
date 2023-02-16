@@ -18,10 +18,6 @@ typedef struct{
 
 } nr_cgi_t;
 
-bool eq_nr_cgi(nr_cgi_t const* m0, nr_cgi_t const* m1);
-
-void free_nr_cgi(nr_cgi_t* src);
-
 
 #ifdef __cplusplus
 }
@@ -29,4 +25,3 @@ void free_nr_cgi(nr_cgi_t* src);
 
 #endif
 
-// done

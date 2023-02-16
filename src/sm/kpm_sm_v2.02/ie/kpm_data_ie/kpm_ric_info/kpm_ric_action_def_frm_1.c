@@ -77,8 +77,31 @@ bool eq_kpm_action_def_frm_1(kpm_act_def_format_1_t const * m0, kpm_act_def_form
   // Cell Global ID
   if (m0->cell_global_id != NULL && m1->cell_global_id != NULL)
   {
-    if (m0->cell_global_id != m1->cell_global_id)
+    if (m0->cell_global_id->type != m1->cell_global_id->type)
       return false;
+
+    switch (m0->cell_global_id->type)
+    {
+    case NR_CGI_RAT_TYPE:
+      if (eq_plmn(&m0->cell_global_id->nr_cgi.plmn_id, &m1->cell_global_id->nr_cgi.plmn_id) != true)
+        return false;
+
+      if (m0->cell_global_id->nr_cgi.nr_cell_id != m1->cell_global_id->nr_cgi.nr_cell_id)
+        return false;
+      break;
+
+    case EUTRA_CGI_RAT_TYPE:
+      if (eq_plmn(&m0->cell_global_id->eutra.plmn_id, &m1->cell_global_id->eutra.plmn_id) != true)
+        return false;
+
+      if (m0->cell_global_id->eutra.eutra_cell_id != m1->cell_global_id->eutra.eutra_cell_id)
+        return false;
+      break;
+    
+    default:
+      assert(false && "Unknown Cell Global ID Type");
+    }
+
   }
 
   // Measurement Bin Range Information

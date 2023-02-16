@@ -18,7 +18,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     // AMF UE NGAP ID
     assert(gnb_asn->amf_UE_NGAP_ID.buf != NULL);
     memcpy(&gnb.amf_ue_ngap_id, gnb_asn->amf_UE_NGAP_ID.buf, 5);
-
+    assert(gnb.amf_ue_ngap_id < (1UL << 40) );
 
     // GUAMI
 
@@ -33,7 +33,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 
     // gNB-CU UE F1AP ID List
     // C-ifCUDUseparated 
-    if (gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count != 0)
+    if (gnb_asn->gNB_CU_UE_F1AP_ID_List != NULL)
     {
         assert(gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count >= 1 && gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count <= maxF1APid);
         gnb.gnb_cu_ue_f1ap_lst_len = gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count;
@@ -53,7 +53,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     //gNB-CU-CP UE E1AP ID List
     //C-ifCPUPseparated 
 
-    if (gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count != 0)
+    if (gnb_asn->gNB_CU_CP_UE_E1AP_ID_List != NULL)
     {
         assert(gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count >= 1 && gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count <= maxE1APid);
         gnb.gnb_cu_cp_ue_e1ap_lst_len = gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count;

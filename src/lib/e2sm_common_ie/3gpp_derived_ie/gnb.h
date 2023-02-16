@@ -30,8 +30,7 @@ typedef struct{
   size_t gnb_cu_ue_f1ap_lst_len;  // [1,4]
   uint32_t *gnb_cu_ue_f1ap_lst;
 
-  //gNB-CU-CP UE E1AP
-  //ID List
+  //gNB-CU-CP UE E1AP ID List
   //C-ifCPUPseparated 
   size_t gnb_cu_cp_ue_e1ap_lst_len;  // [1, 65535]
   uint32_t *gnb_cu_cp_ue_e1ap_lst;

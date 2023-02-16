@@ -12,10 +12,10 @@ LabelInfoItem_t * kpm_enc_label_info_asn(const label_info_lst_t * label_info)
     assert (label_info_asn != NULL && "Memory exhausted");
 
     if (label_info->noLabel != NULL) {
-      assert(label_info->noLabel == TRUE_ENUM_VALUE && "has only one value (true)");
+      assert(*label_info->noLabel == TRUE_ENUM_VALUE && "has only one value (true)");
       label_info_asn->measLabel.noLabel = malloc (sizeof(*(label_info_asn->measLabel.noLabel)));
       assert (label_info_asn->measLabel.noLabel != NULL && "Memory exhausted");
-      label_info_asn->measLabel.noLabel = 0;
+      *label_info_asn->measLabel.noLabel = 0;
       /* 
        * specification mentions that if 'noLabel' is included, other elements in the same datastructure 
        * 'LabelInfoItem_t' shall not be included.

@@ -79,7 +79,7 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
   
   assert (pdu != NULL && "Memory exhausted");
 
-  pdu->ric_Style_Type = (long)action_def->type;
+  pdu->ric_Style_Type = (long)action_def->type + 1;
  
   /* Action Definition Formats */
   switch (action_def->type) 
@@ -132,6 +132,8 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
   asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_KPM_ActionDefinition, pdu, ba.buf, ba.len);
   assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
   ba.len = er.encoded;
+
+  // ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition_Format1, &pdu->actionDefinition_formats.choice.actionDefinition_Format2->subscriptInfo);
 
   ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, pdu);
 

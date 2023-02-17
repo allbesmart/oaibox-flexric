@@ -184,6 +184,7 @@ do {                                            \
     (aSN)->bits_unused = 6;                   \
 } while(0)
 
+
 #define AMF_POINTER_TO_BIT_STRING(x, aSN)     \
   do {                                        \
     INT8_TO_OCTET_STRING(x, aSN);             \

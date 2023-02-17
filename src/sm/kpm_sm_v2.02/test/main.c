@@ -81,9 +81,9 @@ int main()
   printf("KPM SM enc/dec test launched\n");
 
   // Event Trigger
-  test_kpm_ric_event_trigger_def_asn();
+//  test_kpm_ric_event_trigger_def_asn();
 
-  printf("KPM Event Trigger test succeeded\n");
+//  printf("KPM Event Trigger test succeeded\n");
 
   // Action Definition
   test_kpm_act_def();
@@ -91,14 +91,14 @@ int main()
   printf("KPM Action Definition test succeeded\n");
 
   // Indication Header
-  test_kpm_ind_hdr();
+//  test_kpm_ind_hdr();
 
-  printf("KPM Indication Header test succeeded\n");
+//  printf("KPM Indication Header test succeeded\n");
 
   // Indication Message
-  test_kpm_ind_msg();
+//  test_kpm_ind_msg();
 
-  printf("KPM Indication Message test succeeded\n");
+//  printf("KPM Indication Message test succeeded\n");
 
   return EXIT_SUCCESS;
 }

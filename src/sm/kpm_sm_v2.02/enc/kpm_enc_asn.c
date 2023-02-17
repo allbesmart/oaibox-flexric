@@ -62,7 +62,11 @@ byte_array_t kpm_enc_event_trigger_asn(kpm_event_trigger_def_t const* event_trig
   asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_KPM_EventTriggerDefinition, pdu, ba.buf, ba.len);
   assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
   ba.len = er.encoded;
-  
+ 
+  // xer_fprint(stderr, &asn_DEF_E2SM_KPM_ActionDefinition, pdu);
+  // fflush(stdout);
+
+
   ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_EventTriggerDefinition, pdu);
 
   return ba;

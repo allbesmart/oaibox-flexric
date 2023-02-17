@@ -400,7 +400,7 @@ kpm_act_def_t fill_kpm_action_def(void)
 {
   kpm_act_def_t action_def = {0};
 
-  action_def.type = FORMAT_1_ACTION_DEFINITION;  // rand()%END_ACTION_DEFINITION;
+  action_def.type = FORMAT_2_ACTION_DEFINITION;  // rand()%END_ACTION_DEFINITION;
 
   switch (action_def.type)
   {

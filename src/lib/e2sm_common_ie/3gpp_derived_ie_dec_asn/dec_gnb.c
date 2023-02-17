@@ -9,6 +9,33 @@
 #include "dec_global_gnb_id.h"
 #include "dec_global_ng_ran.h"
 
+static
+uint8_t cp_amf_ptr_to_u8(BIT_STRING_t src)
+{
+  assert(src.bits_unused == 2);
+  assert(src.size == 1);
+
+  uint8_t dst = 0; 
+  memcpy(&dst, src.buf, 1);
+
+  dst = (dst >> 2);
+  return dst;
+}
+
+static 
+uint16_t cp_amf_set_id(BIT_STRING_t src)
+{
+  assert(src.bits_unused == 6);
+  assert(src.size == 2);
+  assert(src.buf != NULL);
+
+  uint16_t dst = (src.buf[1] >> 6) << 8; 
+  
+  dst = dst | src.buf[0];
+
+  return dst;
+}
+
 gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 {
     gnb_t gnb = {0};
@@ -26,9 +53,9 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 
     OCTET_STRING_TO_INT8(&gnb_asn->guami.aMFRegionID, gnb.guami.amf_region_id);
 
-    OCTET_STRING_TO_INT16(&gnb_asn->guami.aMFSetID, gnb.guami.amf_set_id);
+    gnb.guami.amf_set_id = cp_amf_set_id(gnb_asn->guami.aMFSetID);
 
-    OCTET_STRING_TO_INT8(&gnb_asn->guami.aMFPointer, gnb.guami.amf_ptr);
+    gnb.guami.amf_ptr = cp_amf_ptr_to_u8( gnb_asn->guami.aMFPointer );
 
 
     // gNB-CU UE F1AP ID List

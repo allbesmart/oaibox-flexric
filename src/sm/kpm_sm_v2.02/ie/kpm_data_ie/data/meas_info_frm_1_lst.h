@@ -7,6 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "label_info_lst.h"
 #include "meas_type.h"
@@ -22,7 +23,9 @@ typedef struct{
 
 } meas_info_format_1_lst_t;
 
+void free_meas_info_frm_1(meas_info_format_1_lst_t* src);
 
+bool eq_meas_info_frm_1(meas_info_format_1_lst_t const * m0, meas_info_format_1_lst_t const * m1);
 
 #ifdef __cplusplus
 }

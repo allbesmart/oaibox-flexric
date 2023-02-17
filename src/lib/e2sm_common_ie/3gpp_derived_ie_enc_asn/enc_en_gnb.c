@@ -31,9 +31,7 @@ UEID_EN_GNB_t * enc_en_gNB_UE_asn(const en_gnb_t * en_gnb)
 
     // Mandatory
     // Global eNB ID
-    GlobalENB_ID_t * temp = enc_global_enb_id_asn(&en_gnb->global_enb_id);
-    en_gnb_asn->globalENB_ID = *temp;
-    free(temp);
+    en_gnb_asn->globalENB_ID = enc_global_enb_id_asn(&en_gnb->global_enb_id);
 
     // gNB-CU UE F1AP ID
     // C-ifCUDUseparated 

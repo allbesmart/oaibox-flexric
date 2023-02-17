@@ -11,9 +11,7 @@ E2SM_KPM_ActionDefinition_Format2_t * kpm_enc_action_def_frm_2_asn(const kpm_act
 
     act_def_frm_2_asn->ueID = enc_ue_id_asn(&act_def_frm_2->ue_id);
 
-    E2SM_KPM_ActionDefinition_Format1_t * temp = kpm_enc_action_def_frm_1_asn(&act_def_frm_2->action_def_format_1);
-    act_def_frm_2_asn->subscriptInfo = *temp;
-    free(temp);
+    act_def_frm_2_asn->subscriptInfo = kpm_enc_action_def_frm_1_asn(&act_def_frm_2->action_def_format_1);
 
     return act_def_frm_2_asn;
 }

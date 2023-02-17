@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "plmn_identity.h"
 
@@ -17,6 +18,8 @@ typedef struct{
   uint32_t eutra_cell_id; // bit string of 28 bits
 
 } eutra_cgi_t ;
+
+bool eq_eutra_cgi(eutra_cgi_t const * m0, eutra_cgi_t const * m1);
 
 #ifdef __cplusplus
 }

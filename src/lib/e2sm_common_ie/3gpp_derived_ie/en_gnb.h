@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "global_enb_id.h"
 
@@ -42,6 +43,10 @@ typedef struct {
     uint64_t *ran_ue_id;
 
 } en_gnb_t;
+
+void free_en_gnb_ue_id(en_gnb_t * src);
+
+bool eq_en_gnb_ue_id(en_gnb_t const * m0, en_gnb_t const * m1);
 
 #ifdef __cplusplus
 }

@@ -87,7 +87,9 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
     case FORMAT_1_ACTION_DEFINITION:
     {
       pdu->actionDefinition_formats.present = E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format1;
-      pdu->actionDefinition_formats.choice.actionDefinition_Format1 = kpm_enc_action_def_frm_1_asn(&action_def->frm_1);
+      pdu->actionDefinition_formats.choice.actionDefinition_Format1 = calloc(1, sizeof(E2SM_KPM_ActionDefinition_Format1_t));
+      assert (pdu->actionDefinition_formats.choice.actionDefinition_Format1 != NULL && "Memory exhausted");
+      *pdu->actionDefinition_formats.choice.actionDefinition_Format1 = kpm_enc_action_def_frm_1_asn(&action_def->frm_1);
       break;
     }
     case FORMAT_2_ACTION_DEFINITION:
@@ -133,7 +135,6 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
   assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
   ba.len = er.encoded;
 
-  // ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition_Format1, &pdu->actionDefinition_formats.choice.actionDefinition_Format2->subscriptInfo);
 
   ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, pdu);
 

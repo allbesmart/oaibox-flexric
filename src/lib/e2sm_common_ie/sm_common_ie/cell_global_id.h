@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #include "../3gpp_derived_ie/nr_cgi.h"
 #include "../3gpp_derived_ie/eutra_cgi.h"
 
@@ -30,6 +32,7 @@ typedef struct{
 
 } cell_global_id_t;
 
+bool eq_cell_global_id(cell_global_id_t const * m0, cell_global_id_t const * m1);
 
 #ifdef __cplusplus
 }
@@ -37,4 +40,3 @@ typedef struct{
 
 #endif
 
-// done

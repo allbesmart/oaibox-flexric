@@ -18,10 +18,13 @@ typedef struct {
 
 } meas_type_t;
 
+bool eq_meas_type(meas_type_t const * m0, meas_type_t const * m1);
+
+meas_type_t cp_meas_type(meas_type_t const* src);
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif
 
-// done

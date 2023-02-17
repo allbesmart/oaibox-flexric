@@ -7,6 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "enum_value.h"
 
@@ -39,6 +40,7 @@ typedef struct {
 
 } meas_data_lst_t;
 
+bool eq_meas_data_lst(meas_data_lst_t const* m0, meas_data_lst_t const* m1);
 
 #ifdef __cplusplus
 }

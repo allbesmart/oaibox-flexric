@@ -18,6 +18,7 @@ typedef struct{
 
 } nr_cgi_t;
 
+bool eq_nr_cgi(nr_cgi_t const * m0, nr_cgi_t const * m1);
 
 #ifdef __cplusplus
 }

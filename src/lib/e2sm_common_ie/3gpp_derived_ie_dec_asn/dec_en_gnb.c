@@ -48,7 +48,7 @@ en_gnb_t dec_en_gNB_UE_asn(const UEID_EN_GNB_t * en_gnb_asn)
     {
         assert(en_gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count >= 1 && en_gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count <= maxE1APid);
         en_gnb.gnb_cu_cp_ue_e1ap_lst_len = en_gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count;
-        en_gnb.gnb_cu_cp_ue_e1ap_lst = calloc(1, sizeof(*en_gnb.gnb_cu_cp_ue_e1ap_lst));
+        en_gnb.gnb_cu_cp_ue_e1ap_lst = calloc(en_gnb.gnb_cu_cp_ue_e1ap_lst_len, sizeof(*en_gnb.gnb_cu_cp_ue_e1ap_lst));
 
         for (size_t i = 0; i < en_gnb.gnb_cu_cp_ue_e1ap_lst_len; i++)
         {

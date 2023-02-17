@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #include "guami.h"
 #include "global_ng_enb_id.h"
 #include "global_ng_ran_node_id.h"
@@ -34,6 +36,9 @@ typedef struct {
 
 } ng_enb_t;
 
+void free_ng_enb_ue_id(ng_enb_t * src);
+
+bool eq_ng_enb_ue_id(ng_enb_t const * m0, ng_enb_t const * m1);
 
 #ifdef __cplusplus
 }

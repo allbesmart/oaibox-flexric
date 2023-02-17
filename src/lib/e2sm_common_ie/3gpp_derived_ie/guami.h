@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #include "plmn_identity.h"
 
 typedef struct{
@@ -29,6 +31,7 @@ typedef struct{
 
 } guami_t;
 
+bool eq_guami(guami_t const * m0, guami_t const * m1);
 
 #ifdef __cplusplus
 }

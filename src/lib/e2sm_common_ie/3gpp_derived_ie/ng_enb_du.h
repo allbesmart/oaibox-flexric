@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+#include <stdint.h>
+
 typedef struct {
     // 6.2.3.22
     // C-if CU DU separated
@@ -13,6 +16,9 @@ typedef struct {
 
 } ng_enb_du_t;
 
+void free_ng_enb_du_ue_id(ng_enb_du_t * src);
+
+bool eq_ng_enb_du_ue_id(ng_enb_du_t const * m0, ng_enb_du_t const * m1);
 
 #ifdef __cplusplus
 }

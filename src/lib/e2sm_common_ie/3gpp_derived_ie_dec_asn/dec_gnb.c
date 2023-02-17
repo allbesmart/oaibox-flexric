@@ -37,7 +37,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     {
         assert(gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count >= 1 && gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count <= maxF1APid);
         gnb.gnb_cu_ue_f1ap_lst_len = gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count;
-        gnb.gnb_cu_ue_f1ap_lst = calloc(1, sizeof(*gnb.gnb_cu_ue_f1ap_lst));
+        gnb.gnb_cu_ue_f1ap_lst = calloc(gnb.gnb_cu_ue_f1ap_lst_len, sizeof(*gnb.gnb_cu_ue_f1ap_lst));
 
         for (size_t i = 0; i < gnb.gnb_cu_ue_f1ap_lst_len; i++)
         {
@@ -57,7 +57,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     {
         assert(gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count >= 1 && gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count <= maxE1APid);
         gnb.gnb_cu_cp_ue_e1ap_lst_len = gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count;
-        gnb.gnb_cu_cp_ue_e1ap_lst = calloc(1, sizeof(*gnb.gnb_cu_cp_ue_e1ap_lst));
+        gnb.gnb_cu_cp_ue_e1ap_lst = calloc(gnb.gnb_cu_cp_ue_e1ap_lst_len, sizeof(*gnb.gnb_cu_cp_ue_e1ap_lst));
 
         for (size_t i = 0; i < gnb.gnb_cu_cp_ue_e1ap_lst_len; i++)
         {

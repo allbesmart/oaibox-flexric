@@ -68,7 +68,7 @@ kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
   {
   case NR_CGI_RAT_TYPE:
     action_def_frm_1.cell_global_id->nr_cgi.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
-    action_def_frm_1.cell_global_id->nr_cgi.nr_cell_id = (rand() % 2^36) + 0;
+    action_def_frm_1.cell_global_id->nr_cgi.nr_cell_id = (rand() % 2^36) + 1;
     break;
 
   case EUTRA_CGI_RAT_TYPE:
@@ -352,7 +352,7 @@ kpm_act_def_format_2_t fill_kpm_action_def_frm_2(void)
   kpm_act_def_format_2_t action_def_frm_2 = {0};
 
   // UE ID
-  action_def_frm_2.ue_id.type = GNB_DU_UE_ID; // rand()%END_UE_ID;
+  action_def_frm_2.ue_id.type = GNB_UE_ID; // rand()%END_UE_ID;
 
   switch (action_def_frm_2.ue_id.type)
   {
@@ -400,7 +400,7 @@ kpm_act_def_t fill_kpm_action_def(void)
 {
   kpm_act_def_t action_def = {0};
 
-  action_def.type = FORMAT_2_ACTION_DEFINITION;  // rand()%END_ACTION_DEFINITION;
+  action_def.type = FORMAT_1_ACTION_DEFINITION;  // rand()%END_ACTION_DEFINITION;
 
   switch (action_def.type)
   {

@@ -23,6 +23,7 @@ add_executable(test_kpm_mir
   fill_rnd_data_kpm.c 
   ${CMAKE_CURRENT_SOURCE_DIR}/../../../util/alg_ds/alg/defer.c
   ${CMAKE_CURRENT_SOURCE_DIR}/../../../util/byte_array.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../../util/conversions.c
   $<TARGET_OBJECTS:e2sm_kpm_asn1_obj> 
   )
 

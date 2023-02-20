@@ -46,7 +46,7 @@ bool eq_kpm_action_def_frm_1(kpm_act_def_format_1_t const * m0, kpm_act_def_form
     return false;
 
   // Cell Global ID
-  if (m0->cell_global_id != NULL && m1->cell_global_id != NULL)
+  if (m0->cell_global_id != NULL || m1->cell_global_id != NULL)
   {
     if (eq_cell_global_id(m0->cell_global_id, m1->cell_global_id) != true)
       return false;

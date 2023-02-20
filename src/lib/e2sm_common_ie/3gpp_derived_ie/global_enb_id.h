@@ -27,10 +27,10 @@ typedef struct {
 
     enb_type_id_e type;
     union {
-        uint32_t macro_enb_id; // BIT STRING (SIZE(20))
-        uint32_t home_enb_id;  // // BIT STRING (SIZE(28))
-        uint32_t short_macro_enb_id;  // BIT STRING (SIZE(18))
-        uint32_t long_macro_enb_id;  // BIT STRING (SIZE(21))
+        uint32_t macro_enb_id:20; // BIT STRING (SIZE(20))
+        uint32_t home_enb_id:28;  // // BIT STRING (SIZE(28))
+        uint32_t short_macro_enb_id:18;  // BIT STRING (SIZE(18))
+        uint32_t long_macro_enb_id:21;  // BIT STRING (SIZE(21))
     };
     
 

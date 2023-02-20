@@ -28,6 +28,8 @@ typedef struct {
 
 } global_ng_ran_node_id_t;
 
+bool eq_global_ng_ran_node_id(global_ng_ran_node_id_t const * m0, global_ng_ran_node_id_t const * m1);
+
 #ifdef __cplusplus
 }
 #endif

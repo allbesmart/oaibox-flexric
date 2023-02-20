@@ -9,32 +9,32 @@
 #include "dec_global_gnb_id.h"
 #include "dec_global_ng_ran.h"
 
-static
-uint8_t cp_amf_ptr_to_u8(BIT_STRING_t src)
-{
-  assert(src.bits_unused == 2);
-  assert(src.size == 1);
+// static
+// uint8_t cp_amf_ptr_to_u8(BIT_STRING_t src)
+// {
+//   assert(src.bits_unused == 2);
+//   assert(src.size == 1);
 
-  uint8_t dst = 0; 
-  memcpy(&dst, src.buf, 1);
+//   uint8_t dst = 0; 
+//   memcpy(&dst, src.buf, 1);
 
-  dst = (dst >> 2);
-  return dst;
-}
+//   dst = (dst >> 2);
+//   return dst;
+// }
 
-static 
-uint16_t cp_amf_set_id(BIT_STRING_t src)
-{
-  assert(src.bits_unused == 6);
-  assert(src.size == 2);
-  assert(src.buf != NULL);
+// static 
+// uint16_t cp_amf_set_id(BIT_STRING_t src)
+// {
+//   assert(src.bits_unused == 6);
+//   assert(src.size == 2);
+//   assert(src.buf != NULL);
 
-  uint16_t dst = (src.buf[1] >> 6) << 8; 
+//   uint16_t dst = (src.buf[1] >> 6) << 8; 
   
-  dst = dst | src.buf[0];
+//   dst = dst | src.buf[0];
 
-  return dst;
-}
+//   return dst;
+// }
 
 gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 {
@@ -51,11 +51,11 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 
     PLMNID_TO_MCC_MNC(&gnb_asn->guami.pLMNIdentity, gnb.guami.plmn_id.mcc, gnb.guami.plmn_id.mnc, gnb.guami.plmn_id.mnc_digit_len);
 
-    OCTET_STRING_TO_INT8(&gnb_asn->guami.aMFRegionID, gnb.guami.amf_region_id);
+    gnb.guami.amf_region_id = cp_amf_region_id_to_u8(gnb_asn->guami.aMFRegionID);
 
-    gnb.guami.amf_set_id = cp_amf_set_id(gnb_asn->guami.aMFSetID);
+    gnb.guami.amf_set_id = cp_amf_set_id_to_u16(gnb_asn->guami.aMFSetID);
 
-    gnb.guami.amf_ptr = cp_amf_ptr_to_u8( gnb_asn->guami.aMFPointer );
+    gnb.guami.amf_ptr = cp_amf_ptr_to_u8(gnb_asn->guami.aMFPointer);
 
 
     // gNB-CU UE F1AP ID List
@@ -125,8 +125,11 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     // 6.2.3.3
     // Optional
     if(gnb_asn->globalGNB_ID != NULL)
-      gnb.global_gnb_id = dec_global_gnb_id_asn(gnb_asn->globalGNB_ID);
-
+    {
+        gnb.global_gnb_id = calloc(1, sizeof(*gnb.global_gnb_id));
+        *gnb.global_gnb_id = dec_global_gnb_id_asn(gnb_asn->globalGNB_ID);
+    }
+      
 
     // Global NG-RAN Node ID
     // C-ifDCSetup

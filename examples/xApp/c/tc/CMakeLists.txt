@@ -30,6 +30,9 @@ add_executable(xapp_tc_all
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/guami.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/gummei.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_enb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_gnb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_enb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_ran_node_id.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/nr_cgi.c
 	../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/eutra_cgi.c
         ../../../../src/lib/e2sm_common_ie/sm_common_ie/ue_id.c
@@ -78,6 +81,9 @@ add_executable(xapp_tc_codel
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/guami.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/gummei.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_enb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_gnb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_enb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_ran_node_id.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/nr_cgi.c
 	../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/eutra_cgi.c
         ../../../../src/lib/e2sm_common_ie/sm_common_ie/ue_id.c
@@ -125,6 +131,9 @@ add_executable(xapp_tc_partition
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/guami.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/gummei.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_enb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_gnb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_enb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_ran_node_id.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/nr_cgi.c
 	../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/eutra_cgi.c
         ../../../../src/lib/e2sm_common_ie/sm_common_ie/ue_id.c
@@ -173,6 +182,9 @@ add_executable(xapp_tc_ecn
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/guami.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/gummei.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_enb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_gnb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_enb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_ran_node_id.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/nr_cgi.c
 	../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/eutra_cgi.c
         ../../../../src/lib/e2sm_common_ie/sm_common_ie/ue_id.c
@@ -222,6 +234,9 @@ add_executable(xapp_tc_osi_codel
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/guami.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/gummei.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_enb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_gnb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_enb_id.c
+        ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_ran_node_id.c
         ../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/nr_cgi.c
 	../../../../src/lib/e2sm_common_ie/3gpp_derived_ie/eutra_cgi.c
         ../../../../src/lib/e2sm_common_ie/sm_common_ie/ue_id.c

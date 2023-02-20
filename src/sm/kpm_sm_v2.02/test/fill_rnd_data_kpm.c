@@ -28,7 +28,7 @@ kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
   // Measurement Information
   // [1, 65535]
   // mir: Here there is a bug. uncomment the following line i.e., (rand() % 65535)
-  action_def_frm_1.meas_info_lst_len = 64; //(rand() % 65535) + 1;
+  action_def_frm_1.meas_info_lst_len = 3; //(rand() % 65535) + 1;
                                             
   action_def_frm_1.meas_info_lst = calloc(action_def_frm_1.meas_info_lst_len, sizeof(meas_info_format_1_lst_t));
   assert(action_def_frm_1.meas_info_lst != NULL && "Memory exhausted" );
@@ -62,7 +62,7 @@ kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
   
   // Cell Global ID - OPTIONAL
   action_def_frm_1.cell_global_id = calloc(1, sizeof(*action_def_frm_1.cell_global_id));
-  action_def_frm_1.cell_global_id->type = NR_CGI_RAT_TYPE; // rand()%END_CGI_RAT_TYPE;
+  action_def_frm_1.cell_global_id->type = rand()%END_CGI_RAT_TYPE;
   
   switch (action_def_frm_1.cell_global_id->type)
   {
@@ -100,9 +100,9 @@ gnb_t fill_gnb_data(void)
   //GUAMI 6.2.3.17 
   gnb.guami.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
   
-  gnb.guami.amf_region_id = 1;  // 48 example in spec
-  gnb.guami.amf_set_id = 1;  // 001 example in spec
-  gnb.guami.amf_ptr = 1;  // 12 example in spec
+  gnb.guami.amf_region_id = (rand() % 2^8) + 0;
+  gnb.guami.amf_set_id = (rand() % 2^10) + 0;
+  gnb.guami.amf_ptr = (rand() % 2^6) + 0;
 
   // gNB-CU UE F1AP ID List
   // C-ifCUDUseparated 
@@ -141,7 +141,43 @@ gnb_t fill_gnb_data(void)
   // Global NG-RAN Node ID
   // C-ifDCSetup
   // 6.2.3.2
-  gnb.global_ng_ran_node_id = NULL;
+  gnb.global_ng_ran_node_id = calloc(1, sizeof(*gnb.global_ng_ran_node_id));
+  gnb.global_ng_ran_node_id->type = rand()%END_GLOBAL_TYPE_ID;
+
+  switch (gnb.global_ng_ran_node_id->type)
+  {
+  case GNB_GLOBAL_TYPE_ID:
+    gnb.global_ng_ran_node_id->global_gnb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+    gnb.global_ng_ran_node_id->global_gnb_id.type = GNB_TYPE_ID;
+    gnb.global_ng_ran_node_id->global_gnb_id.gnb_id = (rand() % 2^32) + 0;
+    break;
+  
+  case NG_ENB_GLOBAL_TYPE_ID:
+    gnb.global_ng_ran_node_id->global_ng_enb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+    gnb.global_ng_ran_node_id->global_ng_enb_id.type = LONG_MACRO_NG_ENB_TYPE_ID;  // rand()%END_NG_ENB_TYPE_ID;
+
+    switch (gnb.global_ng_ran_node_id->global_ng_enb_id.type)
+    {
+    case MACRO_NG_ENB_TYPE_ID:
+      gnb.global_ng_ran_node_id->global_ng_enb_id.macro_ng_enb_id = (rand() % 2^20) + 0;
+      break;
+
+    case SHORT_MACRO_NG_ENB_TYPE_ID:
+      gnb.global_ng_ran_node_id->global_ng_enb_id.macro_ng_enb_id = (rand() % 2^18) + 0;
+      break;
+
+    case LONG_MACRO_NG_ENB_TYPE_ID:
+      gnb.global_ng_ran_node_id->global_ng_enb_id.macro_ng_enb_id = (rand() % 2^21) + 0;
+      break;
+    
+    default:
+      assert(false && "Unknown Global NG eNB ID Type");
+    }
+    break;
+
+  default:
+    assert(false && "Unknown Global NG-RAN Node ID Type");
+  }
 
   return gnb;
 }
@@ -182,8 +218,8 @@ ng_enb_t fill_ng_enb_data(void)
   ng_enb.guami.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
   
   ng_enb.guami.amf_region_id = (rand() % 2^8) + 0;
-  ng_enb.guami.amf_set_id = 1;
-  ng_enb.guami.amf_ptr = 1; 
+  ng_enb.guami.amf_set_id = (rand() % 2^10) + 0;
+  ng_enb.guami.amf_ptr = (rand() % 2^6) + 0;
 
   // 6.2.3.22
   // C-if CU DU separated
@@ -238,8 +274,7 @@ en_gnb_t fill_en_gnb_data(void)
   // Global eNB ID
   en_gnb.global_enb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
 
-  en_gnb.global_enb_id.type = MACRO_ENB_TYPE_ID;
-  // rand()%END_ENB_TYPE_ID;
+  en_gnb.global_enb_id.type = HOME_ENB_TYPE_ID;  // rand()%END_ENB_TYPE_ID;
 
   switch (en_gnb.global_enb_id.type)
   {
@@ -251,13 +286,14 @@ en_gnb_t fill_en_gnb_data(void)
     en_gnb.global_enb_id.home_enb_id = (rand() % 2^28) + 0;
     break;
 
-  case SHORT_MACRO_ENB_TYPE_ID:
-    en_gnb.global_enb_id.short_macro_enb_id = (rand() % 2^18) + 0;
-    break;
+  /* Possible extensions: */
+  // case SHORT_MACRO_ENB_TYPE_ID:
+  //   en_gnb.global_enb_id.short_macro_enb_id = (rand() % 2^18) + 0;
+  //   break;
 
-  case LONG_MACRO_ENB_TYPE_ID:
-    en_gnb.global_enb_id.long_macro_enb_id = (rand() % 2^21) + 0;
-    break;
+  // case LONG_MACRO_ENB_TYPE_ID:
+  //   en_gnb.global_enb_id.long_macro_enb_id = (rand() % 2^21) + 0;
+  //   break;
 
   default:
     break;
@@ -319,8 +355,7 @@ enb_t fill_enb_data(void)
 
   enb.global_enb_id->plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
 
-  enb.global_enb_id->type = MACRO_ENB_TYPE_ID;
-  // rand()%END_ENB_TYPE_ID;
+  enb.global_enb_id->type = MACRO_ENB_TYPE_ID;  // rand()%END_ENB_TYPE_ID;
 
   switch (enb.global_enb_id->type)
   {
@@ -332,13 +367,14 @@ enb_t fill_enb_data(void)
     enb.global_enb_id->home_enb_id = (rand() % 2^28) + 0;
     break;
 
-  case SHORT_MACRO_ENB_TYPE_ID:
-    enb.global_enb_id->short_macro_enb_id = (rand() % 2^18) + 0;
-    break;
+  /* Possible extensions: */
+  // case SHORT_MACRO_ENB_TYPE_ID:
+  //   enb.global_enb_id->short_macro_enb_id = (rand() % 2^18) + 0;
+  //   break;
 
-  case LONG_MACRO_ENB_TYPE_ID:
-    enb.global_enb_id->long_macro_enb_id = (rand() % 2^21) + 0;
-    break;
+  // case LONG_MACRO_ENB_TYPE_ID:
+  //   enb.global_enb_id->long_macro_enb_id = (rand() % 2^21) + 0;
+  //   break;
 
   default:
     break;

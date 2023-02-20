@@ -20,11 +20,11 @@ ng_enb_t dec_ng_eNB_UE_asn(const UEID_NG_ENB_t * ng_enb_asn)
 
     PLMNID_TO_MCC_MNC(&ng_enb_asn->guami.pLMNIdentity, ng_enb.guami.plmn_id.mcc, ng_enb.guami.plmn_id.mnc, ng_enb.guami.plmn_id.mnc_digit_len);
 
-    OCTET_STRING_TO_INT8(&ng_enb_asn->guami.aMFRegionID, ng_enb.guami.amf_region_id);
+    ng_enb.guami.amf_region_id = cp_amf_region_id_to_u8(ng_enb_asn->guami.aMFRegionID);
 
-    OCTET_STRING_TO_INT16(&ng_enb_asn->guami.aMFSetID, ng_enb.guami.amf_set_id);
+    ng_enb.guami.amf_set_id = cp_amf_set_id_to_u16(ng_enb_asn->guami.aMFSetID);
 
-    OCTET_STRING_TO_INT8(&ng_enb_asn->guami.aMFPointer, ng_enb.guami.amf_ptr);
+    ng_enb.guami.amf_ptr = cp_amf_ptr_to_u8(ng_enb_asn->guami.aMFPointer);
 
 
     // C-if CU DU separated
@@ -50,8 +50,11 @@ ng_enb_t dec_ng_eNB_UE_asn(const UEID_NG_ENB_t * ng_enb_asn)
     // Global NG eNB
     // Optional
     if (ng_enb_asn->globalNgENB_ID != NULL)
-      ng_enb.global_ng_enb_id = dec_global_ng_enb_asn(ng_enb_asn->globalNgENB_ID);
-
+    {
+      ng_enb.global_ng_enb_id = calloc(1, sizeof(*ng_enb.global_ng_enb_id));
+      *ng_enb.global_ng_enb_id = dec_global_ng_enb_asn(ng_enb_asn->globalNgENB_ID);
+    }
+      
 
     // Global NG-RAN Node ID
     // C-ifDCSetup

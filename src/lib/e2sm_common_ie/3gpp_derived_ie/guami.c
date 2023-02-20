@@ -14,7 +14,6 @@ bool eq_guami(guami_t const * m0, guami_t const * m1)
   if (m0->amf_region_id != m1->amf_region_id)
     return false;
 
-  // to be solved, encoding problem with bits
   if (m0->amf_set_id != m1->amf_set_id)
     return false;
 

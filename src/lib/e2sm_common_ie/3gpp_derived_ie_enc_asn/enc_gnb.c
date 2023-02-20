@@ -16,38 +16,38 @@
 
 #include "enc_gnb.h"
 
-static
-BIT_STRING_t cp_amf_set_id(uint16_t val)
-{
-  assert(val < 1024);
+// static
+// BIT_STRING_t cp_amf_set_id(uint16_t val)
+// {
+//   assert(val < 1024);
 
-  BIT_STRING_t dst = {0}; 
-  dst.bits_unused = 6; // unused_bit;
-  dst.size = 2;
-  dst.buf = calloc(2, sizeof(uint8_t) ); 
-  assert(dst.buf != NULL);
+//   BIT_STRING_t dst = {0}; 
+//   dst.bits_unused = 6; // unused_bit;
+//   dst.size = 2;
+//   dst.buf = calloc(2, sizeof(uint8_t) ); 
+//   assert(dst.buf != NULL);
 
-  dst.buf[0] = val; // 0x5555;
-  dst.buf[1] = (val >> 8) << 6; 
+//   dst.buf[0] = val; // 0x5555;
+//   dst.buf[1] = (val >> 8) << 6; 
 
-  return dst;
-}
+//   return dst;
+// }
 
 
 
-static
-BIT_STRING_t cp_amf_ptr_to_bit_string(uint8_t src)
-{
-  assert(src < 64);
+// static
+// BIT_STRING_t cp_amf_ptr_to_bit_string(uint8_t src)
+// {
+//   assert(src < 64);
 
-  uint8_t tmp = src << 2;
+//   uint8_t tmp = src << 2;
 
-  BIT_STRING_t dst = {.bits_unused =2, .buf = malloc(1), .size = 1}; 
-  assert(dst.buf != NULL);
-  memcpy(dst.buf, &tmp, 1); 
+//   BIT_STRING_t dst = {.bits_unused =2, .buf = malloc(1), .size = 1}; 
+//   assert(dst.buf != NULL);
+//   memcpy(dst.buf, &tmp, 1); 
 
-  return dst;
-}
+//   return dst;
+// }
 
 
 UEID_GNB_t* enc_gNB_UE_asn(const gnb_t* gnb)
@@ -70,10 +70,10 @@ UEID_GNB_t* enc_gNB_UE_asn(const gnb_t* gnb)
 
   // GUAMI
   MCC_MNC_TO_PLMNID(gnb->guami.plmn_id.mcc, gnb->guami.plmn_id.mnc, gnb->guami.plmn_id.mnc_digit_len, &gnb_asn->guami.pLMNIdentity);
+  
+  gnb_asn->guami.aMFRegionID = cp_amf_region_id_to_bit_string(gnb->guami.amf_region_id);
 
-  AMF_REGION_TO_BIT_STRING(gnb->guami.amf_region_id, &gnb_asn->guami.aMFRegionID);
-
-  gnb_asn->guami.aMFSetID = cp_amf_set_id(gnb->guami.amf_set_id);
+  gnb_asn->guami.aMFSetID = cp_amf_set_id_to_bit_string(gnb->guami.amf_set_id);
 
   gnb_asn->guami.aMFPointer = cp_amf_ptr_to_bit_string(gnb->guami.amf_ptr);
 

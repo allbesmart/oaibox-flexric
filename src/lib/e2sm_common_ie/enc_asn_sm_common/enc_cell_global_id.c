@@ -26,7 +26,7 @@ CGI_t * enc_cell_global_id_asn(const cell_global_id_t * cell_global_id)
         cell_global_id_asn->choice.nR_CGI = calloc(1, sizeof(NR_CGI_t));
 
         MCC_MNC_TO_PLMNID(cell_global_id->nr_cgi.plmn_id.mcc, cell_global_id->nr_cgi.plmn_id.mnc, cell_global_id->nr_cgi.plmn_id.mnc_digit_len, &cell_global_id_asn->choice.nR_CGI->pLMNIdentity);
-        NR_CELL_ID_TO_BIT_STRING(cell_global_id->nr_cgi.nr_cell_id, &cell_global_id_asn->choice.nR_CGI->nRCellIdentity);
+        cell_global_id_asn->choice.nR_CGI->nRCellIdentity = cp_nr_cell_id_to_bit_string(cell_global_id->nr_cgi.nr_cell_id);
         break;
       }
 
@@ -36,7 +36,7 @@ CGI_t * enc_cell_global_id_asn(const cell_global_id_t * cell_global_id)
         cell_global_id_asn->choice.eUTRA_CGI = calloc(1, sizeof(EUTRA_CGI_t));
 
         MCC_MNC_TO_PLMNID(cell_global_id->eutra.plmn_id.mcc, cell_global_id->eutra.plmn_id.mnc, cell_global_id->eutra.plmn_id.mnc_digit_len, &cell_global_id_asn->choice.eUTRA_CGI->pLMNIdentity);
-        EUTRA_CELL_ID_TO_BIT_STRING(cell_global_id->eutra.eutra_cell_id, &cell_global_id_asn->choice.eUTRA_CGI->eUTRACellIdentity);
+        cell_global_id_asn->choice.eUTRA_CGI->eUTRACellIdentity = cp_eutra_cell_id_to_bit_string(cell_global_id->eutra.eutra_cell_id);
         break;
       }
 

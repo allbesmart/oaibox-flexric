@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #include "plmn_identity.h"
 
 typedef enum {
@@ -24,6 +26,8 @@ typedef struct {
     
 
 } global_gnb_id_t;
+
+bool eq_global_gnb_id(global_gnb_id_t const * m0, global_gnb_id_t const * m1);
 
 
 #ifdef __cplusplus

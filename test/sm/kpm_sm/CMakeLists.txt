@@ -42,6 +42,7 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
                       ../../../src/util/alg_ds/alg/defer.c
                       ../../../src/util/alg_ds/alg/eq_float.c
                       ../../../src/util/byte_array.c
+                      ../../../src/util/conversions.c
                       fill_kpm_ind_data/fill_kpm_ind_data.c
                       ../../../src/sm/kpm_sm_v2.02/fill_ric_subscription_data/on_ric_subscription.c
 
@@ -94,6 +95,9 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
                 ../../../src/lib/e2sm_common_ie/3gpp_derived_ie/guami.c
                 ../../../src/lib/e2sm_common_ie/3gpp_derived_ie/gummei.c
                 ../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_enb_id.c
+                ../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_gnb_id.c
+                ../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_enb_id.c
+                ../../../src/lib/e2sm_common_ie/3gpp_derived_ie/global_ng_ran_node_id.c
                 ../../../src/lib/e2sm_common_ie/3gpp_derived_ie/nr_cgi.c
 		            ../../../src/lib/e2sm_common_ie/3gpp_derived_ie/eutra_cgi.c
                 ../../../src/lib/e2sm_common_ie/sm_common_ie/ue_id.c

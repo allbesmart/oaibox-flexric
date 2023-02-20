@@ -20,25 +20,25 @@ GlobalENB_ID_t enc_global_enb_id_asn(const global_enb_id_t * global_enb_id)
     case MACRO_ENB_TYPE_ID:
 
         global_enb_id_asn.eNB_ID.present = ENB_ID_PR_macro_eNB_ID;
-        MACRO_ENB_ID_TO_BIT_STRING(global_enb_id->macro_enb_id, &global_enb_id_asn.eNB_ID.choice.macro_eNB_ID);
+        global_enb_id_asn.eNB_ID.choice.macro_eNB_ID = cp_macro_enb_id_to_bit_string(global_enb_id->macro_enb_id);
         break;
     
     case HOME_ENB_TYPE_ID:
 
         global_enb_id_asn.eNB_ID.present = ENB_ID_PR_home_eNB_ID;
-        HOME_ENB_ID_TO_BIT_STRING(global_enb_id->home_enb_id, &global_enb_id_asn.eNB_ID.choice.home_eNB_ID);
+        global_enb_id_asn.eNB_ID.choice.home_eNB_ID = cp_home_enb_id_to_bit_string(global_enb_id->home_enb_id);
         break;
 
     case SHORT_MACRO_ENB_TYPE_ID:
 
         global_enb_id_asn.eNB_ID.present = ENB_ID_PR_short_Macro_eNB_ID;
-        SHORT_MACRO_ENB_ID_TO_BIT_STRING(global_enb_id->short_macro_enb_id, &global_enb_id_asn.eNB_ID.choice.short_Macro_eNB_ID);
+        global_enb_id_asn.eNB_ID.choice.short_Macro_eNB_ID = cp_short_macro_enb_id_to_bit_string(global_enb_id->short_macro_enb_id);
         break;
 
     case LONG_MACRO_ENB_TYPE_ID:
 
         global_enb_id_asn.eNB_ID.present = ENB_ID_PR_long_Macro_eNB_ID;
-        LONG_MACRO_ENB_ID_TO_BIT_STRING(global_enb_id->long_macro_enb_id, &global_enb_id_asn.eNB_ID.choice.long_Macro_eNB_ID);
+        global_enb_id_asn.eNB_ID.choice.long_Macro_eNB_ID = cp_long_macro_enb_id_to_bit_string(global_enb_id->long_macro_enb_id);
         break;
 
     default:

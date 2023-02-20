@@ -26,11 +26,15 @@ UEID_NG_ENB_t * enc_ng_eNB_UE_asn(const ng_enb_t * ng_enb)
 
     MCC_MNC_TO_PLMNID(ng_enb->guami.plmn_id.mcc, ng_enb->guami.plmn_id.mnc, ng_enb->guami.plmn_id.mnc_digit_len, &ng_enb_asn->guami.pLMNIdentity);
 
-    AMF_REGION_TO_BIT_STRING(ng_enb->guami.amf_region_id, &ng_enb_asn->guami.aMFRegionID);
+    ng_enb_asn->guami.aMFRegionID = cp_amf_region_id_to_bit_string(ng_enb->guami.amf_region_id);
 
-    AMF_SETID_TO_BIT_STRING(ng_enb->guami.amf_set_id, &ng_enb_asn->guami.aMFSetID);
+    ng_enb_asn->guami.aMFSetID = cp_amf_set_id_to_bit_string(ng_enb->guami.amf_set_id);
 
-    AMF_POINTER_TO_BIT_STRING(ng_enb->guami.amf_ptr, &ng_enb_asn->guami.aMFPointer);
+    ng_enb_asn->guami.aMFPointer = cp_amf_ptr_to_bit_string(ng_enb->guami.amf_ptr);
+    
+    // AMF_SETID_TO_BIT_STRING(ng_enb->guami.amf_set_id, &ng_enb_asn->guami.aMFSetID);
+// 
+    // AMF_POINTER_TO_BIT_STRING(ng_enb->guami.amf_ptr, &ng_enb_asn->guami.aMFPointer);
 
 
     // C-if CU DU separated

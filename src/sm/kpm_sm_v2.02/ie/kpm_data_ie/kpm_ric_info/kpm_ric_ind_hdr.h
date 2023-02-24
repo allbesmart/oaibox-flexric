@@ -9,7 +9,7 @@ extern "C" {
 
 
 typedef enum {
-  FORMAT_1_INDICATION_HEADER = 1,
+  FORMAT_1_INDICATION_HEADER,
 
   END_INDICATION_HEADER
 

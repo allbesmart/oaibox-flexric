@@ -9,15 +9,22 @@ bool eq_meas_type(meas_type_t const * m0, meas_type_t const * m1)
 
     if (m0->type != m1->type)
       return false;
-    if (m0->type == NAME_MEAS_TYPE)
+
+
+    switch (m0->type)
     {
+    case NAME_MEAS_TYPE:
       if (eq_byte_array(&m0->name, &m1->name) != true)
         return false;
-    }
-    else if (m0->type == ID_MEAS_TYPE)
-    {
+      break;
+
+    case ID_MEAS_TYPE:
       if (m0->id != m1->id)
         return false;
+      break;
+    
+    default:
+      assert(false && "Unknown Measurement Type");
     }
 
     return true;

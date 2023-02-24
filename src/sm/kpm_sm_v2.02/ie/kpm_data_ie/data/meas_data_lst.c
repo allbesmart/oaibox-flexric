@@ -41,7 +41,7 @@ bool eq_meas_data_lst(meas_data_lst_t const* m0, meas_data_lst_t const* m1)
     }
 
 
-    if (m0->incomplete_flag != m1->incomplete_flag)
+    if ((m0->incomplete_flag != NULL || m1->incomplete_flag != NULL) && *m0->incomplete_flag != *m1->incomplete_flag)
       return false;
 
 

@@ -10,7 +10,7 @@ extern "C" {
 #include "kpm_ric_event_trigger_def_frm_1.h"
 
 typedef enum {
-    STYLE_1_RIC_EVENT_TRIGGER = 1,
+    STYLE_1_RIC_EVENT_TRIGGER,
 
     END_STYLE_RIC_EVENT_TRIGGER
 

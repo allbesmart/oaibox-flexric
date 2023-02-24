@@ -32,7 +32,7 @@ MeasurementInfoList_t kpm_enc_meas_info_asn(const meas_info_format_1_lst_t *meas
           assert(ret == 0);
         }
         else {
-          mInfo->measType.choice.measID = meas_info[i].meas_type.id;
+          memcpy(&mInfo->measType.choice.measID, &meas_info[i].meas_type.id, 2);
         }
 
 

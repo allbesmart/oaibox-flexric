@@ -12,6 +12,10 @@ void free_kpm_ind_msg(kpm_ind_msg_t * src)
     case FORMAT_1_INDICATION_MESSAGE:
         free_kpm_ind_msg_frm_1(&src->frm_1);
         break;
+
+    case FORMAT_2_INDICATION_MESSAGE:
+        free_kpm_ind_msg_frm_2(&src->frm_2);
+        break;
     
     // to be filled with other formats
 
@@ -34,8 +38,13 @@ bool eq_kpm_ind_msg(kpm_ind_msg_t const * m0, kpm_ind_msg_t const * m1)
             return false;
         break;
     
-    default:
+    case FORMAT_2_INDICATION_MESSAGE:
+        if (eq_kpm_ind_msg_frm_2(&m0->frm_2, &m1->frm_2) != true)
+            return false;
         break;
+
+    default:
+        assert(false && "Unknown Indication Message Type");
     }
 
     return true;

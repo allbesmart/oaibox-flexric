@@ -15,8 +15,8 @@ UEID_EN_GNB_t * enc_en_gNB_UE_asn(const en_gnb_t * en_gnb)
 
     // Mandatory
     // MeNB UE X2AP ID
-    en_gnb_asn->m_eNB_UE_X2AP_ID = (long)en_gnb->enb_ue_x2ap_id;
-    assert(en_gnb_asn->m_eNB_UE_X2AP_ID >= min_val_ENB_UE_X2AP_ID && en_gnb_asn->m_eNB_UE_X2AP_ID <= max_val_ENB_UE_X2AP_ID);
+    memcpy(&en_gnb_asn->m_eNB_UE_X2AP_ID, &en_gnb->enb_ue_x2ap_id, 2);
+    assert(en_gnb_asn->m_eNB_UE_X2AP_ID > min_val_ENB_UE_X2AP_ID && en_gnb_asn->m_eNB_UE_X2AP_ID < max_val_ENB_UE_X2AP_ID);
 
 
     // OPTIONAL
@@ -24,8 +24,8 @@ UEID_EN_GNB_t * enc_en_gNB_UE_asn(const en_gnb_t * en_gnb)
     if (en_gnb->enb_ue_x2ap_id_extension != NULL)
     {
         en_gnb_asn->m_eNB_UE_X2AP_ID_Extension = calloc(1, sizeof(*en_gnb_asn->m_eNB_UE_X2AP_ID_Extension));
-        memcpy(en_gnb_asn->m_eNB_UE_X2AP_ID_Extension, en_gnb->enb_ue_x2ap_id_extension, 1);
-        assert(*en_gnb_asn->m_eNB_UE_X2AP_ID_Extension >= min_val_ENB_UE_X2AP_ID && *en_gnb_asn->m_eNB_UE_X2AP_ID_Extension <= max_val_ENB_UE_X2AP_ID);
+        memcpy(en_gnb_asn->m_eNB_UE_X2AP_ID_Extension, en_gnb->enb_ue_x2ap_id_extension, 2);
+        assert(*en_gnb_asn->m_eNB_UE_X2AP_ID_Extension > min_val_ENB_UE_X2AP_ID && *en_gnb_asn->m_eNB_UE_X2AP_ID_Extension < max_val_ENB_UE_X2AP_ID);
     }
 
 
@@ -38,7 +38,7 @@ UEID_EN_GNB_t * enc_en_gNB_UE_asn(const en_gnb_t * en_gnb)
     if (en_gnb->gnb_cu_ue_f1ap_lst != NULL)
     {
         en_gnb_asn->gNB_CU_UE_F1AP_ID = calloc(1, sizeof(*en_gnb_asn->gNB_CU_UE_F1AP_ID));
-        memcpy(en_gnb_asn->gNB_CU_UE_F1AP_ID, en_gnb->gnb_cu_ue_f1ap_lst, 1);
+        memcpy(en_gnb_asn->gNB_CU_UE_F1AP_ID, en_gnb->gnb_cu_ue_f1ap_lst, 4);
     }
 
 
@@ -53,7 +53,7 @@ UEID_EN_GNB_t * enc_en_gNB_UE_asn(const en_gnb_t * en_gnb)
         for (size_t i = 0; i < en_gnb->gnb_cu_cp_ue_e1ap_lst_len; i++)
         {
             UEID_GNB_CU_CP_E1AP_ID_Item_t * e1_item = calloc(1, sizeof(UEID_GNB_CU_CP_E1AP_ID_Item_t));
-            memcpy(&e1_item->gNB_CU_CP_UE_E1AP_ID, &en_gnb->gnb_cu_cp_ue_e1ap_lst[i], 1);
+            memcpy(&e1_item->gNB_CU_CP_UE_E1AP_ID, &en_gnb->gnb_cu_cp_ue_e1ap_lst[i], 4);
             int rc1 = ASN_SEQUENCE_ADD(&en_gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list, e1_item);
             assert(rc1 == 0);
         }

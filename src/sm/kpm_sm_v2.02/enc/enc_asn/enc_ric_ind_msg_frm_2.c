@@ -20,10 +20,10 @@ E2SM_KPM_IndicationMessage_Format2_t * kpm_enc_ind_msg_frm_2_asn(const kpm_ind_m
 
 
     //  3. Granularity Period  -  OPTIONAL
-    if (ind_msg->gran_period_ms)
+    if (ind_msg->gran_period_ms != NULL)
     {
-        ind_msg_asn->granulPeriod = malloc(sizeof(*ind_msg_asn->granulPeriod));
-        ind_msg_asn->granulPeriod = (unsigned long *)ind_msg->gran_period_ms;
+        ind_msg_asn->granulPeriod = calloc(1, sizeof(*ind_msg_asn->granulPeriod));
+        memcpy(ind_msg_asn->granulPeriod, ind_msg->gran_period_ms, 4);
         assert(*ind_msg_asn->granulPeriod >= min_val_GranularityPeriod && *ind_msg_asn->granulPeriod <= max_val_GranularityPeriod);
     }
         

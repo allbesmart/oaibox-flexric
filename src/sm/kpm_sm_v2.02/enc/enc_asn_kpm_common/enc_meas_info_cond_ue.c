@@ -3,9 +3,13 @@
 
 #include "../../ie/kpm_data_ie/data/meas_type.h"
 #include "../../ie/asn/MeasurementCondUEidItem.h"
+#include "../../ie/asn/MatchingUEidList.h"
+#include "../../ie/asn/MatchingUEidItem.h"
 
 #include "enc_meas_info_cond_ue.h"
 #include "enc_matching_cond_frm_3.h"
+#include "../../../../lib/e2sm_common_ie/enc_asn_sm_common/enc_ue_id.h"
+
 MeasurementCondUEidList_t kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_ue_lst_t * meas_cond_ue, const size_t meas_cond_ue_len)
 {
     assert((meas_cond_ue_len <= maxnoofMeasurementInfo && meas_cond_ue_len >= 1) 
@@ -42,15 +46,27 @@ MeasurementCondUEidList_t kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_ue_
         for (size_t j = 0; j<meas_cond_ue[i].matching_cond_lst_len; j++)
         {
             MatchingCondItem_t * matching_cond = kpm_enc_matching_cond_asn(&meas_cond_ue[i].matching_cond_lst[j]);
-            int rc1 = ASN_SEQUENCE_ADD(&meas_cond_ue_asn.list, matching_cond);
+            int rc1 = ASN_SEQUENCE_ADD(&cond_ue_item->matchingCond.list, matching_cond);
             assert(rc1 == 0);
         }
 
 
         // UE_id Matched - OPTIONAL
-        if (meas_cond_ue->ue_id_matched_lst_len != 0)
+        if (meas_cond_ue[i].ue_id_matched_lst_len != 0)
         {
-            assert(false && "Non yet implemented");
+            assert(meas_cond_ue[i].ue_id_matched_lst_len >= 1 && meas_cond_ue[i].ue_id_matched_lst_len <= maxnoofUEID);
+            cond_ue_item->matchingUEidList = calloc(meas_cond_ue[i].ue_id_matched_lst_len, sizeof(MatchingUEidList_t));
+            assert(cond_ue_item->matchingUEidList != NULL && "Memory exhausted");
+
+            for (size_t j = 0; j<meas_cond_ue[i].ue_id_matched_lst_len; j++)
+            {
+                MatchingUEidItem_t * matching_ue_id_item = calloc(1, sizeof(MatchingUEidItem_t));
+                assert(matching_ue_id_item != NULL && "Memory exhausted");
+                matching_ue_id_item->ueID = enc_ue_id_asn(&meas_cond_ue[i].ue_id_matched_lst[j]);
+                int rc1 = ASN_SEQUENCE_ADD(&cond_ue_item->matchingUEidList->list, matching_ue_id_item);
+                assert(rc1 == 0);
+            }
+
         }
         else
         {
@@ -59,10 +75,7 @@ MeasurementCondUEidList_t kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_ue_
 
 
         // UE_id Granularity Period - OPTIONAL
-        if (meas_cond_ue->ue_id_gran_period_lst != NULL)
-        {
-            assert(false && "Not yet implemented, even in ASN.1");
-        }
+        // not implemented in ASN.1
 
 
         int rc1 = ASN_SEQUENCE_ADD(&meas_cond_ue_asn.list, cond_ue_item);

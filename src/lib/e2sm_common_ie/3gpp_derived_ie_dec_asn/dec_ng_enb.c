@@ -33,7 +33,7 @@ ng_enb_t dec_ng_eNB_UE_asn(const UEID_NG_ENB_t * ng_enb_asn)
     if (ng_enb_asn->ng_eNB_CU_UE_W1AP_ID != NULL)
     {
         ng_enb.ng_enb_cu_ue_w1ap_id = calloc(1, sizeof(*ng_enb.ng_enb_cu_ue_w1ap_id));
-        memcpy(ng_enb.ng_enb_cu_ue_w1ap_id, ng_enb_asn->ng_eNB_CU_UE_W1AP_ID, 1);
+        memcpy(ng_enb.ng_enb_cu_ue_w1ap_id, ng_enb_asn->ng_eNB_CU_UE_W1AP_ID, 4);
     }
 
 
@@ -43,7 +43,7 @@ ng_enb_t dec_ng_eNB_UE_asn(const UEID_NG_ENB_t * ng_enb_asn)
     if (ng_enb_asn->m_NG_RAN_UE_XnAP_ID != NULL)
     {
         ng_enb.ng_ran_node_ue_xnap_id = calloc(1, sizeof(*ng_enb.ng_ran_node_ue_xnap_id));
-        memcpy(ng_enb.ng_ran_node_ue_xnap_id, ng_enb_asn->m_NG_RAN_UE_XnAP_ID, 1);
+        memcpy(ng_enb.ng_ran_node_ue_xnap_id, ng_enb_asn->m_NG_RAN_UE_XnAP_ID, 4);
     }
 
 

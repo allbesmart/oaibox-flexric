@@ -10,7 +10,7 @@ UEID_GNB_CU_UP_t * enc_gNB_CU_UP_UE_asn(const gnb_cu_up_t * gnb_cu_up)
     // 6.2.3.20
     // Mandatory
     // gNB CU CP UE E1AP
-    memcpy(&gnb_cu_up_asn->gNB_CU_CP_UE_E1AP_ID, &gnb_cu_up->gnb_cu_cp_ue_e1ap, 1);
+    memcpy(&gnb_cu_up_asn->gNB_CU_CP_UE_E1AP_ID, &gnb_cu_up->gnb_cu_cp_ue_e1ap, 4);
 
 
     // RAN UE ID

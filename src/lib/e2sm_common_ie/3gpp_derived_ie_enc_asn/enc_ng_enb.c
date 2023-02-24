@@ -23,7 +23,6 @@ UEID_NG_ENB_t * enc_ng_eNB_UE_asn(const ng_enb_t * ng_enb)
 
     // GUAMI
 
-
     MCC_MNC_TO_PLMNID(ng_enb->guami.plmn_id.mcc, ng_enb->guami.plmn_id.mnc, ng_enb->guami.plmn_id.mnc_digit_len, &ng_enb_asn->guami.pLMNIdentity);
 
     ng_enb_asn->guami.aMFRegionID = cp_amf_region_id_to_bit_string(ng_enb->guami.amf_region_id);
@@ -31,10 +30,6 @@ UEID_NG_ENB_t * enc_ng_eNB_UE_asn(const ng_enb_t * ng_enb)
     ng_enb_asn->guami.aMFSetID = cp_amf_set_id_to_bit_string(ng_enb->guami.amf_set_id);
 
     ng_enb_asn->guami.aMFPointer = cp_amf_ptr_to_bit_string(ng_enb->guami.amf_ptr);
-    
-    // AMF_SETID_TO_BIT_STRING(ng_enb->guami.amf_set_id, &ng_enb_asn->guami.aMFSetID);
-// 
-    // AMF_POINTER_TO_BIT_STRING(ng_enb->guami.amf_ptr, &ng_enb_asn->guami.aMFPointer);
 
 
     // C-if CU DU separated
@@ -43,7 +38,7 @@ UEID_NG_ENB_t * enc_ng_eNB_UE_asn(const ng_enb_t * ng_enb)
     if (ng_enb->ng_enb_cu_ue_w1ap_id != NULL)
     {
         ng_enb_asn->ng_eNB_CU_UE_W1AP_ID = calloc(1, sizeof(*ng_enb_asn->ng_eNB_CU_UE_W1AP_ID));
-        memcpy(ng_enb_asn->ng_eNB_CU_UE_W1AP_ID, ng_enb->ng_enb_cu_ue_w1ap_id, 1);
+        memcpy(ng_enb_asn->ng_eNB_CU_UE_W1AP_ID, ng_enb->ng_enb_cu_ue_w1ap_id, 4);
     }
     
 
@@ -53,7 +48,7 @@ UEID_NG_ENB_t * enc_ng_eNB_UE_asn(const ng_enb_t * ng_enb)
     if (ng_enb->ng_ran_node_ue_xnap_id != NULL)
     {
         ng_enb_asn->m_NG_RAN_UE_XnAP_ID = calloc(1, sizeof(*ng_enb_asn->m_NG_RAN_UE_XnAP_ID));
-        memcpy(ng_enb_asn->m_NG_RAN_UE_XnAP_ID, ng_enb->ng_ran_node_ue_xnap_id, 1);
+        memcpy(ng_enb_asn->m_NG_RAN_UE_XnAP_ID, ng_enb->ng_ran_node_ue_xnap_id, 4);
     }
 
 

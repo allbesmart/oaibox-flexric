@@ -46,11 +46,17 @@ bool eq_ng_enb_ue_id(ng_enb_t const * m0, ng_enb_t const * m1)
     
     // Global gNB ID
     if (m0->global_ng_enb_id != NULL && m1->global_ng_enb_id != NULL)
-      assert(false && "Equivalency of Global NG eNB ID not yet implemented");
+    {
+      if (eq_global_ng_enb_id(m0->global_ng_enb_id, m1->global_ng_enb_id) != true)
+        return false;
+    }
 
     // Global NG-RAN Node ID
     if (m0->global_ng_ran_node_id != NULL && m1->global_ng_ran_node_id != NULL)
-      assert(false && "Equivalency of Global NG RAN Node ID not yet implemented");
+    {
+      if (eq_global_ng_ran_node_id(m0->global_ng_ran_node_id, m1->global_ng_ran_node_id) != true)
+        return false;
+    }
 
 
     return true;

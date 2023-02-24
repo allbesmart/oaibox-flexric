@@ -28,12 +28,12 @@ meas_data_lst_t * kpm_dec_meas_data_asn(const MeasurementData_t meas_data_asn, c
             {
             case MeasurementRecordItem_PR_integer:
                 meas_data[i].meas_record_lst[j].value = INTEGER_MEAS_VALUE;
-                meas_data[i].meas_record_lst[j].int_val = record_item_asn->choice.integer;
+                memcpy(&meas_data[i].meas_record_lst[j].int_val, &record_item_asn->choice.integer, 4);
                 break;
 
             case MeasurementRecordItem_PR_real:
                 meas_data[i].meas_record_lst[j].value = REAL_MEAS_VALUE;
-                meas_data[i].meas_record_lst[j].real_val = record_item_asn->choice.real;
+                memcpy(&meas_data[i].meas_record_lst[j].real_val, &record_item_asn->choice.real, 8);
                 break;
 
             case MeasurementRecordItem_PR_noValue:
@@ -50,10 +50,10 @@ meas_data_lst_t * kpm_dec_meas_data_asn(const MeasurementData_t meas_data_asn, c
         // Incomplete Flag - OPTIONAL
         if (data_item_asn->incompleteFlag != NULL)
         {
-            assert(data_item_asn->incompleteFlag == 0  && "has only one value (true)");
+            assert(*data_item_asn->incompleteFlag == 0  && "has only one value (true)");
             meas_data[i].incomplete_flag = calloc(1, sizeof(*meas_data[i].incomplete_flag));
             assert(meas_data[i].incomplete_flag != NULL && "Memory exhausted");
-            meas_data[i].incomplete_flag = TRUE_ENUM_VALUE;
+            *meas_data[i].incomplete_flag = TRUE_ENUM_VALUE;
         }
         else
         {

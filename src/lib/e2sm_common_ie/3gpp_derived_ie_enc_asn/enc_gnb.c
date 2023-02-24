@@ -12,42 +12,7 @@
 #include "enc_global_gnb_id.h"
 #include "enc_global_ng_ran.h"
 
-
-
 #include "enc_gnb.h"
-
-// static
-// BIT_STRING_t cp_amf_set_id(uint16_t val)
-// {
-//   assert(val < 1024);
-
-//   BIT_STRING_t dst = {0}; 
-//   dst.bits_unused = 6; // unused_bit;
-//   dst.size = 2;
-//   dst.buf = calloc(2, sizeof(uint8_t) ); 
-//   assert(dst.buf != NULL);
-
-//   dst.buf[0] = val; // 0x5555;
-//   dst.buf[1] = (val >> 8) << 6; 
-
-//   return dst;
-// }
-
-
-
-// static
-// BIT_STRING_t cp_amf_ptr_to_bit_string(uint8_t src)
-// {
-//   assert(src < 64);
-
-//   uint8_t tmp = src << 2;
-
-//   BIT_STRING_t dst = {.bits_unused =2, .buf = malloc(1), .size = 1}; 
-//   assert(dst.buf != NULL);
-//   memcpy(dst.buf, &tmp, 1); 
-
-//   return dst;
-// }
 
 
 UEID_GNB_t* enc_gNB_UE_asn(const gnb_t* gnb)
@@ -88,7 +53,7 @@ UEID_GNB_t* enc_gNB_UE_asn(const gnb_t* gnb)
     for (size_t i = 0; i < gnb->gnb_cu_ue_f1ap_lst_len; i++)
     {
       UEID_GNB_CU_CP_F1AP_ID_Item_t * f1_item = calloc(1, sizeof(UEID_GNB_CU_CP_F1AP_ID_Item_t));
-      memcpy(&f1_item->gNB_CU_UE_F1AP_ID, &gnb->gnb_cu_ue_f1ap_lst[i], 1);
+      memcpy(&f1_item->gNB_CU_UE_F1AP_ID, &gnb->gnb_cu_ue_f1ap_lst[i], 4);
       int rc1 = ASN_SEQUENCE_ADD(&gnb_asn->gNB_CU_UE_F1AP_ID_List->list, f1_item);
       assert(rc1 == 0);
     }
@@ -107,7 +72,7 @@ UEID_GNB_t* enc_gNB_UE_asn(const gnb_t* gnb)
     for (size_t i = 0; i < gnb->gnb_cu_cp_ue_e1ap_lst_len; i++)
     {
       UEID_GNB_CU_CP_E1AP_ID_Item_t * e1_item = calloc(1, sizeof(UEID_GNB_CU_CP_E1AP_ID_Item_t));
-      memcpy(&e1_item->gNB_CU_CP_UE_E1AP_ID, &gnb->gnb_cu_cp_ue_e1ap_lst[i], 1);
+      memcpy(&e1_item->gNB_CU_CP_UE_E1AP_ID, &gnb->gnb_cu_cp_ue_e1ap_lst[i], 4);
       int rc1 = ASN_SEQUENCE_ADD(&gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list, e1_item);
       assert(rc1 == 0);
     }
@@ -133,7 +98,7 @@ UEID_GNB_t* enc_gNB_UE_asn(const gnb_t* gnb)
   if (gnb->ng_ran_node_ue_xnap_id != NULL)
   {
     gnb_asn->m_NG_RAN_UE_XnAP_ID = calloc(1, sizeof(*gnb_asn->m_NG_RAN_UE_XnAP_ID));
-    memcpy(gnb_asn->m_NG_RAN_UE_XnAP_ID, gnb->ng_ran_node_ue_xnap_id, 1);
+    memcpy(gnb_asn->m_NG_RAN_UE_XnAP_ID, gnb->ng_ran_node_ue_xnap_id, 4);
   }
 
 

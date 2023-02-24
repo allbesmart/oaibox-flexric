@@ -11,7 +11,7 @@ UEID_GNB_DU_t * enc_gNB_DU_UE_asn(const gnb_du_t * gnb_du)
     // 6.2.3.21
     // Mandatory
     // gNB CU UE F1AP
-    memcpy(&gnb_du_asn->gNB_CU_UE_F1AP_ID, &gnb_du->gnb_cu_ue_f1ap, 1);
+    memcpy(&gnb_du_asn->gNB_CU_UE_F1AP_ID, &gnb_du->gnb_cu_ue_f1ap, 4);
 
 
     // RAN UE ID

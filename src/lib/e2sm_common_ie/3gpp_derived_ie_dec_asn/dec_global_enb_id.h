@@ -9,7 +9,7 @@ extern "C" {
 #include "../../../sm/kpm_sm_v2.02/ie/asn/GlobalENB-ID.h"
 #include "../3gpp_derived_ie/global_enb_id.h"
 
-global_enb_id_t * dec_global_enb_id_asn(const GlobalENB_ID_t * global_enb_id_asn);
+global_enb_id_t dec_global_enb_id_asn(const GlobalENB_ID_t * global_enb_id_asn);
 
 #ifdef __cplusplus
 }

@@ -12,32 +12,30 @@ en_gnb_t dec_en_gNB_UE_asn(const UEID_EN_GNB_t * en_gnb_asn)
 
     // Mandatory
     // MeNB UE X2AP ID
-    en_gnb.enb_ue_x2ap_id = (uint16_t)en_gnb_asn->m_eNB_UE_X2AP_ID;
-    //memcpy(&en_gnb.enb_ue_x2ap_id, &en_gnb_asn->m_eNB_UE_X2AP_ID, 1);
-    assert(en_gnb.enb_ue_x2ap_id >= min_val_ENB_UE_X2AP_ID && en_gnb.enb_ue_x2ap_id <= max_val_ENB_UE_X2AP_ID);
+    memcpy(&en_gnb.enb_ue_x2ap_id, &en_gnb_asn->m_eNB_UE_X2AP_ID, 2);
+    assert(en_gnb.enb_ue_x2ap_id > min_val_ENB_UE_X2AP_ID && en_gnb.enb_ue_x2ap_id < max_val_ENB_UE_X2AP_ID);
 
     // OPTIONAL
     // MeNB UE X2AP ID Extension
     if (en_gnb_asn->m_eNB_UE_X2AP_ID_Extension != NULL)
     {
         en_gnb.enb_ue_x2ap_id_extension = calloc(1, sizeof(*en_gnb.enb_ue_x2ap_id_extension));
-        memcpy(en_gnb.enb_ue_x2ap_id_extension, en_gnb_asn->m_eNB_UE_X2AP_ID_Extension, 1);
-        assert(*en_gnb.enb_ue_x2ap_id_extension >= min_val_ENB_UE_X2AP_ID && *en_gnb.enb_ue_x2ap_id_extension <= max_val_ENB_UE_X2AP_ID);
+        memcpy(en_gnb.enb_ue_x2ap_id_extension, en_gnb_asn->m_eNB_UE_X2AP_ID_Extension, 2);
+        assert(*en_gnb.enb_ue_x2ap_id_extension > min_val_ENB_UE_X2AP_ID && *en_gnb.enb_ue_x2ap_id_extension < max_val_ENB_UE_X2AP_ID);
     }
 
 
     // Mandatory
     // Global eNB ID
-    global_enb_id_t * temp = dec_global_enb_id_asn(&en_gnb_asn->globalENB_ID);
-    en_gnb.global_enb_id = *temp;
-    free(temp);
+    en_gnb.global_enb_id = dec_global_enb_id_asn(&en_gnb_asn->globalENB_ID);
+
 
     // gNB-CU UE F1AP ID
     // C-ifCUDUseparated 
     if (en_gnb_asn->gNB_CU_UE_F1AP_ID != NULL)
     {
         en_gnb.gnb_cu_ue_f1ap_lst = calloc(1, sizeof(*en_gnb.gnb_cu_ue_f1ap_lst));
-        memcpy(en_gnb.gnb_cu_ue_f1ap_lst, en_gnb_asn->gNB_CU_UE_F1AP_ID, 1);
+        memcpy(en_gnb.gnb_cu_ue_f1ap_lst, en_gnb_asn->gNB_CU_UE_F1AP_ID, 4);
     }
 
 
@@ -52,7 +50,7 @@ en_gnb_t dec_en_gNB_UE_asn(const UEID_EN_GNB_t * en_gnb_asn)
 
         for (size_t i = 0; i < en_gnb.gnb_cu_cp_ue_e1ap_lst_len; i++)
         {
-            memcpy(&en_gnb.gnb_cu_cp_ue_e1ap_lst[i], en_gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.array[i], 1);
+            memcpy(&en_gnb.gnb_cu_cp_ue_e1ap_lst[i], en_gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.array[i], 4);
         }
     }
     else

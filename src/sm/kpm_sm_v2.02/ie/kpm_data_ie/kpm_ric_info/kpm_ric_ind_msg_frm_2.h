@@ -6,6 +6,8 @@ extern "C" {
 #endif
 
 #include <stdlib.h>
+#include <stdbool.h>
+
 #include "../data/meas_data_lst.h"
 #include "../data/meas_info_cond_ue_lst.h"
 
@@ -19,9 +21,13 @@ typedef struct {
     size_t                    meas_info_cond_ue_lst_len;  // [1, 65535]
     meas_info_cond_ue_lst_t  *meas_info_cond_ue_lst;
 
-    uint32_t                 *gran_period_ms;  // 8.3.8  -  OPTIONAL
+    uint32_t                 *gran_period_ms;  // 8.3.8  -  OPTIONAL  (1..4294967295)
 
 } kpm_ind_msg_format_2_t;
+
+void free_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t* src);
+
+bool eq_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t const* m0, kpm_ind_msg_format_2_t const* m1);
 
 #ifdef __cplusplus
 }

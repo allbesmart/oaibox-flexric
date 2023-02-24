@@ -20,8 +20,13 @@ void free_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t* src)
 {
   assert(src != NULL);
 
-  for (size_t i = 0; i < src->meas_data_lst_len; i++)
+  for (size_t i = 0; i<src->meas_data_lst_len; i++)
+  {
     free(src->meas_data_lst[i].meas_record_lst);
+
+    if (src->meas_data_lst[i].incomplete_flag != NULL)
+      free(src->meas_data_lst[i].incomplete_flag);
+  }
   free(src->meas_data_lst);
   
 
@@ -81,7 +86,7 @@ bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1
   }
 
   // Granularity Period
-  if (m0->gran_period_ms != m1->gran_period_ms)
+  if ((m0->gran_period_ms != NULL || m1->gran_period_ms != NULL) && *m0->gran_period_ms != *m1->gran_period_ms)
     return false;
 
 

@@ -85,17 +85,20 @@ typedef struct {
 
     test_cond_value_e *test_cond_value;  /* 8.3.23, OPTIONAL */
     union {
-        int64_t int_value;
-        int64_t enum_value;
-        bool bool_value;
-        byte_array_t bit_string_value; // bit_string to be created, it is not the type of byte_array; ask Mikel
-        byte_array_t octet_string_value;
-        byte_array_t printable_string_value;
-        double real_value_value;
+        int64_t * int_value;
+        int64_t * enum_value;
+        bool * bool_value;
+        byte_array_t * bit_string_value; // enc/dec of this bit_string to be created
+        byte_array_t * octet_string_value;
+        byte_array_t * printable_string_value;
+        double * real_value_value;
     };
 
 } test_info_lst_t;
 
+void free_test_info(test_info_lst_t* src);
+
+bool eq_test_info(const test_info_lst_t *m0, const test_info_lst_t *m1);
 
 #ifdef __cplusplus
 }

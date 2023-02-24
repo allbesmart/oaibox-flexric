@@ -11,7 +11,7 @@ MeasurementCondList_t kpm_enc_meas_info_cond_asn(const meas_info_format_3_lst_t 
     assert((meas_info_cond_len <= maxnoofMeasurementInfo && meas_info_cond_len >= 1) 
               && "Number of measures not allowed");
     
-    MeasurementCondList_t meas_cond_list_asn;
+    MeasurementCondList_t meas_cond_list_asn = {0};
 
     int ret;
 

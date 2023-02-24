@@ -71,15 +71,19 @@ TestCondInfo_t * kpm_enc_test_info_asn(const test_info_lst_t * test_info)
         
     }
     
-
-    if (*test_info->test_cond >= 0 && *test_info->test_cond < END_TEST_COND) {
-        assert(false && "Test Condition not yet implemented");
+    if (test_info->test_cond != NULL)
+    {
+        if (*test_info->test_cond >= 0 && *test_info->test_cond < END_TEST_COND) {
+            assert(false && "Test Condition not yet implemented");
+        }
     }
 
-    if (*test_info->test_cond_value >= 0 && *test_info->test_cond_value <= 6) {
-        assert(false && "Test Condition Value not yet implemented");
+    if (test_info->test_cond_value != NULL)
+    {
+        if (*test_info->test_cond_value >= 0 && *test_info->test_cond_value < END_TEST_COND_VALUE) {
+            assert(false && "Test Condition Value not yet implemented");
+        }
     }
-
 
     return test_info_asn;
 

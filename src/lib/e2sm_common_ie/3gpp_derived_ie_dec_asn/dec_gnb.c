@@ -9,32 +9,6 @@
 #include "dec_global_gnb_id.h"
 #include "dec_global_ng_ran.h"
 
-// static
-// uint8_t cp_amf_ptr_to_u8(BIT_STRING_t src)
-// {
-//   assert(src.bits_unused == 2);
-//   assert(src.size == 1);
-
-//   uint8_t dst = 0; 
-//   memcpy(&dst, src.buf, 1);
-
-//   dst = (dst >> 2);
-//   return dst;
-// }
-
-// static 
-// uint16_t cp_amf_set_id(BIT_STRING_t src)
-// {
-//   assert(src.bits_unused == 6);
-//   assert(src.size == 2);
-//   assert(src.buf != NULL);
-
-//   uint16_t dst = (src.buf[1] >> 6) << 8; 
-  
-//   dst = dst | src.buf[0];
-
-//   return dst;
-// }
 
 gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 {
@@ -68,7 +42,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 
         for (size_t i = 0; i < gnb.gnb_cu_ue_f1ap_lst_len; i++)
         {
-            memcpy(&gnb.gnb_cu_ue_f1ap_lst[i], gnb_asn->gNB_CU_UE_F1AP_ID_List->list.array[i], 1);
+            memcpy(&gnb.gnb_cu_ue_f1ap_lst[i], gnb_asn->gNB_CU_UE_F1AP_ID_List->list.array[i], 4);
         }
     }
     else
@@ -88,7 +62,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 
         for (size_t i = 0; i < gnb.gnb_cu_cp_ue_e1ap_lst_len; i++)
         {
-            memcpy(&gnb.gnb_cu_cp_ue_e1ap_lst[i], gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.array[i], 1);
+            memcpy(&gnb.gnb_cu_cp_ue_e1ap_lst[i], gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.array[i], 4);
         }
     }
     else
@@ -117,7 +91,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     if (gnb_asn->m_NG_RAN_UE_XnAP_ID != NULL)
     {
         gnb.ng_ran_node_ue_xnap_id = calloc(1, sizeof(*gnb.ng_ran_node_ue_xnap_id));
-        memcpy(gnb.ng_ran_node_ue_xnap_id, gnb_asn->m_NG_RAN_UE_XnAP_ID, 1);
+        memcpy(gnb.ng_ran_node_ue_xnap_id, gnb_asn->m_NG_RAN_UE_XnAP_ID, 4);
     }
     
 

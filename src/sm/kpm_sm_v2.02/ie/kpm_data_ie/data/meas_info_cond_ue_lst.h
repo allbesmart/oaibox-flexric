@@ -22,11 +22,14 @@ typedef struct {
     ue_id_t *ue_id_matched_lst;
 
     size_t ue_id_gran_period_lst_len;  // [0, 65535]
-    ue_id_gran_period_lst_t *ue_id_gran_period_lst;
+    ue_id_gran_period_lst_t *ue_id_gran_period_lst;  // not implemented in ASN.1
 
 
 } meas_info_cond_ue_lst_t;
 
+void free_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t* src);
+
+bool eq_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t const* m0, meas_info_cond_ue_lst_t const* m1);
 
 #ifdef __cplusplus
 }

@@ -42,6 +42,8 @@ typedef enum{
   TC_AGENT_IF_CTRL_ANS_V0,
   GTP_AGENT_IF_CTRL_ANS_V0,
 
+  RC_AGENT_IF_CTRL_ANS_V1_3,
+
   SM_AGENT_IF_ANS_V0_END,
 } sm_ag_if_ans_e;
 

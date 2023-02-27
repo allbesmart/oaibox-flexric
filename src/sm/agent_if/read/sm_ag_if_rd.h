@@ -33,6 +33,7 @@
 #include "../../tc_sm/ie/tc_data_ie.h"
 #include "../../gtp_sm/ie/gtp_data_ie.h"
 #include "../../kpm_sm_v2.02/ie/kpm_data_ie.h"
+#include "../../rc_sm/ie/rc_data_ie.h"
 
 typedef enum{
   MAC_STATS_V0,
@@ -42,6 +43,9 @@ typedef enum{
   TC_STATS_V0,
   GTP_STATS_V0, 
   KPM_STATS_V0, 
+
+  RC_STATS_V1_03,
+
   SM_AGENT_IF_READ_V0_END,
 } sm_ag_if_rd_e;
 
@@ -55,6 +59,7 @@ typedef struct{
     tc_ind_data_t tc_stats;
     gtp_ind_data_t gtp_stats;
     kpm_ind_data_t kpm_stats;
+    rc_ind_data_t rc_stats;
   };
   sm_ag_if_rd_e type;
 } sm_ag_if_rd_t;

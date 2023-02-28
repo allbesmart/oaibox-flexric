@@ -9,6 +9,7 @@ set(KPM_RIC_INFO_COMMON_SRCS
   matching_cond_frm_3_lst.c
   meas_info_frm_3_lst.c
   meas_info_cond_ue_lst.c
+  matching_cond_frm_4_lst.c
   )
 
 add_library(kpm_ric_info_common_obj OBJECT ${KPM_RIC_INFO_COMMON_SRCS})

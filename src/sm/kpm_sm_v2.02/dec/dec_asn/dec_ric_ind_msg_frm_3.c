@@ -4,6 +4,7 @@
 #include "dec_ric_ind_msg_frm_3.h"
 #include "dec_ric_ind_msg_frm_1.h"
 #include "../../ie/asn/UEMeasurementReportItem.h"
+#include "../../../../lib/e2sm_common_ie/dec_asn_sm_common/dec_ue_id.h"
 
 kpm_ind_msg_format_3_t kpm_dec_ind_msg_frm_3_asn(const E2SM_KPM_IndicationMessage_Format3_t * ind_msg_asn)
 {
@@ -18,9 +19,9 @@ kpm_ind_msg_format_3_t kpm_dec_ind_msg_frm_3_asn(const E2SM_KPM_IndicationMessag
     {
         UEMeasurementReportItem_t * ue_item_asn = ind_msg_asn->ueMeasReportList.list.array[i];
 
-        /* to be filled : UE_id */
+        ind_msg.meas_report_per_ue[i].ue_meas_report_lst = dec_ue_id_asn(&ue_item_asn->ueID);
 
-        ind_msg.meas_report_per_ue->ind_msg_format_1 = kpm_dec_ind_msg_frm_1_asn(&ue_item_asn->measReport);
+        ind_msg.meas_report_per_ue[i].ind_msg_format_1 = kpm_dec_ind_msg_frm_1_asn(&ue_item_asn->measReport);
 
     }
 

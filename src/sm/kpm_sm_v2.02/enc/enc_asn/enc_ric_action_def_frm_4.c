@@ -20,14 +20,12 @@ E2SM_KPM_ActionDefinition_Format4_t * kpm_enc_action_def_frm_4_asn(const kpm_act
     // 1. Matching Condition : [1, 32768]
 
     assert(act_def_frm_4->matching_cond_lst_len >= 1 && act_def_frm_4->matching_cond_lst_len <= maxnoofConditionInfoPerSub);
-
+    
     for (size_t i = 0; i < act_def_frm_4->matching_cond_lst_len; i++)
     {
         MatchingUeCondPerSubItem_t * matching_cond = kpm_enc_matching_cond_frm_4_asn(&act_def_frm_4->matching_cond_lst[i]);
         int rc1 = ASN_SEQUENCE_ADD(&act_def_frm_4_asn->matchingUeCondList.list, matching_cond);
         assert(rc1 == 0);
-
-
     }
 
     act_def_frm_4_asn->subscriptionInfo = kpm_enc_action_def_frm_1_asn(&act_def_frm_4->action_def_format_1);

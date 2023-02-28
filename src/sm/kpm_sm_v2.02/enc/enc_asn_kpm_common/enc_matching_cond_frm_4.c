@@ -13,7 +13,7 @@ MatchingUeCondPerSubItem_t * kpm_enc_matching_cond_frm_4_asn(const matching_cond
     assert(matching_cond_asn != NULL && "Memory exhausted");
 
 
-    matching_cond_asn->testCondInfo = *kpm_enc_test_info_asn(&matching_cond->test_info_lst);
+    matching_cond_asn->testCondInfo = kpm_enc_test_info_asn(&matching_cond->test_info_lst);
 
 
     if (matching_cond->logical_OR != NULL) {

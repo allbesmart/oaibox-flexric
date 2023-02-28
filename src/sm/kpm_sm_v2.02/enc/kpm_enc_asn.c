@@ -62,9 +62,6 @@ byte_array_t kpm_enc_event_trigger_asn(kpm_event_trigger_def_t const* event_trig
   asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_KPM_EventTriggerDefinition, pdu, ba.buf, ba.len);
   assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
   ba.len = er.encoded;
- 
-  // xer_fprint(stderr, &asn_DEF_E2SM_KPM_ActionDefinition, pdu);
-  // fflush(stdout);
 
 
   ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_EventTriggerDefinition, pdu);
@@ -126,7 +123,8 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
     }
   }
 
-
+  // xer_fprint(stderr, &asn_DEF_E2SM_KPM_ActionDefinition, pdu);
+  // fflush(stdout);
 
   /* XXX-tuning: 
    * below bytearray sizing needs to be reviewed and made dynamic. It looks too small for the general case of action definition.
@@ -199,7 +197,9 @@ byte_array_t kpm_enc_ind_msg_asn(kpm_ind_msg_t const* ind_msg)
   {
   case FORMAT_1_INDICATION_MESSAGE:
     pdu->indicationMessage_formats.present = E2SM_KPM_IndicationMessage__indicationMessage_formats_PR_indicationMessage_Format1;
-    pdu->indicationMessage_formats.choice.indicationMessage_Format1 = kpm_enc_ind_msg_frm_1_asn(&ind_msg->frm_1);
+    pdu->indicationMessage_formats.choice.indicationMessage_Format1 = calloc(1, sizeof(E2SM_KPM_IndicationMessage_Format1_t));
+    assert(pdu->indicationMessage_formats.choice.indicationMessage_Format1 != NULL && "Memory exhausted");
+    *pdu->indicationMessage_formats.choice.indicationMessage_Format1 = kpm_enc_ind_msg_frm_1_asn(&ind_msg->frm_1);
     break;
   
   case FORMAT_2_INDICATION_MESSAGE:

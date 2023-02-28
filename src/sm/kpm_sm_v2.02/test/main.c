@@ -85,7 +85,7 @@ int main()
 
   printf("KPM Event Trigger test succeeded\n");
 
-  // // Action Definition
+  // Action Definition
   test_kpm_act_def();
 
   printf("KPM Action Definition test succeeded\n");

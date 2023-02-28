@@ -716,11 +716,56 @@ kpm_act_def_format_3_t fill_kpm_action_def_frm_3(void)
   return action_def_frm_3;
 }
 
+kpm_act_def_format_4_t fill_kpm_action_def_frm_4(void)
+{
+  kpm_act_def_format_4_t action_def_frm_4 = {0};
+
+  // Matching Condition
+  action_def_frm_4.matching_cond_lst_len = 1;  // (rand() % 32768) + 1;
+
+  action_def_frm_4.matching_cond_lst = calloc(action_def_frm_4.matching_cond_lst_len, sizeof(matching_condition_format_4_lst_t));
+  assert(action_def_frm_4.matching_cond_lst != NULL && "Memory exhausted" );
+
+  for (size_t i = 0; i<action_def_frm_4.matching_cond_lst_len; i++)
+  {
+    action_def_frm_4.matching_cond_lst[i].logical_OR = NULL;
+
+    action_def_frm_4.matching_cond_lst[i].test_info_lst = fill_kpm_test_info();
+  }
+
+  action_def_frm_4.action_def_format_1 = fill_kpm_action_def_frm_1();
+
+  return action_def_frm_4;
+}
+
+kpm_act_def_format_5_t fill_kpm_action_def_frm_5(void)
+{
+  kpm_act_def_format_5_t action_def_frm_5 = {0};
+
+  // UE ID List
+  action_def_frm_5.ue_id_lst_len = 3;  // (rand() % 65535) + 2;
+
+  action_def_frm_5.ue_id_lst = calloc(action_def_frm_5.ue_id_lst_len, sizeof(ue_id_t));
+  assert(action_def_frm_5.ue_id_lst != NULL && "Memory exhausted");
+
+  for (size_t i = 0; i<action_def_frm_5.ue_id_lst_len; i++)
+  {
+    action_def_frm_5.ue_id_lst[i] = fill_ue_id_data();
+  }
+
+  
+  // Action Definition Format 1
+  action_def_frm_5.action_def_format_1 = fill_kpm_action_def_frm_1();
+
+
+  return action_def_frm_5;
+}
+
 kpm_act_def_t fill_kpm_action_def(void)
 {
   kpm_act_def_t action_def = {0};
 
-  action_def.type = FORMAT_3_ACTION_DEFINITION;  // rand()%END_ACTION_DEFINITION;
+  action_def.type = rand()%FORMAT_4_ACTION_DEFINITION;
 
   switch (action_def.type)
   {
@@ -736,7 +781,14 @@ kpm_act_def_t fill_kpm_action_def(void)
     action_def.frm_3 = fill_kpm_action_def_frm_3();
     break;
   
-  // to be filled with other formats
+  /* Possible extensions: */
+  // case FORMAT_4_ACTION_DEFINITION:
+  //   action_def.frm_4 = fill_kpm_action_def_frm_4();
+  //   break;
+
+  // case FORMAT_5_ACTION_DEFINITION:
+  //   action_def.frm_5 = fill_kpm_action_def_frm_5();
+  //   break;
 
   default:
     assert(false && "Unknown KPM Action Definition Format Type");
@@ -828,7 +880,7 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
   kpm_ind_msg_format_1_t msg_frm_1 = {0};
   
   // Measurement Data
-  msg_frm_1.meas_data_lst_len = 10;  // (rand() % 65535) + 1;
+  msg_frm_1.meas_data_lst_len = 2;  // (rand() % 65535) + 1;
   msg_frm_1.meas_data_lst = calloc(msg_frm_1.meas_data_lst_len, sizeof(*msg_frm_1.meas_data_lst));
   assert(msg_frm_1.meas_data_lst != NULL && "Memory exhausted" );
   
@@ -840,7 +892,7 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
       *msg_frm_1.meas_data_lst[i].incomplete_flag = TRUE_ENUM_VALUE;
       
       // Measurement Record
-      msg_frm_1.meas_data_lst[i].meas_record_len = 10;  // (rand() % 65535) + 1;
+      msg_frm_1.meas_data_lst[i].meas_record_len = 2;  // (rand() % 65535) + 1;
       msg_frm_1.meas_data_lst[i].meas_record_lst = calloc(msg_frm_1.meas_data_lst[i].meas_record_len, sizeof(meas_record_lst_t));
       assert(msg_frm_1.meas_data_lst[i].meas_record_lst != NULL && "Memory exhausted" );
       
@@ -875,7 +927,7 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
   *msg_frm_1.gran_period_ms = (rand() % 4294967295) + 1;
   
   // Measurement Information - OPTIONAL
-  msg_frm_1.meas_info_lst_len = 3;
+  msg_frm_1.meas_info_lst_len = 2;
   msg_frm_1.meas_info_lst = calloc(msg_frm_1.meas_info_lst_len, sizeof(meas_info_format_1_lst_t));
   assert(msg_frm_1.meas_info_lst != NULL && "Memory exhausted" );
   
@@ -1056,11 +1108,31 @@ kpm_ind_msg_format_2_t fill_kpm_ind_msg_frm_2(void)
   return msg_frm_2;
 }
 
+kpm_ind_msg_format_3_t fill_kpm_ind_msg_frm_3(void)
+{
+  kpm_ind_msg_format_3_t msg_frm_3 = {0};
+
+  msg_frm_3.ue_meas_report_lst_len = 1;  // (rand() % 65535) + 1;
+
+  msg_frm_3.meas_report_per_ue = calloc(msg_frm_3.ue_meas_report_lst_len, sizeof(meas_report_per_ue_t));
+  assert(msg_frm_3.meas_report_per_ue != NULL && "Memory exhausted");
+
+  for (size_t i = 0; i<msg_frm_3.ue_meas_report_lst_len; i++)
+  {
+    msg_frm_3.meas_report_per_ue[i].ue_meas_report_lst = fill_ue_id_data();
+    msg_frm_3.meas_report_per_ue[i].ind_msg_format_1 = fill_kpm_ind_msg_frm_1();
+  }
+
+  return msg_frm_3;
+}
+
+
+
 kpm_ind_msg_t fill_kpm_ind_msg(void)
 {
   kpm_ind_msg_t msg = {0};
 
-  msg.type = FORMAT_2_INDICATION_MESSAGE;  // rand()%END_INDICATION_MESSAGE;
+  msg.type = rand()%FORMAT_3_INDICATION_MESSAGE;
   
   switch (msg.type)
   {
@@ -1072,7 +1144,10 @@ kpm_ind_msg_t fill_kpm_ind_msg(void)
     msg.frm_2 = fill_kpm_ind_msg_frm_2();
     break;
 
-  // to be filled with other formats
+  /* Possible extensions: */
+  // case FORMAT_3_INDICATION_MESSAGE:
+  //   msg.frm_3 = fill_kpm_ind_msg_frm_3();
+  //   break;
   
   default:
     assert(false && "Unknown KPM Indication Message Format Type");

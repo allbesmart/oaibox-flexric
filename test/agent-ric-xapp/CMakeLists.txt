@@ -10,16 +10,16 @@ add_executable(test_ag_ric_xapp
                 ../../src/sm/rlc_sm/ie/rlc_data_ie.c
                 ../../src/sm/pdcp_sm/ie/pdcp_data_ie.c
                 ../../src/sm/slice_sm/ie/slice_data_ie.c
-                ../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.c
+                ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie.c
 
-                ../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
-                ../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
-                ../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
-                ../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_2.c
-                ../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/data/label_info_lst.c
-                ../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/data/meas_info_frm_1_lst.c
-                ../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/data/meas_data_lst.c
-		            ../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie/data/meas_type.c
+                ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
+                ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+                ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
+                ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_2.c
+                ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/label_info_lst.c
+                ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_info_frm_1_lst.c
+                ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_data_lst.c
+		            ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_type.c
                 ../../src/lib/e2sm_common_ie/3gpp_derived_ie/plmn_identity.c
                 ../../src/lib/e2sm_common_ie/3gpp_derived_ie/gnb.c
                 ../../src/lib/e2sm_common_ie/3gpp_derived_ie/gnb_du.c

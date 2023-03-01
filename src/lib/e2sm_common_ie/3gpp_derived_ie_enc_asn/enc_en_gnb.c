@@ -1,9 +1,9 @@
 #include <assert.h>
 
-#include "../../../sm/kpm_sm_v2.02/ie/asn/asn_constant.h"
-#include "../../../sm/kpm_sm_v2.02/ie/asn/asn_SEQUENCE_OF.h"
-#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-CP-E1AP-ID-Item.h"
-#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/asn_constant.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/asn_SEQUENCE_OF.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-CP-E1AP-ID-Item.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
 
 #include "enc_en_gnb.h"
 #include "enc_global_enb_id.h"

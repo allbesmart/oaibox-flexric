@@ -2,9 +2,9 @@
  * E2E test for KPM SM, no messages on the wire transported by E2AP.
  */
 
-#include "../../../src/sm/kpm_sm_v2.02/kpm_sm_agent.h"
-#include "../../../src/sm/kpm_sm_v2.02/kpm_sm_ric.h"
-#include "../../../src/sm/kpm_sm_v2.02/kpm_sm_id.h"
+#include "../../../src/sm/kpm_sm_v02.03/kpm_sm_agent.h"
+#include "../../../src/sm/kpm_sm_v02.03/kpm_sm_ric.h"
+#include "../../../src/sm/kpm_sm_v02.03/kpm_sm_id.h"
 #include "../../../src/util/alg_ds/alg/defer.h"
 #include "fill_kpm_ind_data/fill_kpm_ind_data.h"
 

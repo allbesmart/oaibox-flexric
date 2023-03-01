@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-NG-ENB-DU.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-NG-ENB-DU.h"
 #include "../3gpp_derived_ie/ng_enb_du.h"
 
 ng_enb_du_t dec_ng_eNB_DU_UE_asn(const UEID_NG_ENB_DU_t * ng_enb_du_asn);

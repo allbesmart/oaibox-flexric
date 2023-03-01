@@ -1,7 +1,7 @@
 #include <assert.h>
 
 #include "../../../util/conversions.h"
-#include "../../../sm/kpm_sm_v2.02/ie/asn/asn_constant.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/asn_constant.h"
 
 #include "dec_enb.h"
 #include "dec_global_enb_id.h"

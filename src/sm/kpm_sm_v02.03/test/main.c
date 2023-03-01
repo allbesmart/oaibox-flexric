@@ -5,8 +5,8 @@
 #include "../ie/kpm_data_ie/kpm_ric_info/kpm_ric_event_trigger_def.h"
 #include "../../../util/alg_ds/alg/defer.h"
 #include "../../../util/byte_array.h"
-#include "../../../sm/kpm_sm_v2.02/enc/kpm_enc_asn.h"
-#include "../../../sm/kpm_sm_v2.02/dec/kpm_dec_asn.h"
+#include "../../../sm/kpm_sm_v02.03/enc/kpm_enc_asn.h"
+#include "../../../sm/kpm_sm_v02.03/dec/kpm_dec_asn.h"
 #include "fill_rnd_data_kpm.h"
 
 #include <time.h>

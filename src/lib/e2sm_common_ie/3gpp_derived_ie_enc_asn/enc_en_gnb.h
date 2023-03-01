@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-EN-GNB.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-EN-GNB.h"
 #include "../3gpp_derived_ie/en_gnb.h"
 
 UEID_EN_GNB_t * enc_en_gNB_UE_asn(const en_gnb_t * en_gnb);

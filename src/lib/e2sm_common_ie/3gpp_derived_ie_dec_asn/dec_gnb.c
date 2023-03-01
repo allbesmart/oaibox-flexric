@@ -1,9 +1,9 @@
 #include <assert.h>
 
 #include "../../../util/conversions.h"
-#include "../../../sm/kpm_sm_v2.02/ie/asn/asn_constant.h"
-#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-F1AP-ID-List.h"
-#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/asn_constant.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-F1AP-ID-List.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
 
 #include "dec_gnb.h"
 #include "dec_global_gnb_id.h"

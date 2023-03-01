@@ -2,7 +2,7 @@
 #define FILL_KPM_INDICATION_DATA_MIR_H 
 
 
-#include "../../../../src/sm/kpm_sm_v2.02/ie/kpm_data_ie.h"
+#include "../../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie.h"
 
 void fill_kpm_ind_data(kpm_ric_indication_t* ind);
 

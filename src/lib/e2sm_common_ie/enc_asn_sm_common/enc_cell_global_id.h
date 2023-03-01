@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#include "../../../sm/kpm_sm_v2.02/ie/asn/CGI.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/CGI.h"
 #include "../sm_common_ie/cell_global_id.h"
 
 CGI_t * enc_cell_global_id_asn(const cell_global_id_t * cell_global_id);

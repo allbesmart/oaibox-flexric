@@ -49,7 +49,8 @@ meas_info_format_3_lst_t * kpm_dec_meas_info_cond_asn(const MeasurementCondList_
             meas_info_cond[i].matching_cond_lst[j] = kpm_dec_matching_cond_asn(meas_info_cond_asn->list.array[i]->matchingCond.list.array[j]);
         }
 
-        // Bin Range Definition not yet implemented
+        // Bin Range Definition
+        // not yet implemented in ASN.1 - possible extension
     }
 
     return meas_info_cond;

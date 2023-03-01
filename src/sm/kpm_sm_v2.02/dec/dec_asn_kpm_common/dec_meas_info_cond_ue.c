@@ -75,7 +75,9 @@ meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEi
 
 
         // UE_id Granularity Period - OPTIONAL
-        // not yet implemented in ASN.1
+        // not yet implemented in ASN.1 - possible extension
+        if (meas_cond_ue_asn.list.array[i]->matchingUEidPerGP != NULL)
+          assert(false && "Not yet implemented in ASN.1");
 
     }
 

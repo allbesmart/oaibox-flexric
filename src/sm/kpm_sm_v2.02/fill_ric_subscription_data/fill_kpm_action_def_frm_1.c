@@ -46,6 +46,7 @@ void fill_kpm_action_def_frm_1(kpm_act_def_format_1_t * action_def)
     action_def->cell_global_id = NULL;
 
     // Measurement Bin Range - OPTIONAL
+    // not yet implemented in ASN.1 - possible extension
     action_def->meas_bin_range_info_lst_len = 0;
     action_def->meas_bin_info_lst = NULL;
 }

@@ -22,7 +22,7 @@ void free_kpm_action_def_frm_1(kpm_act_def_format_1_t* src)
   
   // Measurement Bin Range
   if (src->meas_bin_info_lst != NULL)
-    assert(false && "Not yet implemented");
+    assert(false && "Not yet implemented in ASN.1");
 
 }
 

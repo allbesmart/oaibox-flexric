@@ -1,6 +1,9 @@
 ASN_MODULE_SRCS=	\
 	asn/TimeStamp.c	\
+	asn/BinIndex.c	\
+	asn/BinRangeValue.c	\
 	asn/GranularityPeriod.c	\
+	asn/LogicalOR.c	\
 	asn/MeasurementType.c	\
 	asn/MeasurementTypeName.c	\
 	asn/MeasurementTypeID.c	\
@@ -9,6 +12,11 @@ ASN_MODULE_SRCS=	\
 	asn/TestCond-Type.c	\
 	asn/TestCond-Expression.c	\
 	asn/TestCond-Value.c	\
+	asn/BinRangeDefinition.c	\
+	asn/BinRangeList.c	\
+	asn/BinRangeItem.c	\
+	asn/DistMeasurementBinRangeList.c	\
+	asn/DistMeasurementBinRangeItem.c	\
 	asn/MeasurementInfoList.c	\
 	asn/MeasurementInfoItem.c	\
 	asn/LabelInfoList.c	\
@@ -25,8 +33,13 @@ ASN_MODULE_SRCS=	\
 	asn/MeasurementCondUEidItem.c	\
 	asn/MatchingCondList.c	\
 	asn/MatchingCondItem.c	\
+	asn/MatchingCondItem-Choice.c	\
 	asn/MatchingUEidList.c	\
 	asn/MatchingUEidItem.c	\
+	asn/MatchingUEidPerGP.c	\
+	asn/MatchingUEidPerGP-Item.c	\
+	asn/MatchingUEidList-PerGP.c	\
+	asn/MatchingUEidItem-PerGP.c	\
 	asn/MatchingUeCondPerSubList.c	\
 	asn/MatchingUeCondPerSubItem.c	\
 	asn/MatchingUEidPerSubList.c	\
@@ -142,7 +155,10 @@ ASN_MODULE_SRCS=	\
 
 ASN_MODULE_HDRS=	\
 	asn/TimeStamp.h	\
+	asn/BinIndex.h	\
+	asn/BinRangeValue.h	\
 	asn/GranularityPeriod.h	\
+	asn/LogicalOR.h	\
 	asn/MeasurementType.h	\
 	asn/MeasurementTypeName.h	\
 	asn/MeasurementTypeID.h	\
@@ -151,6 +167,11 @@ ASN_MODULE_HDRS=	\
 	asn/TestCond-Type.h	\
 	asn/TestCond-Expression.h	\
 	asn/TestCond-Value.h	\
+	asn/BinRangeDefinition.h	\
+	asn/BinRangeList.h	\
+	asn/BinRangeItem.h	\
+	asn/DistMeasurementBinRangeList.h	\
+	asn/DistMeasurementBinRangeItem.h	\
 	asn/MeasurementInfoList.h	\
 	asn/MeasurementInfoItem.h	\
 	asn/LabelInfoList.h	\
@@ -167,8 +188,13 @@ ASN_MODULE_HDRS=	\
 	asn/MeasurementCondUEidItem.h	\
 	asn/MatchingCondList.h	\
 	asn/MatchingCondItem.h	\
+	asn/MatchingCondItem-Choice.h	\
 	asn/MatchingUEidList.h	\
 	asn/MatchingUEidItem.h	\
+	asn/MatchingUEidPerGP.h	\
+	asn/MatchingUEidPerGP-Item.h	\
+	asn/MatchingUEidList-PerGP.h	\
+	asn/MatchingUEidItem-PerGP.h	\
 	asn/MatchingUeCondPerSubList.h	\
 	asn/MatchingUeCondPerSubItem.h	\
 	asn/MatchingUEidPerSubList.h	\

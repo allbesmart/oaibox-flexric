@@ -22,6 +22,7 @@ extern "C" {
 #define maxnoofConditionInfoPerSub (32768)
 #define maxnoofUEIDPerSub (65535)
 #define maxnoofUEMeasReport (65535)
+#define maxnoofBin (65535)
 #define maxE1APid (65535)
 #define maxF1APid (4)
 #define maxEARFCN (65535)

@@ -31,7 +31,7 @@ E2SM_KPM_ActionDefinition_Format1_t kpm_enc_action_def_frm_1_asn(const kpm_act_d
     
     
     // 4. Measurement Bin Range Information List : [0, 65535]
-    // not yet implemented in ASN, ask Mikel
+    // not yet implemented in ASN.1 - possible extension
 
     if (act_def_frm_1->meas_bin_info_lst != NULL) {
       assert(false && "Measurement Bin Range not yet implemented in ASN");

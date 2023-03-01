@@ -26,7 +26,9 @@ void free_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t* src)
   free(src->ue_id_matched_lst);
 
   // Sequence of Matched UE IDs for Granularity Periods
-  // not yet implemented in ASN.1
+  // not yet implemented in ASN.1 - possible extension
+  if (src->ue_id_gran_period_lst != NULL || src->ue_id_gran_period_lst_len != 0)
+    assert(false && "Not yet implemented in ASN.1");
 
 }
 
@@ -66,7 +68,10 @@ bool eq_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t const* m0, meas_info_cond_
   }
 
   // Sequence of Matched UE IDs for Granularity Periods
-  // not yet implemented in ASN.1
+  // not yet implemented in ASN.1 - possible extension
+  if (m0->ue_id_gran_period_lst != NULL || m0->ue_id_gran_period_lst_len != 0 || m1->ue_id_gran_period_lst_len != 0 || m1->ue_id_gran_period_lst != NULL)
+    assert(false && "Not yet implemented in ASN.1");
+
 
   return true;
 }

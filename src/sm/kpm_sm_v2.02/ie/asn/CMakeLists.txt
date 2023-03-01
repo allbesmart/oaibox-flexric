@@ -13,6 +13,11 @@ set(ASN_MODULE_SRCS
     ber_decoder.c
     ber_tlv_length.c
     ber_tlv_tag.c
+    BinIndex.c
+    BinRangeDefinition.c
+    BinRangeItem.c
+    BinRangeList.c
+    BinRangeValue.c
     BIT_STRING.c
     BOOLEAN.c
     CGI.c
@@ -24,6 +29,8 @@ set(ASN_MODULE_SRCS
     constr_TYPE.c
     CoreCPID.c
     der_encoder.c
+    DistMeasurementBinRangeItem.c
+    DistMeasurementBinRangeList.c
     E2SM-KPM-ActionDefinition.c
     E2SM-KPM-ActionDefinition-Format1.c
     E2SM-KPM-ActionDefinition-Format2.c
@@ -79,12 +86,18 @@ set(ASN_MODULE_SRCS
     InterfaceType.c
     LabelInfoItem.c
     LabelInfoList.c
+    LogicalOR.c
     MatchingCondItem.c
+    MatchingCondItem-Choice.c
     MatchingCondList.c
     MatchingUeCondPerSubItem.c
     MatchingUeCondPerSubList.c
     MatchingUEidItem.c
+    MatchingUEidItem-PerGP.c
     MatchingUEidList.c
+    MatchingUEidList-PerGP.c
+    MatchingUEidPerGP.c
+    MatchingUEidPerGP-Item.c
     MatchingUEidPerSubItem.c
     MatchingUEidPerSubList.c
     MeasurementCondItem.c
@@ -175,188 +188,7 @@ set(ASN_MODULE_SRCS
     xer_encoder.c
     xer_support.c
 )
-# unused for now ${ASN_MODULE_HDRS}
-set(ASN_MODULE_HDRS
-    AMFPointer.h
-    AMFRegionID.h
-    AMFSetID.h
-    AMF-UE-NGAP-ID.h
-    asn_application.h
-    asn_bit_data.h
-    asn_codecs.h
-    asn_codecs_prim.h
-    asn_constant.h
-    asn_internal.h
-    asn_ioc.h
-    asn_random_fill.h
-    asn_SEQUENCE_OF.h
-    asn_SET_OF.h
-    asn_system.h
-    ber_decoder.h
-    ber_tlv_length.h
-    ber_tlv_tag.h
-    BIT_STRING.h
-    BOOLEAN.h
-    CGI.h
-    constraints.h
-    constr_CHOICE.h
-    constr_SEQUENCE.h
-    constr_SEQUENCE_OF.h
-    constr_SET_OF.h
-    constr_TYPE.h
-    CoreCPID.h
-    der_encoder.h
-    E2SM-KPM-ActionDefinition-Format1.h
-    E2SM-KPM-ActionDefinition-Format2.h
-    E2SM-KPM-ActionDefinition-Format3.h
-    E2SM-KPM-ActionDefinition-Format4.h
-    E2SM-KPM-ActionDefinition-Format5.h
-    E2SM-KPM-ActionDefinition.h
-    E2SM-KPM-EventTriggerDefinition-Format1.h
-    E2SM-KPM-EventTriggerDefinition.h
-    E2SM-KPM-IndicationHeader-Format1.h
-    E2SM-KPM-IndicationHeader.h
-    E2SM-KPM-IndicationMessage-Format1.h
-    E2SM-KPM-IndicationMessage-Format2.h
-    E2SM-KPM-IndicationMessage-Format3.h
-    E2SM-KPM-IndicationMessage.h
-    E2SM-KPM-RANfunction-Description.h
-    ENB-ID.h
-    ENB-UE-X2AP-ID-Extension.h
-    ENB-UE-X2AP-ID.h
-    EN-GNB-ID.h
-    E-UTRA-ARFCN.h
-    EUTRACellIdentity.h
-    EUTRA-CGI.h
-    E-UTRA-PCI.h
-    E-UTRA-TAC.h
-    FiveGS-TAC.h
-    FiveQI.h
-    FreqBandNrItem.h
-    GlobalENB-ID.h
-    GlobalenGNB-ID.h
-    GlobalGNB-ID.h
-    GlobalNgENB-ID.h
-    GlobalNGRANNodeID.h
-    GNB-CU-CP-UE-E1AP-ID.h
-    GNB-CU-UE-F1AP-ID.h
-    GNB-CU-UP-ID.h
-    GNB-DU-ID.h
-    GNB-ID.h
-    GranularityPeriod.h
-    GroupID.h
-    GUAMI.h
-    GUMMEI.h
-    IndexToRFSP.h
-    INTEGER.h
-    InterfaceID-E1.h
-    InterfaceIdentifier.h
-    InterfaceID-F1.h
-    InterfaceID-NG.h
-    InterfaceID-S1.h
-    InterfaceID-W1.h
-    InterfaceID-X2.h
-    InterfaceID-Xn.h
-    Interface-MessageID.h
-    InterfaceType.h
-    LabelInfoItem.h
-    LabelInfoList.h
-    MatchingCondItem.h
-    MatchingCondList.h
-    MatchingUeCondPerSubItem.h
-    MatchingUeCondPerSubList.h
-    MatchingUEidItem.h
-    MatchingUEidList.h
-    MatchingUEidPerSubItem.h
-    MatchingUEidPerSubList.h
-    MeasurementCondItem.h
-    MeasurementCondList.h
-    MeasurementCondUEidItem.h
-    MeasurementCondUEidList.h
-    MeasurementData.h
-    MeasurementDataItem.h
-    MeasurementInfo-Action-Item.h
-    MeasurementInfo-Action-List.h
-    MeasurementInfoItem.h
-    MeasurementInfoList.h
-    MeasurementLabel.h
-    MeasurementRecord.h
-    MeasurementRecordItem.h
-    MeasurementType.h
-    MeasurementTypeID.h
-    MeasurementTypeName.h
-    MME-Code.h
-    MME-Group-ID.h
-    MME-UE-S1AP-ID.h
-    NativeEnumerated.h
-    NativeInteger.h
-    NativeReal.h
-    NGENB-CU-UE-W1AP-ID.h
-    NGENB-DU-ID.h
-    NgENB-ID.h
-    NG-RANnodeUEXnAPID.h
-    NR-ARFCN.h
-    NRCellIdentity.h
-    NR-CGI.h
-    NRFrequencyBandItem.h
-    NRFrequencyBand-List.h
-    NRFrequencyInfo.h
-    NRFrequencyShift7p5khz.h
-    NR-PCI.h
-    NULL.h
-    OCTET_STRING.h
-    OPEN_TYPE.h
-    per_decoder.h
-    per_encoder.h
-    per_opentype.h
-    per_support.h
-    PLMNIdentity.h
-    PrintableString.h
-    QCI.h
-    QosFlowIdentifier.h
-    QoSID.h
-    RANfunction-Name.h
-    RANUEID.h
-    REAL.h
-    RIC-EventTriggerStyle-Item.h
-    RIC-Format-Type.h
-    RIC-ReportStyle-Item.h
-    RIC-Style-Name.h
-    RIC-Style-Type.h
-    RRCclass-LTE.h
-    RRCclass-NR.h
-    RRC-MessageID.h
-    SD.h
-    ServingCell-ARFCN.h
-    ServingCell-PCI.h
-    S-NSSAI.h
-    SST.h
-    SubscriberProfileIDforRFP.h
-    SupportedSULBandList.h
-    SupportedSULFreqBandItem.h
-    TestCond-Expression.h
-    TestCondInfo.h
-    TestCond-Type.h
-    TestCond-Value.h
-    TimeStamp.h
-    UEID-ENB.h
-    UEID-EN-GNB.h
-    UEID-GNB-CU-CP-E1AP-ID-Item.h
-    UEID-GNB-CU-CP-E1AP-ID-List.h
-    UEID-GNB-CU-CP-F1AP-ID-Item.h
-    UEID-GNB-CU-F1AP-ID-List.h
-    UEID-GNB-CU-UP.h
-    UEID-GNB-DU.h
-    UEID-GNB.h
-    UEID.h
-    UEID-NG-ENB-DU.h
-    UEID-NG-ENB.h
-    UEMeasurementReportItem.h
-    UEMeasurementReportList.h
-    xer_decoder.h
-    xer_encoder.h
-    xer_support.h
-)
+
 
 add_library(e2sm_kpm_asn1_obj OBJECT ${ASN_MODULE_SRCS})
 target_include_directories(e2sm_kpm_asn1_obj

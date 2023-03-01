@@ -33,7 +33,7 @@ kpm_act_def_format_1_t kpm_dec_action_def_frm_1_asn(const  E2SM_KPM_ActionDefini
 
 
     // 4. Measurement Bin Range Information List : [0, 65535]
-    // not yet implemented in ASN, ask Mikel
+    // not yet implemented in ASN.1 - possible extension
 
 
     return act_def;

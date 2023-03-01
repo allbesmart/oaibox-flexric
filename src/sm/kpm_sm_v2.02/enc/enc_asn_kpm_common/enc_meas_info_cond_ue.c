@@ -75,7 +75,9 @@ MeasurementCondUEidList_t kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_ue_
 
 
         // UE_id Granularity Period - OPTIONAL
-        // not implemented in ASN.1
+        // not implemented in ASN.1 - possible extension
+        if (meas_cond_ue->ue_id_gran_period_lst != NULL || meas_cond_ue->ue_id_gran_period_lst_len != 0)
+          assert(false && "Not yet implemented in ASN.1");
 
 
         int rc1 = ASN_SEQUENCE_ADD(&meas_cond_ue_asn.list, cond_ue_item);

@@ -3,15 +3,6 @@
 #include <stdio.h>
 #include "label_info_lst.h"
 
-// static long* dup_long(const long* src)
-// {
-//   if (src == NULL)
-//     return NULL;
-//   long* dst = malloc(sizeof(*dst));
-//   assert(dst != NULL && "memory exhausted");
-//   *dst = *src;
-//   return dst;
-// }
 
 void cp_label_info(label_info_lst_t *dst, label_info_lst_t const *src) 
 {

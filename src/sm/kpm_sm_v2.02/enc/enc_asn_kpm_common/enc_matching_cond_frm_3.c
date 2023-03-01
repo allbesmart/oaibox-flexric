@@ -11,17 +11,17 @@ MatchingCondItem_t * kpm_enc_matching_cond_asn(const matching_condition_format_3
 
     if (matching_cond->cond_type == LABEL_INFO)
     {
-        matching_item_asn->present = MatchingCondItem_PR_measLabel;
+        matching_item_asn->matchingCondChoice.present = MatchingCondItem_Choice_PR_measLabel;
         
         LabelInfoItem_t * labels = kpm_enc_label_info_asn(&matching_cond->label_info_lst);
-        matching_item_asn->choice.measLabel = &labels->measLabel;
+        matching_item_asn->matchingCondChoice.choice.measLabel = &labels->measLabel;
     }
     else if (matching_cond->cond_type == TEST_INFO)
     {
-        matching_item_asn->present = MatchingCondItem_PR_testCondInfo;
-        matching_item_asn->choice.testCondInfo = calloc(1, sizeof(*matching_item_asn->choice.testCondInfo));
-        assert(matching_item_asn->choice.testCondInfo != NULL && "Memory exhausted");
-        *matching_item_asn->choice.testCondInfo = kpm_enc_test_info_asn(&matching_cond->test_info_lst);
+        matching_item_asn->matchingCondChoice.present = MatchingCondItem_Choice_PR_testCondInfo;
+        matching_item_asn->matchingCondChoice.choice.testCondInfo = calloc(1, sizeof(*matching_item_asn->matchingCondChoice.choice.testCondInfo));
+        assert(matching_item_asn->matchingCondChoice.choice.testCondInfo != NULL && "Memory exhausted");
+        *matching_item_asn->matchingCondChoice.choice.testCondInfo = kpm_enc_test_info_asn(&matching_cond->test_info_lst);
 
     }
     else {
@@ -29,8 +29,12 @@ MatchingCondItem_t * kpm_enc_matching_cond_asn(const matching_condition_format_3
     }
 
 
-    if (matching_cond->logical_OR != NULL) {
-        assert(false && "Encryption of logical OR not yet implemented");
+    if (matching_cond->logical_OR != NULL)
+    {
+        assert(*matching_cond->logical_OR == TRUE_ENUM_VALUE && "has only one value (true)");
+        matching_item_asn->logicalOR = calloc(1, sizeof(LogicalOR_t));
+        assert(matching_item_asn->logicalOR != NULL && "Memory exhausted");
+        *matching_item_asn->logicalOR = 0;
     }
     
 

@@ -100,7 +100,7 @@ kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
   }
   
   // Measurement Bin Range - OPTIONAL
-  // not yet implemented in ASN.1
+  // not yet implemented in ASN.1 - possible extension
   action_def_frm_1.meas_bin_range_info_lst_len = 0;
   action_def_frm_1.meas_bin_info_lst = NULL;
 
@@ -676,13 +676,16 @@ kpm_act_def_format_3_t fill_kpm_action_def_frm_3(void)
       }
       
       // Logical OR
-      meas_info->matching_cond_lst[j].logical_OR = NULL;  // not implemented in ASN.1
+      meas_info->matching_cond_lst[j].logical_OR = calloc(1, sizeof(enum_value_e));
+      assert(meas_info->matching_cond_lst[j].logical_OR != NULL && "Memory exhausted");
+      *meas_info->matching_cond_lst[j].logical_OR = TRUE_ENUM_VALUE;
 
       
     }
 
     // Bin Range Definition
-    meas_info->bin_range_def = NULL;  // not implemented in ASN.1
+    // not yet implemented in ASN.1 - possible extension
+    meas_info->bin_range_def = NULL;
 
 
   }
@@ -1086,7 +1089,9 @@ kpm_ind_msg_format_2_t fill_kpm_ind_msg_frm_2(void)
       }
       
       // Logical OR
-      cond_ue->matching_cond_lst[j].logical_OR = NULL;  // not implemented in ASN.1      
+      cond_ue->matching_cond_lst[j].logical_OR = calloc(1, sizeof(enum_value_e));
+      assert(cond_ue->matching_cond_lst[j].logical_OR != NULL && "Memory exhausted");
+      *cond_ue->matching_cond_lst[j].logical_OR = TRUE_ENUM_VALUE;
     }
 
     // List of matched UE IDs
@@ -1101,8 +1106,9 @@ kpm_ind_msg_format_2_t fill_kpm_ind_msg_frm_2(void)
     }
 
     // Sequence of Matched UE IDs for Granularity Periods
+    // not yet implemented in ASN.1 - possible extension
     cond_ue->ue_id_gran_period_lst = 0; 
-    cond_ue->ue_id_gran_period_lst = NULL;  // not yet implemented in ASN.1
+    cond_ue->ue_id_gran_period_lst = NULL;
   }
 
   return msg_frm_2;

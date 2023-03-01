@@ -64,7 +64,7 @@ void test_rc_act_def(void)
   e2sm_rc_action_def_t out = rc_dec_action_def_asn(ba.len, ba.buf);
   defer({ free_e2sm_rc_action_def(&out); });
 
-//  assert(eq_e2sm_rc_action_def(&action_def, &out) == true);
+  assert(eq_e2sm_rc_action_def(&action_def, &out) == true);
 }
 
 /*

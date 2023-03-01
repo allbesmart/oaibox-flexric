@@ -794,6 +794,153 @@ e2sm_rc_act_def_frmt_2_t fill_rnd_rc_action_def_frmt_2(void)
   return dst;
 }
 
+static
+ran_param_ins_t fill_rnd_ran_param_ins(void)
+{
+  ran_param_ins_t dst = {0}; 
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1 - 4294967295]
+  dst.ran_id = (rand()% 4294967295) + 1;
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  dst.def = NULL;
+
+  return dst;
+}
+
+static
+e2sm_rc_act_def_frmt_3_t fill_rnd_rc_action_def_frmt_3(void)
+{
+  e2sm_rc_act_def_frmt_3_t dst = {0}; 
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1 - 65535] 
+  dst.id = rand()% 65535 + 1;
+
+  // List of RAN parameters for Insert
+  // Indication
+  // [1 - 65535]
+  dst.sz_ran_param_ins = (rand() % 64) + 1;
+  dst.ran_param = calloc(dst.sz_ran_param_ins, sizeof(ran_param_ins_t) );
+  assert(dst.ran_param != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_ran_param_ins; ++i){
+    dst.ran_param[i] = fill_rnd_ran_param_ins();
+  }
+
+  //  UE ID
+  //  Optional
+  //  9.3.10
+  dst.ue_id = NULL;
+
+  return dst;
+}
+
+static
+ran_param_ins_ind_t fill_rnd_ran_param_ins_ind(void)
+{
+  ran_param_ins_ind_t dst = {0}; 
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1.. 429496729 ]
+  dst.ran_param_id = rand() + 1; 
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  dst.ran_param_def = NULL; 
+
+  return dst;
+}
+
+static
+seq_ins_ind_act_def_t fill_rnd_seq_ins_ind_act_def(void)
+{
+  seq_ins_ind_act_def_t dst = {0}; 
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1 - 65535]
+  dst.ind_id = (rand()%  65535 ) +1;
+
+  // List of RAN parameters for
+  // Insert Indication
+  // [1-65535]
+  dst.sz_ran_param_ins_ind = (rand() % 16) + 1;
+
+  dst.ran_param_ins_ind = calloc(dst.sz_ran_param_ins_ind, sizeof(ran_param_ins_ind_t));
+  assert(dst.ran_param_ins_ind != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_ran_param_ins_ind; ++i){
+    dst.ran_param_ins_ind[i] = fill_rnd_ran_param_ins_ind();
+  }
+
+  return dst;
+}
+
+
+static
+seq_ins_style_t fill_rnd_seq_ins_style(void)
+{
+  seq_ins_style_t dst = {0}; 
+
+  // Requested Insert Style
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2. in E2 SM common 
+  // Integer
+  dst.req_insert_style = rand() % 1024;
+
+  // Sequence of Insert Indication
+  // Action Definition
+  // [1-63]
+  dst.sz_seq_ins_ind_act_def = (rand()% 64) + 1;
+
+  dst.seq_ins_ind_act_def = calloc(dst.sz_seq_ins_ind_act_def, sizeof( seq_ins_ind_act_def_t));
+  assert(dst.seq_ins_ind_act_def != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ins_ind_act_def; ++i){
+    dst.seq_ins_ind_act_def[i] = fill_rnd_seq_ins_ind_act_def();
+  }
+
+  return dst;
+}
+
+static
+e2sm_rc_act_def_frmt_4_t fill_rnd_rc_action_def_frmt_4(void)
+{
+  e2sm_rc_act_def_frmt_4_t dst = {0};
+
+  // Sequence of Insert Styles for
+  // Multiple Actions
+  // [1-4]
+  dst.sz_seq_ins_style = (rand() % 4) + 1;
+  
+  dst.seq_ins_style = calloc(dst.sz_seq_ins_style, sizeof(seq_ins_style_t) );
+  assert(dst.seq_ins_style != NULL && "Memory exhausted" );
+
+  for(size_t i = 0; i < dst.sz_seq_ins_style; ++i){
+    dst.seq_ins_style[i] = fill_rnd_seq_ins_style();
+  }
+
+
+  // UE ID
+  // Optional
+  // 9.3.10
+  dst.ue_id = NULL; 
+
+  return dst;
+}
+
 
 e2sm_rc_action_def_t fill_rnd_rc_action_def(void)
 {
@@ -805,7 +952,7 @@ e2sm_rc_action_def_t fill_rnd_rc_action_def(void)
   // Defined in common 6.2.2.2.
   dst.ric_style_type = (rand()%1024) + 1;
 
-  dst.format = FORMAT_2_E2SM_RC_ACT_DEF; //  rand() % END_E2SM_RC_ACT_DEF;
+  dst.format = FORMAT_4_E2SM_RC_ACT_DEF; //  rand() % END_E2SM_RC_ACT_DEF;
 
   if(dst.format == FORMAT_1_E2SM_RC_ACT_DEF ){
     dst.frmt_1 = fill_rnd_rc_action_def_frmt_1();
@@ -814,9 +961,11 @@ e2sm_rc_action_def_t fill_rnd_rc_action_def(void)
     dst.frmt_2 = fill_rnd_rc_action_def_frmt_2();
 
   } else if(dst.format == FORMAT_3_E2SM_RC_ACT_DEF){
-    assert(0!=0 && "Not implemented");
+    dst.frmt_3 = fill_rnd_rc_action_def_frmt_3();
+
   } else if(dst.format == FORMAT_4_E2SM_RC_ACT_DEF){
-    assert(0!=0 && "Not implemented");
+    dst.frmt_4 = fill_rnd_rc_action_def_frmt_4();
+
   } else {
     assert(0 != 0 && "Unknown format");
   }
@@ -825,7 +974,7 @@ e2sm_rc_action_def_t fill_rnd_rc_action_def(void)
   //9.2.1.2.1
 //  e2sm_rc_act_def_frmt_2_t frmt_2;
 //  e2sm_rc_act_def_frmt_3_t frmt_3;
-//  e2sm_rc_act_def_frmt_4_t frmt_4;
+//  frmt_4;
 
   return dst;
 }

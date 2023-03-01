@@ -6,7 +6,6 @@
 
 e2sm_rc_event_trigger_t fill_rnd_rc_event_trigger(void);
 
-
 e2sm_rc_action_def_t fill_rnd_rc_action_def(void);
 
 

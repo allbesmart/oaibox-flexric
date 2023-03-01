@@ -42,6 +42,8 @@ extern "C" {
 
 #include "ir/e2sm_rc_act_def_frmt_1.h"
 #include "ir/e2sm_rc_act_def_frmt_2.h"
+#include "ir/e2sm_rc_act_def_frmt_3.h"
+#include "ir/e2sm_rc_act_def_frmt_4.h"
 
 
 //////////////////////////////////////
@@ -107,8 +109,8 @@ typedef struct {
   //9.2.1.2.1
   e2sm_rc_act_def_frmt_1_t frmt_1;
   e2sm_rc_act_def_frmt_2_t frmt_2;
-//  e2sm_rc_act_def_frmt_3_t frmt_3;
-//  e2sm_rc_act_def_frmt_4_t frmt_4;
+  e2sm_rc_act_def_frmt_3_t frmt_3;
+  e2sm_rc_act_def_frmt_4_t frmt_4;
   };
 
 } e2sm_rc_action_def_t;

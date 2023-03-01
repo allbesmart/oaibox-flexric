@@ -65,6 +65,14 @@
 #include "../ie/asn/E2SM-RC-ActionDefinition-Format2.h"
 #include "../ie/asn/E2SM-RC-ActionDefinition-Format2-Item.h"
 
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format3.h"
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format3-Item.h"
+
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format4.h"
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format4-Style-Item.h"
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format4-Indication-Item.h"
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format4-RANP-Item.h"
+
 #include "../ie/asn/RANParameter-ValueType-Choice-ElementTrue.h"
 #include "../ie/asn/RANParameter-ValueType-Choice-ElementFalse.h"
 
@@ -1264,7 +1272,176 @@ e2sm_rc_act_def_frmt_2_t cp_act_def_frmt_2(E2SM_RC_ActionDefinition_Format2_t co
   return dst;
 }
 
+static
+ran_param_ins_t cp_ran_param_ins( E2SM_RC_ActionDefinition_Format3_Item_t const* src)
+{
+  assert(src != NULL);
 
+  ran_param_ins_t dst = {0}; 
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1 - 4294967295]
+  assert(src->ranParameter_ID > 0);
+  dst.ran_id = src->ranParameter_ID;
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->ranParameter_Definition == NULL && "Not implemented");
+
+  return dst;
+}
+
+
+static
+e2sm_rc_act_def_frmt_3_t cp_act_def_frmt_3(E2SM_RC_ActionDefinition_Format3_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_act_def_frmt_3_t dst = {0}; 
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1 - 65535] 
+  assert(src->ric_InsertIndication_ID > 0 && src->ric_InsertIndication_ID < 65535 + 1); 
+  dst.id = src->ric_InsertIndication_ID;
+
+  // List of RAN parameters for Insert
+  // Indication
+  // [1 - 65535]
+  assert(src->ranP_InsertIndication_List.list.count > 0 && src->ranP_InsertIndication_List.list.count <   65535 + 1);
+
+  dst.sz_ran_param_ins = src->ranP_InsertIndication_List.list.count; 
+  dst.ran_param = calloc(dst.sz_ran_param_ins, sizeof( ran_param_ins_t ) );
+  assert(dst.ran_param != NULL && "memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_ran_param_ins; ++i){
+    dst.ran_param[i] = cp_ran_param_ins(src->ranP_InsertIndication_List.list.array[i]);
+  }
+
+  //  UE ID
+  //  Optional
+  //  9.3.10
+  assert(src->ueID == NULL && "Not implemented"); 
+
+  return dst;
+}
+
+static
+ran_param_ins_ind_t cp_ran_param_ins_ind(E2SM_RC_ActionDefinition_Format4_RANP_Item_t const* src)
+{
+  assert(src != NULL);
+
+  ran_param_ins_ind_t dst = {0}; 
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1.. 429496729 ]
+  assert(src->ranParameter_ID > 0); 
+  dst.ran_param_id = src->ranParameter_ID;
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->ranParameter_Definition == NULL && "Not implemented");
+
+  return dst;
+}
+
+
+static
+seq_ins_ind_act_def_t cp_seq_ins_ind_act_def(E2SM_RC_ActionDefinition_Format4_Indication_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ins_ind_act_def_t dst = {0} ;
+
+    // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1 - 65535]
+  assert(src->ric_InsertIndication_ID > 0);
+  dst.ind_id = src->ric_InsertIndication_ID;
+
+  // List of RAN parameters for
+  // Insert Indication
+  // [1-65535]
+  assert(src->ranP_InsertIndication_List.list.count > 0 && src->ranP_InsertIndication_List.list.count < 65535+1); 
+  
+  dst.sz_ran_param_ins_ind = src->ranP_InsertIndication_List.list.count ;
+
+  dst.ran_param_ins_ind = calloc(dst.sz_ran_param_ins_ind, sizeof( ran_param_ins_ind_t) );
+  assert(dst.ran_param_ins_ind != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_ran_param_ins_ind; ++i){
+    dst.ran_param_ins_ind[i] = cp_ran_param_ins_ind(src->ranP_InsertIndication_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+static
+seq_ins_style_t cp_seq_ins_styles(E2SM_RC_ActionDefinition_Format4_Style_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ins_style_t dst = {0}; 
+
+  // Requested Insert Style
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2. in E2 SM common 
+  // Integer
+  dst.req_insert_style = src->requested_Insert_Style_Type;
+
+  // Sequence of Insert Indication
+  // Action Definition
+  // [1-63]
+  assert(src->ric_InsertIndication_List.list.count > 0 && src->ric_InsertIndication_List.list.count < 64);
+ dst.sz_seq_ins_ind_act_def = src->ric_InsertIndication_List.list.count; 
+
+  dst.seq_ins_ind_act_def = calloc(dst.sz_seq_ins_ind_act_def, sizeof(seq_ins_ind_act_def_t));
+  assert(dst.seq_ins_ind_act_def != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ins_ind_act_def; ++i){
+    dst.seq_ins_ind_act_def[i] = cp_seq_ins_ind_act_def(src->ric_InsertIndication_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+
+static
+e2sm_rc_act_def_frmt_4_t cp_act_def_frmt_4(E2SM_RC_ActionDefinition_Format4_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_act_def_frmt_4_t dst = {0}; 
+
+  // Sequence of Insert Styles for
+  // Multiple Actions
+  // [1-4]
+  assert(src->ric_InsertStyle_List.list.count > 0 && src->ric_InsertStyle_List.list.count < 5);
+  dst.sz_seq_ins_style =  src->ric_InsertStyle_List.list.count; 
+
+  dst.seq_ins_style = calloc(dst.sz_seq_ins_style, sizeof(seq_ins_style_t));
+  assert(dst.seq_ins_style != NULL && "memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ins_style; ++i){
+    dst.seq_ins_style[i] =	cp_seq_ins_styles(src->ric_InsertStyle_List.list.array[i]);
+  }
+
+  // UE ID
+  // Optional
+  // 9.3.10
+  assert(src->ueID == NULL && "Not implemented"); 
+
+  return dst;
+}
 
 
 e2sm_rc_action_def_t rc_dec_action_def_asn(size_t len, uint8_t const action_def[len])
@@ -1300,10 +1477,12 @@ e2sm_rc_action_def_t rc_dec_action_def_asn(size_t len, uint8_t const action_def[
 
   }else if(src.ric_actionDefinition_formats.present == E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR_actionDefinition_Format3 ){
     dst.format = FORMAT_3_E2SM_RC_ACT_DEF ;
-    assert(0!=0 && "Not implemented");
+    dst.frmt_3 = cp_act_def_frmt_3(src.ric_actionDefinition_formats.choice.actionDefinition_Format3);
+
   } else if(src.ric_actionDefinition_formats.present == E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR_actionDefinition_Format4 ){
     dst.format = FORMAT_4_E2SM_RC_ACT_DEF ;
-    assert(0!=0 && "Not implemented");
+    dst.frmt_4 = cp_act_def_frmt_4(src.ric_actionDefinition_formats.choice.actionDefinition_Format4);
+
   } else {
     assert(0!=0 && "Unknown type");
   }

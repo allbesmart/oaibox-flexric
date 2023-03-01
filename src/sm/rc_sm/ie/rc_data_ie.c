@@ -168,8 +168,7 @@ void free_e2sm_rc_action_def(e2sm_rc_action_def_t* src)
   } else if(src->format ==  FORMAT_2_E2SM_RC_ACT_DEF ){
     free_e2sm_rc_act_def_frmt_2(&src->frmt_2);  
   }else if(src->format ==  FORMAT_3_E2SM_RC_ACT_DEF ){
-
-    assert(0!=0 && "Not implemented");
+    free_e2sm_rc_act_def_frmt_3(&src->frmt_3);  
   }else if(src->format ==  FORMAT_4_E2SM_RC_ACT_DEF ){
     assert(0!=0 && "Not implemented");
 

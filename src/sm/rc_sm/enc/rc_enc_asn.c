@@ -41,6 +41,11 @@
 #include "../ie/asn/E2SM-RC-ActionDefinition-Format3.h"
 #include "../ie/asn/E2SM-RC-ActionDefinition-Format3-Item.h"
 
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format4.h"
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format4-Style-Item.h"
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format4-Indication-Item.h"
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format4-RANP-Item.h"
+
 #include "../ie/ir/ran_param_struct.h"
 #include "../ie/ir/ran_param_list.h"
 
@@ -1092,6 +1097,177 @@ E2SM_RC_ActionDefinition_Format2_t* cp_act_def_frmt_2(e2sm_rc_act_def_frmt_2_t c
   return dst;
 }
 
+static
+E2SM_RC_ActionDefinition_Format3_Item_t* cp_rc_act_def_frmt_3_it(ran_param_ins_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ActionDefinition_Format3_Item_t* dst = calloc(1, sizeof(E2SM_RC_ActionDefinition_Format3_Item_t));
+  assert(dst != NULL && "memory exhausted");
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1 - 4294967295]
+  assert(src->ran_id > 0);
+  dst->ranParameter_ID = src->ran_id;
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->def == NULL && "Not implemented");
+
+  return dst;
+}
+
+
+static
+E2SM_RC_ActionDefinition_Format3_t* cp_act_def_frmt_3(e2sm_rc_act_def_frmt_3_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ActionDefinition_Format3_t* dst = calloc(1, sizeof(E2SM_RC_ActionDefinition_Format3_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1 - 65535] 
+  assert(src->id > 0); 
+  dst->ric_InsertIndication_ID = src->id;
+
+  // List of RAN parameters for Insert
+  // Indication
+  // [1 - 65535]
+  assert(src->sz_ran_param_ins > 0);
+
+  for(size_t i = 0; i < src->sz_ran_param_ins; ++i){
+    E2SM_RC_ActionDefinition_Format3_Item_t* ie =	cp_rc_act_def_frmt_3_it(&src->ran_param[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ranP_InsertIndication_List.list, ie);
+    assert(rc == 0);
+  }
+
+  //  UE ID
+  //  Optional
+  //  9.3.10
+  assert(src->ue_id == NULL && "not implmeented");
+
+  return dst;
+}
+
+
+
+
+static
+E2SM_RC_ActionDefinition_Format4_RANP_Item_t* cp_ran_param_ins_ind(ran_param_ins_ind_t const* src)
+{
+  assert(src != NULL);
+  
+  E2SM_RC_ActionDefinition_Format4_RANP_Item_t* dst = calloc(1, sizeof(E2SM_RC_ActionDefinition_Format4_RANP_Item_t)); 
+  assert(dst != NULL && "memory exhausted");
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1.. 429496729 ]
+  assert(src->ran_param_id > 0);
+  dst->ranParameter_ID = src->ran_param_id;
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->ran_param_def == NULL && "Not implemented"); 
+
+  return dst;
+}
+
+static
+E2SM_RC_ActionDefinition_Format4_Indication_Item_t* cp_seq_ins_ind_act_def(seq_ins_ind_act_def_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ActionDefinition_Format4_Indication_Item_t* dst = calloc(1, sizeof(E2SM_RC_ActionDefinition_Format4_Indication_Item_t) );
+  assert(dst != NULL && "Memory exhausted");
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1 - 65535]
+  assert(src->ind_id > 0);
+  dst->ric_InsertIndication_ID = src->ind_id;
+
+  // List of RAN parameters for
+  // Insert Indication
+  // [1-65535]
+  assert(src->sz_ran_param_ins_ind > 0 && src->sz_ran_param_ins_ind < 65535+1);
+
+  for(size_t i = 0; i < src->sz_ran_param_ins_ind; ++i){
+    E2SM_RC_ActionDefinition_Format4_RANP_Item_t* ie = cp_ran_param_ins_ind(&src->ran_param_ins_ind[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ranP_InsertIndication_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+E2SM_RC_ActionDefinition_Format4_Style_Item_t* cp_seq_ins_styles(seq_ins_style_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ActionDefinition_Format4_Style_Item_t* dst = calloc(1, sizeof(E2SM_RC_ActionDefinition_Format4_Style_Item_t));
+
+  // Requested Insert Style
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2. in E2 SM common 
+  // Integer
+  dst->requested_Insert_Style_Type = src->req_insert_style;
+
+  // Sequence of Insert Indication
+  // Action Definition
+  // [1-63]
+  assert(src->sz_seq_ins_ind_act_def > 0 && src->sz_seq_ins_ind_act_def < 64);
+
+  for(size_t i = 0; i < src->sz_seq_ins_ind_act_def; ++i){
+    E2SM_RC_ActionDefinition_Format4_Indication_Item_t* ie = cp_seq_ins_ind_act_def(&src->seq_ins_ind_act_def[i]); 
+    int rc = ASN_SEQUENCE_ADD(&dst->ric_InsertIndication_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+E2SM_RC_ActionDefinition_Format4_t* cp_act_def_frmt_4(e2sm_rc_act_def_frmt_4_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ActionDefinition_Format4_t* dst = calloc(1, sizeof(E2SM_RC_ActionDefinition_Format4_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // Sequence of Insert Styles for
+  // Multiple Actions
+  // [1-4]
+  assert(src->sz_seq_ins_style > 0 && src->sz_seq_ins_style < 5);
+  assert(src->seq_ins_style != NULL);
+
+  for(size_t i = 0; i <src->sz_seq_ins_style; ++i){
+    E2SM_RC_ActionDefinition_Format4_Style_Item_t* ie =	cp_seq_ins_styles(&src->seq_ins_style[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ric_InsertStyle_List.list, ie);
+    assert(rc == 0);
+  }
+
+  // UE ID
+  // Optional
+  // 9.3.10
+  assert(src->ue_id == NULL && "Not implemented"); 
+
+  return dst;
+}
+
+
+
 byte_array_t rc_enc_action_def_asn(e2sm_rc_action_def_t const* src)
 {
   assert(src != NULL);
@@ -1115,10 +1291,12 @@ byte_array_t rc_enc_action_def_asn(e2sm_rc_action_def_t const* src)
 
   }else if(src->format ==  FORMAT_3_E2SM_RC_ACT_DEF){
     dst.ric_actionDefinition_formats.present = E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR_actionDefinition_Format3;
-    assert(0!=0 && "not implemented");
+    dst.ric_actionDefinition_formats.choice.actionDefinition_Format3 = cp_act_def_frmt_3(&src->frmt_3) ;
+
   }else if(src->format == FORMAT_4_E2SM_RC_ACT_DEF){
     dst.ric_actionDefinition_formats.present = E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR_actionDefinition_Format4;
-    assert(0!=0 && "not implemented");
+    dst.ric_actionDefinition_formats.choice.actionDefinition_Format4 = cp_act_def_frmt_4(&src->frmt_4);
+
   } else {
     assert(0!=0 && "not implemented");
   }

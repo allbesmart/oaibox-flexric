@@ -3,8 +3,8 @@
 
 #include "../../../../util/byte_array.h"
 
-#include "ran_param_list.h"
-#include "ran_param_struct.h"
+#include "ran_param_test_list.h"
+#include "ran_param_test_struct.h"
 #include "ran_param_elm_key_false.h"
 #include "ran_param_elm_key_true.h"
 
@@ -33,9 +33,9 @@ typedef struct ran_param_test_s  {
 
   ran_parameter_type_e type;
   union{
-    ran_param_list_t lst;
-    ran_param_struct_t strct;
-    ran_param_elm_key_true_t flag_true;
+    ran_param_test_lst_t lst;
+    ran_param_test_strct_t strct;
+    ran_parameter_value_t flag_true;
     ran_param_elm_key_false_t flag_false;
   };
 

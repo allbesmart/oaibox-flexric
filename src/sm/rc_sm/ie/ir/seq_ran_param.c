@@ -1,6 +1,7 @@
 #include "seq_ran_param.h"
 
 #include <assert.h>
+#include <stdlib.h>
 
 void free_seq_ran_param(seq_ran_param_t* src)
 {
@@ -18,11 +19,22 @@ void free_seq_ran_param(seq_ran_param_t* src)
   // Mandatory
   free_ran_param_val_type(&src->ran_param_val);
   
-  ran_param_val_type_t ran_param_val;
 }
 
 bool eq_seq_ran_param(seq_ran_param_t const* m0, seq_ran_param_t const* m1)
 {
+  if(m0 == m1)
+    return true;
+
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  if(m0->ran_param_id != m1->ran_param_id)
+    return false;
+
+  if(eq_ran_param_val_type(&m0->ran_param_val, &m1->ran_param_val) == false)
+    return false;
+
   assert(0!=0 && "Not implemented");
 
   return false;

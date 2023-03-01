@@ -25,6 +25,7 @@
 
 #include "../../../util/alg_ds/alg/defer.h"
 
+#include "../ie/ir/ran_param_struct.h"
 
 #include "../ie/asn/RANParameter-Testing-Item.h"
 #include "../ie/asn/E2SM-RC-EventTrigger.h"
@@ -55,13 +56,34 @@
 #include "../ie/asn/MessageType-Choice-NI.h"
 #include "../ie/asn/MessageType-Choice-RRC.h"
 
+#include "../ie/asn/RIC-PolicyAction-RANParameter-Item.h"
 
 #include "../ie/asn/E2SM-RC-ActionDefinition.h"
 #include "../ie/asn/E2SM-RC-ActionDefinition-Format1.h"
 #include "../ie/asn/E2SM-RC-ActionDefinition-Format1-Item.h"
 
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format2.h"
+#include "../ie/asn/E2SM-RC-ActionDefinition-Format2-Item.h"
+
+#include "../ie/asn/RANParameter-ValueType-Choice-ElementTrue.h"
+#include "../ie/asn/RANParameter-ValueType-Choice-ElementFalse.h"
 
 
+#include "../ie/asn/RANParameter-ValueType-Choice-Structure.h"
+#include "../ie/asn/RANParameter-STRUCTURE.h"
+#include "../ie/asn/RANParameter-STRUCTURE-Item.h"
+#include "../ie/asn/RANParameter-ValueType-Choice-ElementTrue.h"
+#include "../ie/asn/RANParameter-ValueType-Choice-ElementFalse.h"
+#include "../ie/asn/RANParameter-ValueType-Choice-Structure.h"
+#include "../ie/asn/RANParameter-Testing-Item-Choice-List.h"
+#include "../ie/asn/RANParameter-ValueType-Choice-List.h"
+#include "../ie/asn/RANParameter-LIST.h"
+
+
+
+#include "../ie/asn/RANParameter-LIST.h"
+
+#include "../ie/ir/ran_param_list.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -474,11 +496,11 @@ ran_param_test_t cp_ran_param_test(RANParameter_Testing_Item_t const* src);
 
 
 static
-ran_param_list_t cp_lst(RANParameter_Testing_Item_Choice_List_t const* src)
+ran_param_test_lst_t cp_lst(RANParameter_Testing_Item_Choice_List_t const* src)
 {
   assert(src != NULL);
 
-  ran_param_list_t dst = {0}; 
+  ran_param_test_lst_t dst = {0}; 
 
   // [1- 65535]
   assert(src->ranParameter_List->list.count > 0 && src->ranParameter_List->list.count < 65535 + 1);
@@ -495,21 +517,21 @@ ran_param_list_t cp_lst(RANParameter_Testing_Item_Choice_List_t const* src)
 }
 
 static
-ran_param_struct_t cp_strct(RANParameter_Testing_Item_Choice_Structure_t const* src)
+ran_param_test_strct_t cp_strct(RANParameter_Testing_Item_Choice_Structure_t const* src)
 {
   assert(src != NULL);
 
-  ran_param_struct_t dst = {0}; 
+  ran_param_test_strct_t dst = {0}; 
 
   // [1-65535]
   assert(src->ranParameter_Structure->list.count > 0 && src->ranParameter_Structure->list.count < 65535 + 1); 
-  dst.sz_ran_param_struct = src->ranParameter_Structure->list.count; 
+  dst.sz_strct = src->ranParameter_Structure->list.count; 
 
-  dst.ran_param_struct = calloc(dst.sz_ran_param_struct, sizeof(ran_param_test_t));
-  assert(dst.ran_param_struct != NULL && "Memory exhausted");
+  dst.ran_param_test = calloc(dst.sz_strct, sizeof(ran_param_test_t));
+  assert(dst.ran_param_test != NULL && "Memory exhausted");
 
-  for(size_t i = 0; i <  dst.sz_ran_param_struct; ++i){
-    dst.ran_param_struct[i] = cp_ran_param_test(src->ranParameter_Structure->list.array[i]);
+  for(size_t i = 0; i <  dst.sz_strct; ++i){
+    dst.ran_param_test[i] = cp_ran_param_test(src->ranParameter_Structure->list.array[i]);
   }
 
   return dst;
@@ -554,13 +576,11 @@ ran_parameter_value_t cp_ran_param_val(RANParameter_Value_t	const* src)
 }
 
 static
-ran_param_elm_key_true_t cp_key_flag_true(RANParameter_Testing_Item_Choice_ElementTrue_t const* src)
+ran_parameter_value_t cp_key_flag_true(RANParameter_Testing_Item_Choice_ElementTrue_t const* src)
 {
   assert(src != NULL);
-  
-  ran_param_elm_key_true_t dst = {0}; 
 
-  dst.value = cp_ran_param_val(&src->ranParameter_value);
+  ran_parameter_value_t dst = cp_ran_param_val(&src->ranParameter_value);
 
   return dst;
 }
@@ -898,9 +918,354 @@ e2sm_rc_act_def_frmt_1_t cp_act_def_frmt_1( E2SM_RC_ActionDefinition_Format1_t c
     dst.param_report_def[i] =	cp_param_report_def(src->ranP_ToBeReported_List.list.array[i]);
   }
 
+  return dst;
+}
+
+static
+ran_parameter_value_t cp_ran_parameter_value(RANParameter_Value_t	const* src)
+{
+  assert(src != NULL);
+
+  ran_parameter_value_t dst = {0}; 
+
+  if(src->present ==RANParameter_Value_PR_valueBoolean){
+    dst.type = BOOLEAN_RAN_PARAMETER_VALUE ;  
+    dst.bool_ran = src->choice.valueBoolean;
+  } else if(src->present ==RANParameter_Value_PR_valueInt){
+    dst.type = INTEGER_RAN_PARAMETER_VALUE ;  
+    dst.int_ran = src->choice.valueInt;
+  }else if(src->present ==RANParameter_Value_PR_valueReal){
+    dst.type = REAL_RAN_PARAMETER_VALUE ;  
+    dst.real_ran = src->choice.valueReal;
+  }else if(src->present ==RANParameter_Value_PR_valueBitS){
+    dst.type = BIT_STRING_RAN_PARAMETER_VALUE;  
+    dst.bit_str_ran = copy_bit_string_to_ba(src->choice.valueBitS);
+  }else if(src->present ==RANParameter_Value_PR_valueOctS){
+    dst.type = OCTET_STRING_RAN_PARAMETER_VALUE;  
+    dst.octet_str_ran = copy_ostring_to_ba(src->choice.valueOctS);
+  }else if(src->present == RANParameter_Value_PR_valuePrintableString){
+    dst.type = PRINTABLESTRING_RAN_PARAMETER_VALUE;  
+    dst.printable_str_ran = copy_ostring_to_ba(src->choice.valuePrintableString);
+  } else {
+    assert(0!=0 && "Unknown type");
+  }
 
   return dst;
 }
+
+static
+ran_param_val_type_t cp_ran_param_value_type(RANParameter_ValueType_t	const* src);
+
+static
+seq_ran_param_t cp_seq_ran_param_strc_it(RANParameter_STRUCTURE_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ran_param_t dst = {0}; 
+
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ranParameter_ID > 0);
+  dst.ran_param_id = src->ranParameter_ID;
+
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  dst.ran_param_val = cp_ran_param_value_type(src->ranParameter_valueType);
+
+  return dst;
+}
+
+static
+ran_param_struct_t* cp_ran_parameter_strct(RANParameter_STRUCTURE_t const* src)
+{
+  assert(src != NULL);
+
+  ran_param_struct_t* dst = calloc(1, sizeof(ran_param_struct_t ));
+  assert(dst != NULL && "Memory exhausted" );
+
+  // [1-65535]
+  assert(src->sequence_of_ranParameters != NULL);
+  assert(src->sequence_of_ranParameters->list.count > 0 && src->sequence_of_ranParameters->list.count <  65535 + 1);
+  dst->sz_ran_param_struct = src->sequence_of_ranParameters->list.count;
+
+  dst->ran_param_struct = calloc(dst->sz_ran_param_struct, sizeof(seq_ran_param_t));
+  assert(dst->ran_param_struct != NULL && "Memory exhausted" );
+
+  for(size_t i = 0; i < dst->sz_ran_param_struct; ++i){
+    dst->ran_param_struct[i] = cp_seq_ran_param_strc_it(src->sequence_of_ranParameters->list.array[i]);
+  }
+
+  return dst;
+}
+
+/*
+static
+lst_ran_param_t cp_lst_ran_param(RANParameter_STRUCTURE_Item_t const* src)
+{
+  assert(src != NULL);
+
+  lst_ran_param_t dst = {0}; 
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  //1.. 4294967295
+  assert(src->ranParameter_ID > 0 && src->ranParameter_ID <  4294967295 +1);
+  dst.ran_param_id = src->ranParameter_ID;
+
+  // RAN Parameter Structure
+  // Mandatory
+  // 9.3.12
+  dst.ran_param_struct = cp_ran_param_struct(src->ranParameter_valueType);
+
+  return dst;
+}
+
+static
+ran_param_list_t* cp_ran_param_list( RANParameter_STRUCTURE_t const* src)
+{
+  assert(src != NULL);
+
+  ran_param_list_t* dst = calloc(1, sizeof( ran_param_list_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // [0- 65535]
+  assert(src->list_of_ranParameter.list.count  <  65535 + 1);
+  dst->sz_lst_ran_param =  src->list_of_ranParameter.list.count ;
+
+  for(size_t i = 0; i <  dst->sz_lst_ran_param; ++i){
+    dst->lst_ran_param[i] = cp_lst_ran_param(src->list_of_ranParameter.list.array[i]); 
+  }
+
+  return dst;
+}
+
+*/
+
+static
+seq_ran_param_t cp_ran_param_struct(RANParameter_STRUCTURE_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ran_param_t dst = {0}; 
+
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ranParameter_ID > 0);
+  dst.ran_param_id = src->ranParameter_ID;
+
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  assert(src->ranParameter_valueType != NULL); 
+  dst.ran_param_val = cp_ran_param_value_type(src->ranParameter_valueType);
+
+  return dst;
+}
+
+static
+lst_ran_param_t cp_lst_ran_param(RANParameter_STRUCTURE_t const* src)
+{
+  assert(src != NULL);
+
+  lst_ran_param_t dst = {0};
+
+  // Bug in the standard. RAN Parameter List 9.3.13 
+  // has a mandatory ie RAN Parameter ID 9.3.8 
+  // and a mandatory ie RAN Parameter Structure 9.3.12
+  // However, the ASN  
+  // RANParameter-LIST ::= SEQUENCE {
+  // list-of-ranParameter  SEQUENCE (SIZE(1..maxnoofItemsinList)) OF RANParameter-STRUCTURE, 
+  // ..
+  // }
+  //
+  // Misses RAN Parameter ID and only has RAN Parameter Structure
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  //1.. 4294967295
+  // Let's ignore the english written standard and believe the ASN.1 is the correct
+  //  uint32_t ran_param_id;
+
+  // RAN Parameter Structure
+  // Mandatory
+  // 9.3.12
+  //ran_param_struct_t ran_param_struct;
+
+  assert(src->sequence_of_ranParameters->list.count > 0 && src->sequence_of_ranParameters->list.count < 65535 + 1);
+
+  const size_t sz = src->sequence_of_ranParameters->list.count;
+  dst.ran_param_struct.sz_ran_param_struct = sz;
+  dst.ran_param_struct.ran_param_struct = calloc(sz, sizeof(seq_ran_param_t));
+  assert(dst.ran_param_struct.ran_param_struct != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < sz; ++i){
+   dst.ran_param_struct.ran_param_struct[i] = cp_ran_param_struct(src->sequence_of_ranParameters->list.array[i]);
+  }
+
+  return dst;
+}
+
+
+static
+ran_param_val_type_t cp_ran_param_value_type(RANParameter_ValueType_t	const* src)
+{
+  assert(src != NULL);
+
+  ran_param_val_type_t dst = {0}; 
+
+  if(src->present == RANParameter_ValueType_PR_ranP_Choice_ElementTrue){
+    dst.type = ELEMENT_KEY_FLAG_TRUE_RAN_PARAMETER_VAL_TYPE;  
+
+    dst.flag_true = calloc(1, sizeof( ran_parameter_value_t)); 
+    assert(dst.flag_true != NULL && "Memory exhausted" );
+
+    *dst.flag_true = cp_ran_parameter_value(&src->choice.ranP_Choice_ElementTrue->ranParameter_value);
+
+  } else if(src->present == RANParameter_ValueType_PR_ranP_Choice_ElementFalse ){
+    dst.type = ELEMENT_KEY_FLAG_FALSE_RAN_PARAMETER_VAL_TYPE;  
+
+    dst.flag_false = calloc(1, sizeof( ran_parameter_value_t)); 
+    assert(dst.flag_false != NULL && "Memory exhausted" );
+
+    *dst.flag_false = cp_ran_parameter_value(src->choice.ranP_Choice_ElementFalse->ranParameter_value);
+
+  }else if(src->present ==  RANParameter_ValueType_PR_ranP_Choice_Structure){
+    dst.type = STRUCTURE_RAN_PARAMETER_VAL_TYPE;  
+    dst.strct = cp_ran_parameter_strct(src->choice.ranP_Choice_Structure->ranParameter_Structure); //->sequence_of_ranParameters->list.count;
+
+  }else if(src->present == RANParameter_ValueType_PR_ranP_Choice_List){
+    dst.type = LIST_RAN_PARAMETER_VAL_TYPE;  
+    dst.lst = calloc(1, sizeof( ran_param_list_t)); 
+    assert(dst.lst != NULL && "Memory exhausted");
+
+    dst.lst->sz_lst_ran_param = src->choice.ranP_Choice_List->ranParameter_List->list_of_ranParameter.list.count;
+    dst.lst->lst_ran_param = calloc( dst.lst->sz_lst_ran_param, sizeof(lst_ran_param_t));
+    assert(dst.lst->lst_ran_param != NULL && "Memory exhausted");
+    for(size_t i =0; i < dst.lst->sz_lst_ran_param; ++i){
+      dst.lst->lst_ran_param[i] = cp_lst_ran_param(src->choice.ranP_Choice_List->ranParameter_List->list_of_ranParameter.list.array[i]); 
+    }
+
+  } else {
+    assert(0!=0 && "Not implemented");
+  }
+
+  return dst;
+}
+
+static
+seq_ran_param_t cp_seq_ran_param(RIC_PolicyAction_RANParameter_Item_t const* src)
+{
+  assert(src != NULL);
+  
+  seq_ran_param_t dst = {0}; 
+
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ranParameter_ID > 0 && src->ranParameter_ID < 4294967295 +1);
+  dst.ran_param_id = src->ranParameter_ID;
+
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  dst.ran_param_val = cp_ran_param_value_type(&src->ranParameter_valueType);
+
+  return dst;
+}
+
+
+
+static
+policy_action_t cp_policy_action(RIC_PolicyAction_t const* src)
+{
+  assert(src != NULL);
+
+  policy_action_t dst = {0}; 
+
+
+  //  Policy Action ID
+  //  Mandatory
+  //  9.3.6
+  //  [1 - 65535]
+  assert(src->ric_PolicyAction_ID > 0 && src->ric_PolicyAction_ID < 65535 + 1);
+  dst.policy_act_id = src->ric_PolicyAction_ID;
+
+  // Sequence of RAN Parameters
+  // [0- 65535]
+  if(src->ranParameters_List != NULL){
+    assert(src->ranParameters_List->list.count > 0 && src->ranParameters_List->list.count < 65535);
+    dst.sz_seq_ran_param = src->ranParameters_List->list.count ;
+    dst.seq_ran_param = calloc(dst.sz_seq_ran_param, sizeof(seq_ran_param_t) );
+    assert(dst.seq_ran_param != NULL && "Memory exhausted");
+
+    for(int i = 0; i < src->ranParameters_List->list.count; ++i ){
+     dst.seq_ran_param[i] = cp_seq_ran_param(src->ranParameters_List->list.array[i]); 
+    }
+  }
+
+  // RIC Policy decision
+  // Optional
+  assert(src->ric_PolicyDecision == NULL && "Not implemented");
+
+  return dst;
+}
+
+
+static
+policy_cond_t cp_policy_cond(E2SM_RC_ActionDefinition_Format2_Item_t const* src)
+{
+  assert(src != NULL);
+
+  policy_cond_t dst = {0}; 
+
+
+  // Policy Action Definition
+  // Mandatory
+  // 9.3.20
+  dst.pol_act = cp_policy_action(&src->ric_PolicyAction);
+
+  // Policy Condition Definition
+  // Optional
+  // 9.3.29
+  assert(src->ric_PolicyConditionDefinition == NULL && "Not implemented");
+
+  return dst;
+}
+
+
+static
+e2sm_rc_act_def_frmt_2_t cp_act_def_frmt_2(E2SM_RC_ActionDefinition_Format2_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_act_def_frmt_2_t dst = {0}; 
+
+  // Sequence of Policy Conditions
+  // [1 - 65535]
+  assert(src->ric_PolicyConditions_List.list.count > 0 && src->ric_PolicyConditions_List.list.count <   65535 + 1);
+
+  dst.sz_policy_cond = src->ric_PolicyConditions_List.list.count;
+
+  dst.policy_cond = calloc(dst.sz_policy_cond, sizeof(policy_cond_t) );
+  assert(dst.policy_cond != NULL && "Memory exhausted");
+  
+  for(size_t i = 0; i < dst.sz_policy_cond; ++i){
+    dst.policy_cond[i] = cp_policy_cond(src->ric_PolicyConditions_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+
+
 
 e2sm_rc_action_def_t rc_dec_action_def_asn(size_t len, uint8_t const action_def[len])
 {
@@ -926,12 +1291,13 @@ e2sm_rc_action_def_t rc_dec_action_def_asn(size_t len, uint8_t const action_def[
   dst.ric_style_type = src.ric_Style_Type; 
 
   if(src.ric_actionDefinition_formats.present == E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR_actionDefinition_Format1){
-    dst.format = FORMAT_1_E2SM_RC_ACT_DEF ;
-    dst.frmt_1 =  cp_act_def_frmt_1(src.ric_actionDefinition_formats.choice.actionDefinition_Format1) ;
+    dst.format = FORMAT_1_E2SM_RC_ACT_DEF;
+    dst.frmt_1 = cp_act_def_frmt_1(src.ric_actionDefinition_formats.choice.actionDefinition_Format1);
 
   } else if(src.ric_actionDefinition_formats.present ==  E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR_actionDefinition_Format2){
-    dst.format = FORMAT_2_E2SM_RC_ACT_DEF ;
-    assert(0!=0 && "Not implemented");
+    dst.format = FORMAT_2_E2SM_RC_ACT_DEF;
+    dst.frmt_2 = cp_act_def_frmt_2(src.ric_actionDefinition_formats.choice.actionDefinition_Format2);
+
   }else if(src.ric_actionDefinition_formats.present == E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR_actionDefinition_Format3 ){
     dst.format = FORMAT_3_E2SM_RC_ACT_DEF ;
     assert(0!=0 && "Not implemented");

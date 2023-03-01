@@ -10,7 +10,7 @@ void free_ran_param_struct(ran_param_struct_t* src)
   // [1-65535]
   assert(src->sz_ran_param_struct > 0 && src-> sz_ran_param_struct < 65536);
   for(size_t i = 0;i < src->sz_ran_param_struct; ++i ){
-    free_ran_param_test(&src->ran_param_struct[i]);
+    free_seq_ran_param(&src->ran_param_struct[i]);
   }
 
   assert(src->ran_param_struct != NULL);
@@ -28,8 +28,11 @@ bool eq_ran_param_struct(ran_param_struct_t const* m0, ran_param_struct_t const*
   if(m0->sz_ran_param_struct != m1->sz_ran_param_struct)
     return false;
 
+  assert(m0->sz_ran_param_struct > 0 && m0->sz_ran_param_struct < 65536);
+  assert(m1->sz_ran_param_struct > 0 && m1->sz_ran_param_struct < 65536);
+
   for(size_t i = 0; i < m0->sz_ran_param_struct; ++i){
-    if(eq_ran_param_test(&m0->ran_param_struct[i], &m1->ran_param_struct[i] ) == false )
+    if(eq_seq_ran_param(&m0->ran_param_struct[i], &m1->ran_param_struct[i]) == false )
       return false;
   }
 

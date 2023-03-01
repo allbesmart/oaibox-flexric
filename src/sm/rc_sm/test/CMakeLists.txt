@@ -107,12 +107,16 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
                       ../ie/ir/policy_cond.c 
                       ../ie/ir/policy_action.c 
 
+                      ../ie/ir/lst_ran_param.c
 
                       ../ie/ir/rrc_state.c 
                       ../ie/ir/rrc_state_lst.c 
                       ../ie/ir/ran_param_list.c 
                       ../ie/ir/ran_param_struct.c 
                       ../ie/ir/ran_param_test.c
+
+                      ../ie/ir/ran_param_test_struct.c
+
                       ../ie/ir/ran_param_cond_crit_def.c
                       ../ie/ir/ran_parameter_test_condition.c
                       ../ie/ir/ran_parameter_value.c
@@ -124,6 +128,8 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
                       ../ie/ir/e2sm_rc_act_def_frmt_2.c
 
                       ../ie/ir/param_report_def.c
+
+                      ../ie/ir/ran_param_test_list.c
                       
                       
 

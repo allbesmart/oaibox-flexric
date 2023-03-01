@@ -58,14 +58,11 @@ void test_rc_act_def(void)
   e2sm_rc_action_def_t action_def = fill_rnd_rc_action_def();
   defer({ free_e2sm_rc_action_def(&action_def); });
 
+  byte_array_t ba = rc_enc_action_def_asn(&action_def);
+  defer({ free_byte_array(ba); });
 
-  assert(0!=0 && "Continue from here, action definition 2 not finished")
-
-//  byte_array_t ba = rc_enc_action_def_asn(&action_def);
-//  defer({ free_byte_array(ba); });
-
-//  e2sm_rc_action_def_t out = rc_dec_action_def_asn(ba.len, ba.buf);
-//  defer({ free_e2sm_rc_action_def(&out); });
+  e2sm_rc_action_def_t out = rc_dec_action_def_asn(ba.len, ba.buf);
+  defer({ free_e2sm_rc_action_def(&out); });
 
 //  assert(eq_e2sm_rc_action_def(&action_def, &out) == true);
 }

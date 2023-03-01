@@ -1,5 +1,9 @@
 #include "fill_rnd_data_rc.h"
 
+#include "../ie/ir/ran_param_struct.h"
+#include "../ie/ir/ran_param_list.h"
+
+
 #include <assert.h>
 
 
@@ -275,9 +279,9 @@ ran_param_test_t fill_rnd_ran_param_test(void);
 
 
 static
-ran_param_list_t fill_rnd_ran_param_lst(void)
+ran_param_test_lst_t fill_rnd_ran_param_test_lst(void)
 {
-  ran_param_list_t dst = {0}; 
+  ran_param_test_lst_t dst = {0}; 
 
 // [1- 65535]
   dst.sz_lst = 1; //(rand() % 2) + 1; // This can grow the tree very quickly
@@ -292,18 +296,18 @@ ran_param_list_t fill_rnd_ran_param_lst(void)
 }
 
 static
-ran_param_struct_t fill_rnd_ran_param_struct(void) 
+ran_param_test_strct_t fill_rnd_ran_param_test_struct(void) 
 {
-  ran_param_struct_t dst = {0}; 
+  ran_param_test_strct_t dst = {0}; 
 
   // [1-65535]
-  dst.sz_ran_param_struct = 1; //(rand()%2) + 1; // This can grow vey quickly if not...
+  dst.sz_strct = 1; //(rand()%2) + 1; // This can grow vey quickly if not...
 
-  dst.ran_param_struct = calloc(dst.sz_ran_param_struct, sizeof(ran_param_test_t));
-  assert(dst.ran_param_struct != NULL && "Memory exhausted" );
+  dst.ran_param_test = calloc(dst.sz_strct, sizeof(ran_param_test_t));
+  assert(dst.ran_param_test != NULL && "Memory exhausted" );
 
-  for(size_t i = 0; i <  dst.sz_ran_param_struct; ++i){
-    dst.ran_param_struct[i] = fill_rnd_ran_param_test();
+  for(size_t i = 0; i <  dst.sz_strct; ++i){
+    dst.ran_param_test[i] = fill_rnd_ran_param_test();
   }
 
   return dst;
@@ -319,9 +323,9 @@ ran_parameter_value_t fill_rnd_ran_param_val(void)
   if(dst.type == BOOLEAN_RAN_PARAMETER_VALUE){
     dst.bool_ran = rand()%2;
   } else if(dst.type == INTEGER_RAN_PARAMETER_VALUE) {
-    dst.int_ran = rand();
+    dst.int_ran = rand()%4098;
   } else if(dst.type == REAL_RAN_PARAMETER_VALUE) {
-    dst.real_ran = rand_double(); 
+    dst.real_ran = (float)rand_double(); 
   } else if(dst.type == BIT_STRING_RAN_PARAMETER_VALUE ) {
     dst.bit_str_ran = cp_str_to_ba("Bit string copy ");
   } else if(dst.type == OCTET_STRING_RAN_PARAMETER_VALUE){
@@ -336,12 +340,68 @@ ran_parameter_value_t fill_rnd_ran_param_val(void)
 }
 
 static
-ran_param_elm_key_true_t fill_rnd_ran_param_elm_key_true(void)
+ran_parameter_value_t fill_rnd_ran_param_elm_key_true(void)
 {
-  ran_param_elm_key_true_t dst = {0}; 
-
   //  9.3.14
-  dst.value = fill_rnd_ran_param_val();
+ return fill_rnd_ran_param_val();
+}
+
+static
+ran_param_struct_t fill_rnd_ran_param_struct(void);
+
+static
+lst_ran_param_t fill_rnd_lst_ran_param(void)
+{
+  lst_ran_param_t dst = {0};
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  //1.. 4294967295
+  dst.ran_param_id = rand() + 1;
+
+  // RAN Parameter Structure
+  // Mandatory
+  // 9.3.12
+  dst.ran_param_struct = fill_rnd_ran_param_struct();
+
+  return dst;
+}
+
+static
+ran_param_list_t fill_rnd_ran_param_lst(void)
+{
+  ran_param_list_t dst = {0};
+
+  // [0- 65535]
+  dst.sz_lst_ran_param = (rand() % 2) + 1;
+  dst.lst_ran_param = calloc(dst.sz_lst_ran_param, sizeof(lst_ran_param_t )); 
+  assert(dst.lst_ran_param != NULL && "Memory exhausted");
+
+  for(size_t i = 0 ; i < dst.sz_lst_ran_param; ++i){
+    dst.lst_ran_param[i] = fill_rnd_lst_ran_param();
+  }
+  
+  return dst;
+}
+
+static
+seq_ran_param_t fill_rnd_seq_ran_param(void);
+
+static
+ran_param_struct_t fill_rnd_ran_param_struct(void)
+{
+  ran_param_struct_t dst = {0}; 
+ 
+  // [1-65535]
+  dst.sz_ran_param_struct = (rand() % 2 ) +1 ;
+
+  dst.ran_param_struct = calloc(dst.sz_ran_param_struct, sizeof(seq_ran_param_t));
+  assert(dst.ran_param_struct != NULL && "Memory exhausted" );
+
+  for(size_t i = 0; i < dst.sz_ran_param_struct ; ++i){
+    dst.ran_param_struct[i] =  fill_rnd_seq_ran_param();
+  }
 
   return dst;
 }
@@ -402,9 +462,9 @@ ran_param_test_t fill_rnd_ran_param_test(void)
   dst.type = rand() % END_RAN_PARAMETER_TYPE;
 
   if(dst.type == LIST_RAN_PARAMETER_TYPE){
-    dst.lst = fill_rnd_ran_param_lst();
+    dst.lst = fill_rnd_ran_param_test_lst();
   } else if(dst.type == STRUCTURE_RAN_PARAMETER_TYPE ){
-    dst.strct = fill_rnd_ran_param_struct() ;
+    dst.strct = fill_rnd_ran_param_test_struct() ;
   } else if(dst.type ==  ELEMENT_WITH_KEY_FLAG_TRUE_RAN_PARAMETER_TYPE){
     dst.flag_true = fill_rnd_ran_param_elm_key_true();
   } else if(dst.type == ELEMENT_WITH_KEY_FLAG_FALSE_RAN_PARAMETER_TYPE ){
@@ -609,24 +669,41 @@ e2sm_rc_act_def_frmt_1_t fill_rnd_rc_action_def_frmt_1(void)
 }
 
 static
+int recursion_fill_rnd_ran_param_val_type = 0;
+
+static
 ran_param_val_type_t fill_rnd_ran_param_val_type()
 {
   ran_param_val_type_t dst = {0}; 
 
-  dst.type = rand() % END_RAN_PARAMETER_VAL_TYPE;
+  dst.type =  STRUCTURE_RAN_PARAMETER_VAL_TYPE; //rand() % END_RAN_PARAMETER_VAL_TYPE;
+
+  recursion_fill_rnd_ran_param_val_type += 1; 
+  if(recursion_fill_rnd_ran_param_val_type > 4){
+//    recursion_fill_rnd_ran_param_val_type = 0; 
+    dst.type = ELEMENT_KEY_FLAG_TRUE_RAN_PARAMETER_VAL_TYPE;
+  }
 
   if(dst.type == ELEMENT_KEY_FLAG_TRUE_RAN_PARAMETER_VAL_TYPE){
-    dst.flag_true = fill_rnd_ran_param_val();
+    dst.flag_true = calloc(1, sizeof( ran_parameter_value_t));
+    assert(dst.flag_true != NULL && "Memory exhausted" );
+    *dst.flag_true = fill_rnd_ran_param_val();
   } else if(dst.type == ELEMENT_KEY_FLAG_FALSE_RAN_PARAMETER_VAL_TYPE ){
-    dst.flag_false = fill_rnd_ran_param_val();
-  }else if(dst.type ==  STRUCTURE_RAN_PARAMETER_VAL_TYPE){
-    dst.strct = fill_rnd_ran_param_struct();
+    dst.flag_false = calloc(1, sizeof( ran_parameter_value_t));
+    assert(dst.flag_false != NULL && "Memory exhausted" );
+    *dst.flag_false = fill_rnd_ran_param_val();
+  }else if(dst.type == STRUCTURE_RAN_PARAMETER_VAL_TYPE){
+    dst.strct = calloc(1, sizeof(ran_param_struct_t));
+    assert(dst.strct != NULL && "Memory exhausted" );
+    *dst.strct = fill_rnd_ran_param_struct();
   }else if(dst.type == LIST_RAN_PARAMETER_VAL_TYPE ){
-    dst.lst = fill_rnd_ran_param_lst();
+    dst.lst = calloc(1, sizeof(ran_param_list_t)); 
+    assert(dst.lst != NULL && "memory exhausted");    
+    *dst.lst = fill_rnd_ran_param_lst();
   } else {
     assert(0!=0 && "not implemented" );
   }
-  
+ 
   return dst;
 }
 
@@ -639,7 +716,7 @@ seq_ran_param_t fill_rnd_seq_ran_param(void)
   //Mandatory
   //9.3.8
   // [1 - 4294967295]
-  dst.ran_param_id = (rand()%  4294967295) +1 ;
+  dst.ran_param_id = (rand()% 4098) +1 ;
 
   // RAN Parameter Value Type
   // 9.3.11
@@ -662,7 +739,7 @@ policy_action_t fill_rnd_policy_action(void)
 
   // Sequence of RAN Parameters
   // [0- 65535]
-  dst.sz_seq_ran_param = rand()% 65535;
+  dst.sz_seq_ran_param = rand()% 2; //65535;
    
   if(dst.sz_seq_ran_param > 0){
     dst.seq_ran_param = calloc(dst.sz_seq_ran_param, sizeof(seq_ran_param_t)); 
@@ -705,7 +782,7 @@ e2sm_rc_act_def_frmt_2_t fill_rnd_rc_action_def_frmt_2(void)
 
   // Sequence of Policy Conditions
   // [1 - 65535]
-  dst.sz_policy_cond = (rand() % 64) + 1; // Too large  65535
+  dst.sz_policy_cond = (rand() % 2) + 1; // Too large  65535
 
   dst.policy_cond = calloc(dst.sz_policy_cond, sizeof(policy_cond_t) );
   assert(dst.policy_cond != NULL && "memory exhausted" );
@@ -726,7 +803,7 @@ e2sm_rc_action_def_t fill_rnd_rc_action_def(void)
   //  Mandatory
   //  9.3.3
   // Defined in common 6.2.2.2.
-  dst.ric_style_type = rand() + 1;
+  dst.ric_style_type = (rand()%1024) + 1;
 
   dst.format = FORMAT_2_E2SM_RC_ACT_DEF; //  rand() % END_E2SM_RC_ACT_DEF;
 

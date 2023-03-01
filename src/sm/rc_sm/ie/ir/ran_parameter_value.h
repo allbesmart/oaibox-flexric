@@ -21,23 +21,17 @@ typedef enum{
 } ran_parameter_value_e; 
 
 
-
 //  9.3.14
-//  It is named value but it should be renamed type
-
-typedef struct{
-    ran_parameter_value_e type;
-
-    union{
+typedef struct ran_parameter_value_s{
+  ran_parameter_value_e type;
+  union{
     bool bool_ran;
     int64_t int_ran;
     double real_ran;
     byte_array_t bit_str_ran;
     byte_array_t octet_str_ran;
     byte_array_t printable_str_ran;
-   
-    };
-
+  };
 }  ran_parameter_value_t;
 
 void free_ran_parameter_value(ran_parameter_value_t* src);

@@ -13,13 +13,13 @@ void free_ran_param_test(ran_param_test_t * src)
 //  free_byte_array(src->ran_param_id); 
 
   if(src->type == LIST_RAN_PARAMETER_TYPE ){
-    free_ran_param_list(&src->lst);
+    free_ran_param_test_lst(&src->lst);
 
   } else if(src->type == STRUCTURE_RAN_PARAMETER_TYPE ){
-    free_ran_param_struct(&src->strct);
+    free_ran_param_test_strct(&src->strct);
 
   }else if(src->type == ELEMENT_WITH_KEY_FLAG_TRUE_RAN_PARAMETER_TYPE ){
-    free_ran_param_elm_key_true(&src->flag_true);
+   free_ran_parameter_value(&src->flag_true);
 
   }else if(src->type == ELEMENT_WITH_KEY_FLAG_FALSE_RAN_PARAMETER_TYPE){
     free_ran_param_elm_key_false(&src->flag_false);
@@ -50,25 +50,24 @@ bool eq_ran_param_test(ran_param_test_t const* m0, ran_param_test_t const* m1)
     return false;
 
   if(m0->type == LIST_RAN_PARAMETER_TYPE){
-    if(eq_ran_param_list(&m0->lst, &m1->lst) == false ){
+    if(eq_ran_param_test_lst(&m0->lst, &m1->lst) == false ){
       assert(0!=0);
       return false;
     }
   } else if(m0->type == STRUCTURE_RAN_PARAMETER_TYPE){
-    if(eq_ran_param_struct(&m0->strct, &m1->strct) == false){
+    if(eq_ran_param_test_strct(&m0->strct, &m1->strct) == false){
       assert(0!=0);
       return false;
     }
 
   }else if(m0->type == ELEMENT_WITH_KEY_FLAG_TRUE_RAN_PARAMETER_TYPE ){
-    if(eq_ran_param_elm_key_true(&m0->flag_true, &m1->flag_true ) == false ){
+    if(eq_ran_parameter_value(&m0->flag_true, &m1->flag_true ) == false ){
       assert(0!=0);
       return false;
     }
 
   }else if(m0->type ==  ELEMENT_WITH_KEY_FLAG_FALSE_RAN_PARAMETER_TYPE){
     if(eq_ran_param_elm_key_false(&m0->flag_false, &m1->flag_false) == false ){
-
       assert(0!=0);
       return false;
     }

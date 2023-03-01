@@ -1,14 +1,17 @@
 #ifndef RAN_PARAMETER_LIST_E2RC_H
 #define RAN_PARAMETER_LIST_E2RC_H 
 
+#include "lst_ran_param.h"
+
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef struct{
+// 9.3.13
+typedef struct ran_param_list_s {
 
-  // [1- 65535]
-  size_t sz_lst;
-  struct ran_param_test_s* ran_param_test;
+  // [0- 65535]
+  size_t sz_lst_ran_param;
+  lst_ran_param_t* lst_ran_param;
 
 } ran_param_list_t;
 

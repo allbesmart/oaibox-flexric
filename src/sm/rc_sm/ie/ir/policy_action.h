@@ -8,12 +8,10 @@
 #include <stdint.h>
 
 typedef enum{
-
   ACCEPT_RIC_POL_DECISION,
   REJECT_RIC_POL_DECISION,
 
   END_RIC_POL_DECISION
-
 } ric_pol_decision_e;
 
 // 9.3.20

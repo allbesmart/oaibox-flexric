@@ -23,9 +23,24 @@ void free_policy_cond(policy_cond_t* src)
 
 bool eq_policy_cond(policy_cond_t const* m0, policy_cond_t const* m1)
 {
+  if(m0 == m1)
+    return true;
 
-  assert(0!=0 && "Not implemented");
+  if(m0 == NULL || m1 == NULL)
+    return false; 
 
+  // Policy Action Definition
+  // Mandatory
+  // 9.3.20
+  if(eq_policy_action(&m0->pol_act, &m1->pol_act) == false) 
+    return false;
 
+  // Policy Condition Definition
+  // Optional
+  // 9.3.29
+  assert(m0->pol == NULL && "Not implmented"); 
+  assert(m1->pol == NULL && "Not implmented"); 
+
+  return true;
 }
 

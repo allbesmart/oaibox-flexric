@@ -45,20 +45,23 @@ bool eq_policy_action(policy_action_t const* m0, policy_action_t const* m1)
   assert(m0->policy_act_id > 0 );
   assert(m1->policy_act_id > 0 );
 
-  if(m0->policy_act_id != m1->policy_act_id)
+  if(m0->policy_act_id != m1->policy_act_id){
     return false;
+  }
 
   // Sequence of RAN Parameters
   // [0- 65535]
   assert(m0->sz_seq_ran_param <  65535);
   assert(m1->sz_seq_ran_param <  65535);
 
-  if(m0->sz_seq_ran_param != m1->sz_seq_ran_param)
+  if(m0->sz_seq_ran_param != m1->sz_seq_ran_param){
     return false;
+  }
 
   for(size_t i = 0; i < m0->sz_seq_ran_param; ++i){
-    if(eq_seq_ran_param(&m0->seq_ran_param[i], &m1->seq_ran_param[i]) == false)
+    if(eq_seq_ran_param(&m0->seq_ran_param[i], &m1->seq_ran_param[i]) == false){
       return false;
+    }
   }
 
   // RIC Policy decision
@@ -66,6 +69,6 @@ bool eq_policy_action(policy_action_t const* m0, policy_action_t const* m1)
   assert(m0->pol_dec == NULL && "Not implemented");
   assert(m1->pol_dec == NULL && "Not implemented");
 
-  return false;
+  return true;
 }
 

@@ -31,7 +31,7 @@ e2sm_rc_event_trigger_t rc_dec_event_trigger_plain(size_t len, uint8_t const ev_
 
 e2sm_rc_action_def_t rc_dec_action_def_plain(size_t len, uint8_t const action_def[len]);
 
-rc_ind_hdr_t rc_dec_ind_hdr_plain(size_t len, uint8_t const ind_hdr[len]); 
+e2sm_rc_ind_hdr_t rc_dec_ind_hdr_plain(size_t len, uint8_t const ind_hdr[len]); 
 
 rc_ind_msg_t rc_dec_ind_msg_plain(size_t len, uint8_t const ind_msg[len]); 
 

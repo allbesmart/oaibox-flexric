@@ -26,8 +26,9 @@ typedef enum E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR {
 	E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR_actionDefinition_Format1,
 	E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR_actionDefinition_Format2,
 	E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR_actionDefinition_Format3,
-	/* Extensions may appear below */
 	E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR_actionDefinition_Format4
+	/* Extensions may appear below */
+	
 } E2SM_RC_ActionDefinition__ric_actionDefinition_formats_PR;
 
 /* Forward declarations */
@@ -45,11 +46,11 @@ typedef struct E2SM_RC_ActionDefinition {
 			struct E2SM_RC_ActionDefinition_Format1	*actionDefinition_Format1;
 			struct E2SM_RC_ActionDefinition_Format2	*actionDefinition_Format2;
 			struct E2SM_RC_ActionDefinition_Format3	*actionDefinition_Format3;
+			struct E2SM_RC_ActionDefinition_Format4	*actionDefinition_Format4;
 			/*
 			 * This type is extensible,
 			 * possible extensions are below.
 			 */
-			struct E2SM_RC_ActionDefinition_Format4	*actionDefinition_Format4;
 		} choice;
 		
 		/* Context for parsing across buffer boundaries */

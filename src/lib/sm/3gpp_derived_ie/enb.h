@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "gummei.h"
 #include "global_enb_id.h"
@@ -37,6 +38,10 @@ typedef struct {
     global_enb_id_t *global_enb_id;
 
 } enb_t;
+
+void free_enb_ue_id(enb_t * src);
+
+bool eq_enb_ue_id(enb_t const * m0, enb_t const * m1);
 
 #ifdef __cplusplus
 }

@@ -33,6 +33,12 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
+
+
+//////////////////////////////////////
+// RIC Event Trigger Definition
+/////////////////////////////////////
+
 #include "ir/e2sm_rc_ev_trg_frmt_1.h"
 #include "ir/e2sm_rc_ev_trg_frmt_2.h"
 #include "ir/e2sm_rc_ev_trg_frmt_3.h"
@@ -40,10 +46,23 @@ extern "C" {
 #include "ir/e2sm_rc_ev_trg_frmt_5.h"
 
 
+//////////////////////////////////////
+// RIC Action Definition 
+/////////////////////////////////////
+
 #include "ir/e2sm_rc_act_def_frmt_1.h"
 #include "ir/e2sm_rc_act_def_frmt_2.h"
 #include "ir/e2sm_rc_act_def_frmt_3.h"
 #include "ir/e2sm_rc_act_def_frmt_4.h"
+
+
+/////////////////////////////////////
+// RIC Indication Header 
+/////////////////////////////////////
+
+#include "ir/e2sm_rc_ind_hdr_frmt_1.h"
+#include "ir/e2sm_rc_ind_hdr_frmt_2.h"
+#include "ir/e2sm_rc_ind_hdr_frmt_3.h"
 
 
 //////////////////////////////////////
@@ -97,7 +116,6 @@ typedef enum{
 } e2sm_rc_act_def_format_e; 
 
 typedef struct {
-
   //  RIC Style Type
   //  Mandatory
   //  9.3.3
@@ -112,7 +130,6 @@ typedef struct {
   e2sm_rc_act_def_frmt_3_t frmt_3;
   e2sm_rc_act_def_frmt_4_t frmt_4;
   };
-
 } e2sm_rc_action_def_t;
 
 void free_e2sm_rc_action_def(e2sm_rc_action_def_t* src); 
@@ -127,15 +144,29 @@ bool eq_e2sm_rc_action_def(e2sm_rc_action_def_t* m0,  e2sm_rc_action_def_t* m1);
 // RIC Indication Header 
 /////////////////////////////////////
 
+typedef enum{
+  FORMAT_1_E2SM_RC_IND_HDR ,
+  FORMAT_2_E2SM_RC_IND_HDR ,
+  FORMAT_3_E2SM_RC_IND_HDR ,
+
+  END_E2SM_RC_IND_HDR
+
+} e2sm_rc_ind_hdr_format_e; 
+
 typedef struct{
-  uint32_t dummy;  
-} rc_ind_hdr_t;
+  e2sm_rc_ind_hdr_format_e format;
+  union{
+    e2sm_rc_ind_hdr_frmt_1_t frmt_1; // 9.2.1.3.1
+    e2sm_rc_ind_hdr_frmt_2_t frmt_2; // 9.2.1.3.1
+    e2sm_rc_ind_hdr_frmt_3_t frmt_3; // 9.2.1.3.1
+  };
+} e2sm_rc_ind_hdr_t;
 
-void free_rc_ind_hdr(rc_ind_hdr_t* src); 
+void free_e2sm_rc_ind_hdr(e2sm_rc_ind_hdr_t* src); 
 
-rc_ind_hdr_t cp_rc_ind_hdr(rc_ind_hdr_t const* src);
+e2sm_rc_ind_hdr_t cp_e2sm_rc_ind_hdr(e2sm_rc_ind_hdr_t const* src);
 
-bool eq_rc_ind_hdr(rc_ind_hdr_t* m0, rc_ind_hdr_t* m1);
+bool eq_e2sm_rc_ind_hdr(e2sm_rc_ind_hdr_t const* m0, e2sm_rc_ind_hdr_t const* m1);
 
 
 //////////////////////////////////////
@@ -322,7 +353,7 @@ typedef struct{
 ///////////////
 
 typedef struct{
-  rc_ind_hdr_t hdr;
+  e2sm_rc_ind_hdr_t hdr;
   rc_ind_msg_t msg;
   rc_call_proc_id_t* proc_id;
 } rc_ind_data_t;

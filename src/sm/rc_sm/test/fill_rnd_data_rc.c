@@ -952,7 +952,7 @@ e2sm_rc_action_def_t fill_rnd_rc_action_def(void)
   // Defined in common 6.2.2.2.
   dst.ric_style_type = (rand()%1024) + 1;
 
-  dst.format = FORMAT_4_E2SM_RC_ACT_DEF; //  rand() % END_E2SM_RC_ACT_DEF;
+  dst.format = rand() % END_E2SM_RC_ACT_DEF;
 
   if(dst.format == FORMAT_1_E2SM_RC_ACT_DEF ){
     dst.frmt_1 = fill_rnd_rc_action_def_frmt_1();
@@ -970,13 +970,524 @@ e2sm_rc_action_def_t fill_rnd_rc_action_def(void)
     assert(0 != 0 && "Unknown format");
   }
 
+  return dst;
+}
 
-  //9.2.1.2.1
-//  e2sm_rc_act_def_frmt_2_t frmt_2;
-//  e2sm_rc_act_def_frmt_3_t frmt_3;
-//  frmt_4;
+static
+e2sm_rc_ind_hdr_frmt_1_t fill_rnd_rc_ind_hdr_frmt_1(void)
+{
+  e2sm_rc_ind_hdr_frmt_1_t dst = {0};
+
+  dst.ev_trigger_id = malloc(sizeof(uint16_t));
+  assert(dst.ev_trigger_id != NULL && "Memory exhausted" );
+
+  // Event Trigger Condition ID
+  // Optional
+  // 9.3.21
+  // [1 - 65535]
+  *dst.ev_trigger_id = (rand() % 65535)+ 1;
 
   return dst;
 }
 
+static
+gnb_t fill_gnb_data(void)
+{
+  gnb_t gnb = {0};
+
+  // 6.2.3.16
+  // Mandatory
+  // AMF UE NGAP ID
+  gnb.amf_ue_ngap_id = (rand() % 2^40) + 0;
+
+  // Mandatory
+  //GUAMI 6.2.3.17 
+  gnb.guami.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+  
+  gnb.guami.amf_region_id = (rand() % 2^8) + 0;
+  gnb.guami.amf_set_id = (rand() % 2^10) + 0;
+  gnb.guami.amf_ptr = (rand() % 2^6) + 0;
+
+  // gNB-CU UE F1AP ID List
+  // C-ifCUDUseparated 
+  gnb.gnb_cu_ue_f1ap_lst_len = (rand() % 4) + 1;
+  gnb.gnb_cu_ue_f1ap_lst = calloc(gnb.gnb_cu_ue_f1ap_lst_len, sizeof(uint32_t));
+  for (size_t i = 0; i < gnb.gnb_cu_ue_f1ap_lst_len; i++)
+  {
+    gnb.gnb_cu_ue_f1ap_lst[i] = (rand() % 4294967296) + 0;
+  }
+
+  //gNB-CU-CP UE E1AP ID List
+  //C-ifCPUPseparated 
+  gnb.gnb_cu_cp_ue_e1ap_lst_len = 3; //(rand() % 65535) + 1;
+  gnb.gnb_cu_cp_ue_e1ap_lst = calloc(gnb.gnb_cu_cp_ue_e1ap_lst_len, sizeof(uint32_t));
+  for (size_t i = 0; i < gnb.gnb_cu_cp_ue_e1ap_lst_len; i++)
+  {
+    gnb.gnb_cu_cp_ue_e1ap_lst[i] = (rand() % 4294967296) + 0;
+  }
+
+  // RAN UE ID
+  // Optional
+  // 6.2.3.25
+  gnb.ran_ue_id = calloc(1, sizeof(uint64_t));
+  assert(gnb.ran_ue_id != NULL && "Memory exhausted");
+  *gnb.ran_ue_id = 14294967296; // (rand() % 2^64) + 0;
+
+  //  M-NG-RAN node UE XnAP ID
+  // C- ifDCSetup
+  // 6.2.3.19
+  gnb.ng_ran_node_ue_xnap_id = calloc(1, sizeof(uint32_t));
+  assert(gnb.ng_ran_node_ue_xnap_id != NULL && "Memory exhausted");
+  *gnb.ng_ran_node_ue_xnap_id = (rand() % 4294967296) + 0;
+
+  // Global gNB ID
+  // 6.2.3.3
+  // Optional
+  // This IE shall not be used. Global NG-RAN Node ID IE shall replace this IE 
+  //gnb.global_gnb_id = calloc(1, sizeof(global_gnb_id_t));
+  //assert(gnb.global_gnb_id != NULL && "Memory exhausted");
+  //gnb.global_gnb_id->type = GNB_TYPE_ID;
+  //gnb.global_gnb_id->plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+  //gnb.global_gnb_id->gnb_id = (rand() % 4294967296) + 0;
+
+  // Global NG-RAN Node ID
+  // C-ifDCSetup
+  // 6.2.3.2
+  gnb.global_ng_ran_node_id = calloc(1, sizeof(*gnb.global_ng_ran_node_id));
+  gnb.global_ng_ran_node_id->type = rand()%END_GLOBAL_TYPE_ID;
+
+  switch (gnb.global_ng_ran_node_id->type)
+  {
+  case GNB_GLOBAL_TYPE_ID:
+    gnb.global_ng_ran_node_id->global_gnb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+//    gnb.global_ng_ran_node_id->global_gnb_id.type = GNB_TYPE_ID;
+    gnb.global_ng_ran_node_id->global_gnb_id.gnb_id = (rand() % 4294967296) + 0;
+    break;
+  
+  case NG_ENB_GLOBAL_TYPE_ID:
+    gnb.global_ng_ran_node_id->global_ng_enb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+    gnb.global_ng_ran_node_id->global_ng_enb_id.type = LONG_MACRO_NG_ENB_TYPE_ID;  // rand()%END_NG_ENB_TYPE_ID;
+
+    switch (gnb.global_ng_ran_node_id->global_ng_enb_id.type)
+    {
+    case MACRO_NG_ENB_TYPE_ID:
+      gnb.global_ng_ran_node_id->global_ng_enb_id.macro_ng_enb_id = (rand() % 2^20) + 0;
+      break;
+
+    case SHORT_MACRO_NG_ENB_TYPE_ID:
+      gnb.global_ng_ran_node_id->global_ng_enb_id.short_macro_ng_enb_id = (rand() % 2^18) + 0;
+      break;
+
+    case LONG_MACRO_NG_ENB_TYPE_ID:
+      gnb.global_ng_ran_node_id->global_ng_enb_id.long_macro_ng_enb_id = (rand() % 2^21) + 0;
+      break;
+    
+    default:
+      assert(false && "Unknown Global NG eNB ID Type");
+    }
+    break;
+
+  default:
+    assert(false && "Unknown Global NG-RAN Node ID Type");
+  }
+
+  return gnb;
+}
+
+static
+gnb_du_t fill_gnb_du_data(void)
+{
+  gnb_du_t gnb_du = {0};
+  gnb_du.gnb_cu_ue_f1ap = (rand() % 4294967296) + 0;
+
+  gnb_du.ran_ue_id = calloc(1, sizeof(*gnb_du.ran_ue_id));
+  *gnb_du.ran_ue_id = (rand() % 2^64) + 0;
+
+  return gnb_du;
+}
+
+static
+gnb_cu_up_t fill_gnb_cu_up_data(void)
+{
+  gnb_cu_up_t gnb_cu_up = {0};
+  gnb_cu_up.gnb_cu_cp_ue_e1ap = (rand() % 4294967296) + 0;
+
+  gnb_cu_up.ran_ue_id = calloc(1, sizeof(*gnb_cu_up.ran_ue_id));
+  *gnb_cu_up.ran_ue_id = (rand() % 2^64) + 0;
+
+  return gnb_cu_up;
+}
+
+ng_enb_t fill_ng_enb_data(void)
+{
+  ng_enb_t ng_enb = {0};
+
+  // 6.2.3.16
+  // Mandatory
+  // AMF UE NGAP ID
+  ng_enb.amf_ue_ngap_id = (rand() % 2^40) + 0;
+
+  // 6.2.3.17
+  // Mandatory
+  // GUAMI
+  ng_enb.guami.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+  
+  ng_enb.guami.amf_region_id = (rand() % 2^8) + 0;
+  ng_enb.guami.amf_set_id = (rand() % 2^10) + 0;
+  ng_enb.guami.amf_ptr = (rand() % 2^6) + 0;
+
+  // 6.2.3.22
+  // C-if CU DU separated
+  // ng-eNB-CU UE W1AP ID
+  ng_enb.ng_enb_cu_ue_w1ap_id = calloc(1, sizeof(uint32_t));
+  assert(ng_enb.ng_enb_cu_ue_w1ap_id != NULL && "Memory exhausted");
+  *ng_enb.ng_enb_cu_ue_w1ap_id = (rand() % 4294967296) + 0;
+
+  // 6.2.3.19
+  // C- ifDCSetup
+  // M-NG-RAN node UE XnAP ID
+  ng_enb.ng_ran_node_ue_xnap_id = calloc(1, sizeof(uint32_t));
+  assert(ng_enb.ng_ran_node_ue_xnap_id != NULL && "Memory exhausted");
+  *ng_enb.ng_ran_node_ue_xnap_id = (rand() % 4294967296) + 0;
+
+  // OPTIONAL
+  // This IE shall not be used. Global NG-RAN Node ID IE shall replace this IE
+  ng_enb.global_ng_enb_id = calloc(1, sizeof(*ng_enb.global_ng_enb_id));
+  assert(ng_enb.global_ng_enb_id != NULL && "Memory exhausted");
+  ng_enb.global_ng_enb_id->plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+
+  ng_enb.global_ng_enb_id->type = rand()%END_NG_ENB_TYPE_ID;
+
+  switch (ng_enb.global_ng_enb_id->type)
+  {
+  case MACRO_NG_ENB_TYPE_ID:
+    ng_enb.global_ng_enb_id->macro_ng_enb_id = (rand() % 2^20) + 0;
+    break;
+
+  case SHORT_MACRO_NG_ENB_TYPE_ID:
+    ng_enb.global_ng_enb_id->short_macro_ng_enb_id = (rand() % 2^18) + 0;
+    break;
+
+  case LONG_MACRO_NG_ENB_TYPE_ID:
+    ng_enb.global_ng_enb_id->long_macro_ng_enb_id = (rand() % 2^21) + 0;
+    break;
+  
+  default:
+    assert(false && "Unknown Global NG eNB ID Type");
+  }
+
+
+  // Global NG-RAN Node ID
+  // C-ifDCSetup
+  // 6.2.3.2
+  ng_enb.global_ng_ran_node_id = calloc(1, sizeof(*ng_enb.global_ng_ran_node_id));
+  assert(ng_enb.global_ng_ran_node_id != NULL && "Memory exhausted");
+  ng_enb.global_ng_ran_node_id->type = rand()%END_GLOBAL_TYPE_ID;
+
+  switch (ng_enb.global_ng_ran_node_id->type)
+  {
+  case GNB_GLOBAL_TYPE_ID:
+    ng_enb.global_ng_ran_node_id->global_gnb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+    //ng_enb.global_ng_ran_node_id->global_gnb_id.type = GNB_TYPE_ID;
+    ng_enb.global_ng_ran_node_id->global_gnb_id.gnb_id = (rand() % 4294967296) + 0;
+    break;
+  
+  case NG_ENB_GLOBAL_TYPE_ID:
+    ng_enb.global_ng_ran_node_id->global_ng_enb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+    ng_enb.global_ng_ran_node_id->global_ng_enb_id.type = LONG_MACRO_NG_ENB_TYPE_ID;  // rand()%END_NG_ENB_TYPE_ID;
+
+    switch (ng_enb.global_ng_ran_node_id->global_ng_enb_id.type)
+    {
+    case MACRO_NG_ENB_TYPE_ID:
+      ng_enb.global_ng_ran_node_id->global_ng_enb_id.macro_ng_enb_id = (rand() % 2^20) + 0;
+      break;
+
+    case SHORT_MACRO_NG_ENB_TYPE_ID:
+      ng_enb.global_ng_ran_node_id->global_ng_enb_id.short_macro_ng_enb_id = (rand() % 2^18) + 0;
+      break;
+
+    case LONG_MACRO_NG_ENB_TYPE_ID:
+      ng_enb.global_ng_ran_node_id->global_ng_enb_id.long_macro_ng_enb_id = (rand() % 2^21) + 0;
+      break;
+    
+    default:
+      assert(false && "Unknown Global NG eNB ID Type");
+    }
+    break;
+
+  default:
+    assert(false && "Unknown Global NG-RAN Node ID Type");
+  }
+
+  return ng_enb;
+}
+
+ng_enb_du_t fill_ng_enb_du_data(void)
+{
+  ng_enb_du_t ng_enb_du = {0};
+
+  // 6.2.3.22
+  // C-if CU DU separated
+  // ng-eNB-CU UE W1AP ID
+  ng_enb_du.ng_enb_cu_ue_w1ap_id = (rand() % 4294967296) + 0;
+
+  return ng_enb_du;
+}
+
+en_gnb_t fill_en_gnb_data(void)
+{
+  en_gnb_t en_gnb = {0};
+
+  // 6.2.3.23
+  // Mandatory
+  // MeNB UE X2AP ID
+  en_gnb.enb_ue_x2ap_id = (rand() % 4095) + 1;
+
+  // 6.2.3.24
+  // OPTIONAL
+  // MeNB UE X2AP ID Extension
+  en_gnb.enb_ue_x2ap_id_extension = calloc(1, sizeof(uint16_t));
+  assert(en_gnb.enb_ue_x2ap_id_extension != NULL && "Memory exhausted");
+  *en_gnb.enb_ue_x2ap_id_extension = (rand() % 4095) + 1;
+
+  // 6.2.3.9
+  // Mandatory
+  // Global eNB ID
+  en_gnb.global_enb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+
+  en_gnb.global_enb_id.type = rand()%SHORT_MACRO_ENB_TYPE_ID;
+
+  switch (en_gnb.global_enb_id.type)
+  {
+  case MACRO_ENB_TYPE_ID:
+    en_gnb.global_enb_id.macro_enb_id = (rand() % 2^20) + 0;
+    break;
+  
+  case HOME_ENB_TYPE_ID:
+    en_gnb.global_enb_id.home_enb_id = (rand() % 2^28) + 0;
+    break;
+
+  /* Possible extensions: */
+  // case SHORT_MACRO_ENB_TYPE_ID:
+  //   en_gnb.global_enb_id.short_macro_enb_id = (rand() % 2^18) + 0;
+  //   break;
+
+  // case LONG_MACRO_ENB_TYPE_ID:
+  //   en_gnb.global_enb_id.long_macro_enb_id = (rand() % 2^21) + 0;
+  //   break;
+
+  default:
+    break;
+  }
+
+  // 6.2.3.21
+  // gNB-CU UE F1AP ID
+  // C-ifCUDUseparated 
+  en_gnb.gnb_cu_ue_f1ap_lst = calloc(1, sizeof(uint32_t));
+  assert(en_gnb.gnb_cu_ue_f1ap_lst != NULL && "Memory exhausted");
+  *en_gnb.gnb_cu_ue_f1ap_lst = (rand() % 4294967296) + 0;
+
+  // gNB-CU-CP UE E1AP ID List
+  // C-ifCPUPseparated 
+  en_gnb.gnb_cu_cp_ue_e1ap_lst_len = 3;
+  en_gnb.gnb_cu_cp_ue_e1ap_lst = calloc(en_gnb.gnb_cu_cp_ue_e1ap_lst_len, sizeof(uint32_t));
+  for (size_t i = 0; i < en_gnb.gnb_cu_cp_ue_e1ap_lst_len; i++)
+  {
+    en_gnb.gnb_cu_cp_ue_e1ap_lst[i] = (rand() % 4294967296) + 0;
+  }
+
+  // RAN UE ID
+  // Optional
+  // 6.2.3.25
+  en_gnb.ran_ue_id = calloc(1, sizeof(uint64_t));
+  assert(en_gnb.ran_ue_id != NULL && "Memory exhausted");
+  *en_gnb.ran_ue_id = (rand() % 2^64) + 0;
+
+  return en_gnb;
+}
+
+enb_t fill_enb_data(void)
+{
+  enb_t enb = {0};
+
+  // 6.2.3.26
+  // Mandatory
+  // MME UE S1AP ID
+  enb.mme_ue_s1ap_id = (rand() % 4294967296) + 0;
+
+  // 6.2.3.18
+  // Mandatory
+  // GUMMEI
+  enb.gummei.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+  enb.gummei.mme_group_id = (rand() % 2^16) + 0;
+  enb.gummei.mme_code = (rand() % 2^8) + 0;
+
+  // 6.2.3.23
+  // C-ifDCSetup
+  // MeNB UE X2AP ID
+  enb.enb_ue_x2ap_id = calloc(1, sizeof(uint16_t));
+  assert(enb.enb_ue_x2ap_id != NULL && "Memory exhausted");
+  *enb.enb_ue_x2ap_id = (rand() % 4095) + 1;
+
+  // 6.2.3.24
+  // C-ifDCSetup
+  // MeNB UE X2AP ID Extension
+  enb.enb_ue_x2ap_id_extension = calloc(1, sizeof(uint16_t));
+  assert(enb.enb_ue_x2ap_id_extension != NULL && "Memory exhausted");
+  *enb.enb_ue_x2ap_id_extension = (rand() % 4095) + 1;
+
+  // 6.2.3.9
+  // C-ifDCSetup
+  // Global eNB ID
+  enb.global_enb_id = calloc(1, sizeof(*enb.global_enb_id));
+  assert(enb.global_enb_id != NULL && "Memory exhausted");
+
+  enb.global_enb_id->plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+
+  enb.global_enb_id->type = MACRO_ENB_TYPE_ID;  // rand()%END_ENB_TYPE_ID;
+
+  switch (enb.global_enb_id->type)
+  {
+  case MACRO_ENB_TYPE_ID:
+    enb.global_enb_id->macro_enb_id = (rand() % 2^20) + 0;
+    break;
+  
+  case HOME_ENB_TYPE_ID:
+    enb.global_enb_id->home_enb_id = (rand() % 2^28) + 0;
+    break;
+
+  /* Possible extensions: */
+  // case SHORT_MACRO_ENB_TYPE_ID:
+  //   enb.global_enb_id->short_macro_enb_id = (rand() % 2^18) + 0;
+  //   break;
+
+  // case LONG_MACRO_ENB_TYPE_ID:
+  //   enb.global_enb_id->long_macro_enb_id = (rand() % 2^21) + 0;
+  //   break;
+
+  default:
+    break;
+  }
+
+  return enb;
+}
+
+static
+ue_id_t fill_rnd_ue_id(void)
+{
+  ue_id_t ue_id_data = {0};
+
+  ue_id_data.type = GNB_UE_ID; // rand()%END_UE_ID;
+
+  switch (ue_id_data.type)
+  {
+  case GNB_UE_ID:
+    ue_id_data.gnb = fill_gnb_data();
+    break;
+
+  case GNB_DU_UE_ID:
+    ue_id_data.gnb_du = fill_gnb_du_data();
+    break;
+  
+  case GNB_CU_UP_UE_ID:
+    ue_id_data.gnb_cu_up = fill_gnb_cu_up_data();
+    break;
+
+  case NG_ENB_UE_ID:
+    ue_id_data.ng_enb = fill_ng_enb_data();
+    break;
+
+  case NG_ENB_DU_UE_ID:
+    ue_id_data.ng_enb_du = fill_ng_enb_du_data();
+    break;
+
+  case EN_GNB_UE_ID:
+    ue_id_data.en_gnb = fill_en_gnb_data();
+    break;
+
+  case ENB_UE_ID:
+    ue_id_data.enb = fill_enb_data();
+    break;
+  
+  default:
+    assert(false && "Unknown UE ID Type");
+  }
+
+
+  return ue_id_data;
+}
+
+
+
+static
+e2sm_rc_ind_hdr_frmt_2_t fill_rnd_rc_ind_hdr_frmt_2(void)
+{
+  e2sm_rc_ind_hdr_frmt_2_t dst = {0}; 
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst.ue_id = fill_rnd_ue_id ();
+
+  // RIC Insert Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2. From common SM
+  // RIC Style Type 
+  // Integer
+  dst.ric_style_type = rand()% 2048;
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1 - 65535]
+  dst.ins_ind_id = (rand() % 65535 ) + 1;  
+
+  return dst;
+}
+
+static
+e2sm_rc_ind_hdr_frmt_3_t fill_rnd_rc_ind_hdr_frmt_3(void)
+{
+  e2sm_rc_ind_hdr_frmt_3_t dst = {0}; 
+
+  // Event Trigger Condition ID
+  // Optional
+  // 9.3.21
+  // [1 - 65535]
+  dst.ev_trigger_cond = malloc(sizeof(uint16_t));
+  assert(dst.ev_trigger_cond != NULL && "Memory exhausted" );
+
+  *dst.ev_trigger_cond = (rand() % 65535) + 1; 
+    
+  // UE ID
+  // Optional 
+  // 9.3.10
+  dst.ue_id = calloc(1, sizeof( ue_id_t)); 
+  assert(dst.ue_id != NULL && "Memory exhausted" );
+
+  *dst.ue_id = fill_rnd_ue_id();
+
+  return dst;
+}
+
+
+e2sm_rc_ind_hdr_t fill_rnd_rc_ind_hdr(void)
+{
+  e2sm_rc_ind_hdr_t dst = {0};
+
+  dst.format = FORMAT_3_E2SM_RC_IND_HDR; //  rand()%END_E2SM_RC_IND_HDR;
+
+  if(dst.format ==  FORMAT_1_E2SM_RC_IND_HDR){
+    dst.frmt_1 = fill_rnd_rc_ind_hdr_frmt_1();
+  } else if(dst.format == FORMAT_2_E2SM_RC_IND_HDR ){
+    dst.frmt_2 = fill_rnd_rc_ind_hdr_frmt_2();
+  }else if(dst.format == FORMAT_3_E2SM_RC_IND_HDR ){
+    dst.frmt_3 = fill_rnd_rc_ind_hdr_frmt_3();
+  }else {
+    assert(0!=0 && "Unknown format");
+  }
+
+  return dst;
+}
 

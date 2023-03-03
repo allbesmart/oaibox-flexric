@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #include "plmn_identity.h"
 
 typedef enum {
@@ -14,27 +16,18 @@ typedef enum {
 
 } gnb_type_id_e;
 
-// 6.2.3.8
-//
 typedef struct {
-
-    // 6.2.3.1
-    // Mandatory
     plmn_t plmn_id;
 
-    // Mandatory
-    uint32_t gnb_id;  // bit string size (22..32) ask Mikel
-                      
-    /*
     gnb_type_id_e type;
-
-
     union {
         uint32_t gnb_id;  // bit string size (22..32) ask Mikel
     };
-   */ 
+    
 
 } global_gnb_id_t;
+
+bool eq_global_gnb_id(global_gnb_id_t const * m0, global_gnb_id_t const * m1);
 
 
 #ifdef __cplusplus

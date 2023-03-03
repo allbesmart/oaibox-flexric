@@ -19,13 +19,12 @@ GlobalGNB_ID_t* enc_global_gnb_id_asn(const global_gnb_id_t * global_gnb_id)
     if (global_gnb_id->type == GNB_TYPE_ID)
     {
         global_gnb_id_asn->gNB_ID.present = GNB_ID_PR_gNB_ID;
-        MACRO_GNB_ID_TO_BIT_STRING(global_gnb_id->gnb_id, &global_gnb_id_asn->gNB_ID.choice.gNB_ID);  // BIT STRING (22..32), ask Mikel
+        global_gnb_id_asn->gNB_ID.choice.gNB_ID = cp_macro_gnb_id_to_bit_string(global_gnb_id->gnb_id); // BIT STRING (22..32), ask Mikel; taken as default 32 bits
     }
     else
     {
         assert(false && "Unknown gNB Type");
     }
-    
 
     return global_gnb_id_asn;
 }

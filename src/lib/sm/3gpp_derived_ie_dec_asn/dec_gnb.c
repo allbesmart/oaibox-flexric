@@ -1,13 +1,14 @@
 #include <assert.h>
 
 #include "../../../util/conversions.h"
-#include "../../../sm/kpm_sm_v2.02/ie/asn/asn_constant.h"
-#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-F1AP-ID-List.h"
-#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/asn_constant.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-F1AP-ID-List.h"
+#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
 
 #include "dec_gnb.h"
 #include "dec_global_gnb_id.h"
 #include "dec_global_ng_ran.h"
+
 
 gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 {
@@ -17,31 +18,32 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     // Mandatory
     // AMF UE NGAP ID
     assert(gnb_asn->amf_UE_NGAP_ID.buf != NULL);
-    memcpy(&gnb.amf_ue_ngap_id, gnb_asn->amf_UE_NGAP_ID.buf, 5);
-
+    assert(gnb_asn->amf_UE_NGAP_ID.size < 6); // 2^40 max -> 2^(8*5) max 
+    memcpy(&gnb.amf_ue_ngap_id, gnb_asn->amf_UE_NGAP_ID.buf, gnb_asn->amf_UE_NGAP_ID.size);
+    assert(gnb.amf_ue_ngap_id < (1UL << 40) );
 
     // GUAMI
 
     PLMNID_TO_MCC_MNC(&gnb_asn->guami.pLMNIdentity, gnb.guami.plmn_id.mcc, gnb.guami.plmn_id.mnc, gnb.guami.plmn_id.mnc_digit_len);
 
-    OCTET_STRING_TO_INT8(&gnb_asn->guami.aMFRegionID, gnb.guami.amf_region_id);
+    gnb.guami.amf_region_id = cp_amf_region_id_to_u8(gnb_asn->guami.aMFRegionID);
 
-    OCTET_STRING_TO_INT16(&gnb_asn->guami.aMFSetID, gnb.guami.amf_set_id);
+    gnb.guami.amf_set_id = cp_amf_set_id_to_u16(gnb_asn->guami.aMFSetID);
 
-    OCTET_STRING_TO_INT8(&gnb_asn->guami.aMFPointer, gnb.guami.amf_ptr);
+    gnb.guami.amf_ptr = cp_amf_ptr_to_u8(gnb_asn->guami.aMFPointer);
 
 
     // gNB-CU UE F1AP ID List
     // C-ifCUDUseparated 
-    if (gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count != 0)
+    if (gnb_asn->gNB_CU_UE_F1AP_ID_List != NULL)
     {
         assert(gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count >= 1 && gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count <= maxF1APid);
         gnb.gnb_cu_ue_f1ap_lst_len = gnb_asn->gNB_CU_UE_F1AP_ID_List->list.count;
-        gnb.gnb_cu_ue_f1ap_lst = calloc(1, sizeof(*gnb.gnb_cu_ue_f1ap_lst));
+        gnb.gnb_cu_ue_f1ap_lst = calloc(gnb.gnb_cu_ue_f1ap_lst_len, sizeof(*gnb.gnb_cu_ue_f1ap_lst));
 
         for (size_t i = 0; i < gnb.gnb_cu_ue_f1ap_lst_len; i++)
         {
-            memcpy(&gnb.gnb_cu_ue_f1ap_lst[i], gnb_asn->gNB_CU_UE_F1AP_ID_List->list.array[i], 1);
+            memcpy(&gnb.gnb_cu_ue_f1ap_lst[i], gnb_asn->gNB_CU_UE_F1AP_ID_List->list.array[i], 4);
         }
     }
     else
@@ -53,15 +55,15 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     //gNB-CU-CP UE E1AP ID List
     //C-ifCPUPseparated 
 
-    if (gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count != 0)
+    if (gnb_asn->gNB_CU_CP_UE_E1AP_ID_List != NULL)
     {
         assert(gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count >= 1 && gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count <= maxE1APid);
         gnb.gnb_cu_cp_ue_e1ap_lst_len = gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.count;
-        gnb.gnb_cu_cp_ue_e1ap_lst = calloc(1, sizeof(*gnb.gnb_cu_cp_ue_e1ap_lst));
+        gnb.gnb_cu_cp_ue_e1ap_lst = calloc(gnb.gnb_cu_cp_ue_e1ap_lst_len, sizeof(*gnb.gnb_cu_cp_ue_e1ap_lst));
 
         for (size_t i = 0; i < gnb.gnb_cu_cp_ue_e1ap_lst_len; i++)
         {
-            memcpy(&gnb.gnb_cu_cp_ue_e1ap_lst[i], gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.array[i], 1);
+            memcpy(&gnb.gnb_cu_cp_ue_e1ap_lst[i], gnb_asn->gNB_CU_CP_UE_E1AP_ID_List->list.array[i], 4);
         }
     }
     else
@@ -90,7 +92,7 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     if (gnb_asn->m_NG_RAN_UE_XnAP_ID != NULL)
     {
         gnb.ng_ran_node_ue_xnap_id = calloc(1, sizeof(*gnb.ng_ran_node_ue_xnap_id));
-        memcpy(gnb.ng_ran_node_ue_xnap_id, gnb_asn->m_NG_RAN_UE_XnAP_ID, 1);
+        memcpy(gnb.ng_ran_node_ue_xnap_id, gnb_asn->m_NG_RAN_UE_XnAP_ID, 4);
     }
     
 
@@ -98,8 +100,11 @@ gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     // 6.2.3.3
     // Optional
     if(gnb_asn->globalGNB_ID != NULL)
-      gnb.global_gnb_id = dec_global_gnb_id_asn(gnb_asn->globalGNB_ID);
-
+    {
+        gnb.global_gnb_id = calloc(1, sizeof(*gnb.global_gnb_id));
+        *gnb.global_gnb_id = dec_global_gnb_id_asn(gnb_asn->globalGNB_ID);
+    }
+      
 
     // Global NG-RAN Node ID
     // C-ifDCSetup

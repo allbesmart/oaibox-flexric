@@ -199,7 +199,7 @@ void free_ind_data_rc_sm_ric(void* msg)
 {
   assert(msg != NULL);
   rc_ind_data_t* ind  = (rc_ind_data_t*)msg;
-  free_rc_ind_hdr(&ind->hdr); 
+  free_e2sm_rc_ind_hdr(&ind->hdr); 
   free_rc_ind_msg(&ind->msg); 
 
 }

@@ -10,7 +10,7 @@ UEID_NG_ENB_DU_t * enc_ng_eNB_DU_UE_asn(const ng_enb_du_t * ng_enb_du)
     // C-if CU DU separated
     // ng-eNB-CU UE W1AP ID
 
-    ng_enb_du_asn->ng_eNB_CU_UE_W1AP_ID = ng_enb_du->ng_enb_cu_ue_w1ap_id;
+    memcpy(&ng_enb_du_asn->ng_eNB_CU_UE_W1AP_ID, &ng_enb_du->ng_enb_cu_ue_w1ap_id, 4);
 
 
     return ng_enb_du_asn;

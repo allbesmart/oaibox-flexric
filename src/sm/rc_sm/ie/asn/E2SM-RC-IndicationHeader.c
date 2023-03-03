@@ -11,7 +11,7 @@
 #include "E2SM-RC-IndicationHeader-Format2.h"
 #include "E2SM-RC-IndicationHeader-Format3.h"
 static asn_per_constraints_t asn_PER_type_ric_indicationHeader_formats_constr_2 CC_NOTUSED = {
-	{ APC_CONSTRAINED | APC_EXTENSIBLE,  1,  1,  0,  1 }	/* (0..1,...) */,
+	{ APC_CONSTRAINED | APC_EXTENSIBLE,  2,  2,  0,  2 }	/* (0..2,...) */,
 	{ APC_UNCONSTRAINED,	-1, -1,  0,  0 },
 	0, 0	/* No PER value map */
 };
@@ -57,7 +57,7 @@ static asn_CHOICE_specifics_t asn_SPC_ric_indicationHeader_formats_specs_2 = {
 	asn_MAP_ric_indicationHeader_formats_tag2el_2,
 	3,	/* Count of tags in the map */
 	0, 0,
-	2	/* Extensions start */
+	3	/* Extensions start */
 };
 static /* Use -fall-defs-global to expose */
 asn_TYPE_descriptor_t asn_DEF_ric_indicationHeader_formats_2 = {

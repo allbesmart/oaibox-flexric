@@ -39,7 +39,7 @@ byte_array_t rc_enc_event_trigger_plain(e2sm_rc_event_trigger_t const* event_tri
 
 byte_array_t rc_enc_action_def_plain(e2sm_rc_action_def_t const*);
 
-byte_array_t rc_enc_ind_hdr_plain(rc_ind_hdr_t const*); 
+byte_array_t rc_enc_ind_hdr_plain(e2sm_rc_ind_hdr_t const*); 
 
 byte_array_t rc_enc_ind_msg_plain(rc_ind_msg_t const*); 
 

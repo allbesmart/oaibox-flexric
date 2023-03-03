@@ -38,7 +38,7 @@ byte_array_t rc_enc_event_trigger_fb(e2sm_rc_event_trigger_t const* event_trigge
 
 byte_array_t rc_enc_action_def_fb(e2sm_rc_action_def_t const*);
 
-byte_array_t rc_enc_ind_hdr_fb(rc_ind_hdr_t const*); 
+byte_array_t rc_enc_ind_hdr_fb(e2sm_rc_ind_hdr_t const*); 
 
 byte_array_t rc_enc_ind_msg_fb(rc_ind_msg_t const*); 
 

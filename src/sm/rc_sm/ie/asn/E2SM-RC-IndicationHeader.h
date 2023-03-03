@@ -24,8 +24,9 @@ typedef enum E2SM_RC_IndicationHeader__ric_indicationHeader_formats_PR {
 	E2SM_RC_IndicationHeader__ric_indicationHeader_formats_PR_NOTHING,	/* No components present */
 	E2SM_RC_IndicationHeader__ric_indicationHeader_formats_PR_indicationHeader_Format1,
 	E2SM_RC_IndicationHeader__ric_indicationHeader_formats_PR_indicationHeader_Format2,
-	/* Extensions may appear below */
 	E2SM_RC_IndicationHeader__ric_indicationHeader_formats_PR_indicationHeader_Format3
+	/* Extensions may appear below */
+	
 } E2SM_RC_IndicationHeader__ric_indicationHeader_formats_PR;
 
 /* Forward declarations */
@@ -40,11 +41,11 @@ typedef struct E2SM_RC_IndicationHeader {
 		union E2SM_RC_IndicationHeader__ric_indicationHeader_formats_u {
 			struct E2SM_RC_IndicationHeader_Format1	*indicationHeader_Format1;
 			struct E2SM_RC_IndicationHeader_Format2	*indicationHeader_Format2;
+			struct E2SM_RC_IndicationHeader_Format3	*indicationHeader_Format3;
 			/*
 			 * This type is extensible,
 			 * possible extensions are below.
 			 */
-			struct E2SM_RC_IndicationHeader_Format3	*indicationHeader_Format3;
 		} choice;
 		
 		/* Context for parsing across buffer boundaries */

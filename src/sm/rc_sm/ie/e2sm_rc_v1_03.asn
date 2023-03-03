@@ -964,9 +964,8 @@ E2SM-RC-ActionDefinition ::= SEQUENCE {
 		actionDefinition-Format1			E2SM-RC-ActionDefinition-Format1,
 		actionDefinition-Format2			E2SM-RC-ActionDefinition-Format2,
 		actionDefinition-Format3			E2SM-RC-ActionDefinition-Format3,
-		...,
-		actionDefinition-Format4			E2SM-RC-ActionDefinition-Format4
-
+		actionDefinition-Format4			E2SM-RC-ActionDefinition-Format4,
+		...
 	},
 	...
 }
@@ -1040,9 +1039,8 @@ E2SM-RC-IndicationHeader ::= SEQUENCE {
 ric-indicationHeader-formats		CHOICE {
 		indicationHeader-Format1			E2SM-RC-IndicationHeader-Format1,
 		indicationHeader-Format2			E2SM-RC-IndicationHeader-Format2,
-		...,
-		indicationHeader-Format3			E2SM-RC-IndicationHeader-Format3
-
+		indicationHeader-Format3			E2SM-RC-IndicationHeader-Format3,
+	  ...
 	},
 	...
 }

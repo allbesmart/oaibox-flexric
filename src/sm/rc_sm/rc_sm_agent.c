@@ -83,7 +83,7 @@ sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t* sm_agent)
   sm_ind_data_t ret = {0};
 
   // Fill Indication Header
-  rc_ind_hdr_t hdr = {.dummy = 0 };
+  e2sm_rc_ind_hdr_t hdr = { 0 };
   byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &hdr );
   ret.ind_hdr = ba_hdr.buf;
   ret.len_hdr = ba_hdr.len;
@@ -95,7 +95,7 @@ sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t* sm_agent)
 
   // Liberate the memory if previously allocated by the RAN. It sucks
   rc_ind_data_t* ind = &rd_if.rc_stats;
-  defer({ free_rc_ind_hdr(&ind->hdr) ;});
+  defer({ free_e2sm_rc_ind_hdr(&ind->hdr) ;});
   defer({ free_rc_ind_msg(&ind->msg) ;});
   defer({ free_rc_call_proc_id(ind->proc_id);});
 

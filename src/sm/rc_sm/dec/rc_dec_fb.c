@@ -40,11 +40,11 @@ rc_action_def_t rc_dec_action_def_fb(size_t len, uint8_t const action_def[len])
   return avoid_warning;
 }
 
-rc_ind_hdr_t rc_dec_ind_hdr_fb(size_t len, uint8_t const ind_hdr[len])
+e2sm_rc_ind_hdr_t rc_dec_ind_hdr_fb(size_t len, uint8_t const ind_hdr[len])
 {
   assert(0!=0 && "Not implemented");
   assert(ind_hdr != NULL);
-  rc_ind_hdr_t avoid_warning;
+  e2sm_rc_ind_hdr_t avoid_warning;
   return avoid_warning;
 }
 

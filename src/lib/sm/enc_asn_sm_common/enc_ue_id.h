@@ -6,7 +6,8 @@
 extern "C" {
 #endif
 
-#include "../../../sm/kpm_sm_v2.02/ie/asn/UEID.h"
+#include "../../../sm/rc_sm/ie/asn/UEID.h"
+
 #include "../sm_common_ie/ue_id.h"
 
 UEID_t enc_ue_id_asn(const ue_id_t * ue_id);

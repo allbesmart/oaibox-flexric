@@ -35,8 +35,6 @@ bool eq_seq_ran_param(seq_ran_param_t const* m0, seq_ran_param_t const* m1)
   if(eq_ran_param_val_type(&m0->ran_param_val, &m1->ran_param_val) == false)
     return false;
 
-  assert(0!=0 && "Not implemented");
-
-  return false;
+  return true;
 }
 

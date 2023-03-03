@@ -14,14 +14,11 @@ extern "C" {
 
 typedef struct{
   plmn_t plmn_id;  // 6.2.3.1
-  uint64_t nr_cell_id; // bit string of 36 bits
+  uint64_t nr_cell_id:36; // bit string of 36 bits
 
 } nr_cgi_t;
 
-bool eq_nr_cgi(nr_cgi_t const* m0, nr_cgi_t const* m1);
-
-void free_nr_cgi(nr_cgi_t* src);
-
+bool eq_nr_cgi(nr_cgi_t const * m0, nr_cgi_t const * m1);
 
 #ifdef __cplusplus
 }
@@ -29,4 +26,3 @@ void free_nr_cgi(nr_cgi_t* src);
 
 #endif
 
-// done

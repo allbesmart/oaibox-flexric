@@ -87,11 +87,20 @@
 #include "../ie/asn/RANParameter-ValueType-Choice-List.h"
 #include "../ie/asn/RANParameter-LIST.h"
 
+#include "../ie/asn/E2SM-RC-IndicationHeader.h"
+#include "../ie/asn/E2SM-RC-IndicationHeader-Format1.h"
+
+#include "../ie/asn/E2SM-RC-IndicationHeader-Format2.h"
+
+#include "../ie/asn/E2SM-RC-IndicationHeader-Format3.h"
 
 
 #include "../ie/asn/RANParameter-LIST.h"
 
 #include "../ie/ir/ran_param_list.h"
+
+#include "../../../lib/sm/dec_asn_sm_common/dec_ue_id.h" 
+
 
 #include <string.h>
 #include <stdlib.h>
@@ -1490,12 +1499,124 @@ e2sm_rc_action_def_t rc_dec_action_def_asn(size_t len, uint8_t const action_def[
   return dst;
 }
 
-rc_ind_hdr_t rc_dec_ind_hdr_asn(size_t len, uint8_t const ind_hdr[len])
+static
+e2sm_rc_ind_hdr_frmt_1_t cp_ind_hdr_frmt_1(E2SM_RC_IndicationHeader_Format1_t const* src)
 {
-  assert(0!=0 && "Not implemented");
+  assert(src != NULL);
+
+  e2sm_rc_ind_hdr_frmt_1_t dst = {0}; 
+
+  // Event Trigger Condition ID
+  // Optional
+  // 9.3.21
+  // [1 - 65535]
+  assert(src->ric_eventTriggerCondition_ID != NULL && "Optional, but only one member" );
+
+  dst.ev_trigger_id = malloc(sizeof(uint16_t));
+  assert(dst.ev_trigger_id != NULL && "Memory exhausted" );
+
+  assert(*src->ric_eventTriggerCondition_ID > 0 && *src->ric_eventTriggerCondition_ID < 65535+1);
+
+  *dst.ev_trigger_id = *src->ric_eventTriggerCondition_ID;
+
+  return dst;
+}
+
+static
+e2sm_rc_ind_hdr_frmt_2_t cp_ind_hdr_frmt_2(E2SM_RC_IndicationHeader_Format2_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ind_hdr_frmt_2_t dst = {0}; 
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst.ue_id = dec_ue_id_asn(&src->ueID);
+
+  // RIC Insert Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2. From common SM
+  // RIC Style Type 
+  // Integer
+  dst.ric_style_type = src->ric_InsertStyle_Type;
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1 - 65535]
+  assert(src->ric_InsertIndication_ID > 0 ); 
+  dst.ins_ind_id = src->ric_InsertIndication_ID; 
+
+  return dst;
+}
+
+static
+e2sm_rc_ind_hdr_frmt_3_t cp_ind_hdr_frmt_3(E2SM_RC_IndicationHeader_Format3_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ind_hdr_frmt_3_t dst = {0}; 
+
+  // Event Trigger Condition ID
+  // Optional
+  // 9.3.21
+  // [1 - 65535]
+  if(src->ric_eventTriggerCondition_ID != NULL){
+    assert(*src->ric_eventTriggerCondition_ID > 0 && *src->ric_eventTriggerCondition_ID < 65535+1); 
+
+    dst.ev_trigger_cond = malloc(sizeof(uint16_t));
+    assert(dst.ev_trigger_cond != NULL && "Memory exhausted");
+ 
+    *dst.ev_trigger_cond = *src->ric_eventTriggerCondition_ID;
+  }
+
+  // UE ID
+  // Optional 
+  // 9.3.10
+  if(src->ueID != NULL){
+  
+    dst.ue_id = calloc(1, sizeof(ue_id_t));
+    assert(dst.ue_id != NULL && "Memory exhausted");
+    
+    *dst.ue_id = dec_ue_id_asn(src->ueID);
+  } 
+
+  return dst;
+}
+
+e2sm_rc_ind_hdr_t rc_dec_ind_hdr_asn(size_t len, uint8_t const ind_hdr[len])
+{
   assert(ind_hdr != NULL);
-  rc_ind_hdr_t avoid_warning;
-  return avoid_warning;
+  assert(len != 0);
+
+  E2SM_RC_IndicationHeader_t src = {0};
+  defer({  ASN_STRUCT_RESET(asn_DEF_E2SM_RC_IndicationHeader, &src); });
+  E2SM_RC_IndicationHeader_t* src_ref = &src;
+
+  asn_dec_rval_t const ret = aper_decode(NULL, &asn_DEF_E2SM_RC_IndicationHeader, (void **)&src_ref, ind_hdr, len, 0, 0);
+  assert(ret.code == RC_OK);
+
+  //  xer_fprint(stdout, &asn_DEF_E2SM_RC_EventTrigger, &src);
+  //  fflush(stdout);
+
+  e2sm_rc_ind_hdr_t dst = {0}; 
+
+  if(src.ric_indicationHeader_formats.present == E2SM_RC_IndicationHeader__ric_indicationHeader_formats_PR_indicationHeader_Format1){
+    dst.format = FORMAT_1_E2SM_RC_IND_HDR;
+    dst.frmt_1 = cp_ind_hdr_frmt_1(src.ric_indicationHeader_formats.choice.indicationHeader_Format1);
+  }else if(src.ric_indicationHeader_formats.present == E2SM_RC_IndicationHeader__ric_indicationHeader_formats_PR_indicationHeader_Format2){
+    dst.format =FORMAT_2_E2SM_RC_IND_HDR   ;
+    dst.frmt_2 = cp_ind_hdr_frmt_2(src.ric_indicationHeader_formats.choice.indicationHeader_Format2);
+  }else if(src.ric_indicationHeader_formats.present == E2SM_RC_IndicationHeader__ric_indicationHeader_formats_PR_indicationHeader_Format3){
+    dst.format = FORMAT_3_E2SM_RC_IND_HDR;
+    dst.frmt_3 = cp_ind_hdr_frmt_3(src.ric_indicationHeader_formats.choice.indicationHeader_Format3);
+  } else {
+    assert(0!=0 && "Unknown format");
+  }
+
+  return dst;
 }
 
 rc_ind_msg_t rc_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len])

@@ -5,11 +5,11 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #include "plmn_identity.h"
 
 //  6.2.3.8 Global ng-eNB ID
-
-
 typedef enum {
     MACRO_NG_ENB_TYPE_ID,
     SHORT_MACRO_NG_ENB_TYPE_ID,
@@ -31,6 +31,9 @@ typedef struct {
     };
 
 } global_ng_enb_id_t;
+
+
+bool eq_global_ng_enb_id(global_ng_enb_id_t const * m0, global_ng_enb_id_t const * m1);
 
 #ifdef __cplusplus
 }

@@ -29,6 +29,7 @@
 #include "ir/e2sm_rc_ev_trg_frmt_1.h"
 #include "ir/e2sm_rc_ev_trg_frmt_2.h"
 #include "ir/e2sm_rc_ev_trg_frmt_3.h"
+#include "ir/e2sm_rc_ev_trg_frmt_4.h"
 
 //////////////////////////////////////
 // RIC Event Trigger Definition
@@ -170,8 +171,7 @@ void free_e2sm_rc_action_def(e2sm_rc_action_def_t* src)
   }else if(src->format ==  FORMAT_3_E2SM_RC_ACT_DEF ){
     free_e2sm_rc_act_def_frmt_3(&src->frmt_3);  
   }else if(src->format ==  FORMAT_4_E2SM_RC_ACT_DEF ){
-    assert(0!=0 && "Not implemented");
-
+    free_e2sm_rc_act_def_frmt_4(&src->frmt_4);  
   } else {
     assert("Unknown format" );
   }
@@ -210,17 +210,17 @@ bool eq_e2sm_rc_action_def(e2sm_rc_action_def_t* m0,  e2sm_rc_action_def_t* m1)
 
   if(m0->format == FORMAT_1_E2SM_RC_ACT_DEF){
     return eq_e2sm_rc_act_def_frmt_1(&m0->frmt_1, &m1->frmt_1);
-
   } else if(m0->format == FORMAT_2_E2SM_RC_ACT_DEF){
-
+    return eq_e2sm_rc_act_def_frmt_2(&m0->frmt_2, &m1->frmt_2);
   } else if(m0->format == FORMAT_3_E2SM_RC_ACT_DEF){
-
+    return eq_e2sm_rc_act_def_frmt_3(&m0->frmt_3, &m1->frmt_3);
   }else if(m0->format == FORMAT_4_E2SM_RC_ACT_DEF ){
-
+    return eq_e2sm_rc_act_def_frmt_4(&m0->frmt_4, &m1->frmt_4);
   } else {
     assert( 0!= 0 && "Unknown format type");
   }
 
+  assert( 0!= 0 && "Impossible path");
   return true;
 }
 
@@ -230,33 +230,57 @@ bool eq_e2sm_rc_action_def(e2sm_rc_action_def_t* m0,  e2sm_rc_action_def_t* m1)
 /////////////////////////////////////
 
 
-void free_rc_ind_hdr(rc_ind_hdr_t* src)
+void free_e2sm_rc_ind_hdr(e2sm_rc_ind_hdr_t* src)
 {
   assert(src != NULL);
-  (void)src;
+ 
+  if(src->format == FORMAT_1_E2SM_RC_IND_HDR){
+    free_e2sm_rc_ind_hdr_frmt_1(&src->frmt_1);
+  } else if(src->format == FORMAT_2_E2SM_RC_IND_HDR){
+    free_e2sm_rc_ind_hdr_frmt_2(&src->frmt_2);
+  } else if(src->format == FORMAT_3_E2SM_RC_IND_HDR){
+    free_e2sm_rc_ind_hdr_frmt_3(&src->frmt_3);
+  } else {
+    assert(0!=0 && "Unknown type");
+  }
+
 }
 
-rc_ind_hdr_t cp_rc_ind_hdr(rc_ind_hdr_t const* src)
+e2sm_rc_ind_hdr_t cp_e2sm_rc_ind_hdr(e2sm_rc_ind_hdr_t const* src)
 {
   assert(src != NULL);
-  rc_ind_hdr_t dst = {0}; 
-  dst.dummy = src->dummy;
+  e2sm_rc_ind_hdr_t dst = {0}; 
+
+  assert(0!=0 && "Not implemented");
   return dst;
 }
 
-bool eq_rc_ind_hdr(rc_ind_hdr_t* m0, rc_ind_hdr_t* m1)
+bool eq_e2sm_rc_ind_hdr(e2sm_rc_ind_hdr_t const* m0, e2sm_rc_ind_hdr_t const* m1)
 {
-  assert(m0 != 0);
-  assert(m1 != 0);
 
-  if(m0->dummy != m1->dummy)
+  if(m0 == m1)
+    return true;
+
+  if(m0 == NULL || m1 == NULL)
     return false;
+
+  if(m0->format != m1->format)
+    return false;
+
+  if(m0->format == FORMAT_1_E2SM_RC_IND_HDR  ){
+    return eq_e2sm_rc_ind_hdr_frmt_1(&m0->frmt_1, &m1->frmt_1);
+  } else if(m0->format == FORMAT_2_E2SM_RC_IND_HDR ){
+    return eq_e2sm_rc_ind_hdr_frmt_2(&m0->frmt_2, &m1->frmt_2);
+  }else if(m0->format == FORMAT_3_E2SM_RC_IND_HDR ){
+    return eq_e2sm_rc_ind_hdr_frmt_3(&m0->frmt_3, &m1->frmt_3);
+  } else {
+    assert(0!=0 && "Unknown format");
+  }
+
+  assert(0!=0 && "Not implemented");
+
   return true;
 }
-
-
-
-
 
 
 //////////////////////////////////////
@@ -508,7 +532,7 @@ void free_rc_ind_data(rc_ind_data_t* ind)
 {
   assert(ind != NULL);
   
-  free_rc_ind_hdr(&ind->hdr);
+  free_e2sm_rc_ind_hdr(&ind->hdr);
   free_rc_ind_msg(&ind->msg);
   free_rc_call_proc_id(ind->proc_id); 
 }
@@ -518,7 +542,7 @@ rc_ind_data_t cp_rc_ind_data(rc_ind_data_t const* src)
   assert(src != NULL);
   rc_ind_data_t dst = {0};
 
-  dst.hdr = cp_rc_ind_hdr(&src->hdr);
+  dst.hdr = cp_e2sm_rc_ind_hdr(&src->hdr);
   dst.msg = cp_rc_ind_msg(&src->msg);
 
   if(src->proc_id != NULL){

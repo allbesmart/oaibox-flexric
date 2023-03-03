@@ -20,7 +20,6 @@ void free_seq_ins_style(seq_ins_style_t* src)
   // [1-63]
   assert(src->sz_seq_ins_ind_act_def > 0 && src->sz_seq_ins_ind_act_def < 64); 
 
-  size_t sz_seq_ins_ind_act_def;
   for(size_t i = 0; i < src-> sz_seq_ins_ind_act_def; ++i){
     free_seq_ins_ind_act_def(&src->seq_ins_ind_act_def[i]) ;
   }

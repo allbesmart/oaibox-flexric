@@ -47,7 +47,7 @@ byte_array_t rc_enc_event_trigger_plain(e2sm_rc_event_trigger_t const* event_tri
   return ba;
 }
 
-byte_array_t rc_enc_action_def_plain(rc_action_def_t const* action_def)
+byte_array_t rc_enc_action_def_plain(e2sm_rc_action_def_t const* action_def)
 {
   assert(0!=0 && "Not implemented");
 
@@ -56,52 +56,26 @@ byte_array_t rc_enc_action_def_plain(rc_action_def_t const* action_def)
   return ba;
 }
 
-byte_array_t rc_enc_ind_hdr_plain(rc_ind_hdr_t const* ind_hdr)
+byte_array_t rc_enc_ind_hdr_plain(e2sm_rc_ind_hdr_t const* ind_hdr)
 {
   assert(ind_hdr != NULL);
 
   byte_array_t ba = {0};
 
-  ba.len = sizeof(rc_ind_hdr_t);
-  ba.buf = malloc(sizeof(rc_ind_msg_t));
+  ba.len = sizeof(e2sm_rc_ind_hdr_t);
+  ba.buf = malloc(sizeof(e2sm_rc_ind_msg_t));
   assert(ba.buf != NULL && "memory exhausted");
-  memcpy(ba.buf, ind_hdr, sizeof(rc_ind_hdr_t));
+  memcpy(ba.buf, ind_hdr, sizeof(e2sm_rc_ind_hdr_t));
 
   return ba;
 }
 
-byte_array_t rc_enc_ind_msg_plain(rc_ind_msg_t const* ind_msg)
+byte_array_t rc_enc_ind_msg_plain(e2sm_rc_ind_msg_t const* ind_msg)
 {
   assert(ind_msg != NULL);
 
-  byte_array_t ba = {0};
+  byte_array_t ba = {0}; 
 
-  size_t const sz = sizeof(ind_msg->len) + 
-                  sizeof(rc_radio_bearer_stats_t)*ind_msg->len + 
-                  sizeof(ind_msg->tstamp);
-
-//  printf("Size of the byte array = %lu\n", sz);
-
-  ba.buf = malloc(sz); 
-  assert(ba.buf != NULL && "Memory exhausted");
-
-  memcpy(ba.buf, &ind_msg->len, sizeof(ind_msg->len));
-
-  void* it = ba.buf + sizeof(ind_msg->len);
-  for(uint32_t i = 0; i < ind_msg->len ; ++i){
-    memcpy(it, &ind_msg->rb[i], sizeof(ind_msg->rb[i]));
-    it += sizeof(ind_msg->rb[i]);
-  }
-
-  memcpy(it, &ind_msg->tstamp, sizeof(ind_msg->tstamp));
-  it += sizeof(ind_msg->tstamp);
-
-//  memcpy(it, &ind_msg->slot, sizeof(ind_msg->slot));
-//  it += sizeof(ind_msg->slot);
-
-  assert(it == ba.buf + sz && "Mismatch of data layout");
-
-  ba.len = sz;
   return ba;
 }
 

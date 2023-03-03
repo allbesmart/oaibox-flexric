@@ -57,7 +57,7 @@ rc_action_def_t rc_dec_action_def_plain(size_t len, uint8_t const action_def[len
   return act_def;
 }
 
-rc_ind_hdr_t rc_dec_ind_hdr_plain(size_t len, uint8_t const ind_hdr[len])
+e2sm_rc_ind_hdr_t rc_dec_ind_hdr_plain(size_t len, uint8_t const ind_hdr[len])
 {
   assert(len == sizeof(rc_ind_hdr_t)); 
   rc_ind_hdr_t ret;

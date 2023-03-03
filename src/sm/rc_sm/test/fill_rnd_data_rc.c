@@ -1491,3 +1491,55 @@ e2sm_rc_ind_hdr_t fill_rnd_rc_ind_hdr(void)
   return dst;
 }
 
+static
+e2sm_rc_ind_msg_frmt_1_t fill_rnd_ind_msg_frmt_1(void)
+{
+  e2sm_rc_ind_msg_frmt_1_t dst = {0}; 
+
+  //  Sequence of RAN
+  //  Parameters
+  //  [1 - 65535]
+  dst.sz_seq_ran_param = (rand() %  64) + 1;
+
+  dst.seq_ran_param = calloc(dst.sz_seq_ran_param, sizeof(seq_ran_param_t));
+  assert(dst.seq_ran_param != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ran_param; ++i){
+    dst.seq_ran_param[i] = fill_rnd_seq_ran_param();
+  }
+
+  return dst;
+}
+
+
+e2sm_rc_ind_msg_t fill_rnd_rc_ind_msg(void)
+{
+  e2sm_rc_ind_msg_t dst = {0};
+  
+  dst.format = FORMAT_1_E2SM_RC_IND_MSG; //  rand()% END_E2SM_RC_IND_MSG;
+
+  if( dst.format == FORMAT_1_E2SM_RC_IND_MSG){
+    dst.frmt_1 = fill_rnd_ind_msg_frmt_1();
+  } else if(dst.format == FORMAT_2_E2SM_RC_IND_MSG){
+    assert(0!=0 && "Not implemented");
+
+  }else if(dst.format == FORMAT_3_E2SM_RC_IND_MSG){
+    assert(0!=0 && "Not implemented");
+
+  }else if(dst.format == FORMAT_4_E2SM_RC_IND_MSG){
+    assert(0!=0 && "Not implemented");
+
+  }else if(dst.format == FORMAT_5_E2SM_RC_IND_MSG){
+    assert(0!=0 && "Not implemented");
+
+  }else if(dst.format == FORMAT_6_E2SM_RC_IND_MSG){
+    assert(0!=0 && "Not implemented");
+
+  } else {
+    assert(0!=0 && "Unknown type");
+  }
+
+  return dst;
+}
+
+

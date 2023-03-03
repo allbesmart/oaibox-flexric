@@ -10,4 +10,6 @@ e2sm_rc_action_def_t fill_rnd_rc_action_def(void);
 
 e2sm_rc_ind_hdr_t fill_rnd_rc_ind_hdr(void);
 
+e2sm_rc_ind_msg_t fill_rnd_rc_ind_msg(void);
+
 #endif

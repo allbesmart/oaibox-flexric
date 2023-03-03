@@ -176,12 +176,6 @@ void free_e2sm_rc_action_def(e2sm_rc_action_def_t* src)
     assert("Unknown format" );
   }
 
-  //9.2.1.2.1
-//  e2sm_rc_act_def_frmt_1_t frmt_1;
-//  e2sm_rc_act_def_frmt_2_t frmt_2;
-//  e2sm_rc_act_def_frmt_3_t frmt_3;
-//  e2sm_rc_act_def_frmt_4_t frmt_4;
-
 }
 
 e2sm_rc_action_def_t cp_e2sm_rc_action_def(e2sm_rc_action_def_t* src)
@@ -287,90 +281,87 @@ bool eq_e2sm_rc_ind_hdr(e2sm_rc_ind_hdr_t const* m0, e2sm_rc_ind_hdr_t const* m1
 // RIC Indication Message 
 /////////////////////////////////////
 
-void free_rc_ind_msg(rc_ind_msg_t* src)
+void free_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t* src)
 {
   assert(src != NULL);
 
-  if(src->len > 0){
-    assert(src->rb != NULL);
-    free(src->rb);
+  if(src->format == FORMAT_1_E2SM_RC_IND_MSG ){
+    free_e2sm_rc_ind_msg_frmt_1(&src->frmt_1);
+  } else if(src->format ==  FORMAT_2_E2SM_RC_IND_MSG ){
+
+  assert(0!=0 && "Not implemented");
+  } else if(src->format == FORMAT_3_E2SM_RC_IND_MSG  ){
+
+  assert(0!=0 && "Not implemented");
+  } else if(src->format ==  FORMAT_4_E2SM_RC_IND_MSG ){
+
+  assert(0!=0 && "Not implemented");
+  } else if(src->format ==  FORMAT_5_E2SM_RC_IND_MSG ){
+
+  assert(0!=0 && "Not implemented");
+  } else if(src->format ==  FORMAT_6_E2SM_RC_IND_MSG ){
+  assert(0!=0 && "Not implemented");
+
+  } else{
+    assert(0 != 0 && "Unknown format");
   }
+
+
 }
 
-rc_ind_msg_t cp_rc_ind_msg(rc_ind_msg_t const* src)
+e2sm_rc_ind_msg_t cp_rc_ind_msg(e2sm_rc_ind_msg_t const* src)
 {
   assert(src != NULL);
 
-  rc_ind_msg_t cp = {.len = src->len, .tstamp = src->tstamp}; 
+  assert(0!=0 && "Not implemented");
 
-  if(cp.len > 0){
-    cp.rb = calloc(cp.len, sizeof(rc_radio_bearer_stats_t));
-    assert(cp.rb != NULL && "memory exhausted");
-  }
-
-  memcpy(cp.rb, src->rb, sizeof(rc_radio_bearer_stats_t)*cp.len);
+  e2sm_rc_ind_msg_t cp = {0}; 
 
   return cp;
 }
 
-bool eq_rc_ind_msg(rc_ind_msg_t* m0, rc_ind_msg_t* m1)
+bool eq_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t const* m0, e2sm_rc_ind_msg_t const* m1)
 {
-  assert(m0 != NULL);
-  assert(m1 != NULL);
+  if(m0 == m1) 
+    return true;
 
-  if(m0->tstamp != m1->tstamp ||
-      m0->len != m1->len)
+  if(m0 == NULL || m1 == NULL)
     return false;
 
-  for(uint32_t i =0; i < m0->len; ++i){
- rc_radio_bearer_stats_t const* rb0 = &m0->rb[i];
- rc_radio_bearer_stats_t const* rb1 = &m1->rb[i];
- if(
-     rb0->txpdu_pkts != rb1->txpdu_pkts   ||
-     rb0->txpdu_bytes != rb1->txpdu_bytes ||  
-     rb0->txpdu_wt_ms != rb1->txpdu_wt_ms  ||
-     rb0->txpdu_dd_pkts != rb1->txpdu_dd_pkts ||
-     rb0->txpdu_dd_bytes != rb1->txpdu_dd_bytes ||
-     rb0->txpdu_retx_pkts != rb1->txpdu_retx_pkts ||
-     rb0->txpdu_retx_bytes != rb1->txpdu_retx_bytes ||
-     rb0->txpdu_segmented != rb1->txpdu_segmented ||
-     rb0->txpdu_status_pkts != rb1->txpdu_status_pkts ||
-     rb0->txpdu_status_bytes != rb1->txpdu_status_bytes ||
-     rb0->txbuf_occ_bytes != rb1-> txbuf_occ_bytes ||
-     rb0->txbuf_occ_pkts != rb1->txbuf_occ_pkts ||
-     rb0->rxpdu_pkts != rb1->rxpdu_pkts ||
-     rb0->rxpdu_bytes != rb1->rxpdu_bytes ||
-     rb0->rxpdu_dup_pkts != rb1->rxpdu_dup_pkts ||
-     rb0->rxpdu_dup_bytes != rb1->rxpdu_dup_bytes ||
-     rb0->rxpdu_dd_pkts != rb1->rxpdu_dd_pkts ||
-     rb0->rxpdu_dd_bytes != rb1->rxpdu_dd_bytes ||
-     rb0->rxpdu_ow_pkts != rb1->rxpdu_ow_pkts ||
-     rb0->rxpdu_ow_bytes != rb1->rxpdu_ow_bytes ||
-     rb0->rxpdu_status_pkts != rb1->rxpdu_status_pkts ||
-     rb0->rxpdu_status_bytes != rb1->rxpdu_status_bytes ||
-     rb0->rxbuf_occ_bytes != rb1->rxbuf_occ_bytes ||
-     rb0->rxbuf_occ_pkts != rb1->rxbuf_occ_pkts ||
-     rb0->txsdu_pkts != rb1->txsdu_pkts ||
-     rb0->txsdu_bytes != rb1->txsdu_bytes ||
-     rb0->rxsdu_pkts != rb1->rxsdu_pkts ||
-     rb0->rxsdu_bytes != rb1->rxsdu_bytes ||
-     rb0->rxsdu_dd_pkts != rb1->rxsdu_dd_pkts ||
-     rb0->rxsdu_dd_bytes != rb1->rxsdu_dd_bytes ||
-     rb0->rnti != rb1->rnti ||
-     rb0->mode != rb1->mode ||
-     rb0->rbid != rb1->rbid 
-     )
-  return false;
+  if(m0->format != m1->format)
+    return false;
+
+  if(m0->format == FORMAT_1_E2SM_RC_IND_MSG ){ 
+    return eq_e2sm_rc_ind_msg_frmt_1(&m0->frmt_1, &m1->frmt_1);
+  } else if(m0->format == FORMAT_2_E2SM_RC_IND_MSG  ){
+    assert(0!=0 && "Not implemented");
+  }else if(m0->format == FORMAT_3_E2SM_RC_IND_MSG  ){
+
+    assert(0!=0 && "Not implemented");
+  }else if(m0->format == FORMAT_4_E2SM_RC_IND_MSG  ){
+
+    assert(0!=0 && "Not implemented");
+  }else if(m0->format ==  FORMAT_5_E2SM_RC_IND_MSG ){
+
+    assert(0!=0 && "Not implemented");
+  }else if(m0->format ==  FORMAT_6_E2SM_RC_IND_MSG ){
+
+    assert(0!=0 && "Not implemented");
+  } else {
+    assert(0 != 0 && "Unknown format");
   }
-    return true;
+
+
+
+
+  return true;
 }
 
 //////////////////////////////////////
-// RIC Call Process ID 
+// RIC Call Process ID
 /////////////////////////////////////
 
-void free_rc_call_proc_id(rc_call_proc_id_t* src)
-{
+void free_rc_call_proc_id(rc_call_proc_id_t *src) {
   // Note that the src could be NULL
   free(src);
 }
@@ -533,7 +524,7 @@ void free_rc_ind_data(rc_ind_data_t* ind)
   assert(ind != NULL);
   
   free_e2sm_rc_ind_hdr(&ind->hdr);
-  free_rc_ind_msg(&ind->msg);
+  free_e2sm_rc_ind_msg(&ind->msg);
   free_rc_call_proc_id(ind->proc_id); 
 }
 

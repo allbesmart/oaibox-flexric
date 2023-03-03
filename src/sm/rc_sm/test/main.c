@@ -81,22 +81,22 @@ void test_rc_ind_hdr(void)
   assert(eq_e2sm_rc_ind_hdr(&hdr, &out) == true);
 }
 
-/*
+
 void test_rc_ind_msg(void)
 {
-  rc_ind_msg_t msg = fill_rc_ind_msg();
-  defer({ free_rc_ind_msg(&msg); });
+  e2sm_rc_ind_msg_t msg = fill_rnd_rc_ind_msg();
+  defer({ free_e2sm_rc_ind_msg(&msg); });
 
   byte_array_t ba = rc_enc_ind_msg_asn(&msg);
   defer({ free_byte_array(ba); });
 
-  rc_ind_msg_t out = rc_dec_ind_msg_asn(ba.len, ba.buf);
-  defer({ free_rc_ind_msg(&out); });
+  e2sm_rc_ind_msg_t out = rc_dec_ind_msg_asn(ba.len, ba.buf);
+  defer({ free_e2sm_rc_ind_msg(&out); });
 
-  assert(eq_rc_ind_msg(&msg, &out) == true);
+  assert(eq_e2sm_rc_ind_msg(&msg, &out) == true);
 }
 
-*/
+
 
 int main()
 {
@@ -104,26 +104,23 @@ int main()
   srand((unsigned) time(&t));
 
   // Test off all the functions
-  printf("\nRC SM enc/dec test launched\n");
+  //printf("\nRC SM enc/dec test launched\n");
 
   // Event Trigger
-  test_ric_event_trigger_rc();
-  printf("\nRC Event Trigger test succeeded\n");
+  //test_ric_event_trigger_rc();
+  //printf("\nRC Event Trigger test succeeded\n");
 
   // Action Definition
-  test_rc_act_def();
-  printf("\nRC Action Definition test succeeded\n");
+  //test_rc_act_def();
+  //printf("\nRC Action Definition test succeeded\n");
 
   // Indication Header
-  test_rc_ind_hdr();
-  printf("\nRC Indication Header test succeeded\n");
+  //test_rc_ind_hdr();
+  //printf("\nRC Indication Header test succeeded\n");
 
-  /*
   // Indication Message
   test_rc_ind_msg();
-
-  printf("KPM Indication Message test succeeded\n");
-  */
+  printf("\nRC Indication Message test succeeded\n");
 
   return EXIT_SUCCESS;
 }

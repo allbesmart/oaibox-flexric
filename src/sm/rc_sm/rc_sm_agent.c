@@ -96,7 +96,7 @@ sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t* sm_agent)
   // Liberate the memory if previously allocated by the RAN. It sucks
   rc_ind_data_t* ind = &rd_if.rc_stats;
   defer({ free_e2sm_rc_ind_hdr(&ind->hdr) ;});
-  defer({ free_rc_ind_msg(&ind->msg) ;});
+  defer({ free_e2sm_rc_ind_msg(&ind->msg) ;});
   defer({ free_rc_call_proc_id(ind->proc_id);});
 
   byte_array_t ba = rc_enc_ind_msg(&sm->enc, &rd_if.rc_stats.msg);

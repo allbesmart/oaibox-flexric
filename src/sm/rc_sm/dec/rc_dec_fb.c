@@ -48,11 +48,11 @@ e2sm_rc_ind_hdr_t rc_dec_ind_hdr_fb(size_t len, uint8_t const ind_hdr[len])
   return avoid_warning;
 }
 
-rc_ind_msg_t rc_dec_ind_msg_fb(size_t len, uint8_t const ind_msg[len])
+e2sm_rc_ind_msg_t rc_dec_ind_msg_fb(size_t len, uint8_t const ind_msg[len])
 {
   assert(0!=0 && "Not implemented");
   assert(ind_msg != NULL);
-  rc_ind_msg_t avoid_warning;
+  e2sm_rc_ind_msg_t avoid_warning;
   return avoid_warning;
 }
 

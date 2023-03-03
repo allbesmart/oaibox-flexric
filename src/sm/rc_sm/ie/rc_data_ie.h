@@ -65,6 +65,21 @@ extern "C" {
 #include "ir/e2sm_rc_ind_hdr_frmt_3.h"
 
 
+/////////////////////////////////////
+// RIC Indication Message 
+/////////////////////////////////////
+
+#include "ir/e2sm_rc_ind_msg_frmt_1.h"
+#include "ir/e2sm_rc_ind_msg_frmt_2.h"
+#include "ir/e2sm_rc_ind_msg_frmt_3.h"
+#include "ir/e2sm_rc_ind_msg_frmt_4.h"
+#include "ir/e2sm_rc_ind_msg_frmt_5.h"
+#include "ir/e2sm_rc_ind_msg_frmt_6.h"
+
+
+
+
+
 //////////////////////////////////////
 // RIC Event Trigger Definition
 /////////////////////////////////////
@@ -173,74 +188,38 @@ bool eq_e2sm_rc_ind_hdr(e2sm_rc_ind_hdr_t const* m0, e2sm_rc_ind_hdr_t const* m1
 // RIC Indication Message 
 /////////////////////////////////////
 
+typedef enum{
+  FORMAT_1_E2SM_RC_IND_MSG ,
+  FORMAT_2_E2SM_RC_IND_MSG ,
+  FORMAT_3_E2SM_RC_IND_MSG ,
+  FORMAT_4_E2SM_RC_IND_MSG ,
+  FORMAT_5_E2SM_RC_IND_MSG ,
+  FORMAT_6_E2SM_RC_IND_MSG ,
+
+  END_E2SM_RC_IND_MSG
+
+} e2sm_rc_ind_msg_format_e ;
+
+
+// 9.2.1.4
 typedef struct {
-  /* PDU stats */
-  /* TX */
-  uint32_t txpdu_pkts;         /* aggregated number of transmitted RC PDUs */
-  uint32_t txpdu_bytes;        /* aggregated amount of transmitted bytes in RC PDUs */
-  /* TODO? */
-  uint32_t txpdu_wt_ms;      /* aggregated head-of-line tx packet waiting time to be transmitted (i.e. send to the MAC layer) */
-  uint32_t txpdu_dd_pkts;      /* aggregated number of dropped or discarded tx packets by RC */
-  uint32_t txpdu_dd_bytes;     /* aggregated amount of bytes dropped or discarded tx packets by RC */
-  uint32_t txpdu_retx_pkts;    /* aggregated number of tx pdus/pkts to be re-transmitted (only applicable to RC AM) */
-  uint32_t txpdu_retx_bytes;   /* aggregated amount of bytes to be re-transmitted (only applicable to RC AM) */
-  uint32_t txpdu_segmented;    /* aggregated number of segmentations */
-  uint32_t txpdu_status_pkts;  /* aggregated number of tx status pdus/pkts (only applicable to RC AM) */
-  uint32_t txpdu_status_bytes; /* aggregated amount of tx status bytes  (only applicable to RC AM) */
-  /* TODO? */
-  uint32_t txbuf_occ_bytes;    /* current tx buffer occupancy in terms of amount of bytes (average: NOT IMPLEMENTED) */
-  /* TODO? */
-  uint32_t txbuf_occ_pkts;     /* current tx buffer occupancy in terms of number of packets (average: NOT IMPLEMENTED) */
-  /* txbuf_wd_ms: the time window for which the txbuf  occupancy value is obtained - NOT IMPLEMENTED */
+  e2sm_rc_ind_msg_format_e format; 
+  union{
+    e2sm_rc_ind_msg_frmt_1_t frmt_1; // 9.2.1.4.1
+//    e2sm_rc_ind_msg_frmt_2_t frmt_2; // 9.2.1.4.2
+//    e2sm_rc_ind_msg_frmt_3_t frmt_3; // 9.2.1.4.3
+//    e2sm_rc_ind_msg_frmt_4_t frmt_4; // 9.2.1.4.4
+//    e2sm_rc_ind_msg_frmt_5_t frmt_5; // 9.2.1.4.5
+//    e2sm_rc_ind_msg_frmt_6_t frmt_6; // 9.2.1.4.6
+  };
 
-  /* RX */
-  uint32_t rxpdu_pkts;         /* aggregated number of received RC PDUs */
-  uint32_t rxpdu_bytes;        /* amount of bytes received by the RC */
-  uint32_t rxpdu_dup_pkts;     /* aggregated number of duplicate packets */
-  uint32_t rxpdu_dup_bytes;    /* aggregated amount of duplicated bytes */
-  uint32_t rxpdu_dd_pkts;      /* aggregated number of rx packets dropped or discarded by RC */
-  uint32_t rxpdu_dd_bytes;     /* aggregated amount of rx bytes dropped or discarded by RC */
-  uint32_t rxpdu_ow_pkts;      /* aggregated number of out of window received RC pdu */
-  uint32_t rxpdu_ow_bytes;     /* aggregated number of out of window bytes received RC pdu */
-  uint32_t rxpdu_status_pkts;  /* aggregated number of rx status pdus/pkts (only applicable to RC AM) */
-  uint32_t rxpdu_status_bytes; /* aggregated amount of rx status bytes  (only applicable to RC AM) */
-  /* rxpdu_rotout_ms: flag indicating rx reordering  timeout in ms - NOT IMPLEMENTED */
-  /* rxpdu_potout_ms: flag indicating the poll retransmit time out in ms - NOT IMPLEMENTED */
-  /* rxpdu_sptout_ms: flag indicating status prohibit timeout in ms - NOT IMPLEMENTED */
-  /* TODO? */
-  uint32_t rxbuf_occ_bytes;    /* current rx buffer occupancy in terms of amount of bytes (average: NOT IMPLEMENTED) */
-  /* TODO? */
-  uint32_t rxbuf_occ_pkts;     /* current rx buffer occupancy in terms of number of packets (average: NOT IMPLEMENTED) */
+} e2sm_rc_ind_msg_t;
 
-  /* SDU stats */
-  /* TX */
-  uint32_t txsdu_pkts;         /* number of SDUs delivered */
-  uint32_t txsdu_bytes;        /* number of bytes of SDUs delivered */
+void free_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t* src); 
 
-  /* RX */
-  uint32_t rxsdu_pkts;         /* number of SDUs received */
-  uint32_t rxsdu_bytes;        /* number of bytes of SDUs received */
-  uint32_t rxsdu_dd_pkts;      /* number of dropped or discarded SDUs */
-  uint32_t rxsdu_dd_bytes;     /* number of bytes of SDUs dropped or discarded */
+e2sm_rc_ind_msg_t cp_rc_ind_msg(e2sm_rc_ind_msg_t const* src);
 
-  uint32_t rnti;
-  uint8_t mode;               /* 0: RC AM, 1: RC UM, 2: RC TM */
-  uint8_t rbid;
-
-} rc_radio_bearer_stats_t;
-
-typedef struct {
-  rc_radio_bearer_stats_t* rb; 
-  uint32_t len;
-
-  int64_t tstamp;
-} rc_ind_msg_t;
-
-void free_rc_ind_msg(rc_ind_msg_t* src); 
-
-rc_ind_msg_t cp_rc_ind_msg(rc_ind_msg_t const* src);
-
-bool eq_rc_ind_msg(rc_ind_msg_t* m0, rc_ind_msg_t* m1);
+bool eq_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t const* m0, e2sm_rc_ind_msg_t const* m1);
 
 
 //////////////////////////////////////
@@ -354,7 +333,7 @@ typedef struct{
 
 typedef struct{
   e2sm_rc_ind_hdr_t hdr;
-  rc_ind_msg_t msg;
+  e2sm_rc_ind_msg_t msg;
   rc_call_proc_id_t* proc_id;
 } rc_ind_data_t;
 

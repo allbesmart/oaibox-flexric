@@ -40,7 +40,7 @@ byte_array_t rc_enc_action_def_fb(e2sm_rc_action_def_t const*);
 
 byte_array_t rc_enc_ind_hdr_fb(e2sm_rc_ind_hdr_t const*); 
 
-byte_array_t rc_enc_ind_msg_fb(rc_ind_msg_t const*); 
+byte_array_t rc_enc_ind_msg_fb(e2sm_rc_ind_msg_t const*); 
 
 byte_array_t rc_enc_call_proc_id_fb(rc_call_proc_id_t const*); 
 

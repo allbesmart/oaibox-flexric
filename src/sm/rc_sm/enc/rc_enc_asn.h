@@ -39,7 +39,7 @@ byte_array_t rc_enc_action_def_asn(e2sm_rc_action_def_t const*);
 
 byte_array_t rc_enc_ind_hdr_asn(e2sm_rc_ind_hdr_t const*); 
 
-byte_array_t rc_enc_ind_msg_asn(rc_ind_msg_t const*); 
+byte_array_t rc_enc_ind_msg_asn(e2sm_rc_ind_msg_t const*); 
 
 byte_array_t rc_enc_call_proc_id_asn(rc_call_proc_id_t const*); 
 

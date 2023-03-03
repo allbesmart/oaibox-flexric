@@ -33,7 +33,7 @@ e2sm_rc_action_def_t rc_dec_action_def_plain(size_t len, uint8_t const action_de
 
 e2sm_rc_ind_hdr_t rc_dec_ind_hdr_plain(size_t len, uint8_t const ind_hdr[len]); 
 
-rc_ind_msg_t rc_dec_ind_msg_plain(size_t len, uint8_t const ind_msg[len]); 
+e2sm_rc_ind_msg_t rc_dec_ind_msg_plain(size_t len, uint8_t const ind_msg[len]); 
 
 rc_call_proc_id_t rc_dec_call_proc_id_plain(size_t len, uint8_t const call_proc_id[len]);
 

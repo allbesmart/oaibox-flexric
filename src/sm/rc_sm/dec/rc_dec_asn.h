@@ -33,7 +33,7 @@ e2sm_rc_action_def_t rc_dec_action_def_asn(size_t len, uint8_t const action_def[
 
 e2sm_rc_ind_hdr_t rc_dec_ind_hdr_asn(size_t len, uint8_t const ind_hdr[len]); 
 
-rc_ind_msg_t rc_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len]); 
+e2sm_rc_ind_msg_t rc_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len]); 
 
 rc_call_proc_id_t rc_dec_call_proc_id_asn(size_t len, uint8_t const call_proc_id[len]);
 

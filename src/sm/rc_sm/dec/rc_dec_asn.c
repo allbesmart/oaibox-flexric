@@ -89,11 +89,13 @@
 
 #include "../ie/asn/E2SM-RC-IndicationHeader.h"
 #include "../ie/asn/E2SM-RC-IndicationHeader-Format1.h"
-
 #include "../ie/asn/E2SM-RC-IndicationHeader-Format2.h"
-
 #include "../ie/asn/E2SM-RC-IndicationHeader-Format3.h"
 
+#include "../ie/asn/E2SM-RC-IndicationMessage.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format1.h"
+
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format1-Item.h"
 
 #include "../ie/asn/RANParameter-LIST.h"
 
@@ -1619,12 +1621,97 @@ e2sm_rc_ind_hdr_t rc_dec_ind_hdr_asn(size_t len, uint8_t const ind_hdr[len])
   return dst;
 }
 
-rc_ind_msg_t rc_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len])
+static
+seq_ran_param_t dec_ind_msg_frmt_1_it(E2SM_RC_IndicationMessage_Format1_Item_t const* src)
 {
-  assert(0!=0 && "Not implemented");
+  assert(src != NULL);
+
+  seq_ran_param_t dst = {0}; 
+
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ranParameter_ID > 0);
+  dst.ran_param_id = src->ranParameter_ID;
+
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  dst.ran_param_val = cp_ran_param_value_type(&src->ranParameter_valueType);
+
+  return dst;
+}
+
+
+static
+e2sm_rc_ind_msg_frmt_1_t dec_ind_msg_frmt_1(E2SM_RC_IndicationMessage_Format1_t const* src)
+{
+  assert(src != NULL);
+  e2sm_rc_ind_msg_frmt_1_t dst = {0}; 
+
+  //  Sequence of RAN
+  //  Parameters
+  //  [1 - 65535]
+  assert(src->ranP_Reported_List.list.count > 0 && src->ranP_Reported_List.list.count < 65535+1);
+  
+  dst.sz_seq_ran_param = src->ranP_Reported_List.list.count; 
+  dst.seq_ran_param = calloc(dst.sz_seq_ran_param, sizeof(seq_ran_param_t));
+  assert(dst.seq_ran_param != NULL && "Memory exhausted" );
+
+  for(size_t i = 0; i < dst.sz_seq_ran_param; ++i){
+    dst.seq_ran_param[i] = dec_ind_msg_frmt_1_it(src->ranP_Reported_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+
+e2sm_rc_ind_msg_t rc_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len])
+{
   assert(ind_msg != NULL);
-  rc_ind_msg_t avoid_warning;
-  return avoid_warning;
+  assert(len != 0);
+
+  E2SM_RC_IndicationMessage_t src = {0};
+  defer({  ASN_STRUCT_RESET(asn_DEF_E2SM_RC_IndicationMessage, &src); });
+  E2SM_RC_IndicationMessage_t* src_ref = &src;
+
+  asn_dec_rval_t const ret = aper_decode(NULL, &asn_DEF_E2SM_RC_IndicationMessage, (void **)&src_ref, ind_msg, len, 0, 0);
+  assert(ret.code == RC_OK);
+
+  //  xer_fprint(stdout, &asn_DEF_E2SM_RC_EventTrigger, &src);
+  //  fflush(stdout);
+
+  e2sm_rc_ind_msg_t dst = {0}; 
+
+  if(src.ric_indicationMessage_formats.present == E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format1){
+    dst.format = FORMAT_1_E2SM_RC_IND_MSG ;
+    dst.frmt_1 = dec_ind_msg_frmt_1(src.ric_indicationMessage_formats.choice.indicationMessage_Format1);
+  } else if(src.ric_indicationMessage_formats.present == E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format2){
+    assert(0!=0 && "Not implemented");
+    dst.format = FORMAT_2_E2SM_RC_IND_MSG ;
+
+  } else if(src.ric_indicationMessage_formats.present == E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format3){
+    assert(0!=0 && "Not implemented");
+
+    dst.format = FORMAT_3_E2SM_RC_IND_MSG ;
+  } else if(src.ric_indicationMessage_formats.present == E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format4){
+    assert(0!=0 && "Not implemented");
+
+    dst.format = FORMAT_4_E2SM_RC_IND_MSG ;
+  } else if(src.ric_indicationMessage_formats.present == E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format5){
+    assert(0!=0 && "Not implemented");
+
+    dst.format = FORMAT_5_E2SM_RC_IND_MSG ;
+  } else if(src.ric_indicationMessage_formats.present == E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format6){
+    assert(0!=0 && "Not implemented");
+    dst.format = FORMAT_6_E2SM_RC_IND_MSG ;
+    
+  } else {
+    assert(0!=0 && "Unknown format type");
+  }
+
+  return dst;
 }
 
 rc_call_proc_id_t rc_dec_call_proc_id_asn(size_t len, uint8_t const call_proc_id[len])

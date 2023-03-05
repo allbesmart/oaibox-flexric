@@ -16,14 +16,13 @@ set(SM_ENCODING_KPM_SRC
                       kpm_sm_ric.c 
                       kpm_sm_agent.c 
                       ../../util/byte_array.c 
+                      ../../util/conversions.c
                       ../../util/alg_ds/alg/defer.c 
                       ../../util/alg_ds/alg/eq_float.c 
                       ../../util/alg_ds/ds/seq_container/seq_arr.c 
                       ../../util/alg_ds/ds/seq_container/seq_ring.c 
                       ../../util/alg_ds/ds/assoc_container/assoc_rb_tree.c
                       ../../util/alg_ds/ds/assoc_container/bimap.c
-
-                      $<TARGET_OBJECTS:kpm_ie_obj>
                       )
 
 if(SM_ENCODING_KPM STREQUAL "PLAIN")
@@ -36,14 +35,18 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
   
   add_subdirectory(ie/asn)
   add_library(kpm_sm SHARED
-                      $<TARGET_OBJECTS:e2sm_kpm_asn1_obj>
-                      $<TARGET_OBJECTS:kpm_e2sm_specific_ie_dec_asn_obj>
-                      $<TARGET_OBJECTS:kpm_e2sm_specific_ie_enc_asn_obj>
                       ${SM_ENCODING_KPM_SRC}
                       enc/kpm_enc_asn.c 
                       dec/kpm_dec_asn.c 
                       )
-  target_link_libraries(kpm_sm PUBLIC -lm)
+
+
+  target_link_libraries(kpm_sm PUBLIC
+                                kpm_data_ie_shared
+                                kpm_e2sm_specific_ie_dec_asn_shared
+                                kpm_e2sm_specific_ie_enc_asn_shared
+                                -lm)
+
   target_include_directories(kpm_sm PRIVATE "ie/asn")
   target_compile_options(kpm_sm PUBLIC "-DASN_DISABLE_OER_SUPPORT" -fPIC)
   target_compile_options(kpm_sm PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter -fPIC)
@@ -52,26 +55,18 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
   #Nasty solution. Do it properly, Mikel!
 
   add_library(kpm_sm_static STATIC  #STATIC or SHARED
-                      $<TARGET_OBJECTS:kpm_e2sm_specific_ie_dec_asn_obj>
-                      $<TARGET_OBJECTS:kpm_e2sm_specific_ie_enc_asn_obj>
-                      $<TARGET_OBJECTS:kpm_ric_info_obj> 
-                      $<TARGET_OBJECTS:kpm_enc_common_asn_obj>
-                      $<TARGET_OBJECTS:kpm_enc_ie_asn_obj>
-                      $<TARGET_OBJECTS:kpm_dec_common_asn_obj>
-                      $<TARGET_OBJECTS:kpm_dec_ie_asn_obj>
-                      $<TARGET_OBJECTS:kpm_ric_info_common_obj>
-                      $<TARGET_OBJECTS:e2sm_common_ie_obj>
-                      $<TARGET_OBJECTS:sm_common_ie_obj>
-                      $<TARGET_OBJECTS:sm_common_dec_asn_obj>
-                      $<TARGET_OBJECTS:sm_common_enc_asn_obj>
-                      $<TARGET_OBJECTS:3gpp_derived_ie_obj>
-                      $<TARGET_OBJECTS:3gpp_derived_ie_dec_asn_obj>
-                      $<TARGET_OBJECTS:3gpp_derived_ie_enc_asn_obj>
+
 
                       ${SM_ENCODING_KPM_SRC}
                       enc/kpm_enc_asn.c 
                       dec/kpm_dec_asn.c 
             )
+  
+  target_link_libraries(kpm_sm_static PUBLIC
+                                kpm_data_ie_shared
+                                kpm_e2sm_specific_ie_dec_asn_shared
+                                kpm_e2sm_specific_ie_enc_asn_shared
+                                -lm)
 
   target_include_directories(kpm_sm_static PRIVATE "ie/asn")
   target_compile_options(kpm_sm_static PRIVATE "-DASN_DISABLE_OER_SUPPORT")

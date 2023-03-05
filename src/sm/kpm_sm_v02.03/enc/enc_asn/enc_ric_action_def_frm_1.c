@@ -3,8 +3,11 @@
 #include "enc_ric_action_def_frm_1.h"
 #include "../../../../lib/e2sm_common_ie/enc_asn_sm_common/enc_cell_global_id.h"
 #include "../enc_asn_kpm_common/enc_meas_info_frm_1.h"
+#include "../enc_asn_kpm_common/enc_meas_bin_range_info.h"
 
 #include "../../ie/asn/asn_constant.h"
+#include "../../ie/asn/DistMeasurementBinRangeList.h"
+#include "../../ie/asn/DistMeasurementBinRangeItem.h"
 
 
 E2SM_KPM_ActionDefinition_Format1_t kpm_enc_action_def_frm_1_asn(const kpm_act_def_format_1_t * act_def_frm_1) {
@@ -33,8 +36,18 @@ E2SM_KPM_ActionDefinition_Format1_t kpm_enc_action_def_frm_1_asn(const kpm_act_d
     // 4. Measurement Bin Range Information List : [0, 65535]
     // not yet implemented in ASN.1 - possible extension
 
-    if (act_def_frm_1->meas_bin_info_lst != NULL) {
-      assert(false && "Measurement Bin Range not yet implemented in ASN");
+    if (act_def_frm_1->meas_bin_info_lst != NULL || act_def_frm_1->meas_bin_range_info_lst_len != 0) {
+      assert(act_def_frm_1->meas_bin_range_info_lst_len >= 1 && act_def_frm_1->meas_bin_range_info_lst_len <= maxnoofBin);
+
+      act_def_frm_1_asn.distMeasBinRangeInfo = calloc(act_def_frm_1->meas_bin_range_info_lst_len, sizeof(DistMeasurementBinRangeList_t));
+      assert(act_def_frm_1_asn.distMeasBinRangeInfo != NULL && "Memory exhausted");
+
+      for (size_t i = 0; i<act_def_frm_1->meas_bin_range_info_lst_len; i++)
+      {
+        DistMeasurementBinRangeItem_t * bin_item = kpm_enc_meas_bin_range_item(&act_def_frm_1->meas_bin_info_lst[i]);
+        int rc1 = ASN_SEQUENCE_ADD(&act_def_frm_1_asn.distMeasBinRangeInfo->list, bin_item);
+        assert(rc1 == 0);
+      }
     }
 
 

@@ -19,7 +19,7 @@ typedef enum {
 } matched_ue_e;
 
 typedef struct {
-    size_t ue_lst_len;
+    size_t ue_lst_len;  // [1..65535]
     ue_id_t *ue_lst;  // 8.3.24
 
 } ue_lst_t;
@@ -37,6 +37,9 @@ typedef struct {
 
 } ue_id_gran_period_lst_t;
 
+void free_kpm_ue_id_gran_period_lst(ue_id_gran_period_lst_t* src);
+
+bool eq_kpm_ue_id_gran_period_lst(ue_id_gran_period_lst_t const* m0, ue_id_gran_period_lst_t const* m1);
 
 #ifdef __cplusplus
 }

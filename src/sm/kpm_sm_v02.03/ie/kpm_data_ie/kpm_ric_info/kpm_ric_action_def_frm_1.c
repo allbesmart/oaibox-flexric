@@ -22,7 +22,11 @@ void free_kpm_action_def_frm_1(kpm_act_def_format_1_t* src)
   
   // Measurement Bin Range
   if (src->meas_bin_info_lst != NULL)
-    assert(false && "Not yet implemented in ASN.1");
+  {
+    for (size_t i = 0; i<src->meas_bin_range_info_lst_len; i++)
+      free_kpm_meas_bin_range_info(&src->meas_bin_info_lst[i]);
+    free(src->meas_bin_info_lst);
+  }
 
 }
 
@@ -53,9 +57,18 @@ bool eq_kpm_action_def_frm_1(kpm_act_def_format_1_t const * m0, kpm_act_def_form
   }
 
   // Measurement Bin Range Information
-  assert(m0->meas_bin_range_info_lst_len == 0 && "Not yet implemented");
-  assert(m1->meas_bin_range_info_lst_len == 0 && "Not yet implemented");
+  if (m0->meas_bin_info_lst != NULL || m1->meas_bin_info_lst != NULL)
+  {
+    if (m0->meas_bin_range_info_lst_len != m1->meas_bin_range_info_lst_len)
+      return false;
 
+    for (size_t i = 0; i<m0->meas_bin_range_info_lst_len; i++)
+    {
+      if (eq_kpm_meas_bin_range_info(&m0->meas_bin_info_lst[i], &m1->meas_bin_info_lst[i]) != true)
+        return false;
+    }
+
+  }
 
   return true;
 }

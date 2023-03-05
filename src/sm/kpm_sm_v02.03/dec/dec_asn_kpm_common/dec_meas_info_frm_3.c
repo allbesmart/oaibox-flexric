@@ -4,6 +4,7 @@
 #include "dec_meas_info_frm_3.h"
 #include "../../ie/asn/MeasurementCondItem.h"
 #include "dec_matching_cond_frm_3.h"
+#include "dec_bin_range_def.h"
 
 meas_info_format_3_lst_t * kpm_dec_meas_info_cond_asn(const MeasurementCondList_t * meas_info_cond_asn, const size_t meas_info_lst_len)
 {
@@ -51,6 +52,9 @@ meas_info_format_3_lst_t * kpm_dec_meas_info_cond_asn(const MeasurementCondList_
 
         // Bin Range Definition
         // not yet implemented in ASN.1 - possible extension
+        meas_info_cond[i].bin_range_def = calloc(1, sizeof(bin_range_def_t));
+        assert(meas_info_cond[i].bin_range_def != NULL && "Memory exhausted");
+        *meas_info_cond[i].bin_range_def = kpm_dec_bin_range_def(meas_info_cond_asn->list.array[i]->binRangeDef);
     }
 
     return meas_info_cond;

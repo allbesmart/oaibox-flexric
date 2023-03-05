@@ -20,6 +20,8 @@ add_executable(test_ag_ric_xapp
                 ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_info_frm_1_lst.c
                 ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_data_lst.c
 		            ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_type.c
+                ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/bin_range_def.c
+                ../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_bin_range_info_lst.c
                 ../../src/lib/e2sm_common_ie/3gpp_derived_ie/plmn_identity.c
                 ../../src/lib/e2sm_common_ie/3gpp_derived_ie/gnb.c
                 ../../src/lib/e2sm_common_ie/3gpp_derived_ie/gnb_du.c

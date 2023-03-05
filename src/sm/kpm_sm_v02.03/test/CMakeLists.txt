@@ -21,14 +21,15 @@ endif()
 add_executable(test_kpm_mir   
   main.c 
   fill_rnd_data_kpm.c 
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../../util/alg_ds/alg/defer.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../../util/byte_array.c
+  # ${CMAKE_CURRENT_SOURCE_DIR}/../../../util/alg_ds/alg/defer.c
+  # ${CMAKE_CURRENT_SOURCE_DIR}/../../../util/byte_array.c
   ${CMAKE_CURRENT_SOURCE_DIR}/../../../util/conversions.c
   $<TARGET_OBJECTS:e2sm_kpm_asn1_obj> 
   )
 
 target_link_libraries(test_kpm_mir PUBLIC 
                             kpm_sm_static
+                            e2sm_common_ie_shared
                             -lm
                             )
 

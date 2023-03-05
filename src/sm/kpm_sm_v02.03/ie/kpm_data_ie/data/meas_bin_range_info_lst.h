@@ -17,7 +17,9 @@ typedef struct {
     
 } meas_bin_range_info_lst_t;
 
+void free_kpm_meas_bin_range_info(meas_bin_range_info_lst_t* src);
 
+bool eq_kpm_meas_bin_range_info(meas_bin_range_info_lst_t const * m0, meas_bin_range_info_lst_t const * m1);
 
 #ifdef __cplusplus
 }

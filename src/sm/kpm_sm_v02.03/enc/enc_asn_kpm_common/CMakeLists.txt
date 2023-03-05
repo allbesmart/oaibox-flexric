@@ -7,6 +7,9 @@ set(KPM_ENC_COMMON_ASN_SRCS
   enc_meas_info_frm_1.c
   enc_meas_info_frm_3.c
   enc_test_info.c
+  enc_meas_bin_range_info.c
+  enc_bin_range_def.c
+  enc_ue_id_gran_period_lst.c
   )
 
 add_library(kpm_enc_common_asn_obj OBJECT

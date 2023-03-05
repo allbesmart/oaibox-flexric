@@ -3,8 +3,10 @@
 
 #include "enc_meas_info_frm_3.h"
 #include "enc_matching_cond_frm_3.h"
+#include "enc_bin_range_def.h"
 #include "../../ie/asn/MeasurementCondList.h"
 #include "../../ie/asn/MeasurementCondItem.h"
+#include "../../ie/asn/BinRangeDefinition.h"
 
 MeasurementCondList_t kpm_enc_meas_info_cond_asn(const meas_info_format_3_lst_t * meas_info_cond, const size_t meas_info_cond_len)
 {
@@ -48,7 +50,9 @@ MeasurementCondList_t kpm_enc_meas_info_cond_asn(const meas_info_format_3_lst_t 
 
 
         if (meas_info_cond[i].bin_range_def != NULL) {
-            assert(false && "Encoding Bin_Range_Definition is not yet implemented");
+          mInfo->binRangeDef = calloc(1, sizeof(BinRangeDefinition_t));
+          assert(mInfo->binRangeDef != NULL && "Memory exhausted");
+          *mInfo->binRangeDef = kpm_enc_bin_range_def(meas_info_cond[i].bin_range_def);
         }
 
 

@@ -18,8 +18,6 @@ set(KPM_RIC_INFO_SRCS
 
 add_library(kpm_ric_info_obj OBJECT
                             ${KPM_RIC_INFO_SRCS}
-                            $<TARGET_OBJECTS:e2sm_common_ie_obj>)
+                            )
 
-target_link_libraries(kpm_ric_info_obj PUBLIC
-                                    e2sm_common_ie_obj)
               

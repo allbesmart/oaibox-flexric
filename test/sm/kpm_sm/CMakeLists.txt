@@ -54,6 +54,8 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
                 ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_info_frm_1_lst.c
                 ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_data_lst.c
 		            ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_type.c
+                ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/bin_range_def.c
+                ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_bin_range_info_lst.c
                 ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ran_function_def.c
                 ../../../src/sm/kpm_sm_v02.03/enc/enc_asn/enc_ric_event_trigger_frm_1.c
 
@@ -66,7 +68,9 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
 
                 ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_meas_info_frm_3.c 
                 ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_matching_cond_frm_4.c
-
+                ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_meas_bin_range_info.c
+                ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_bin_range_def.c
+                ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_ue_id_gran_period_lst.c
                 ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_meas_data.c
                 ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_meas_info_cond_ue.c
                 ../../../src/sm/kpm_sm_v02.03/dec/dec_asn/dec_ric_event_trigger_frm_1.c
@@ -115,6 +119,8 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
                 ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_matching_cond_frm_3.c
                 ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_test_info.c 
                 ../../../src/sm/kpm_sm_v02.03/dec/dec_asn_kpm_common/dec_meas_info_frm_1.c
+                ../../../src/sm/kpm_sm_v02.03/dec/dec_asn_kpm_common/dec_meas_bin_range_info.c
+                ../../../src/sm/kpm_sm_v02.03/dec/dec_asn_kpm_common/dec_bin_range_def.c
                 ../../../src/lib/e2sm_common_ie/dec_asn_sm_common/dec_cell_global_id.c
                 ../../../src/sm/kpm_sm_v02.03/dec/dec_asn_kpm_common/dec_meas_info_frm_3.c
                 ../../../src/sm/kpm_sm_v02.03/dec/dec_asn_kpm_common/dec_matching_cond_frm_4.c

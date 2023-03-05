@@ -5,9 +5,13 @@
 #include "../../ie/asn/MeasurementCondUEidItem.h"
 #include "../../ie/asn/MatchingUEidList.h"
 #include "../../ie/asn/MatchingUEidItem.h"
+#include "../../ie/asn/MatchingUEidPerGP.h"
+#include "../../ie/asn/MatchingUEidPerGP-Item.h"
+
 
 #include "enc_meas_info_cond_ue.h"
 #include "enc_matching_cond_frm_3.h"
+#include "enc_ue_id_gran_period_lst.h"
 #include "../../../../lib/e2sm_common_ie/enc_asn_sm_common/enc_ue_id.h"
 
 MeasurementCondUEidList_t kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_ue_lst_t * meas_cond_ue, const size_t meas_cond_ue_len)
@@ -76,8 +80,19 @@ MeasurementCondUEidList_t kpm_enc_meas_info_cond_ue_asn(const meas_info_cond_ue_
 
         // UE_id Granularity Period - OPTIONAL
         // not implemented in ASN.1 - possible extension
-        if (meas_cond_ue->ue_id_gran_period_lst != NULL || meas_cond_ue->ue_id_gran_period_lst_len != 0)
-          assert(false && "Not yet implemented in ASN.1");
+        if (meas_cond_ue[i].ue_id_gran_period_lst != NULL || meas_cond_ue[i].ue_id_gran_period_lst_len != 0)
+        {
+          assert(meas_cond_ue[i].ue_id_gran_period_lst_len >=1 && meas_cond_ue[i].ue_id_gran_period_lst_len <= maxnoofUEID);
+          cond_ue_item->matchingUEidPerGP = calloc(meas_cond_ue[i].ue_id_gran_period_lst_len, sizeof(MatchingUEidPerGP_t));
+          assert(cond_ue_item->matchingUEidPerGP != NULL && "Memory exhausted");
+
+          for (size_t j = 0; j<meas_cond_ue[i].ue_id_gran_period_lst_len; j++)
+          {
+            MatchingUEidPerGP_Item_t * matching_gp_ue_item = kpm_enc_ue_id_gran_period_asn(&meas_cond_ue[i].ue_id_gran_period_lst[j]);
+            int rc1 = ASN_SEQUENCE_ADD(&cond_ue_item->matchingUEidPerGP->list, matching_gp_ue_item);
+            assert(rc1 == 0);
+          }
+        }
 
 
         int rc1 = ASN_SEQUENCE_ADD(&meas_cond_ue_asn.list, cond_ue_item);

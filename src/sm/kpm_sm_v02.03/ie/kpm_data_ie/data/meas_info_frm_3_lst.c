@@ -12,7 +12,10 @@ void free_meas_info_frm_3(meas_info_format_3_lst_t* src)
 
   // Bin Range Definition
   if (src->bin_range_def != NULL)
+  {
+    free_kpm_bin_range_def(src->bin_range_def);
     free(src->bin_range_def);
+  }
 
   // Matching Condition Format 3
   for (size_t i = 0; i < src->matching_cond_lst_len; i++)
@@ -44,7 +47,10 @@ bool eq_meas_info_frm_3(meas_info_format_3_lst_t const * m0, meas_info_format_3_
 
   // Bin Range Definition
   if (m0->bin_range_def != NULL || m1->bin_range_def != NULL)
-    assert(false && "Bin Range Definition not yet implemented");
+  {
+    if (eq_kpm_bin_range_def(m0->bin_range_def, m1->bin_range_def) != true)
+      return false;
+  }
 
 
   return true;

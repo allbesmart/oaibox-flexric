@@ -7,11 +7,11 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdlib.h>
-
+#include <stdbool.h>
 
 // 8.3.27  Bin Range Value
 typedef struct {
-  enum {INTEGER_BIN_RANGE, REAL_BIN_RANGE} value;
+  enum {INTEGER_BIN_RANGE, REAL_BIN_RANGE, END_BIN_RANGE} value;
   union {
     unsigned long int_value;
     double real_value;
@@ -33,17 +33,19 @@ typedef struct {
 // 8.3.26   Bin Range Definition
 typedef struct {
   size_t bin_x_lst_len;  // [1, 65535]
-  bin_distr_t bin_x_lst;
+  bin_distr_t *bin_x_lst;
 
   size_t bin_y_lst_len;  // [0, 65535]
-  bin_distr_t bin_y_lst;
+  bin_distr_t *bin_y_lst;
 
   size_t bin_z_lst_len;  // [0, 65535]
-  bin_distr_t bin_z_lst;
+  bin_distr_t *bin_z_lst;
 
 } bin_range_def_t;
 
+void free_kpm_bin_range_def(bin_range_def_t* src);
 
+bool eq_kpm_bin_range_def(bin_range_def_t const * m0, bin_range_def_t const * m1);
 
 #ifdef __cplusplus
 }

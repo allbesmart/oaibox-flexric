@@ -5,6 +5,10 @@
 #include "../../ie/asn/MeasurementCondUEidItem.h"
 #include "../../ie/asn/MatchingUEidList.h"
 #include "../../ie/asn/MatchingUEidItem.h"
+#include "../../ie/asn/MatchingUEidPerGP.h"
+#include "../../ie/asn/MatchingUEidPerGP-Item.h"
+#include "../../ie/asn/MatchingUEidItem-PerGP.h"
+#include "../../ie/asn/MatchingUEidList-PerGP.h"
 
 #include "../dec_asn_kpm_common/dec_matching_cond_frm_3.h"
 #include "../../../../lib/e2sm_common_ie/dec_asn_sm_common/dec_ue_id.h"
@@ -77,7 +81,48 @@ meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEi
         // UE_id Granularity Period - OPTIONAL
         // not yet implemented in ASN.1 - possible extension
         if (meas_cond_ue_asn.list.array[i]->matchingUEidPerGP != NULL)
-          assert(false && "Not yet implemented in ASN.1");
+        {
+            MatchingUEidPerGP_t * ue_id_per_gp = meas_cond_ue_asn.list.array[i]->matchingUEidPerGP;
+
+            meas_cond_ue[i].ue_id_gran_period_lst_len = ue_id_per_gp->list.count;
+            assert(meas_cond_ue[i].ue_id_gran_period_lst_len >=1 && meas_cond_ue[i].ue_id_gran_period_lst_len <= maxnoofUEID);
+
+            meas_cond_ue[i].ue_id_gran_period_lst = calloc(meas_cond_ue[i].ue_id_gran_period_lst_len, sizeof(ue_id_gran_period_lst_t));
+            assert(meas_cond_ue[i].ue_id_gran_period_lst != NULL && "Memory exhausted");
+
+            for (size_t j = 0; j<meas_cond_ue[i].ue_id_gran_period_lst_len; j++)
+            {
+                switch (ue_id_per_gp->list.array[j]->matchedPerGP.present)
+                {
+                case MatchingUEidPerGP_Item__matchedPerGP_PR_noUEmatched:
+                  meas_cond_ue[i].ue_id_gran_period_lst[j].num_matched_ue = NONE_MATCHED_UE;
+                  meas_cond_ue[i].ue_id_gran_period_lst[j].no_matched_ue = TRUE_ENUM_VALUE;
+                  break;
+
+                case MatchingUEidPerGP_Item__matchedPerGP_PR_oneOrMoreUEmatched:
+                  meas_cond_ue[i].ue_id_gran_period_lst[j].num_matched_ue = ONE_OR_MORE_MATCHED_UE;
+                  meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len = ue_id_per_gp->list.array[j]->matchedPerGP.choice.oneOrMoreUEmatched->list.count;
+                  assert(meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len >= 1 && meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len <= maxnoofUEID);
+
+                  meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst = calloc(meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len, sizeof(ue_id_t));
+                  assert(meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst != NULL && "Memory exhausted");
+
+                  for (size_t z = 0; z<meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len; z++)
+                  {
+                    meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst[z] = dec_ue_id_asn(&ue_id_per_gp->list.array[j]->matchedPerGP.choice.oneOrMoreUEmatched->list.array[z]->ueID);
+                  }
+                  break;
+                
+                default:
+                    break;
+                }
+            }
+
+        }
+        else
+        {
+            meas_cond_ue[i].ue_id_gran_period_lst_len = 0;
+        }
 
     }
 

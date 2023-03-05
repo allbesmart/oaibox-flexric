@@ -7,6 +7,8 @@ set(KPM_DEC_COMMON_ASN_SRCS
   dec_meas_info_frm_1.c
   dec_meas_info_frm_3.c
   dec_test_info.c
+  dec_meas_bin_range_info.c
+  dec_bin_range_def.c
   )
 
 

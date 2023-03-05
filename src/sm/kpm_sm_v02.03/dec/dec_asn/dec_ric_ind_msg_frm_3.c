@@ -15,6 +15,9 @@ kpm_ind_msg_format_3_t kpm_dec_ind_msg_frm_3_asn(const E2SM_KPM_IndicationMessag
     ind_msg.ue_meas_report_lst_len = ind_msg_asn->ueMeasReportList.list.count;
     assert(ind_msg.ue_meas_report_lst_len >= 1 && ind_msg.ue_meas_report_lst_len <= maxnoofUEMeasReport);
 
+    ind_msg.meas_report_per_ue = calloc(ind_msg.ue_meas_report_lst_len, sizeof(meas_report_per_ue_t));
+    assert(ind_msg.meas_report_per_ue != NULL && "Memory exhausted");
+
     for (size_t i = 0; i<ind_msg.ue_meas_report_lst_len; i++)
     {
         UEMeasurementReportItem_t * ue_item_asn = ind_msg_asn->ueMeasReportList.list.array[i];

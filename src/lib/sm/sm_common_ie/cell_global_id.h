@@ -32,6 +32,9 @@ typedef struct{
 
 } cell_global_id_t;
 
+void free_cell_global_id(cell_global_id_t* src);
+
+
 bool eq_cell_global_id(cell_global_id_t const * m0, cell_global_id_t const * m1);
 
 #ifdef __cplusplus

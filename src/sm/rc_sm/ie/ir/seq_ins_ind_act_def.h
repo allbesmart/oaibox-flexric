@@ -8,6 +8,7 @@
 #include "ran_param_ins_ind.h"
 
 // From 9.2.1.2.4
+// From 9.2.1.4.6
 typedef struct{
   // Insert Indication ID
   // Mandatory
@@ -17,7 +18,8 @@ typedef struct{
 
   // List of RAN parameters for
   // Insert Indication
-  // [1-65535]
+  // [1-65535] 9.2.1.2.4
+  // [0-65535] 9.2.1.4.6
   size_t sz_ran_param_ins_ind;
   ran_param_ins_ind_t* ran_param_ins_ind;
 

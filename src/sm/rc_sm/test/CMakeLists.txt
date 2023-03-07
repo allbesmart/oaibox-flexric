@@ -99,6 +99,8 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
     ../ie/ir/e2sm_rc_ev_trg_frmt_5.c
 
     ../ie/ir/ue_info_chng.c 
+
+    ../ie/ir/ran_param_req.c 
     ../ie/ir/ran_param_list.c 
     ../ie/ir/ran_param_struct.c
     ../ie/ir/ran_param_elm_key_true.c
@@ -141,11 +143,11 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
 
 
     ../ie/ir/e2sm_rc_ind_msg_frmt_1.c
-    #../ie/ir/e2sm_rc_ind_msg_frmt_1.c
-    #../ie/ir/e2sm_rc_ind_msg_frmt_1.c
-    #../ie/ir/e2sm_rc_ind_msg_frmt_1.c
-    #../ie/ir/e2sm_rc_ind_msg_frmt_1.c
-    #../ie/ir/e2sm_rc_ind_msg_frmt_1.c
+    ../ie/ir/e2sm_rc_ind_msg_frmt_2.c
+    ../ie/ir/e2sm_rc_ind_msg_frmt_3.c
+    ../ie/ir/e2sm_rc_ind_msg_frmt_4.c
+    ../ie/ir/e2sm_rc_ind_msg_frmt_5.c
+    ../ie/ir/e2sm_rc_ind_msg_frmt_6.c
 
 
     ../ie/ir/param_report_def.c
@@ -153,12 +155,25 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
     ../ie/ir/ran_param_test_list.c
 
 
+
+    ../ie/ir/seq_cell_info.c
+    ../ie/ir/seq_cell_info_2.c
+    ../ie/ir/seq_ue_id.c
+    ../ie/ir/seq_ue_info.c
     ../ie/ir/seq_ins_ind_act_def.c
+    ../ie/ir/seq_ins_style_2.c
+    ../ie/ir/seq_ins_ind_act_2.c
+
     ../ie/ir/seq_ins_style_multiple_action.c 
 
     ../../../lib/sm/3gpp_derived_ie/rrc_msg_id.c
     ../../../lib/sm/enc_asn_sm_common/enc_ue_id.c
+    ../../../lib/sm/enc_asn_sm_common/enc_cell_global_id.c
+
+    ../../../lib/sm/sm_common_ie/cell_global_id.c
+
     ../../../lib/sm/dec_asn_sm_common/dec_ue_id.c
+    ../../../lib/sm/dec_asn_sm_common/dec_cell_global_id.c
 
 
     ../../../lib/sm/sm_common_ie/ue_id.c

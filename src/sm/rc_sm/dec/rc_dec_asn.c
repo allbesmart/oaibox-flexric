@@ -97,11 +97,32 @@
 
 #include "../ie/asn/E2SM-RC-IndicationMessage-Format1-Item.h"
 
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format2.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format2-Item.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format2-RANParameter-Item.h"
+
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format3.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format3-Item.h"
+
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format4.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format4-ItemUE.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format4-ItemCell.h"
+
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format5.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format5-Item.h"
+
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format6.h"
+
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format6-Style-Item.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format6-Indication-Item.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format6-RANP-Item.h"
+
 #include "../ie/asn/RANParameter-LIST.h"
 
 #include "../ie/ir/ran_param_list.h"
 
 #include "../../../lib/sm/dec_asn_sm_common/dec_ue_id.h" 
+#include "../../../lib/sm/dec_asn_sm_common/dec_cell_global_id.h"
 
 
 #include <string.h>
@@ -1666,6 +1687,372 @@ e2sm_rc_ind_msg_frmt_1_t dec_ind_msg_frmt_1(E2SM_RC_IndicationMessage_Format1_t 
   return dst;
 }
 
+static
+seq_ran_param_t dec_frmt_2_ran_param(E2SM_RC_IndicationMessage_Format2_RANParameter_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ran_param_t dst = {0}; 
+
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ranParameter_ID > 0);
+  dst.ran_param_id = src->ranParameter_ID;
+
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  dst.ran_param_val = cp_ran_param_value_type(&src->ranParameter_valueType);
+
+  return dst;
+}
+
+static
+seq_ue_id_t dec_seq_ue_id(E2SM_RC_IndicationMessage_Format2_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ue_id_t dst = {0}; 
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst.ue_id = dec_ue_id_asn(&src->ueID);
+
+  // Sequence of
+  // RAN Parameter
+  // [1- 65535]
+  assert(src->ranP_List.list.count > 0 && src->ranP_List.list.count <  65535+1); 
+
+  dst.sz_seq_ran_param = src->ranP_List.list.count;
+
+  dst.seq_ran_param = calloc(dst.sz_seq_ran_param ,sizeof(seq_ran_param_t));
+  assert(dst.seq_ran_param != NULL && "Memory exhausted" );
+
+  for(size_t i =0; i < dst.sz_seq_ran_param; ++i){
+    dst.seq_ran_param[i] = dec_frmt_2_ran_param(src->ranP_List.list.array[i]); 
+  }
+
+  return dst;
+}
+
+
+static
+e2sm_rc_ind_msg_frmt_2_t dec_ind_msg_frmt_2(E2SM_RC_IndicationMessage_Format2_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ind_msg_frmt_2_t dst = {0}; 
+
+  //Sequence of UE Identifier
+  //[1-65535]
+  assert(src->ueParameter_List.list.count > 0 && src->ueParameter_List.list.count < 65535+1);
+
+  dst.sz_seq_ue_id = src->ueParameter_List.list.count; 
+
+  dst.seq_ue_id = calloc(dst.sz_seq_ue_id, sizeof(seq_ue_id_t ) );
+  assert(dst.seq_ue_id != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ue_id; ++i){
+    dst.seq_ue_id[i] = dec_seq_ue_id( src->ueParameter_List.list.array[i]);
+  } 
+
+  return dst;
+}
+
+static
+seq_cell_info_t dec_ind_msg_frmt_3_it(E2SM_RC_IndicationMessage_Format3_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_cell_info_t dst = {0}; 
+
+  // Cell Global ID
+  // Mandatory
+  // 9.3.36
+  // 6.2.2.5
+  dst.cell_global_id = dec_cell_global_id_asn(&src->cellGlobal_ID);
+
+  // Cell Context Information
+  // Optional
+  // OCTET STRING
+  assert(src->cellContextInfo == NULL && "Not implemented" );
+
+  // Cell Deleted
+  // Optional
+  // BOOLEAN
+  assert(src->cellDeleted == NULL && "not implemented");
+
+  // Neighbour Relation Table
+  // Optional
+  // 9.3.38
+  assert(src->neighborRelation_Table == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+e2sm_rc_ind_msg_frmt_3_t dec_ind_msg_frmt_3(E2SM_RC_IndicationMessage_Format3_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ind_msg_frmt_3_t dst = {0}; 
+
+  // Sequence of Cell Information
+  // [1 - 65535]
+  assert(src->cellInfo_List.list.count > 0 &&  src->cellInfo_List.list.count < 65535+1);
+
+  dst.sz_seq_cell_info = src->cellInfo_List.list.count;
+
+  dst.seq_cell_info = calloc(dst.sz_seq_cell_info , sizeof(seq_cell_info_t ));
+  assert(dst.seq_cell_info != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_cell_info; ++i){
+    dst.seq_cell_info[i] = dec_ind_msg_frmt_3_it(src->cellInfo_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+static
+seq_ue_info_t dec_ind_msg_frmt_4_it_ue_info(E2SM_RC_IndicationMessage_Format4_ItemUE_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ue_info_t dst = {0}; 
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst.ue_id = dec_ue_id_asn(&src->ueID);
+
+  // UE Context Information
+  // Optional
+  // OCTET STRING
+  assert(src->ueContextInfo == NULL && "Not implemented");
+
+  // Cell Global ID
+  // Mandatory
+  // 9.3.36
+  dst.cell_global_id = dec_cell_global_id_asn(&src->cellGlobal_ID);
+
+  return dst;
+}
+
+static
+seq_cell_info_2_t dec_ind_msg_frmt_4_it_dell_info(E2SM_RC_IndicationMessage_Format4_ItemCell_t const* src)
+{
+  assert(src != NULL);
+
+  seq_cell_info_2_t dst = {0}; 
+
+  // Cell Global ID
+  // Mandatory
+  // 9.3.36
+  // 6.2.2.5. 
+  dst.cell_global_id = dec_cell_global_id_asn(&src->cellGlobal_ID);
+
+  // Cell Context Information
+  // Optional
+  // OCTET STRING
+  assert(src->cellContextInfo == NULL && "Not implemented");
+
+  // Neighbour Relation Table
+  // Optional
+  // 9.3.38
+  assert(src->neighborRelation_Table == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+e2sm_rc_ind_msg_frmt_4_t dec_ind_msg_frmt_4(E2SM_RC_IndicationMessage_Format4_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ind_msg_frmt_4_t dst = {0};
+
+  //Sequence of UE Information
+  // [0-65535]
+  assert(src->ueInfo_List.list.count < 65536);
+  if(src->ueInfo_List.list.count > 0){
+    dst.sz_seq_ue_info = src->ueInfo_List.list.count; 
+    dst.seq_ue_info = calloc(dst.sz_seq_ue_info, sizeof(seq_ue_info_t)); 
+    assert(dst.seq_ue_info != NULL && "Memory exhausted");
+  }
+
+  for(size_t i = 0; i < dst.sz_seq_ue_info; ++i){
+    dst.seq_ue_info[i] = dec_ind_msg_frmt_4_it_ue_info(src->ueInfo_List.list.array[i]); 
+  }
+
+  // Sequence of Cell Information
+  // [0-65535]
+  assert(src->cellInfo_List.list.count < 65536); 
+  if(src->cellInfo_List.list.count > 0){
+    dst.sz_seq_cell_info_2 = src->cellInfo_List.list.count; 
+    dst.seq_cell_info_2 = calloc(dst.sz_seq_cell_info_2, sizeof(seq_cell_info_2_t)); 
+    assert(dst.seq_cell_info_2 != NULL && "Memory exhausted");
+  }
+
+  for(size_t i = 0; i < dst.sz_seq_cell_info_2; ++i){
+    dst.seq_cell_info_2[i] = dec_ind_msg_frmt_4_it_dell_info(src->cellInfo_List.list.array[i]); 
+  }
+
+  return dst;
+}
+
+static
+seq_ran_param_t dec_ind_msg_frmt_5_it(E2SM_RC_IndicationMessage_Format5_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ran_param_t dst = {0}; 
+
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ranParameter_ID > 0);
+  dst.ran_param_id = src->ranParameter_ID;
+  
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  dst.ran_param_val = cp_ran_param_value_type(&src->ranParameter_valueType); 
+
+  return dst;
+}
+
+static
+e2sm_rc_ind_msg_frmt_5_t dec_ind_msg_frmt_5(E2SM_RC_IndicationMessage_Format5_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ind_msg_frmt_5_t dst = {0}; 
+
+  // List of RAN parameters requested
+  // [0-65535]
+  assert(src->ranP_Requested_List.list.count < 65536);
+ 
+  if(src->ranP_Requested_List.list.count > 0){
+    dst.sz_seq_ran_param = src->ranP_Requested_List.list.count;
+    dst.seq_ran_param = calloc(dst.sz_seq_ran_param, sizeof(seq_ran_param_t) ); 
+    assert(dst.seq_ran_param != NULL && "Memory exhausted" );
+  }
+
+  for(size_t i = 0; i < dst.sz_seq_ran_param; ++i){
+    dst.seq_ran_param[i] = dec_ind_msg_frmt_5_it(src->ranP_Requested_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+static
+ran_param_req_t dec_ran_param_req(E2SM_RC_IndicationMessage_Format6_RANP_Item_t const* src)
+{
+  assert(src != NULL);
+
+  ran_param_req_t dst = {0}; 
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // 1 4294967295,
+  assert(src->ranParameter_ID > 0 && src->ranParameter_ID <  4294967296);
+  dst.ran_param_id = src->ranParameter_ID;
+
+  // RAN Parameter Value Type
+  // Mandatory
+  // 9.3.11
+  dst.ran_param = cp_ran_param_value_type(&src->ranParameter_valueType);
+
+  return dst;
+}
+
+static
+seq_ins_ind_act_2_t dec_seq_ins_ind_act( E2SM_RC_IndicationMessage_Format6_Indication_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ins_ind_act_2_t dst = {0}; 
+
+  //  Insert Indication ID
+  //  Mandatory
+  //  9.3.16
+  //  1.. 65535
+  assert(src->ric_InsertIndication_ID > 0 && src->ric_InsertIndication_ID < 65536);
+  dst.ins_ind_id = src->ric_InsertIndication_ID;
+
+  // List of RAN parameters requested
+  // [0-65535]
+  if(src->ranP_InsertIndication_List.list.count > 0){
+    dst.sz_ran_param_req = src->ranP_InsertIndication_List.list.count;
+    dst.ran_param_req = calloc(dst.sz_ran_param_req , sizeof(ran_param_req_t));
+    assert(dst.ran_param_req != NULL && "memory exhausted");
+  }
+
+  for(size_t i = 0; i < dst.sz_ran_param_req; ++i){
+    dst.ran_param_req[i] = dec_ran_param_req(src->ranP_InsertIndication_List.list.array[i]);    
+  }
+
+  return dst;
+}
+
+
+static
+seq_ins_style_2_t dec_seq_ins_style(E2SM_RC_IndicationMessage_Format6_Style_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ins_style_2_t dst = {0}; 
+
+  // Indicated Insert Style
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst.ind_ins_style = src->indicated_Insert_Style_Type;
+
+  // Sequence of Insert Indication Actions
+  // [1-63]
+  assert(src->ric_InsertIndication_List.list.count > 0 && src->ric_InsertIndication_List.list.count < 64);
+  
+  dst.sz_seq_ins_ind_act_2 = src->ric_InsertIndication_List.list.count;
+  dst.seq_ins_ind_act = calloc(dst.sz_seq_ins_ind_act_2, sizeof(seq_ins_ind_act_2_t));
+  assert(dst.seq_ins_ind_act != NULL && "Memory exhausted" );
+
+  for(size_t i = 0; i < dst.sz_seq_ins_ind_act_2; ++i){
+    dst.seq_ins_ind_act[i] = dec_seq_ins_ind_act(src->ric_InsertIndication_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+static
+e2sm_rc_ind_msg_frmt_6_t dec_ind_msg_frmt_6(E2SM_RC_IndicationMessage_Format6_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ind_msg_frmt_6_t dst = {0}; 
+
+  // Sequence of Insert Styles for Multiple Actions
+  // [1-63]
+  assert(src->ric_InsertStyle_List.list.count > 0 && src->ric_InsertStyle_List.list.count < 64);
+  
+  dst.sz_seq_ins_style_ind_msg = src->ric_InsertStyle_List.list.count; 
+
+  dst.seq_ins_style = calloc(dst.sz_seq_ins_style_ind_msg, sizeof(seq_ins_style_2_t));
+  assert(dst.seq_ins_style != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i <dst.sz_seq_ins_style_ind_msg; ++i){
+    dst.seq_ins_style[i] = dec_seq_ins_style(src->ric_InsertStyle_List.list.array[i]);
+  }
+
+  return dst;
+}
+
 
 e2sm_rc_ind_msg_t rc_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len])
 {
@@ -1688,25 +2075,20 @@ e2sm_rc_ind_msg_t rc_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len])
     dst.format = FORMAT_1_E2SM_RC_IND_MSG ;
     dst.frmt_1 = dec_ind_msg_frmt_1(src.ric_indicationMessage_formats.choice.indicationMessage_Format1);
   } else if(src.ric_indicationMessage_formats.present == E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format2){
-    assert(0!=0 && "Not implemented");
     dst.format = FORMAT_2_E2SM_RC_IND_MSG ;
-
+    dst.frmt_2 = dec_ind_msg_frmt_2(src.ric_indicationMessage_formats.choice.indicationMessage_Format2);
   } else if(src.ric_indicationMessage_formats.present == E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format3){
-    assert(0!=0 && "Not implemented");
-
     dst.format = FORMAT_3_E2SM_RC_IND_MSG ;
+    dst.frmt_3 = dec_ind_msg_frmt_3(src.ric_indicationMessage_formats.choice.indicationMessage_Format3);
   } else if(src.ric_indicationMessage_formats.present == E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format4){
-    assert(0!=0 && "Not implemented");
-
     dst.format = FORMAT_4_E2SM_RC_IND_MSG ;
+    dst.frmt_4 = dec_ind_msg_frmt_4(src.ric_indicationMessage_formats.choice.indicationMessage_Format4);
   } else if(src.ric_indicationMessage_formats.present == E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format5){
-    assert(0!=0 && "Not implemented");
-
     dst.format = FORMAT_5_E2SM_RC_IND_MSG ;
+    dst.frmt_5 = dec_ind_msg_frmt_5(src.ric_indicationMessage_formats.choice.indicationMessage_Format5);
   } else if(src.ric_indicationMessage_formats.present == E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format6){
-    assert(0!=0 && "Not implemented");
     dst.format = FORMAT_6_E2SM_RC_IND_MSG ;
-    
+    dst.frmt_6 = dec_ind_msg_frmt_6(src.ric_indicationMessage_formats.choice.indicationMessage_Format6);
   } else {
     assert(0!=0 && "Unknown format type");
   }

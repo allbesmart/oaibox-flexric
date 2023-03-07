@@ -136,7 +136,7 @@ typedef enum {
   KPMV2_CELL_ID_CHOICE_NOTHING = 0, 
   KPMV2_CELL_ID_CHOICE_NR_CGI, 
   KPMV2_CELL_ID_CHOICE_EUTRA_CGI 
-} cell_global_id_t;
+} cell_global_id_e;
 
 /*******************************************************
  * SEC 2. RIC Action Definition as per $8.2.1.2
@@ -167,7 +167,7 @@ typedef struct kpm_action_def_t
   MeasInfo_t                    *MeasInfo;    
   
   // If cellGlobalIDtype == choice_NOTHING, the field 'cellGlobalID' in asn format will be NULL
-  cell_global_id_t cell_global_id;
+  cell_global_id_e cell_global_id;
 
   adapter_NRCellIdentity_t      nRCellIdentity;
   adapter_PLMNIdentity_t	      pLMNIdentity;

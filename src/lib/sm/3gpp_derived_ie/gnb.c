@@ -1,6 +1,5 @@
 #include <assert.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "gnb.h"
 
@@ -35,8 +34,6 @@ bool eq_gnb_ue_id(gnb_t const * m0, gnb_t const * m1)
     assert(m0 != NULL);
     assert(m1 != NULL);
 
-    printf("Step -1 \n");
-
     // AMF UE NGAP ID
     if (m0->amf_ue_ngap_id != m1->amf_ue_ngap_id){
       assert(0!=0 && "Debug assert");
@@ -69,7 +66,6 @@ bool eq_gnb_ue_id(gnb_t const * m0, gnb_t const * m1)
           return false;
     }
    
-    printf("Before RAN UE ID\n");
     // RAN UE ID
     if (m0->ran_ue_id != NULL && m1->ran_ue_id != NULL && *m0->ran_ue_id != *m1->ran_ue_id)
       return false;

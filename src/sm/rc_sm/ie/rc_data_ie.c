@@ -285,23 +285,18 @@ void free_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t* src)
 {
   assert(src != NULL);
 
-  if(src->format == FORMAT_1_E2SM_RC_IND_MSG ){
+  if(src->format == FORMAT_1_E2SM_RC_IND_MSG){
     free_e2sm_rc_ind_msg_frmt_1(&src->frmt_1);
-  } else if(src->format ==  FORMAT_2_E2SM_RC_IND_MSG ){
-
-  assert(0!=0 && "Not implemented");
-  } else if(src->format == FORMAT_3_E2SM_RC_IND_MSG  ){
-
-  assert(0!=0 && "Not implemented");
-  } else if(src->format ==  FORMAT_4_E2SM_RC_IND_MSG ){
-
-  assert(0!=0 && "Not implemented");
-  } else if(src->format ==  FORMAT_5_E2SM_RC_IND_MSG ){
-
-  assert(0!=0 && "Not implemented");
-  } else if(src->format ==  FORMAT_6_E2SM_RC_IND_MSG ){
-  assert(0!=0 && "Not implemented");
-
+  } else if(src->format == FORMAT_2_E2SM_RC_IND_MSG){
+    free_e2sm_rc_ind_msg_frmt_2(&src->frmt_2);
+  } else if(src->format == FORMAT_3_E2SM_RC_IND_MSG){
+    free_e2sm_rc_ind_msg_frmt_3(&src->frmt_3);
+  } else if(src->format ==  FORMAT_4_E2SM_RC_IND_MSG){
+    free_e2sm_rc_ind_msg_frmt_4(&src->frmt_4);
+  } else if(src->format == FORMAT_5_E2SM_RC_IND_MSG){
+    free_e2sm_rc_ind_msg_frmt_5(&src->frmt_5);
+  } else if(src->format == FORMAT_6_E2SM_RC_IND_MSG){
+    free_e2sm_rc_ind_msg_frmt_6(&src->frmt_6);
   } else{
     assert(0 != 0 && "Unknown format");
   }
@@ -333,25 +328,21 @@ bool eq_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t const* m0, e2sm_rc_ind_msg_t const* m1
 
   if(m0->format == FORMAT_1_E2SM_RC_IND_MSG ){ 
     return eq_e2sm_rc_ind_msg_frmt_1(&m0->frmt_1, &m1->frmt_1);
-  } else if(m0->format == FORMAT_2_E2SM_RC_IND_MSG  ){
-    assert(0!=0 && "Not implemented");
-  }else if(m0->format == FORMAT_3_E2SM_RC_IND_MSG  ){
-
-    assert(0!=0 && "Not implemented");
-  }else if(m0->format == FORMAT_4_E2SM_RC_IND_MSG  ){
-
-    assert(0!=0 && "Not implemented");
+  } else if(m0->format == FORMAT_2_E2SM_RC_IND_MSG){
+    return eq_e2sm_rc_ind_msg_frmt_2(&m0->frmt_2, &m1->frmt_2);
+  }else if(m0->format == FORMAT_3_E2SM_RC_IND_MSG){
+    return eq_e2sm_rc_ind_msg_frmt_3(&m0->frmt_3, &m1->frmt_3);
+  }else if(m0->format == FORMAT_4_E2SM_RC_IND_MSG){
+    return eq_e2sm_rc_ind_msg_frmt_4(&m0->frmt_4, &m1->frmt_4);
   }else if(m0->format ==  FORMAT_5_E2SM_RC_IND_MSG ){
-
-    assert(0!=0 && "Not implemented");
+    return eq_e2sm_rc_ind_msg_frmt_5(&m0->frmt_5, &m1->frmt_5);
   }else if(m0->format ==  FORMAT_6_E2SM_RC_IND_MSG ){
-
-    assert(0!=0 && "Not implemented");
+    return eq_e2sm_rc_ind_msg_frmt_6(&m0->frmt_6, &m1->frmt_6);
   } else {
     assert(0 != 0 && "Unknown format");
   }
 
-
+  assert(0 != 0 && "Impossible path");
 
 
   return true;

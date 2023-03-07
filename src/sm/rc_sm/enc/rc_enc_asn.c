@@ -99,7 +99,22 @@
 #include "../ie/asn/E2SM-RC-IndicationMessage-Format6.h"
 
 #include "../ie/asn/E2SM-RC-IndicationMessage-Format1-Item.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format2-Item.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format2-RANParameter-Item.h"
 
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format3-Item.h"
+
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format4-ItemUE.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format4-ItemCell.h"
+
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format5-Item.h"
+
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format6-Style-Item.h"
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format6-RANP-Item.h"
+
+#include "../ie/asn/E2SM-RC-IndicationMessage-Format6-Indication-Item.h"
+
+#include "../../../lib/sm/enc_asn_sm_common/enc_cell_global_id.h"
 
 
 #include "../../../lib/sm/enc_asn_sm_common/enc_ue_id.h"
@@ -1505,6 +1520,353 @@ E2SM_RC_IndicationMessage_Format1_t* enc_ind_msg_frmt_1(e2sm_rc_ind_msg_frmt_1_t
   return dst;
 }
 
+static
+E2SM_RC_IndicationMessage_Format2_RANParameter_Item_t* enc_ind_msg_frmt_2_ran_param(seq_ran_param_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format2_RANParameter_Item_t* dst = calloc(1, sizeof(E2SM_RC_IndicationMessage_Format2_RANParameter_Item_t));
+  assert(dst != NULL && "Memorye xhausted");
+
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ran_param_id > 0);
+  dst->ranParameter_ID = src->ran_param_id;
+
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  dst->ranParameter_valueType = cp_ran_param_value_type(&src->ran_param_val);
+
+  return dst;
+}
+
+static
+E2SM_RC_IndicationMessage_Format2_Item_t* enc_ind_msg_frmt_2_it(seq_ue_id_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format2_Item_t* dst = calloc(1, sizeof(E2SM_RC_IndicationMessage_Format2_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst->ueID = enc_ue_id_asn(&src->ue_id);
+
+  // Sequence of
+  // RAN Parameter
+  // [1- 65535]
+  assert(src->sz_seq_ran_param > 0 && src->sz_seq_ran_param < 65535+1); 
+
+  for(size_t i = 0; i < src->sz_seq_ran_param; ++i){
+    E2SM_RC_IndicationMessage_Format2_RANParameter_Item_t* ie = enc_ind_msg_frmt_2_ran_param(&src->seq_ran_param[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ranP_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+
+static
+E2SM_RC_IndicationMessage_Format2_t* enc_ind_msg_frmt_2(e2sm_rc_ind_msg_frmt_2_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format2_t* dst = calloc(1, sizeof(E2SM_RC_IndicationMessage_Format2_t));
+  assert(dst != NULL && "Memorye exhausted");
+
+  //Sequence of UE Identifier
+  //[1-65535]
+  assert(src->sz_seq_ue_id > 0 && src->sz_seq_ue_id < 65535+1);
+
+  for(size_t i = 0; i <  src->sz_seq_ue_id; ++i){
+    E2SM_RC_IndicationMessage_Format2_Item_t* ie = enc_ind_msg_frmt_2_it(&src->seq_ue_id[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ueParameter_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+E2SM_RC_IndicationMessage_Format3_Item_t* enc_ind_msg_frmt_3_it(seq_cell_info_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format3_Item_t* dst = calloc(1, sizeof(E2SM_RC_IndicationMessage_Format3_Item_t));
+
+  // Cell Global ID
+  // Mandatory
+  // 9.3.36
+  // 6.2.2.5
+  dst->cellGlobal_ID = enc_cell_global_id_asn(&src->cell_global_id);
+
+  // Cell Context Information
+  // Optional
+  // OCTET STRING
+  assert(src->cell_ctx_info == NULL && "Not implemented"); 
+
+  // Cell Deleted
+  // Optional
+  // BOOLEAN
+  assert(src->cell_del == NULL && "Not implemented"); 
+
+  // Neighbour Relation Table
+  // Optional
+  // 9.3.38
+  assert(src->neighbour_rela_tbl == NULL && "not implemented");
+
+  return dst;
+}
+
+static
+E2SM_RC_IndicationMessage_Format3_t* enc_ind_msg_frmt_3(e2sm_rc_ind_msg_frmt_3_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format3_t* dst = calloc(1, sizeof(E2SM_RC_IndicationMessage_Format3_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // Sequence of Cell Information
+  // [1 - 65535]
+  assert(src->sz_seq_cell_info > 0 && src->sz_seq_cell_info < 65535+1);
+
+  for(size_t i = 0; i < src->sz_seq_cell_info; ++i){
+    E2SM_RC_IndicationMessage_Format3_Item_t* ie = enc_ind_msg_frmt_3_it(&src->seq_cell_info[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->cellInfo_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+E2SM_RC_IndicationMessage_Format4_ItemUE_t* enc_ind_msg_frmt_4_it_ue(seq_ue_info_t const* src)
+{
+  assert(src != NULL);
+ 
+  E2SM_RC_IndicationMessage_Format4_ItemUE_t* dst = calloc(1 ,sizeof(E2SM_RC_IndicationMessage_Format4_ItemUE_t)); 
+  assert(dst != NULL && "Memory exhausted");
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst->ueID = enc_ue_id_asn(&src->ue_id);
+
+  // UE Context Information
+  // Optiona;
+  // OCTET STRING
+  assert(src->ue_ctx_info == NULL && "not implemented"); 
+
+  // Cell Global ID
+  // Mandatory
+  // 9.3.36
+  dst->cellGlobal_ID = enc_cell_global_id_asn(&src->cell_global_id); 
+
+  return dst;
+}
+
+static
+E2SM_RC_IndicationMessage_Format4_ItemCell_t* enc_ind_msg_frmt_4_it_cell(seq_cell_info_2_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format4_ItemCell_t* dst = calloc(1, sizeof(E2SM_RC_IndicationMessage_Format4_ItemCell_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // Cell Global ID
+  // Mandatory
+  // 9.3.36
+  // 6.2.2.5. 
+  dst->cellGlobal_ID = enc_cell_global_id_asn(&src->cell_global_id);
+
+  // Cell Context Information
+  // Optional
+  // OCTET STRING
+  assert(src->cell_ctx_info == NULL && "not implemented");
+
+  // Neighbour Relation Table
+  // Optional
+  // 9.3.38
+  assert(src->neighbour_rela_tbl == NULL && "Not implemented");
+
+  return dst;
+}
+
+
+static
+E2SM_RC_IndicationMessage_Format4_t* enc_ind_msg_frmt_4(e2sm_rc_ind_msg_frmt_4_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format4_t* dst = calloc(1, sizeof(E2SM_RC_IndicationMessage_Format4_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  //Sequence of UE Information
+  // [0-65535]
+  for(size_t i = 0; i < src->sz_seq_ue_info; ++i){
+    E2SM_RC_IndicationMessage_Format4_ItemUE_t* ie = enc_ind_msg_frmt_4_it_ue(&src->seq_ue_info[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ueInfo_List.list, ie);
+    assert(rc == 0);
+  }
+
+  // Sequence of Cell Information
+  // [0-65535]
+   for(size_t i = 0; i < src->sz_seq_cell_info_2; ++i){
+    E2SM_RC_IndicationMessage_Format4_ItemCell_t* ie = enc_ind_msg_frmt_4_it_cell(&src->seq_cell_info_2[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->cellInfo_List.list, ie);
+    assert(rc == 0);
+  }
+
+   return dst;
+}
+
+static
+E2SM_RC_IndicationMessage_Format5_Item_t* enc_ind_msg_frmt_5_it(seq_ran_param_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format5_Item_t* dst = calloc(1, sizeof( E2SM_RC_IndicationMessage_Format5_Item_t ));
+  assert(dst != NULL && "Memory exhausted");
+
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ran_param_id > 0);
+  dst->ranParameter_ID = src->ran_param_id;
+
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  dst->ranParameter_valueType = cp_ran_param_value_type(&src->ran_param_val); 
+
+  return dst;
+}
+
+static    
+E2SM_RC_IndicationMessage_Format5_t* enc_ind_msg_frmt_5(e2sm_rc_ind_msg_frmt_5_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format5_t* dst = calloc(1 , sizeof(E2SM_RC_IndicationMessage_Format5_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // List of RAN parameters requested
+  // [0-65535]
+  for(size_t i = 0 ; i < src->sz_seq_ran_param; ++i){
+    E2SM_RC_IndicationMessage_Format5_Item_t* ie = enc_ind_msg_frmt_5_it(&src->seq_ran_param[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ranP_Requested_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+E2SM_RC_IndicationMessage_Format6_RANP_Item_t* enc_ind_msg_frmt_6_ran(ran_param_req_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format6_RANP_Item_t* dst = calloc(1, sizeof(E2SM_RC_IndicationMessage_Format6_RANP_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // 1 4294967295,
+  assert(src->ran_param_id > 0); 
+  dst->ranParameter_ID = src->ran_param_id;
+
+  // RAN Parameter Value Type
+  // Mandatory
+  // 9.3.11
+  dst->ranParameter_valueType = cp_ran_param_value_type(&src->ran_param);
+
+  return dst;
+}
+
+
+static
+E2SM_RC_IndicationMessage_Format6_Indication_Item_t* enc_ind_msg_frmt_6_ind_it(seq_ins_ind_act_2_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format6_Indication_Item_t* dst = calloc(1, sizeof(E2SM_RC_IndicationMessage_Format6_Indication_Item_t ));
+  assert(dst != NULL && "memory exhausted");
+
+  //  Insert Indication ID
+  //  Mandatory
+  //  9.3.16
+  //  1.. 65535
+  assert(src->ins_ind_id > 0);
+  dst->ric_InsertIndication_ID = src->ins_ind_id;
+
+  // List of RAN parameters requested
+  // [0-65535]
+  for(size_t i = 0; i < src->sz_ran_param_req; ++i){
+    E2SM_RC_IndicationMessage_Format6_RANP_Item_t* ie = enc_ind_msg_frmt_6_ran(&src->ran_param_req[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ranP_InsertIndication_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+E2SM_RC_IndicationMessage_Format6_Style_Item_t* enc_ind_msg_frmt_6_it(seq_ins_style_2_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format6_Style_Item_t* dst = calloc(1, sizeof(E2SM_RC_IndicationMessage_Format6_Style_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // Indicated Insert Style
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst->indicated_Insert_Style_Type = src->ind_ins_style; 
+
+  // Sequence of Insert Indication Action
+  // [1-63]
+  assert(src->sz_seq_ins_ind_act_2 > 0 && src->sz_seq_ins_ind_act_2 < 64);
+
+  for(size_t i = 0; i < src->sz_seq_ins_ind_act_2; ++i){
+    E2SM_RC_IndicationMessage_Format6_Indication_Item_t* ie = enc_ind_msg_frmt_6_ind_it(&src->seq_ins_ind_act[i]); 
+    int rc = ASN_SEQUENCE_ADD(&dst->ric_InsertIndication_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+E2SM_RC_IndicationMessage_Format6_t* enc_ind_msg_frmt_6(e2sm_rc_ind_msg_frmt_6_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_IndicationMessage_Format6_t* dst = calloc(1, sizeof(E2SM_RC_IndicationMessage_Format6_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // Sequence of Insert Styles for Multiple Actions
+  // [1-63]
+  assert(src->sz_seq_ins_style_ind_msg> 0 && src->sz_seq_ins_style_ind_msg < 64); 
+
+  for(size_t i = 0 ; i < src->sz_seq_ins_style_ind_msg; ++i){
+    E2SM_RC_IndicationMessage_Format6_Style_Item_t* ie = enc_ind_msg_frmt_6_it(&src->seq_ins_style[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ric_InsertStyle_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+
 
 byte_array_t rc_enc_ind_msg_asn(e2sm_rc_ind_msg_t const* src)
 {
@@ -1517,23 +1879,19 @@ byte_array_t rc_enc_ind_msg_asn(e2sm_rc_ind_msg_t const* src)
     dst.ric_indicationMessage_formats.choice.indicationMessage_Format1 = enc_ind_msg_frmt_1(&src->frmt_1) ;
   } else if(src->format == FORMAT_2_E2SM_RC_IND_MSG){
     dst.ric_indicationMessage_formats.present =E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format2;
-    assert(0!=0 && "Not implemented");
+    dst.ric_indicationMessage_formats.choice.indicationMessage_Format2 = enc_ind_msg_frmt_2(&src->frmt_2);
   } else if(src->format == FORMAT_3_E2SM_RC_IND_MSG){
     dst.ric_indicationMessage_formats.present = E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format3;
-    assert(0!=0 && "Not implemented");
-
+    dst.ric_indicationMessage_formats.choice.indicationMessage_Format3 = enc_ind_msg_frmt_3(&src->frmt_3);
   } else if(src->format == FORMAT_4_E2SM_RC_IND_MSG){
     dst.ric_indicationMessage_formats.present = E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format4;
-    assert(0!=0 && "Not implemented");
-
+    dst.ric_indicationMessage_formats.choice.indicationMessage_Format4 = enc_ind_msg_frmt_4(&src->frmt_4);
   } else if(src->format == FORMAT_5_E2SM_RC_IND_MSG){
     dst.ric_indicationMessage_formats.present = E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format5;
-    assert(0!=0 && "Not implemented");
-
+    dst.ric_indicationMessage_formats.choice.indicationMessage_Format5 = enc_ind_msg_frmt_5(&src->frmt_5);
   } else if(src->format == FORMAT_6_E2SM_RC_IND_MSG){
     dst.ric_indicationMessage_formats.present = E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format6;
-    assert(0!=0 && "Not implemented");
-
+    dst.ric_indicationMessage_formats.choice.indicationMessage_Format6 = enc_ind_msg_frmt_6(&src->frmt_6);
   } else {
     assert(0!=0 && "Unknown format type");
   }
@@ -1541,7 +1899,7 @@ byte_array_t rc_enc_ind_msg_asn(e2sm_rc_ind_msg_t const* src)
   xer_fprint(stdout, &asn_DEF_E2SM_RC_IndicationMessage, &dst);
   fflush(stdout);
 
-  byte_array_t ba = {.buf = malloc(1024), .len = 1024};
+  byte_array_t ba = {.buf = malloc(64*1024), .len = 16*1024};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
   asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_RC_IndicationMessage, &dst, ba.buf, ba.len);
   assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);

@@ -9,7 +9,7 @@ extern "C" {
 #include "../../../sm/kpm_sm_v02.03/ie/asn/CGI.h"
 #include "../sm_common_ie/cell_global_id.h"
 
-cell_global_id_t * dec_cell_global_id_asn(const CGI_t * cell_global_id_asn);
+cell_global_id_t dec_cell_global_id_asn(const CGI_t * cell_global_id_asn);
 
 #ifdef __cplusplus
 }

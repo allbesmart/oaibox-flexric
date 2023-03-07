@@ -206,11 +206,11 @@ typedef struct {
   e2sm_rc_ind_msg_format_e format; 
   union{
     e2sm_rc_ind_msg_frmt_1_t frmt_1; // 9.2.1.4.1
-//    e2sm_rc_ind_msg_frmt_2_t frmt_2; // 9.2.1.4.2
-//    e2sm_rc_ind_msg_frmt_3_t frmt_3; // 9.2.1.4.3
-//    e2sm_rc_ind_msg_frmt_4_t frmt_4; // 9.2.1.4.4
-//    e2sm_rc_ind_msg_frmt_5_t frmt_5; // 9.2.1.4.5
-//    e2sm_rc_ind_msg_frmt_6_t frmt_6; // 9.2.1.4.6
+    e2sm_rc_ind_msg_frmt_2_t frmt_2; // 9.2.1.4.2
+    e2sm_rc_ind_msg_frmt_3_t frmt_3; // 9.2.1.4.3
+    e2sm_rc_ind_msg_frmt_4_t frmt_4; // 9.2.1.4.4
+    e2sm_rc_ind_msg_frmt_5_t frmt_5; // 9.2.1.4.5
+    e2sm_rc_ind_msg_frmt_6_t frmt_6; // 9.2.1.4.6
   };
 
 } e2sm_rc_ind_msg_t;

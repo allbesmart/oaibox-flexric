@@ -3,6 +3,7 @@
 
 #include "seq_ran_param.h"
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include "../../../../lib/sm/sm_common_ie/ue_id.h"
 
@@ -21,6 +22,10 @@ typedef struct{
   seq_ran_param_t* seq_ran_param;
 
 } seq_ue_id_t;
+
+void free_seq_ue_id(seq_ue_id_t* src);
+
+bool eq_seq_ue_id(seq_ue_id_t const* m0, seq_ue_id_t const* m1);
 
 
 #endif

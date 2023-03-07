@@ -1069,16 +1069,15 @@ E2SM-RC-IndicationHeader-Format3 ::= SEQUENCE {
 -- ***************************************************
 
 E2SM-RC-IndicationMessage ::= SEQUENCE {
-ric-indicationMessage-formats		CHOICE {
-		indicationMessage-Format1			E2SM-RC-IndicationMessage-Format1,
-		indicationMessage-Format2			E2SM-RC-IndicationMessage-Format2,
-		indicationMessage-Format3			E2SM-RC-IndicationMessage-Format3,
-    		indicationMessage-Format4			E2SM-RC-IndicationMessage-Format4,
-		indicationMessage-Format5			E2SM-RC-IndicationMessage-Format5,
-		...,
-		indicationMessage-Format6			E2SM-RC-IndicationMessage-Format6
-
-	},
+  ric-indicationMessage-formats		CHOICE {
+    indicationMessage-Format1			E2SM-RC-IndicationMessage-Format1,
+      indicationMessage-Format2			E2SM-RC-IndicationMessage-Format2,
+      indicationMessage-Format3			E2SM-RC-IndicationMessage-Format3,
+      indicationMessage-Format4			E2SM-RC-IndicationMessage-Format4,
+      indicationMessage-Format5			E2SM-RC-IndicationMessage-Format5,
+      indicationMessage-Format6			E2SM-RC-IndicationMessage-Format6,
+      ...
+  },
 	...
 }
 

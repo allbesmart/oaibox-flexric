@@ -27,8 +27,9 @@ typedef enum E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR {
 	E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format3,
 	E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format4,
 	E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format5,
-	/* Extensions may appear below */
 	E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR_indicationMessage_Format6
+	/* Extensions may appear below */
+	
 } E2SM_RC_IndicationMessage__ric_indicationMessage_formats_PR;
 
 /* Forward declarations */
@@ -49,11 +50,11 @@ typedef struct E2SM_RC_IndicationMessage {
 			struct E2SM_RC_IndicationMessage_Format3	*indicationMessage_Format3;
 			struct E2SM_RC_IndicationMessage_Format4	*indicationMessage_Format4;
 			struct E2SM_RC_IndicationMessage_Format5	*indicationMessage_Format5;
+			struct E2SM_RC_IndicationMessage_Format6	*indicationMessage_Format6;
 			/*
 			 * This type is extensible,
 			 * possible extensions are below.
 			 */
-			struct E2SM_RC_IndicationMessage_Format6	*indicationMessage_Format6;
 		} choice;
 		
 		/* Context for parsing across buffer boundaries */

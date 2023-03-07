@@ -14,7 +14,7 @@
 #include "E2SM-RC-IndicationMessage-Format5.h"
 #include "E2SM-RC-IndicationMessage-Format6.h"
 static asn_per_constraints_t asn_PER_type_ric_indicationMessage_formats_constr_2 CC_NOTUSED = {
-	{ APC_CONSTRAINED | APC_EXTENSIBLE,  3,  3,  0,  4 }	/* (0..4,...) */,
+	{ APC_CONSTRAINED | APC_EXTENSIBLE,  3,  3,  0,  5 }	/* (0..5,...) */,
 	{ APC_UNCONSTRAINED,	-1, -1,  0,  0 },
 	0, 0	/* No PER value map */
 };
@@ -90,7 +90,7 @@ static asn_CHOICE_specifics_t asn_SPC_ric_indicationMessage_formats_specs_2 = {
 	asn_MAP_ric_indicationMessage_formats_tag2el_2,
 	6,	/* Count of tags in the map */
 	0, 0,
-	5	/* Extensions start */
+	6	/* Extensions start */
 };
 static /* Use -fall-defs-global to expose */
 asn_TYPE_descriptor_t asn_DEF_ric_indicationMessage_formats_2 = {

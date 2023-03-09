@@ -120,7 +120,8 @@ static
 
 
   rc_ctrl_req_data_t const* req = &data->rc_ctrl;
-  assert(req->hdr.dummy == 0);
+  assert(0!=0 && "Fix control header");
+//  assert(req->hdr.dummy == 0);
   assert(req->msg.action == 42);
 
   sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  

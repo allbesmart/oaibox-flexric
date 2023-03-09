@@ -12,4 +12,8 @@ e2sm_rc_ind_hdr_t fill_rnd_rc_ind_hdr(void);
 
 e2sm_rc_ind_msg_t fill_rnd_rc_ind_msg(void);
 
+e2sm_rc_cpid_t fill_rnd_rc_cpid(void);
+
+e2sm_rc_ctrl_hdr_t fill_rnd_rc_ctrl_hdr(void);
+
 #endif

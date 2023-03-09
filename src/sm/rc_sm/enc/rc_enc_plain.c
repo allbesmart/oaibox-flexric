@@ -79,7 +79,7 @@ byte_array_t rc_enc_ind_msg_plain(e2sm_rc_ind_msg_t const* ind_msg)
   return ba;
 }
 
-byte_array_t rc_enc_call_proc_id_plain(rc_call_proc_id_t const* call_proc_id)
+byte_array_t rc_enc_call_proc_id_plain(e2sm_rc_cpid_t const* call_proc_id)
 {
   assert(0!=0 && "Not implemented");
 
@@ -88,16 +88,16 @@ byte_array_t rc_enc_call_proc_id_plain(rc_call_proc_id_t const* call_proc_id)
   return ba;
 }
 
-byte_array_t rc_enc_ctrl_hdr_plain(rc_ctrl_hdr_t const* ctrl_hdr)
+byte_array_t rc_enc_ctrl_hdr_plain(e2sm_rc_ctrl_hdr_t const* ctrl_hdr)
 {
   assert(ctrl_hdr != NULL);
   byte_array_t  ba = {0};
-  ba.buf = malloc(sizeof(rc_ind_msg_t)); 
+  ba.buf = malloc(sizeof(e2sm_rc_ctrl_hdr_t)); 
   assert(ba.buf != NULL && "Memory exhausted");
 
-  memcpy(ba.buf, ctrl_hdr, sizeof(rc_ctrl_hdr_t));
+  memcpy(ba.buf, ctrl_hdr, sizeof(e2sm_rc_ctrl_hdr_t));
 
-  ba.len = sizeof(rc_ctrl_hdr_t);
+  ba.len = sizeof(e2sm_rc_ctrl_hdr_t);
   return ba;
 }
 
@@ -111,7 +111,7 @@ byte_array_t rc_enc_ctrl_msg_plain(rc_ctrl_msg_t const* ctrl_msg)
 
   memcpy(ba.buf, ctrl_msg, sizeof(rc_ctrl_msg_t));
 
-  ba.len = sizeof(rc_ctrl_hdr_t);
+  ba.len = sizeof(rc_ctrl_msg_t);
   return ba;
 }
 

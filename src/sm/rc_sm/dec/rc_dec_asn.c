@@ -117,6 +117,13 @@
 #include "../ie/asn/E2SM-RC-IndicationMessage-Format6-Indication-Item.h"
 #include "../ie/asn/E2SM-RC-IndicationMessage-Format6-RANP-Item.h"
 
+#include "../ie/asn/E2SM-RC-CallProcessID.h"
+
+#include "../ie/asn/E2SM-RC-CallProcessID-Format1.h"
+#include "../ie/asn/E2SM-RC-ControlHeader.h"
+
+#include "../ie/asn/E2SM-RC-ControlHeader-Format1.h"
+
 #include "../ie/asn/RANParameter-LIST.h"
 
 #include "../ie/ir/ran_param_list.h"
@@ -2096,20 +2103,97 @@ e2sm_rc_ind_msg_t rc_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len])
   return dst;
 }
 
-rc_call_proc_id_t rc_dec_call_proc_id_asn(size_t len, uint8_t const call_proc_id[len])
+e2sm_rc_cpid_t rc_dec_cpid_asn(size_t len, uint8_t const call_proc_id[len])
 {
-  assert(0!=0 && "Not implemented");
   assert(call_proc_id != NULL);
-  rc_call_proc_id_t avoid_warning;
-  return avoid_warning;
+
+  E2SM_RC_CallProcessID_t src = {0};
+  defer({  ASN_STRUCT_RESET(asn_DEF_E2SM_RC_CallProcessID, &src); });
+  E2SM_RC_CallProcessID_t* src_ref = &src;
+
+  asn_dec_rval_t const ret = aper_decode(NULL, &asn_DEF_E2SM_RC_CallProcessID, (void **)&src_ref, call_proc_id, len, 0, 0);
+  assert(ret.code == RC_OK);
+
+  //  xer_fprint(stdout, &asn_DEF_E2SM_RC_EventTrigger, &src);
+  //  fflush(stdout);
+
+  e2sm_rc_cpid_t dst = {0}; 
+
+  // RIC Call Process ID
+  // Mandatory
+  // 9.3.18
+  // [ 1 - 4294967295]
+  assert(src.ric_callProcessID_formats.present == E2SM_RC_CallProcessID__ric_callProcessID_formats_PR_callProcessID_Format1);
+  assert(src.ric_callProcessID_formats.choice.callProcessID_Format1->ric_callProcess_ID > 0 && src.ric_callProcessID_formats.choice.callProcessID_Format1->ric_callProcess_ID < 4294967296);
+
+  dst.ric_cpid = src.ric_callProcessID_formats.choice.callProcessID_Format1->ric_callProcess_ID;
+
+  return dst;
 }
 
-rc_ctrl_hdr_t rc_dec_ctrl_hdr_asn(size_t len, uint8_t const ctrl_hdr[len])
+static
+e2sm_rc_ctrl_hdr_frmt_1_t dec_ctrl_hdr_frmt_1(E2SM_RC_ControlHeader_Format1_t const* src)
 {
-  assert(0!=0 && "Not implemented");
+  assert(src != NULL);
+  e2sm_rc_ctrl_hdr_frmt_1_t dst = {0};  
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst.ue_id = dec_ue_id_asn(&src->ueID);
+
+  // RIC Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2. 
+  // INTEGER
+  dst.ric_style_type = src->ric_Style_Type;
+
+  // Control Action ID
+  // Mandatory
+  // 9.3.6
+  // [1- 65535]
+  assert(src->ric_ControlAction_ID > 0 && src->ric_ControlAction_ID < 65536);
+  dst.ctrl_act_id = src->ric_ControlAction_ID;
+
+  // RIC Control decision
+  // Optional
+  assert(src->ric_ControlDecision == NULL && "Not implemented");
+
+ return dst;
+}
+
+
+
+e2sm_rc_ctrl_hdr_t rc_dec_ctrl_hdr_asn(size_t len, uint8_t const ctrl_hdr[len])
+{
   assert(ctrl_hdr != NULL);
-  rc_ctrl_hdr_t avoid_warning;
-  return avoid_warning;
+
+  E2SM_RC_ControlHeader_t src = {0};
+  defer({  ASN_STRUCT_RESET(asn_DEF_E2SM_RC_ControlHeader, &src); });
+  E2SM_RC_ControlHeader_t* src_ref = &src;
+
+  asn_dec_rval_t const ret = aper_decode(NULL, & asn_DEF_E2SM_RC_ControlHeader, (void **)&src_ref, ctrl_hdr, len, 0, 0);
+  assert(ret.code == RC_OK);
+
+  //  xer_fprint(stdout, &asn_DEF_E2SM_RC_EventTrigger, &src);
+  //  fflush(stdout);
+
+  e2sm_rc_ctrl_hdr_t dst = {0}; 
+
+  if(src.ric_controlHeader_formats.present == E2SM_RC_ControlHeader__ric_controlHeader_formats_PR_controlHeader_Format1){
+    dst.format = FORMAT_1_E2SM_RC_CTRL_HDR;
+    dst.frmt_1 = dec_ctrl_hdr_frmt_1(src.ric_controlHeader_formats.choice.controlHeader_Format1);
+  } else if(src.ric_controlHeader_formats.present == E2SM_RC_ControlHeader__ric_controlHeader_formats_PR_controlHeader_Format2){
+    dst.format = FORMAT_2_E2SM_RC_CTRL_HDR;
+
+    assert(0!=0 && "Not implemnented");
+  } else {
+    assert(0!=0 && "Unknown format type");
+  }
+
+
+  return dst;
 }
 
 rc_ctrl_msg_t rc_dec_ctrl_msg_asn(size_t len, uint8_t const ctrl_msg[len])

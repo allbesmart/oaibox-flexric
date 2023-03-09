@@ -114,6 +114,14 @@
 
 #include "../ie/asn/E2SM-RC-IndicationMessage-Format6-Indication-Item.h"
 
+#include "../ie/asn/E2SM-RC-CallProcessID.h"
+#include "../ie/asn/E2SM-RC-CallProcessID-Format1.h"
+
+#include "../ie/asn/E2SM-RC-ControlHeader.h"
+
+#include "../ie/asn/E2SM-RC-ControlHeader-Format1.h"
+
+
 #include "../../../lib/sm/enc_asn_sm_common/enc_cell_global_id.h"
 
 
@@ -1899,7 +1907,7 @@ byte_array_t rc_enc_ind_msg_asn(e2sm_rc_ind_msg_t const* src)
   xer_fprint(stdout, &asn_DEF_E2SM_RC_IndicationMessage, &dst);
   fflush(stdout);
 
-  byte_array_t ba = {.buf = malloc(64*1024), .len = 16*1024};
+  byte_array_t ba = {.buf = malloc(128*1024), .len = 128*1024};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
   asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_RC_IndicationMessage, &dst, ba.buf, ba.len);
   assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
@@ -1909,21 +1917,99 @@ byte_array_t rc_enc_ind_msg_asn(e2sm_rc_ind_msg_t const* src)
 }
 
 
-byte_array_t rc_enc_call_proc_id_asn(rc_call_proc_id_t const* call_proc_id)
+byte_array_t rc_enc_cpid_asn(e2sm_rc_cpid_t const* src)
 {
-  assert(0!=0 && "Not implemented");
+  assert(src != NULL);
 
-  assert(call_proc_id != NULL);
-  byte_array_t  ba = {0};
+  E2SM_RC_CallProcessID_t dst = {0};
+  defer({  ASN_STRUCT_RESET( asn_DEF_E2SM_RC_CallProcessID, &dst); });
+
+  // RIC Call Process ID
+  // Mandatory
+  // 9.3.18
+  // [ 1 - 4294967295]
+  assert(src->ric_cpid > 0);
+
+  dst.ric_callProcessID_formats.present = E2SM_RC_CallProcessID__ric_callProcessID_formats_PR_callProcessID_Format1;
+  dst.ric_callProcessID_formats.choice.callProcessID_Format1 =  calloc(1, sizeof(E2SM_RC_CallProcessID_Format1_t));
+  assert(dst.ric_callProcessID_formats.choice.callProcessID_Format1 != NULL && "Memorye exhausted");
+
+  dst.ric_callProcessID_formats.choice.callProcessID_Format1->ric_callProcess_ID = src->ric_cpid;
+
+  
+  xer_fprint(stdout, &asn_DEF_E2SM_RC_CallProcessID, &dst);
+  fflush(stdout);
+
+  byte_array_t ba = {.buf = malloc(16*1024), .len = 16*1024};
+  const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
+  asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, & asn_DEF_E2SM_RC_CallProcessID, &dst, ba.buf, ba.len);
+  assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
+  ba.len = er.encoded;
+
   return ba;
 }
 
-byte_array_t rc_enc_ctrl_hdr_asn(rc_ctrl_hdr_t const* ctrl_hdr)
-{
-  assert(0!=0 && "Not implemented");
 
-  assert(ctrl_hdr != NULL);
-  byte_array_t  ba = {0};
+static
+E2SM_RC_ControlHeader_Format1_t* enc_ctrl_hdr_frmt_1(e2sm_rc_ctrl_hdr_frmt_1_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlHeader_Format1_t* dst = calloc(1, sizeof(E2SM_RC_ControlHeader_Format1_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst->ueID = enc_ue_id_asn(&src->ue_id);
+
+  // RIC Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2. 
+  // INTEGER
+  dst->ric_Style_Type = src->ric_style_type;
+
+  // Control Action ID
+  // Mandatory
+  // 9.3.6
+  // [1- 65535]
+  assert(src->ctrl_act_id > 0);
+  dst->ric_ControlAction_ID = src->ctrl_act_id;
+
+  // RIC Control decision
+  // Optional
+  assert(src->ric_ctrl_decision == NULL && "Not implemented");
+
+  return dst;
+}
+
+byte_array_t rc_enc_ctrl_hdr_asn(e2sm_rc_ctrl_hdr_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlHeader_t dst = {0};
+  defer({  ASN_STRUCT_RESET(asn_DEF_E2SM_RC_ControlHeader, &dst); });
+
+  if(src->format == FORMAT_1_E2SM_RC_CTRL_HDR){
+    dst.ric_controlHeader_formats.present = E2SM_RC_ControlHeader__ric_controlHeader_formats_PR_controlHeader_Format1;
+    dst.ric_controlHeader_formats.choice.controlHeader_Format1 = enc_ctrl_hdr_frmt_1(&src->frmt_1); 
+  } else if(src->format == FORMAT_2_E2SM_RC_CTRL_HDR){
+    dst.ric_controlHeader_formats.present = E2SM_RC_ControlHeader__ric_controlHeader_formats_PR_controlHeader_Format2;
+    assert(0!=0 && "Not implemented");
+  } else {
+    assert(0!=0 && "Unknown format");
+  }
+
+  xer_fprint(stdout, &asn_DEF_E2SM_RC_ControlHeader, &dst);
+  fflush(stdout);
+
+  byte_array_t ba = {.buf = malloc(16*1024), .len = 16*1024};
+  const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
+  asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_RC_ControlHeader, &dst, ba.buf, ba.len);
+  assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
+  ba.len = er.encoded;
+
   return ba;
 }
 

@@ -97,7 +97,7 @@ byte_array_t rc_enc_ind_msg_fb(rc_ind_msg_t const* ind_msg)
   return ba;
 }
 
-byte_array_t rc_enc_call_proc_id_fb(rc_call_proc_id_t const* call_proc_id)
+byte_array_t rc_enc_call_proc_id_fb(e2sm_rc_cpid_t const* call_proc_id)
 {
   assert(0!=0 && "Not implemented");
 
@@ -106,7 +106,7 @@ byte_array_t rc_enc_call_proc_id_fb(rc_call_proc_id_t const* call_proc_id)
   return ba;
 }
 
-byte_array_t rc_enc_ctrl_hdr_fb(rc_ctrl_hdr_t const* ctrl_hdr)
+byte_array_t rc_enc_ctrl_hdr_fb(e2sm_rc_ctrl_hdr_t const* ctrl_hdr)
 {
   assert(0!=0 && "Not implemented");
 

@@ -35,9 +35,9 @@ e2sm_rc_ind_hdr_t rc_dec_ind_hdr_fb(size_t len, uint8_t const ind_hdr[len]);
 
 e2sm_rc_ind_msg_t rc_dec_ind_msg_fb(size_t len, uint8_t const ind_msg[len]); 
 
-rc_call_proc_id_t rc_dec_call_proc_id_fb(size_t len, uint8_t const call_proc_id[len]);
+e2sm_rc_cpid_t rc_dec_call_proc_id_fb(size_t len, uint8_t const call_proc_id[len]);
 
-rc_ctrl_hdr_t rc_dec_ctrl_hdr_fb(size_t len, uint8_t const ctrl_hdr[len]); 
+e2sm_rc_ctrl_hdr_t rc_dec_ctrl_hdr_fb(size_t len, uint8_t const ctrl_hdr[len]); 
 
 rc_ctrl_msg_t rc_dec_ctrl_msg_fb(size_t len, uint8_t const ctrl_msg[len]); 
 

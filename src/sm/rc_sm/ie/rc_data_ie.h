@@ -77,6 +77,12 @@ extern "C" {
 #include "ir/e2sm_rc_ind_msg_frmt_6.h"
 
 
+/////////////////////////////////////
+// RIC Control Header 
+/////////////////////////////////////
+
+#include "ir/e2sm_rc_ctrl_hdr_frmt_1.h"
+#include "ir/e2sm_rc_ctrl_hdr_frmt_2.h"
 
 
 
@@ -226,33 +232,49 @@ bool eq_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t const* m0, e2sm_rc_ind_msg_t const* m1
 // RIC Call Process ID 
 /////////////////////////////////////
 
+// 9.2.1.5.1
 typedef struct {
-  uint32_t dummy;
-} rc_call_proc_id_t;
+  // RIC Call Process ID
+  // Mandatory
+  // 9.3.18
+  // [ 1 - 4294967295]
+  uint32_t ric_cpid;
 
-void free_rc_call_proc_id( rc_call_proc_id_t* src); 
+} e2sm_rc_cpid_t;
 
-rc_call_proc_id_t cp_rc_call_proc_id( rc_call_proc_id_t* src);
+void free_e2sm_rc_cpid(e2sm_rc_cpid_t* src); 
 
-bool eq_rc_call_proc_id(rc_call_proc_id_t* m0, rc_call_proc_id_t* m1);
+e2sm_rc_cpid_t cp_e2sm_rc_cpid(e2sm_rc_cpid_t const* src);
 
+bool eq_e2sm_rc_cpid(e2sm_rc_cpid_t const* m0, e2sm_rc_cpid_t const* m1);
 
 
 //////////////////////////////////////
 // RIC Control Header 
 /////////////////////////////////////
 
+typedef enum{
+  FORMAT_1_E2SM_RC_CTRL_HDR,
+  FORMAT_2_E2SM_RC_CTRL_HDR,
+
+  END_E2SM_RC_CTRL_HDR,
+
+} e2sm_rc_ctrl_hdr_e; 
+
 
 typedef struct {
-  uint32_t dummy;
-} rc_ctrl_hdr_t;
+  e2sm_rc_ctrl_hdr_e format; 
+  union{
+    e2sm_rc_ctrl_hdr_frmt_1_t frmt_1; // 9.2.1.6.1 
+    e2sm_rc_ctrl_hdr_frmt_2_t frmt_2; // 9.2.1.6.2 
+  };
+} e2sm_rc_ctrl_hdr_t;
 
-void free_rc_ctrl_hdr( rc_ctrl_hdr_t* src); 
+void free_e2sm_rc_ctrl_hdr( e2sm_rc_ctrl_hdr_t* src); 
 
-rc_ctrl_hdr_t cp_rc_ctrl_hdr(rc_ctrl_hdr_t* src);
+e2sm_rc_ctrl_hdr_t cp_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t* src);
 
-bool eq_rc_ctrl_hdr(rc_ctrl_hdr_t* m0, rc_ctrl_hdr_t* m1);
-
+bool eq_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t const* m0, e2sm_rc_ctrl_hdr_t const* m1);
 
 
 //////////////////////////////////////
@@ -334,7 +356,7 @@ typedef struct{
 typedef struct{
   e2sm_rc_ind_hdr_t hdr;
   e2sm_rc_ind_msg_t msg;
-  rc_call_proc_id_t* proc_id;
+  e2sm_rc_cpid_t* proc_id;
 } rc_ind_data_t;
 
 void free_rc_ind_data(rc_ind_data_t* ind);
@@ -346,7 +368,7 @@ rc_ind_data_t cp_rc_ind_data(rc_ind_data_t const* src);
 ///////////////
 
 typedef struct{
-  rc_ctrl_hdr_t hdr;
+  e2sm_rc_ctrl_hdr_t hdr;
   rc_ctrl_msg_t msg;
 } rc_ctrl_req_data_t;
 

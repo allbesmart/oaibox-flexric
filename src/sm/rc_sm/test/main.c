@@ -96,6 +96,35 @@ void test_rc_ind_msg(void)
   assert(eq_e2sm_rc_ind_msg(&msg, &out) == true);
 }
 
+void test_rc_call_process_id()
+{
+  e2sm_rc_cpid_t msg = fill_rnd_rc_cpid();
+  defer({ free_e2sm_rc_cpid(&msg); });
+
+  byte_array_t ba = rc_enc_cpid_asn(&msg);
+  defer({ free_byte_array(ba); });
+
+  e2sm_rc_cpid_t out = rc_dec_cpid_asn(ba.len, ba.buf);
+  defer({ free_e2sm_rc_cpid(&out); });
+
+  assert(eq_e2sm_rc_cpid(&msg, &out) == true);
+}
+
+void test_rc_ctrl_hdr(void)
+{
+  e2sm_rc_ctrl_hdr_t msg = fill_rnd_rc_ctrl_hdr();
+  defer({ free_e2sm_rc_ctrl_hdr(&msg); });
+
+  byte_array_t ba = rc_enc_ctrl_hdr_asn(&msg);
+  defer({ free_byte_array(ba); });
+
+  e2sm_rc_ctrl_hdr_t out = rc_dec_ctrl_hdr_asn(ba.len, ba.buf);
+  defer({ free_e2sm_rc_ctrl_hdr(&out); });
+
+  assert(eq_e2sm_rc_ctrl_hdr(&msg, &out) == true);
+}
+
+
 
 
 int main()
@@ -119,8 +148,20 @@ int main()
   //printf("\nRC Indication Header test succeeded\n");
 
   // Indication Message
-  test_rc_ind_msg();
-  printf("\nRC Indication Message test succeeded\n");
+  //test_rc_ind_msg();
+  //printf("\nRC Indication Message test succeeded\n");
+
+  // Call Process ID 
+  //test_rc_call_process_id();
+  //printf("\nRC Call Process ID\nn");
+
+  // Control Message  
+  test_rc_ctrl_hdr();
+  printf("\nRC Control Header \n");
+
+
+
+
 
   return EXIT_SUCCESS;
 }

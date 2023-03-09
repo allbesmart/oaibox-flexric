@@ -41,9 +41,9 @@ byte_array_t rc_enc_ind_hdr_asn(e2sm_rc_ind_hdr_t const*);
 
 byte_array_t rc_enc_ind_msg_asn(e2sm_rc_ind_msg_t const*); 
 
-byte_array_t rc_enc_call_proc_id_asn(rc_call_proc_id_t const*); 
+byte_array_t rc_enc_cpid_asn(e2sm_rc_cpid_t const*); 
 
-byte_array_t rc_enc_ctrl_hdr_asn(rc_ctrl_hdr_t const*); 
+byte_array_t rc_enc_ctrl_hdr_asn(e2sm_rc_ctrl_hdr_t const*); 
 
 byte_array_t rc_enc_ctrl_msg_asn(rc_ctrl_msg_t const*); 
 

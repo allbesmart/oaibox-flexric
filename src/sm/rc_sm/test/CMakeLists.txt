@@ -150,6 +150,9 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
     ../ie/ir/e2sm_rc_ind_msg_frmt_6.c
 
 
+    ../ie/ir/e2sm_rc_ctrl_hdr_frmt_1.c
+
+
     ../ie/ir/param_report_def.c
 
     ../ie/ir/ran_param_test_list.c

@@ -1845,4 +1845,101 @@ e2sm_rc_ind_msg_t fill_rnd_rc_ind_msg(void)
   return dst;
 }
 
+/////////////////////////////
+/////////////////////////////
+////////// End of RC Message Indication //////////
+/////////////////////////////
+/////////////////////////////
+
+
+
+/////////////////////////////
+/////////////////////////////
+////////// Start of RC Call Process ID //////////////////
+/////////////////////////////
+/////////////////////////////
+
+e2sm_rc_cpid_t fill_rnd_rc_cpid(void)
+{
+  e2sm_rc_cpid_t dst = {0}; 
+
+  // RIC Call Process ID
+  // Mandatory
+  // 9.3.18
+  // [ 1 - 4294967295]
+  dst.ric_cpid = rand() + 1; 
+
+  return dst;
+}
+
+/////////////////////////////
+/////////////////////////////
+////////// End of RC Call Process ID 
+/////////////////////////////
+/////////////////////////////
+
+
+
+/////////////////////////////
+/////////////////////////////
+////////// Start of RC Control Header 
+/////////////////////////////
+/////////////////////////////
+
+static
+e2sm_rc_ctrl_hdr_frmt_1_t fill_rnd_rc_ctrl_hdr_frmat_1(void)
+{
+  e2sm_rc_ctrl_hdr_frmt_1_t dst = {0}; 
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst.ue_id = fill_rnd_ue_id();
+
+  // RIC Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2. 
+  // INTEGER
+  dst.ric_style_type = rand(); 
+
+  // Control Action ID
+  // Mandatory
+  // 9.3.6
+  // [1- 65535]
+  dst.ctrl_act_id = (rand() % 65535) + 1;
+
+  // RIC Control decision
+  // Optional
+  dst.ric_ctrl_decision = NULL;
+
+  return dst;
+}
+
+
+e2sm_rc_ctrl_hdr_t fill_rnd_rc_ctrl_hdr(void)
+{
+  e2sm_rc_ctrl_hdr_t dst = {0}; 
+
+  dst.format = FORMAT_1_E2SM_RC_CTRL_HDR; //rand() % END_E2SM_RC_CTRL_HDR;
+
+  if(dst.format ==  FORMAT_1_E2SM_RC_CTRL_HDR){
+    dst.frmt_1 =  fill_rnd_rc_ctrl_hdr_frmat_1();
+  } else if(dst.format == FORMAT_2_E2SM_RC_CTRL_HDR){
+    assert(0!=0 && "Not implemented");
+    // dst.frmt_2 =  fill_rnd_rc_ctrl_hdr_frmat_2();
+  } else {
+    assert(0!=0 && "Not implemented");
+  }
+                                          
+  return dst;
+}
+
+
+/////////////////////////////
+/////////////////////////////
+////////// End of RC Control Header 
+/////////////////////////////
+/////////////////////////////
+
 

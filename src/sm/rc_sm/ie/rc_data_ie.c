@@ -352,31 +352,46 @@ bool eq_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t const* m0, e2sm_rc_ind_msg_t const* m1
 // RIC Call Process ID
 /////////////////////////////////////
 
-void free_rc_call_proc_id(rc_call_proc_id_t *src) {
-  // Note that the src could be NULL
-  free(src);
+void free_e2sm_rc_cpid(e2sm_rc_cpid_t *src) 
+{
+ // RIC Call Process ID
+  // Mandatory
+  // 9.3.18
+  // [ 1 - 4294967295]
+  assert(src->ric_cpid > 0);
+  // uint32_t ric_cpid;
+
 }
 
-rc_call_proc_id_t cp_rc_call_proc_id( rc_call_proc_id_t* src)
+e2sm_rc_cpid_t cp_e2sm_rc_cpid(e2sm_rc_cpid_t const* src)
 {
   assert(src != NULL); 
-  rc_call_proc_id_t dst = {0};
-
-  dst.dummy = src->dummy;
-
+ 
+  // RIC Call Process ID
+  // Mandatory
+  // 9.3.18
+  // [ 1 - 4294967295]
+  assert(src->ric_cpid > 0);
+  
+  e2sm_rc_cpid_t dst = { .ric_cpid = src->ric_cpid};
   return dst;
 }
 
-bool eq_rc_call_proc_id(rc_call_proc_id_t* m0, rc_call_proc_id_t* m1)
+bool eq_e2sm_rc_cpid(e2sm_rc_cpid_t const* m0, e2sm_rc_cpid_t const* m1)
 {
-  if(m0 == NULL && m1 == NULL)
+  if(m0 == m1)
     return true;
-  if(m0 == NULL)
-    return false;
-  if(m1 == NULL)
+
+  if(m0 == NULL || m1 == NULL)
     return false;
 
-  if(m0->dummy != m1->dummy)
+  // RIC Call Process ID
+  // Mandatory
+  // 9.3.18
+  // [ 1 - 4294967295]
+  assert(m0->ric_cpid > 0);
+  assert(m1->ric_cpid > 0);
+  if(m0->ric_cpid != m1->ric_cpid)
     return false;
 
   return true;
@@ -387,27 +402,48 @@ bool eq_rc_call_proc_id(rc_call_proc_id_t* m0, rc_call_proc_id_t* m1)
 // RIC Control Header 
 /////////////////////////////////////
 
-void free_rc_ctrl_hdr( rc_ctrl_hdr_t* src)
+void free_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t* src)
 {
-
   assert(src != NULL);
-  assert(0!=0 && "Not implemented" ); 
+  if(src->format == FORMAT_1_E2SM_RC_CTRL_HDR){
+    free_e2sm_rc_ctrl_hdr_frmt_1(&src->frmt_1);
+  } else if(src->format == FORMAT_2_E2SM_RC_CTRL_HDR ){
+    assert(0!=0 && "Not implemented");
+  } else {
+    assert(0!=0 && "Unknown type");
+  }
+
 }
 
-rc_ctrl_hdr_t cp_rc_ctrl_hdr(rc_ctrl_hdr_t* src)
+e2sm_rc_ctrl_hdr_t cp_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t* src)
 {
   assert(src != NULL);
   assert(0!=0 && "Not implemented" ); 
-  rc_ctrl_hdr_t ret = {0};
+  e2sm_rc_ctrl_hdr_t ret = {0};
   return ret;
 }
 
-bool eq_rc_ctrl_hdr(rc_ctrl_hdr_t* m0, rc_ctrl_hdr_t* m1)
+bool eq_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t const* m0, e2sm_rc_ctrl_hdr_t const* m1)
 {
-  assert(m0 != NULL);
-  assert(m1 != NULL);
+  if(m0 == m1)
+    return true;
 
-  assert(0!=0 && "Not implemented" ); 
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  
+  if(m0->format != m1->format)
+    return false;
+
+  if(m0->format == FORMAT_1_E2SM_RC_CTRL_HDR){
+    if(eq_e2sm_rc_ctrl_hdr_frmt_1(&m0->frmt_1, &m1->frmt_1) == false)
+      return false;
+  } else if(m0->format == FORMAT_2_E2SM_RC_CTRL_HDR){
+
+    assert(0!=0 && "Not implemented");
+  } else {
+    assert(0!=0 && "Unknown type");
+  }
 
   return true;
 }
@@ -516,7 +552,7 @@ void free_rc_ind_data(rc_ind_data_t* ind)
   
   free_e2sm_rc_ind_hdr(&ind->hdr);
   free_e2sm_rc_ind_msg(&ind->msg);
-  free_rc_call_proc_id(ind->proc_id); 
+  free_e2sm_rc_cpid(ind->proc_id); 
 }
 
 rc_ind_data_t cp_rc_ind_data(rc_ind_data_t const* src)
@@ -528,9 +564,9 @@ rc_ind_data_t cp_rc_ind_data(rc_ind_data_t const* src)
   dst.msg = cp_rc_ind_msg(&src->msg);
 
   if(src->proc_id != NULL){
-    dst.proc_id = malloc(sizeof(rc_call_proc_id_t));
+    dst.proc_id = malloc(sizeof(e2sm_rc_cpid_t));
     assert(dst.proc_id != NULL && "Memory exhausted");
-    *dst.proc_id = cp_rc_call_proc_id(src->proc_id);
+    *dst.proc_id = cp_e2sm_rc_cpid(src->proc_id);
   }
 
   return dst;

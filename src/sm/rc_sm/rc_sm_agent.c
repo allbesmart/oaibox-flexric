@@ -97,7 +97,7 @@ sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t* sm_agent)
   rc_ind_data_t* ind = &rd_if.rc_stats;
   defer({ free_e2sm_rc_ind_hdr(&ind->hdr) ;});
   defer({ free_e2sm_rc_ind_msg(&ind->msg) ;});
-  defer({ free_rc_call_proc_id(ind->proc_id);});
+  defer({ free_e2sm_rc_cpid(ind->proc_id);});
 
   byte_array_t ba = rc_enc_ind_msg(&sm->enc, &rd_if.rc_stats.msg);
   ret.ind_msg = ba.buf;
@@ -117,14 +117,16 @@ static
   assert(data != NULL);
   sm_rc_agent_t* sm = (sm_rc_agent_t*) sm_agent;
 
-  rc_ctrl_hdr_t hdr = rc_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
-  assert(hdr.dummy == 0 && "Only dummy == 0 supported ");
+  e2sm_rc_ctrl_hdr_t hdr = rc_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
+  assert(0!=0 && "Dummy years are vorbei..."); 
+//  assert(hdr.dummy == 0 && "Only dummy == 0 supported ");
 
   rc_ctrl_msg_t msg = rc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
   assert(msg.action == 42 && "Only action number 42 supported");
 
   sm_ag_if_wr_t wr = {.type = RC_STATS_V1_03 };
-  wr.rc_ctrl.hdr.dummy = 0; 
+  assert(0!=0 && "Fix this!!!");
+//  wr.rc_ctrl.hdr.dummy = 0; 
   wr.rc_ctrl.msg.action = msg.action;
 
   sm->base.io.write(&wr);

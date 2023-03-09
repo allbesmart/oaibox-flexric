@@ -7,7 +7,7 @@
 #include "enc_global_ng_enb.h"
 
 
-UEID_NG_ENB_t * enc_ng_eNB_UE_asn(const ng_enb_t * ng_enb)
+UEID_NG_ENB_t * enc_ng_eNB_UE_asn(const ng_enb_e2sm_t * ng_enb)
 {
     UEID_NG_ENB_t * ng_enb_asn = calloc(1, sizeof(UEID_NG_ENB_t));
     assert(ng_enb_asn != NULL && "Memory exhausted");

@@ -40,13 +40,32 @@ kpm_ric_ind_hdr_format_1_t cp_kpm_ind_hdr_frm_1(kpm_ric_ind_hdr_format_1_t const
   ret.collectStartTime = src->collectStartTime;
   
   if (src->fileformat_version)
+  {
+    ret.fileformat_version = calloc(1, sizeof(byte_array_t));
+    assert(ret.fileformat_version != NULL && "Memory exhausted");
     *ret.fileformat_version = copy_byte_array(*src->fileformat_version);
+  }
+
   if (src->sender_name)
+  {
+    ret.sender_name = calloc(1, sizeof(byte_array_t));
+    assert(ret.sender_name != NULL && "Memory exhausted");
     *ret.sender_name = copy_byte_array(*src->sender_name);
+  }
   if (src->sender_type)
+  {
+    ret.sender_type = calloc(1, sizeof(byte_array_t));
+    assert(ret.sender_type != NULL && "Memory exhausted");
     *ret.sender_type = copy_byte_array(*src->sender_type);
+  }
+
   if (src->vendor_name)
+  {
+    ret.vendor_name = calloc(1, sizeof(byte_array_t));
+    assert(ret.vendor_name != NULL && "Memory exhausted");
     *ret.vendor_name = copy_byte_array(*src->vendor_name);
+  }
+
   return ret;
 }
 

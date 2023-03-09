@@ -9,7 +9,7 @@ extern "C" {
 #include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-EN-GNB.h"
 #include "../3gpp_derived_ie/en_gnb.h"
 
-en_gnb_t dec_en_gNB_UE_asn(const UEID_EN_GNB_t * en_gnb_asn);
+en_gnb_e2sm_t dec_en_gNB_UE_asn(const UEID_EN_GNB_t * en_gnb_asn);
 
 #ifdef __cplusplus
 }

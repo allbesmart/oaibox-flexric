@@ -113,6 +113,7 @@ kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src) {
     
     for (size_t i = 0; i<ret.meas_data_lst_len; i++)
     {
+      ret.meas_data_lst[i].meas_record_len = src->meas_data_lst[i].meas_record_len;
       ret.meas_data_lst[i].meas_record_lst = calloc(src->meas_data_lst[i].meas_record_len, sizeof(meas_record_lst_t));
       memcpy (ret.meas_data_lst[i].meas_record_lst, src->meas_data_lst[i].meas_record_lst, src->meas_data_lst[i].meas_record_len * sizeof(meas_record_lst_t));
     }

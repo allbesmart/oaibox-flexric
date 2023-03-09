@@ -2,7 +2,7 @@
 
 #include "enc_ng_enb_du.h"
 
-UEID_NG_ENB_DU_t * enc_ng_eNB_DU_UE_asn(const ng_enb_du_t * ng_enb_du)
+UEID_NG_ENB_DU_t * enc_ng_eNB_DU_UE_asn(const ng_enb_du_e2sm_t * ng_enb_du)
 {
     UEID_NG_ENB_DU_t * ng_enb_du_asn = calloc(1, sizeof(UEID_NG_ENB_DU_t));
     assert(ng_enb_du_asn != NULL && "Memory exhausted");

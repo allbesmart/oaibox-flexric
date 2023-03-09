@@ -30,7 +30,7 @@
 #include "enc/kpm_enc_generic.h"
 #include "dec/kpm_dec_generic.h"
 
-#include "fill_ric_subscription_data/on_ric_subscription.h"
+#include "test/fill_rnd_data_kpm.h"
 
 typedef struct{
   sm_ric_t base;
@@ -59,11 +59,11 @@ static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const c
   sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;  
  
 
-  // CHOOSE THE RIC STYLE TYPE [1..5]
+  kpm_ric_subscription_t *subscription = calloc(1, sizeof(kpm_ric_subscription_t));
+  assert(subscription != NULL && "Memory exhausted");
 
-  int ric_style_type = 1;
-
-  kpm_ric_subscription_t *subscription = fill_kpm_subscription_data(ric_style_type, cmd);
+  subscription->kpm_event_trigger_def = fill_kpm_event_trigger_def();
+  subscription->kpm_act_def = fill_kpm_action_def();
 
   const byte_array_t ba = kpm_enc_event_trigger(&sm->enc, &subscription->kpm_event_trigger_def); 
 
@@ -126,7 +126,7 @@ void ric_on_e2_setup_kpm_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* dat
  
   kpm_ran_function_def_t fdef = kpm_dec_func_def(&sm->enc, data->len_rfd, data->ran_fun_def);
   // we do nothing with function definition for the moment, so we can free here with defer()
-  free_kpm_func_def(&fdef);
+  free_kpm_ran_function_def(&fdef);
   
 }
 

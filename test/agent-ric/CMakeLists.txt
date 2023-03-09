@@ -4,7 +4,8 @@
 
 add_executable(test_near_ric 
               test_near_ric.c 
-              ../sm/common/fill_ind_data.c)
+              ../sm/common/fill_ind_data.c
+              ../../../src/sm/kpm_sm_v02.03/test/fill_rnd_data_kpm.c)
 
 target_link_libraries(test_near_ric
                       PUBLIC 

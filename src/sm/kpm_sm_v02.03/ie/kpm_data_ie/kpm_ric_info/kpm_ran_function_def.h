@@ -62,8 +62,9 @@ typedef struct {
 } kpm_ran_function_def_t;
 
 
-void free_kpm_func_def(kpm_ran_function_def_t* src);
+void free_kpm_ran_function_def(kpm_ran_function_def_t* src);
 
+bool eq_kpm_ran_function_def(kpm_ran_function_def_t const * m0, kpm_ran_function_def_t const * m1);
 
 #ifdef __cplusplus
 }

@@ -9,7 +9,7 @@ void free_kpm_action_def_frm_5(kpm_act_def_format_5_t * src)
   // UE ID List
   for (size_t i = 0; i<src->ue_id_lst_len; i++)
   {
-    free_ue_id(&src->ue_id_lst[i]);
+    free_ue_id_e2sm(&src->ue_id_lst[i]);
   }
   free(src->ue_id_lst);
 
@@ -30,7 +30,7 @@ bool eq_kpm_action_def_frm_5(kpm_act_def_format_5_t const * m0, kpm_act_def_form
 
   for (size_t i = 0; i<m0->ue_id_lst_len; i++)
   {
-    if (eq_ue_id(&m0->ue_id_lst[i], &m1->ue_id_lst[i]) != true)
+    if (eq_ue_id_e2sm(&m0->ue_id_lst[i], &m1->ue_id_lst[i]) != true)
       return false;
   }
 

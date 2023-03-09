@@ -20,6 +20,8 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../src/lib/e2sm_common_ie/3gpp_derived_ie_enc_asn/*.c)
   add_executable(test_kpm_sm 
                       main.c 
+                      ../common/fill_ind_data.c
+                      ../../../src/sm/kpm_sm_v02.03/test/fill_rnd_data_kpm.c
                       ../../../src/sm/sm_proc_data.c 
                       ../../../src/sm/kpm_sm_v02.03/kpm_sm_agent.c 
                       ../../../src/sm/kpm_sm_v02.03/kpm_sm_ric.c 
@@ -39,17 +41,24 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
 
                       ../../../src/sm/kpm_sm_v02.03/dec/kpm_dec_asn.c 
                       ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie.c 
+                      ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr.c
+                      ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg.c
+                      ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_event_trigger_def.c
+                      ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def.c
                       ../../../src/util/alg_ds/alg/defer.c
                       ../../../src/util/alg_ds/alg/eq_float.c
                       ../../../src/util/byte_array.c
                       ../../../src/util/conversions.c
-                      fill_kpm_ind_data/fill_kpm_ind_data.c
-                      ../../../src/sm/kpm_sm_v02.03/fill_ric_subscription_data/on_ric_subscription.c
 
                 ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr_frm_1.c
                 ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_1.c
+                ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_2.c
+                ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg_frm_3.c
                 ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_1.c
                 ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_2.c
+                ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_3.c
+                ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_4.c
+                ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/kpm_ric_info/kpm_ric_action_def_frm_5.c
                 ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/label_info_lst.c
                 ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_info_frm_1_lst.c
                 ../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie/data/meas_data_lst.c
@@ -106,15 +115,13 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
 		            ../../../src/lib/e2sm_common_ie/3gpp_derived_ie/eutra_cgi.c
                 ../../../src/lib/e2sm_common_ie/sm_common_ie/ue_id.c
                 ../../../src/lib/e2sm_common_ie/sm_common_ie/cell_global_id.c
+                ../../../src/lib/e2sm_common_ie/sm_common_ie/ran_function_name.c
                 ../../../src/lib/e2sm_common_ie/enc_asn_sm_common/enc_ue_id.c
                 ../../../src/lib/e2sm_common_ie/dec_asn_sm_common/dec_ue_id.c
 
                 # Why test and src?
-                ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_hdr_frm_1.c
-                ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_msg_frm_1.c
-                ../../../src/sm/kpm_sm_v02.03/fill_ric_subscription_data/fill_kpm_event_trigger_frm_1.c
 
-                ../../../src/sm/kpm_sm_v02.03/fill_ric_subscription_data/fill_kpm_action_def_frm_1.c
+
                 ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_label_info.c
                 ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_matching_cond_frm_3.c
                 ../../../src/sm/kpm_sm_v02.03/enc/enc_asn_kpm_common/enc_test_info.c 
@@ -146,7 +153,9 @@ else()
 endif()
 
 target_compile_definitions(test_kpm_sm PUBLIC ${SM_ENCODING_KPM})
-target_link_libraries(test_kpm_sm PUBLIC -pthread)
+target_link_libraries(test_kpm_sm PUBLIC 
+                                kpm_sm_static -pthread)
+                                
 target_link_libraries(test_kpm_sm PUBLIC m)
 
 enable_testing()

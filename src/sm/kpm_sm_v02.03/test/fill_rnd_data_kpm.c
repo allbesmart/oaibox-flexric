@@ -1,4 +1,5 @@
 #include "fill_rnd_data_kpm.h"
+#include "../kpm_sm_id.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -13,7 +14,7 @@ kpm_event_trigger_def_t fill_kpm_event_trigger_def(void)
 
   if(dst.type == FORMAT_1_RIC_EVENT_TRIGGER  ){
     // Normally the period is not free, need to check in the specs
-    dst.kpm_ric_event_trigger_format_1.report_period_ms = rand()%1000;
+    dst.kpm_ric_event_trigger_format_1.report_period_ms = 2;  // rand()%1000;
   } else {
     assert(0 != 0 && "unknown type");
   }
@@ -21,7 +22,7 @@ kpm_event_trigger_def_t fill_kpm_event_trigger_def(void)
   return dst;
 }
 
-kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
+static kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
 {
   kpm_act_def_format_1_t action_def_frm_1 = {0};
 
@@ -182,9 +183,9 @@ kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
   return action_def_frm_1;
 }
 
-gnb_t fill_gnb_data(void)
+static gnb_e2sm_t fill_gnb_data(void)
 {
-  gnb_t gnb = {0};
+  gnb_e2sm_t gnb = {0};
 
   // 6.2.3.16
   // Mandatory
@@ -257,7 +258,7 @@ gnb_t fill_gnb_data(void)
   
   case NG_ENB_GLOBAL_TYPE_ID:
     gnb.global_ng_ran_node_id->global_ng_enb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
-    gnb.global_ng_ran_node_id->global_ng_enb_id.type = LONG_MACRO_NG_ENB_TYPE_ID;  // rand()%END_NG_ENB_TYPE_ID;
+    gnb.global_ng_ran_node_id->global_ng_enb_id.type = rand()%END_NG_ENB_TYPE_ID;
 
     switch (gnb.global_ng_ran_node_id->global_ng_enb_id.type)
     {
@@ -285,9 +286,9 @@ gnb_t fill_gnb_data(void)
   return gnb;
 }
 
-gnb_du_t fill_gnb_du_data(void)
+static gnb_du_e2sm_t fill_gnb_du_data(void)
 {
-  gnb_du_t gnb_du = {0};
+  gnb_du_e2sm_t gnb_du = {0};
   gnb_du.gnb_cu_ue_f1ap = (rand() % 4294967296) + 0;
 
   gnb_du.ran_ue_id = calloc(1, sizeof(*gnb_du.ran_ue_id));
@@ -296,9 +297,9 @@ gnb_du_t fill_gnb_du_data(void)
   return gnb_du;
 }
 
-gnb_cu_up_t fill_gnb_cu_up_data(void)
+static gnb_cu_up_e2sm_t fill_gnb_cu_up_data(void)
 {
-  gnb_cu_up_t gnb_cu_up = {0};
+  gnb_cu_up_e2sm_t gnb_cu_up = {0};
   gnb_cu_up.gnb_cu_cp_ue_e1ap = (rand() % 4294967296) + 0;
 
   gnb_cu_up.ran_ue_id = calloc(1, sizeof(*gnb_cu_up.ran_ue_id));
@@ -307,9 +308,9 @@ gnb_cu_up_t fill_gnb_cu_up_data(void)
   return gnb_cu_up;
 }
 
-ng_enb_t fill_ng_enb_data(void)
+static ng_enb_e2sm_t fill_ng_enb_data(void)
 {
-  ng_enb_t ng_enb = {0};
+  ng_enb_e2sm_t ng_enb = {0};
 
   // 6.2.3.16
   // Mandatory
@@ -383,7 +384,7 @@ ng_enb_t fill_ng_enb_data(void)
   
   case NG_ENB_GLOBAL_TYPE_ID:
     ng_enb.global_ng_ran_node_id->global_ng_enb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
-    ng_enb.global_ng_ran_node_id->global_ng_enb_id.type = LONG_MACRO_NG_ENB_TYPE_ID;  // rand()%END_NG_ENB_TYPE_ID;
+    ng_enb.global_ng_ran_node_id->global_ng_enb_id.type = rand()%END_NG_ENB_TYPE_ID;
 
     switch (ng_enb.global_ng_ran_node_id->global_ng_enb_id.type)
     {
@@ -411,9 +412,9 @@ ng_enb_t fill_ng_enb_data(void)
   return ng_enb;
 }
 
-ng_enb_du_t fill_ng_enb_du_data(void)
+static ng_enb_du_e2sm_t fill_ng_enb_du_data(void)
 {
-  ng_enb_du_t ng_enb_du = {0};
+  ng_enb_du_e2sm_t ng_enb_du = {0};
 
   // 6.2.3.22
   // C-if CU DU separated
@@ -423,9 +424,9 @@ ng_enb_du_t fill_ng_enb_du_data(void)
   return ng_enb_du;
 }
 
-en_gnb_t fill_en_gnb_data(void)
+static en_gnb_e2sm_t fill_en_gnb_data(void)
 {
-  en_gnb_t en_gnb = {0};
+  en_gnb_e2sm_t en_gnb = {0};
 
   // 6.2.3.23
   // Mandatory
@@ -495,9 +496,9 @@ en_gnb_t fill_en_gnb_data(void)
   return en_gnb;
 }
 
-enb_t fill_enb_data(void)
+static enb_e2sm_t fill_enb_data(void)
 {
-  enb_t enb = {0};
+  enb_e2sm_t enb = {0};
 
   // 6.2.3.26
   // Mandatory
@@ -533,7 +534,7 @@ enb_t fill_enb_data(void)
 
   enb.global_enb_id->plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
 
-  enb.global_enb_id->type = MACRO_ENB_TYPE_ID;  // rand()%END_ENB_TYPE_ID;
+  enb.global_enb_id->type = rand()%SHORT_MACRO_ENB_TYPE_ID;
 
   switch (enb.global_enb_id->type)
   {
@@ -560,39 +561,40 @@ enb_t fill_enb_data(void)
 
   return enb;
 }
-ue_id_t fill_ue_id_data(void)
-{
-  ue_id_t ue_id_data = {0};
 
-  ue_id_data.type = GNB_UE_ID; // rand()%END_UE_ID;
+static ue_id_e2sm_t fill_ue_id_data(void)
+{
+  ue_id_e2sm_t ue_id_data = {0};
+
+  ue_id_data.type = rand()%END_UE_ID_E2SM;
 
   switch (ue_id_data.type)
   {
-  case GNB_UE_ID:
+  case GNB_UE_ID_E2SM:
     ue_id_data.gnb = fill_gnb_data();
     break;
 
-  case GNB_DU_UE_ID:
+  case GNB_DU_UE_ID_E2SM:
     ue_id_data.gnb_du = fill_gnb_du_data();
     break;
   
-  case GNB_CU_UP_UE_ID:
+  case GNB_CU_UP_UE_ID_E2SM:
     ue_id_data.gnb_cu_up = fill_gnb_cu_up_data();
     break;
 
-  case NG_ENB_UE_ID:
+  case NG_ENB_UE_ID_E2SM:
     ue_id_data.ng_enb = fill_ng_enb_data();
     break;
 
-  case NG_ENB_DU_UE_ID:
+  case NG_ENB_DU_UE_ID_E2SM:
     ue_id_data.ng_enb_du = fill_ng_enb_du_data();
     break;
 
-  case EN_GNB_UE_ID:
+  case EN_GNB_UE_ID_E2SM:
     ue_id_data.en_gnb = fill_en_gnb_data();
     break;
 
-  case ENB_UE_ID:
+  case ENB_UE_ID_E2SM:
     ue_id_data.enb = fill_enb_data();
     break;
   
@@ -604,7 +606,7 @@ ue_id_t fill_ue_id_data(void)
   return ue_id_data;
 }
 
-kpm_act_def_format_2_t fill_kpm_action_def_frm_2(void)
+static kpm_act_def_format_2_t fill_kpm_action_def_frm_2(void)
 {
   kpm_act_def_format_2_t action_def_frm_2 = {0};
 
@@ -619,7 +621,7 @@ kpm_act_def_format_2_t fill_kpm_action_def_frm_2(void)
   return action_def_frm_2;
 }
 
-test_info_lst_t fill_kpm_test_info(void)
+static test_info_lst_t fill_kpm_test_info(void)
 {
   test_info_lst_t test_info = {0};
 
@@ -686,7 +688,7 @@ test_info_lst_t fill_kpm_test_info(void)
   return test_info;
 }
 
-kpm_act_def_format_3_t fill_kpm_action_def_frm_3(void)
+static kpm_act_def_format_3_t fill_kpm_action_def_frm_3(void)
 {
   kpm_act_def_format_3_t action_def_frm_3 = {0};
 
@@ -732,7 +734,7 @@ kpm_act_def_format_3_t fill_kpm_action_def_frm_3(void)
     for (size_t j = 0; j < meas_info->matching_cond_lst_len; j++)
     {      
       // Matching Condition Type
-      meas_info->matching_cond_lst[j].cond_type = TEST_INFO; // rand()&END_INFO;
+      meas_info->matching_cond_lst[j].cond_type = rand()%END_INFO;
       
       switch (meas_info->matching_cond_lst[j].cond_type)
       {
@@ -842,7 +844,7 @@ kpm_act_def_format_3_t fill_kpm_action_def_frm_3(void)
   return action_def_frm_3;
 }
 
-kpm_act_def_format_4_t fill_kpm_action_def_frm_4(void)
+static kpm_act_def_format_4_t fill_kpm_action_def_frm_4(void)
 {
   kpm_act_def_format_4_t action_def_frm_4 = {0};
 
@@ -864,14 +866,14 @@ kpm_act_def_format_4_t fill_kpm_action_def_frm_4(void)
   return action_def_frm_4;
 }
 
-kpm_act_def_format_5_t fill_kpm_action_def_frm_5(void)
+static kpm_act_def_format_5_t fill_kpm_action_def_frm_5(void)
 {
   kpm_act_def_format_5_t action_def_frm_5 = {0};
 
   // UE ID List
   action_def_frm_5.ue_id_lst_len = 2;  // (rand() % 65535) + 2;
 
-  action_def_frm_5.ue_id_lst = calloc(action_def_frm_5.ue_id_lst_len, sizeof(ue_id_t));
+  action_def_frm_5.ue_id_lst = calloc(action_def_frm_5.ue_id_lst_len, sizeof(ue_id_e2sm_t));
   assert(action_def_frm_5.ue_id_lst != NULL && "Memory exhausted");
 
   for (size_t i = 0; i<action_def_frm_5.ue_id_lst_len; i++)
@@ -891,7 +893,7 @@ kpm_act_def_t fill_kpm_action_def(void)
 {
   kpm_act_def_t action_def = {0};
 
-  action_def.type = FORMAT_5_ACTION_DEFINITION;  // rand()%FORMAT_4_ACTION_DEFINITION;
+  action_def.type = rand()%END_ACTION_DEFINITION;
 
   switch (action_def.type)
   {
@@ -954,7 +956,7 @@ int64_t time_now_us(void)
 
 
 
-kpm_ric_ind_hdr_format_1_t fill_kpm_ind_hdr_frm_1(void)
+static kpm_ric_ind_hdr_format_1_t fill_kpm_ind_hdr_frm_1(void)
 {
   kpm_ric_ind_hdr_format_1_t hdr_frm_1 = {0};
 
@@ -1001,12 +1003,12 @@ kpm_ind_hdr_t fill_kpm_ind_hdr(void)
   return hdr;
 }
 
-kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
+static kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
 {
   kpm_ind_msg_format_1_t msg_frm_1 = {0};
   
   // Measurement Data
-  msg_frm_1.meas_data_lst_len = 2;  // (rand() % 65535) + 1;
+  msg_frm_1.meas_data_lst_len = 3;  // (rand() % 65535) + 1;
   msg_frm_1.meas_data_lst = calloc(msg_frm_1.meas_data_lst_len, sizeof(*msg_frm_1.meas_data_lst));
   assert(msg_frm_1.meas_data_lst != NULL && "Memory exhausted" );
   
@@ -1018,7 +1020,7 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
       *msg_frm_1.meas_data_lst[i].incomplete_flag = TRUE_ENUM_VALUE;
       
       // Measurement Record
-      msg_frm_1.meas_data_lst[i].meas_record_len = 2;  // (rand() % 65535) + 1;
+      msg_frm_1.meas_data_lst[i].meas_record_len = 4;  // (rand() % 65535) + 1;
       msg_frm_1.meas_data_lst[i].meas_record_lst = calloc(msg_frm_1.meas_data_lst[i].meas_record_len, sizeof(meas_record_lst_t));
       assert(msg_frm_1.meas_data_lst[i].meas_record_lst != NULL && "Memory exhausted" );
       
@@ -1085,7 +1087,7 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
       
       
       // Label Information
-      msg_frm_1.meas_info_lst[i].label_info_lst_len = 2;
+      msg_frm_1.meas_info_lst[i].label_info_lst_len = 1;
       msg_frm_1.meas_info_lst[i].label_info_lst = calloc(msg_frm_1.meas_info_lst[i].label_info_lst_len, sizeof(label_info_lst_t));
       assert(msg_frm_1.meas_info_lst[i].label_info_lst != NULL && "Memory exhausted" );
       
@@ -1102,7 +1104,7 @@ kpm_ind_msg_format_1_t fill_kpm_ind_msg_frm_1(void)
   return msg_frm_1;
 }
 
-kpm_ind_msg_format_2_t fill_kpm_ind_msg_frm_2(void)
+static kpm_ind_msg_format_2_t fill_kpm_ind_msg_frm_2(void)
 {
   kpm_ind_msg_format_2_t msg_frm_2 = {0};
 
@@ -1220,7 +1222,7 @@ kpm_ind_msg_format_2_t fill_kpm_ind_msg_frm_2(void)
     // List of matched UE IDs
     // Optional [0, 65535]
     cond_ue->ue_id_matched_lst_len = 1;  // (rand() % 65535) + 0;
-    cond_ue->ue_id_matched_lst = calloc(cond_ue->ue_id_matched_lst_len, sizeof(ue_id_t));
+    cond_ue->ue_id_matched_lst = calloc(cond_ue->ue_id_matched_lst_len, sizeof(ue_id_e2sm_t));
     assert(cond_ue->ue_id_matched_lst != NULL && "Memory exhausted");
 
     for (size_t j = 0; j<cond_ue->ue_id_matched_lst_len; j++)
@@ -1236,7 +1238,7 @@ kpm_ind_msg_format_2_t fill_kpm_ind_msg_frm_2(void)
 
     for (size_t j = 0; j<cond_ue->ue_id_gran_period_lst_len; j++)
     {
-      cond_ue->ue_id_gran_period_lst[j].num_matched_ue = ONE_OR_MORE_MATCHED_UE;  // rand()%END_MATCHED_UE;
+      cond_ue->ue_id_gran_period_lst[j].num_matched_ue = rand()%END_MATCHED_UE;
 
       switch (cond_ue->ue_id_gran_period_lst[j].num_matched_ue)
       {
@@ -1249,7 +1251,7 @@ kpm_ind_msg_format_2_t fill_kpm_ind_msg_frm_2(void)
       case ONE_OR_MORE_MATCHED_UE:
       {
         cond_ue->ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len = 5;  // (rand() % 65535) + 1;
-        cond_ue->ue_id_gran_period_lst[j].matched_ue_lst.ue_lst = calloc(cond_ue->ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len, sizeof(ue_id_t));
+        cond_ue->ue_id_gran_period_lst[j].matched_ue_lst.ue_lst = calloc(cond_ue->ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len, sizeof(ue_id_e2sm_t));
         assert(cond_ue->ue_id_gran_period_lst[j].matched_ue_lst.ue_lst != NULL && "Memory exhausted");
 
         for (size_t z = 0; z<cond_ue->ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len; z++)
@@ -1269,7 +1271,7 @@ kpm_ind_msg_format_2_t fill_kpm_ind_msg_frm_2(void)
   return msg_frm_2;
 }
 
-kpm_ind_msg_format_3_t fill_kpm_ind_msg_frm_3(void)
+static kpm_ind_msg_format_3_t fill_kpm_ind_msg_frm_3(void)
 {
   kpm_ind_msg_format_3_t msg_frm_3 = {0};
 
@@ -1293,7 +1295,7 @@ kpm_ind_msg_t fill_kpm_ind_msg(void)
 {
   kpm_ind_msg_t msg = {0};
 
-  msg.type = FORMAT_2_INDICATION_MESSAGE;  // rand()%FORMAT_3_INDICATION_MESSAGE;
+  msg.type = FORMAT_1_INDICATION_MESSAGE;  // rand()%END_INDICATION_MESSAGE;
   
   switch (msg.type)
   {
@@ -1314,4 +1316,36 @@ kpm_ind_msg_t fill_kpm_ind_msg(void)
     assert(false && "Unknown KPM Indication Message Format Type");
   }
   return msg;
+}
+
+
+kpm_ran_function_def_t fill_kpm_ran_function(void)
+{
+  kpm_ran_function_def_t ran_function = {0};
+
+  // RAN Function Name
+  ran_function.ran_function_Name.description.buf = calloc(strlen(SM_KPM_DESCRIPTION) + 1, sizeof(char));
+  memcpy(ran_function.ran_function_Name.description.buf, SM_KPM_DESCRIPTION, strlen(SM_KPM_DESCRIPTION));
+  ran_function.ran_function_Name.description.len = strlen(SM_KPM_DESCRIPTION);
+
+  ran_function.ran_function_Name.short_name.buf = calloc(strlen(SM_KPM_STR) + 1, sizeof(char));
+  memcpy(ran_function.ran_function_Name.short_name.buf, SM_KPM_STR, strlen(SM_KPM_STR));
+  ran_function.ran_function_Name.short_name.len = strlen(SM_KPM_STR);
+
+  ran_function.ran_function_Name.E2SM_OID.buf = calloc(strlen(SM_KPM_OID) + 1, sizeof(char));
+  memcpy(ran_function.ran_function_Name.E2SM_OID.buf, SM_KPM_OID, strlen(SM_KPM_OID));
+  ran_function.ran_function_Name.E2SM_OID.len = strlen(SM_KPM_OID);
+
+  ran_function.ran_function_Name.instance = NULL;
+
+  // RIC Event Trigger Style List
+  ran_function.ric_event_trigger_style_list_len = 0;
+  ran_function.ric_event_trigger_style_list = NULL;
+
+
+  // RIC Report Style List
+  ran_function.ric_report_style_list_len = 0;
+  ran_function.ric_report_style_list = NULL;
+
+  return ran_function;
 }

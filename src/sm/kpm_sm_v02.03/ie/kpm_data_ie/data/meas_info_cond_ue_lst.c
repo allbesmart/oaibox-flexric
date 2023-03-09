@@ -21,7 +21,7 @@ void free_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t* src)
   if (src->ue_id_matched_lst != NULL)
   {
     for (size_t i = 0; i<src->ue_id_matched_lst_len; i++)
-      free_ue_id(&src->ue_id_matched_lst[i]);
+      free_ue_id_e2sm(&src->ue_id_matched_lst[i]);
   }
   free(src->ue_id_matched_lst);
 
@@ -68,7 +68,7 @@ bool eq_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t const* m0, meas_info_cond_
   {
     for (size_t i = 0; i<m0->ue_id_matched_lst_len; i++)
     {
-      if (eq_ue_id(&m0->ue_id_matched_lst[i], &m1->ue_id_matched_lst[i]) != true)
+      if (eq_ue_id_e2sm(&m0->ue_id_matched_lst[i], &m1->ue_id_matched_lst[i]) != true)
         return false;
     }
   }

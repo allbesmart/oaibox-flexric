@@ -10,7 +10,7 @@ void free_kpm_ue_id_gran_period_lst(ue_id_gran_period_lst_t* src)
   {
     for (size_t i = 0; i<src->matched_ue_lst.ue_lst_len; i++)
     {
-      free_ue_id(&src->matched_ue_lst.ue_lst[i]);
+      free_ue_id_e2sm(&src->matched_ue_lst.ue_lst[i]);
     }
     
     free(src->matched_ue_lst.ue_lst);
@@ -39,7 +39,7 @@ bool eq_kpm_ue_id_gran_period_lst(ue_id_gran_period_lst_t const* m0, ue_id_gran_
 
     for (size_t i = 0; i<m0->matched_ue_lst.ue_lst_len; i++)
     {
-        if (eq_ue_id(&m0->matched_ue_lst.ue_lst[i], &m1->matched_ue_lst.ue_lst[i]) != true)
+        if (eq_ue_id_e2sm(&m0->matched_ue_lst.ue_lst[i], &m1->matched_ue_lst.ue_lst[i]) != true)
           return false;
     }
     break;

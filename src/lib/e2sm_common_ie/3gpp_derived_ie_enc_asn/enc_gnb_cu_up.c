@@ -2,7 +2,7 @@
 
 #include "enc_gnb_cu_up.h"
 
-UEID_GNB_CU_UP_t * enc_gNB_CU_UP_UE_asn(const gnb_cu_up_t * gnb_cu_up)
+UEID_GNB_CU_UP_t * enc_gNB_CU_UP_UE_asn(const gnb_cu_up_e2sm_t * gnb_cu_up)
 {
     UEID_GNB_CU_UP_t * gnb_cu_up_asn = calloc(1, sizeof(UEID_GNB_CU_UP_t));
     assert(gnb_cu_up_asn != NULL && "Memory exhausted");

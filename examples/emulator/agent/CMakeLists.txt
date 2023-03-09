@@ -10,9 +10,9 @@
 add_executable(emu_agent_gnb
                   test_agent.c
                   ../../../test/sm/common/fill_ind_data.c
-                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
-                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_hdr_frm_1.c
-                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_msg_frm_1.c
+                  ../../../src/sm/kpm_sm_v02.03/test/fill_rnd_data_kpm.c
+                
+                  
                   )
 
                   target_link_libraries(emu_agent_gnb
@@ -32,9 +32,9 @@ target_compile_definitions(emu_agent_gnb PRIVATE TEST_AGENT_GNB)
 add_executable(emu_agent_gnb_cu
                 test_agent.c
                 ../../../test/sm/common/fill_ind_data.c
-                ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
-                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_hdr_frm_1.c
-                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_msg_frm_1.c
+                ../../../src/sm/kpm_sm_v02.03/test/fill_rnd_data_kpm.c
+                
+                  
  
                 )
 
@@ -55,9 +55,9 @@ target_compile_definitions(emu_agent_gnb_cu PRIVATE TEST_AGENT_GNB_CU)
 add_executable(emu_agent_gnb_du
                 test_agent.c
                 ../../../test/sm/common/fill_ind_data.c
-                ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
-                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_hdr_frm_1.c
-                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_msg_frm_1.c
+                ../../../src/sm/kpm_sm_v02.03/test/fill_rnd_data_kpm.c
+                
+                  
  
                 )
 
@@ -78,9 +78,9 @@ target_compile_definitions(emu_agent_gnb_du PRIVATE TEST_AGENT_GNB_DU)
 add_executable(emu_agent_enb
                 test_agent.c
                 ../../../test/sm/common/fill_ind_data.c
-                ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.c
-                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_hdr_frm_1.c
-                  ../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_ind_msg_frm_1.c
+                ../../../src/sm/kpm_sm_v02.03/test/fill_rnd_data_kpm.c
+                
+                  
  
                 )
 

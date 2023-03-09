@@ -16,6 +16,10 @@ typedef struct {
                                    multiple RAN Function ID supporting the same  E2SM specification   ask Mikel */
 } ran_function_name_t;
 
+void free_kpm_ran_function_name(ran_function_name_t* src);
+
+bool eq_kpm_ran_function_name(ran_function_name_t const * m0, ran_function_name_t const * m1);
+
 #ifdef __cplusplus
 }
 #endif

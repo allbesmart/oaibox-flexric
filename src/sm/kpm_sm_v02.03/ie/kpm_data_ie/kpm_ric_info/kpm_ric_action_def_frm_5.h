@@ -12,7 +12,7 @@ extern "C" {
 
 typedef struct {
     size_t ue_id_lst_len;  // [2, 65535]
-    ue_id_t *ue_id_lst;  // 8.3.24
+    ue_id_e2sm_t *ue_id_lst;  // 8.3.24
 
     kpm_act_def_format_1_t action_def_format_1;  // 8.2.1.2.1
 

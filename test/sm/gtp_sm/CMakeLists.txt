@@ -16,6 +16,7 @@ if(SM_ENCODING_GTP  STREQUAL "PLAIN")
                       ../../../src/util/alg_ds/alg/eq_float.c
                       ../../../src/sm/gtp_sm/ie/gtp_data_ie.c
                       ../common/fill_ind_data.c
+                      ../../../src/sm/kpm_sm_v02.03/test/fill_rnd_data_kpm.c
               )
 elseif(SM_ENCODING_GTP STREQUAL "ASN")
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}../ie/asn/ )
@@ -35,6 +36,7 @@ elseif(SM_ENCODING_GTP STREQUAL "ASN")
                       ../../if_sm/read/sm_rd_if.c
                       ${asn_sources} 
                       ../../../../test/common/fill_ind_data.c
+                      ../../../src/sm/kpm_sm_v02.03/test/fill_rnd_data_kpm.c
               )
 elseif(SM_ENCODING_GTP STREQUAL "FLATBUFFERS")
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}../ie/fb/ )
@@ -50,6 +52,7 @@ elseif(SM_ENCODING_GTP STREQUAL "FLATBUFFERS")
                       ../ie/gtp_data_ie.c
                       ../../if_sm/read/sm_rd_if.c
                       ../../../../test/common/fill_ind_data.c
+                      ../../../src/sm/kpm_sm_v02.03/test/fill_rnd_data_kpm.c
               )
 endif()
 

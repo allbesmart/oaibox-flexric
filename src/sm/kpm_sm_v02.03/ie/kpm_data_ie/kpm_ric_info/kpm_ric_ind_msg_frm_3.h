@@ -11,7 +11,7 @@ extern "C" {
 #include "kpm_ric_ind_msg_frm_1.h"
 
 typedef struct {
-    ue_id_t ue_meas_report_lst;  // 8.3.24
+    ue_id_e2sm_t ue_meas_report_lst;  // 8.3.24
 
     kpm_ind_msg_format_1_t ind_msg_format_1;  // 8.2.1.4.1; measurement data per ue
 

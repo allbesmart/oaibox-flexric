@@ -6,9 +6,9 @@
 #include "dec_en_gnb.h"
 #include "dec_global_enb_id.h"
 
-en_gnb_t dec_en_gNB_UE_asn(const UEID_EN_GNB_t * en_gnb_asn)
+en_gnb_e2sm_t dec_en_gNB_UE_asn(const UEID_EN_GNB_t * en_gnb_asn)
 {
-    en_gnb_t en_gnb = {0};
+    en_gnb_e2sm_t en_gnb = {0};
 
     // Mandatory
     // MeNB UE X2AP ID

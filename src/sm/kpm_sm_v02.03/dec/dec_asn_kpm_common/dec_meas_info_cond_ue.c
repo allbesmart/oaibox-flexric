@@ -64,7 +64,7 @@ meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEi
             meas_cond_ue[i].ue_id_matched_lst_len = meas_cond_ue_asn.list.array[i]->matchingUEidList->list.count;
             assert(meas_cond_ue[i].ue_id_matched_lst_len >= 1 && meas_cond_ue[i].ue_id_matched_lst_len <= maxnoofUEID);
 
-            meas_cond_ue[i].ue_id_matched_lst = calloc(meas_cond_ue[i].ue_id_matched_lst_len, sizeof(ue_id_t));
+            meas_cond_ue[i].ue_id_matched_lst = calloc(meas_cond_ue[i].ue_id_matched_lst_len, sizeof(ue_id_e2sm_t));
             assert(meas_cond_ue[i].ue_id_matched_lst != NULL && "Memory exhausted");
 
             for (size_t j = 0; j<meas_cond_ue[i].ue_id_matched_lst_len; j++)
@@ -104,7 +104,7 @@ meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEi
                   meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len = ue_id_per_gp->list.array[j]->matchedPerGP.choice.oneOrMoreUEmatched->list.count;
                   assert(meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len >= 1 && meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len <= maxnoofUEID);
 
-                  meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst = calloc(meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len, sizeof(ue_id_t));
+                  meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst = calloc(meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len, sizeof(ue_id_e2sm_t));
                   assert(meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst != NULL && "Memory exhausted");
 
                   for (size_t z = 0; z<meas_cond_ue[i].ue_id_gran_period_lst[j].matched_ue_lst.ue_lst_len; z++)

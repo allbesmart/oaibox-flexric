@@ -10,9 +10,9 @@
 #include "dec_global_ng_ran.h"
 
 
-gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
+gnb_e2sm_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 {
-    gnb_t gnb = {0};
+    gnb_e2sm_t gnb = {0};
 
     // 6.2.3.16
     // Mandatory

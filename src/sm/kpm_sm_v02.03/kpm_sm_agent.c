@@ -34,6 +34,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "test/fill_rnd_data_kpm.h"
+
+
 typedef struct{
 
   sm_agent_t base;
@@ -89,9 +92,6 @@ static sm_ind_data_t on_indication_kpm_sm_ag(sm_agent_t* sm_agent)
   rd_if.type = KPM_STATS_V0;
   sm->base.io.read(&rd_if); 
 
-  kpm_ric_indication_t* ind = &rd_if.kpm_stats;
-  //defer({ free_kpm_ind_data(&ind) ;});
-  free_kpm_ind_data(ind);
 
   byte_array_t ba_hdr = kpm_enc_ind_hdr(&sm->enc, &rd_if.kpm_stats.kpm_ind_hdr);
   ret.ind_hdr = ba_hdr.buf;
@@ -119,14 +119,8 @@ sm_e2_setup_t on_e2_setup_kpm_sm_ag(sm_agent_t* sm_agent)
 
   kpm_e2_setup_t e2_setup_msg = {0};
   
-  e2_setup_msg.kpm_ran_function_def.ran_function_Name.description.buf = (uint8_t *)SM_KPM_DESCRIPTION;
-  e2_setup_msg.kpm_ran_function_def.ran_function_Name.description.len = strlen(SM_KPM_DESCRIPTION);
-  e2_setup_msg.kpm_ran_function_def.ran_function_Name.short_name.buf = (uint8_t *)SM_KPM_STR;
-  e2_setup_msg.kpm_ran_function_def.ran_function_Name.short_name.len = strlen(SM_KPM_STR);
-  
-  e2_setup_msg.kpm_ran_function_def.ran_function_Name.E2SM_OID.buf = (uint8_t *)SM_KPM_OID;
-  e2_setup_msg.kpm_ran_function_def.ran_function_Name.E2SM_OID.len = strlen(SM_KPM_OID);
-  
+  e2_setup_msg.kpm_ran_function_def = fill_kpm_ran_function();
+
   byte_array_t ba = kpm_enc_func_def(&sm->enc, &e2_setup_msg.kpm_ran_function_def);
   setup.ran_fun_def = ba.buf;
   setup.len_rfd = ba.len;

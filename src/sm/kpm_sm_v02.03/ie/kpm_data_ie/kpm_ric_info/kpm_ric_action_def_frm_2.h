@@ -15,7 +15,7 @@ extern "C" {
 //  8.2.1.2.2  E2SM-KPM Action Definition Format 2
 
 typedef struct {
-    ue_id_t ue_id;  // 8.3.24
+    ue_id_e2sm_t ue_id;  // 8.3.24
     kpm_act_def_format_1_t action_def_format_1;  // 8.2.1.2.1
 
 } kpm_act_def_format_2_t;

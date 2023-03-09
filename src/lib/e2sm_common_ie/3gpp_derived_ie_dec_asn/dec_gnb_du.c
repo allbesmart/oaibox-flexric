@@ -2,9 +2,9 @@
 
 #include "dec_gnb_du.h"
 
-gnb_du_t dec_gNB_DU_UE_asn(const UEID_GNB_DU_t * gnb_du_asn)
+gnb_du_e2sm_t dec_gNB_DU_UE_asn(const UEID_GNB_DU_t * gnb_du_asn)
 {
-    gnb_du_t gnb_du = {0};
+    gnb_du_e2sm_t gnb_du = {0};
 
     // gNB CU UE F1AP
     memcpy(&gnb_du.gnb_cu_ue_f1ap, &gnb_du_asn->gNB_CU_UE_F1AP_ID, 4);

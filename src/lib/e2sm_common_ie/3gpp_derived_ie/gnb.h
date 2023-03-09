@@ -61,11 +61,11 @@ typedef struct{
 
 
 
-} gnb_t ;
+} gnb_e2sm_t ;
 
-void free_gnb_ue_id(gnb_t * src);
+void free_gnb_ue_id_e2sm(gnb_e2sm_t * src);
 
-bool eq_gnb_ue_id(gnb_t const * m0, gnb_t const * m1);
+bool eq_gnb_ue_id_e2sm(gnb_e2sm_t const * m0, gnb_e2sm_t const * m1);
 
 #ifdef __cplusplus
 }

@@ -7,9 +7,9 @@
 #include "dec_global_ng_ran.h"
 
 
-ng_enb_t dec_ng_eNB_UE_asn(const UEID_NG_ENB_t * ng_enb_asn)
+ng_enb_e2sm_t dec_ng_eNB_UE_asn(const UEID_NG_ENB_t * ng_enb_asn)
 {
-    ng_enb_t ng_enb = {0};
+    ng_enb_e2sm_t ng_enb = {0};
 
     // AMF UE NGAP ID
     assert(ng_enb_asn->amf_UE_NGAP_ID.buf != NULL);

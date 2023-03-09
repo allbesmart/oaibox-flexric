@@ -3,7 +3,7 @@
 
 #include "gnb_du.h"
 
-void free_gnb_du_ue_id(gnb_du_t * src)
+void free_gnb_du_ue_id_e2sm(gnb_du_e2sm_t * src)
 {
     assert(src != NULL);
 
@@ -12,7 +12,7 @@ void free_gnb_du_ue_id(gnb_du_t * src)
 
 }
 
-bool eq_gnb_du_ue_id(gnb_du_t const * m0, gnb_du_t const * m1)
+bool eq_gnb_du_ue_id_e2sm(gnb_du_e2sm_t const * m0, gnb_du_e2sm_t const * m1)
 {
     assert(m0 != NULL);
     assert(m1 != NULL);

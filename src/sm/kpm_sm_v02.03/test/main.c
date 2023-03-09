@@ -69,36 +69,58 @@ void test_kpm_ind_msg(void)
   assert(eq_kpm_ind_msg(&msg, &out) == true);
 }
 
+void test_kpm_ran_function(void)
+{
+  kpm_ran_function_def_t msg = fill_kpm_ran_function();
+  defer({ free_kpm_ran_function_def(&msg); });
+
+  byte_array_t ba = kpm_enc_func_def_asn(&msg);
+  defer({ free_byte_array(ba); }); 
+
+  kpm_ran_function_def_t out = kpm_dec_func_def_asn(ba.len, ba.buf);
+  defer({ free_kpm_ran_function_def(&out); });
+
+  assert(eq_kpm_ran_function_def(&msg, &out) == true);
+}
 
 int main()
 {
   time_t t;
   srand((unsigned) time(&t));
 
+  for (size_t i = 0; i<10; i++)
+  {
 
   // Test off all the functions
 
   printf("KPM SM enc/dec test launched\n");
 
   // Event Trigger
-  // test_kpm_ric_event_trigger_def_asn();
+  test_kpm_ric_event_trigger_def_asn();
 
-  // printf("KPM Event Trigger test succeeded\n");
+  printf("KPM Event Trigger test succeeded\n");
 
   // Action Definition
-  // test_kpm_act_def();
+  test_kpm_act_def();
 
-  // printf("KPM Action Definition test succeeded\n");
+  printf("KPM Action Definition test succeeded\n");
 
   // Indication Header
-  // test_kpm_ind_hdr();
+  test_kpm_ind_hdr();
 
-  // printf("KPM Indication Header test succeeded\n");
+  printf("KPM Indication Header test succeeded\n");
 
   // Indication Message
   test_kpm_ind_msg();
 
   printf("KPM Indication Message test succeeded\n");
+
+  printf("KPM SM enc/dec test succeeded\n");
+
+  }
+  
+  // RAN Function Definition
+  test_kpm_ran_function();
 
   printf("KPM SM enc/dec test succeeded\n");
 

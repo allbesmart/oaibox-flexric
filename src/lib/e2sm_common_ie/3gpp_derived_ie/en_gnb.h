@@ -42,11 +42,11 @@ typedef struct {
     // 6.2.3.25
     uint64_t *ran_ue_id;
 
-} en_gnb_t;
+} en_gnb_e2sm_t;
 
-void free_en_gnb_ue_id(en_gnb_t * src);
+void free_en_gnb_ue_id_e2sm(en_gnb_e2sm_t * src);
 
-bool eq_en_gnb_ue_id(en_gnb_t const * m0, en_gnb_t const * m1);
+bool eq_en_gnb_ue_id_e2sm(en_gnb_e2sm_t const * m0, en_gnb_e2sm_t const * m1);
 
 #ifdef __cplusplus
 }

@@ -3,7 +3,7 @@
 
 #include "ng_enb.h"
 
-void free_ng_enb_ue_id(ng_enb_t * src)
+void free_ng_enb_ue_id_e2sm(ng_enb_e2sm_t * src)
 {
     assert(src != NULL);
 
@@ -21,7 +21,7 @@ void free_ng_enb_ue_id(ng_enb_t * src)
 
 }
 
-bool eq_ng_enb_ue_id(ng_enb_t const * m0, ng_enb_t const * m1)
+bool eq_ng_enb_ue_id_e2sm(ng_enb_e2sm_t const * m0, ng_enb_e2sm_t const * m1)
 {
 
     // AMF UE NGAP ID

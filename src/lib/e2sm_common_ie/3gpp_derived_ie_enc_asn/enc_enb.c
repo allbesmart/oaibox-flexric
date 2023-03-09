@@ -6,7 +6,7 @@
 #include "enc_enb.h"
 #include "enc_global_enb_id.h"
 
-UEID_ENB_t * enc_eNB_UE_asn(const enb_t * enb)
+UEID_ENB_t * enc_eNB_UE_asn(const enb_e2sm_t * enb)
 {
     UEID_ENB_t * enb_asn = calloc(1, sizeof(UEID_ENB_t));
     assert(enb_asn != NULL && "Memory exhausted");

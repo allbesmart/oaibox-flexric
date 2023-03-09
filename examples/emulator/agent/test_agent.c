@@ -23,7 +23,6 @@
 
 #include "../../../src/agent/e2_agent_api.h"
 #include "../../../test/sm/common/fill_ind_data.h"
-#include "../../../test/sm/kpm_sm/fill_kpm_ind_data/fill_kpm_ind_data.h"
 
 #include <assert.h>
 #include <signal.h>

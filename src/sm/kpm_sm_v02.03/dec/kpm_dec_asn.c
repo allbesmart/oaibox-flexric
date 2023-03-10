@@ -16,6 +16,7 @@
 #include "../ie/asn/MeasurementType.h"
 #include "../ie/asn/LabelInfoItem.h"
 #include "../ie/asn/asn_constant.h"
+#include "../ie/asn/RIC-EventTriggerStyle-Item.h"
 
 #include "dec_asn/dec_ric_event_trigger_frm_1.h"
 
@@ -257,7 +258,36 @@ kpm_ran_function_def_t kpm_dec_func_def_asn(size_t len, uint8_t const func_def[l
   //  RIC Event Trigger Style Item
   if (pdu->ric_EventTriggerStyle_List != NULL)
   {
-    assert(false && "RIC Event Style not yet implemented");
+    assert(pdu->ric_EventTriggerStyle_List->list.count >=1 && pdu->ric_EventTriggerStyle_List->list.count <= maxnoofRICStyles);
+    ret.ric_event_trigger_style_list_len = pdu->ric_EventTriggerStyle_List->list.count;
+
+    ret.ric_event_trigger_style_list = calloc(ret.ric_event_trigger_style_list_len, sizeof(ric_event_trigger_style_item_t));
+    assert(ret.ric_event_trigger_style_list != NULL && "Memory exhausted");
+
+    for (size_t i = 0; i<ret.ric_event_trigger_style_list_len; i++)
+    {
+      RIC_EventTriggerStyle_Item_t * event_item = pdu->ric_EventTriggerStyle_List->list.array[i];
+
+      switch (event_item->ric_EventTriggerStyle_Type)
+      {
+      case 1:
+      {
+        ret.ric_event_trigger_style_list[i].style_type = STYLE_1_RIC_EVENT_TRIGGER;
+
+        // RIC Event Trigger Style Name
+        ret.ric_event_trigger_style_list[i].style_name.len = event_item->ric_EventTriggerStyle_Name.size;
+        ret.ric_event_trigger_style_list[i].style_name.buf = malloc(ret.ric_event_trigger_style_list[i].style_name.len);
+        memcpy(ret.ric_event_trigger_style_list[i].style_name.buf, event_item->ric_EventTriggerStyle_Name.buf, ret.ric_event_trigger_style_list[i].style_name.len);
+
+        // RIC Event Trigger Format
+        ret.ric_event_trigger_style_list[i].format_type = FORMAT_1_RIC_EVENT_TRIGGER;
+        break;
+      }
+      
+      default:
+        assert(false && "Unknown RIC Event Trigger Style Type");
+      }
+    }
   }
   else
   {

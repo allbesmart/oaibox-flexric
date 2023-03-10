@@ -115,14 +115,13 @@ int main()
 
   printf("KPM Indication Message test succeeded\n");
 
-  printf("KPM SM enc/dec test succeeded\n");
-
-  }
-  
   // RAN Function Definition
   test_kpm_ran_function();
 
   printf("KPM SM enc/dec test succeeded\n");
+
+  }
+  
 
   return EXIT_SUCCESS;
 }

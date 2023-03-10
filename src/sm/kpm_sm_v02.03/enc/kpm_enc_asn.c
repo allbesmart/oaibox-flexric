@@ -4,12 +4,15 @@
   * XXX-implementation, cfr: https://gitlab.eurecom.fr/mosaic5g/flexric/-/blob/rrc-sm/src/sm/rrc_sm/enc/rrc_enc_asn.c
   */
 
+#include "../ie/asn/asn_constant.h"
+
 #include "../ie/asn/E2SM-KPM-EventTriggerDefinition.h"
 #include "../ie/asn/E2SM-KPM-ActionDefinition.h"
 #include "../ie/asn/E2SM-KPM-IndicationHeader.h"
 #include "../ie/asn/E2SM-KPM-IndicationMessage.h"
 #include "../ie/asn/E2SM-KPM-RANfunction-Description.h"
 #include "../ie/asn/RANfunction-Name.h"
+#include "../ie/asn/RIC-EventTriggerStyle-Item.h"
 
 #include "enc_asn/enc_ric_event_trigger_frm_1.h"
 
@@ -27,6 +30,7 @@
 
 #include "kpm_enc_asn.h"
 #include "../../../util/conversions.h"
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -274,14 +278,45 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
 
 
   //  RIC Event Trigger Style Item
-  if (func_def->ric_event_trigger_style_list_len != 0)
+  if (func_def->ric_event_trigger_style_list != NULL || func_def->ric_event_trigger_style_list_len != 0)
   {
-    assert(false && "RIC Event Style not yet implemented");
+    assert(func_def->ric_event_trigger_style_list_len >= 1 && func_def->ric_event_trigger_style_list_len <= maxnoofRICStyles);
+
+    pdu->ric_EventTriggerStyle_List = calloc(func_def->ric_event_trigger_style_list_len, sizeof(*pdu->ric_EventTriggerStyle_List));
+    assert(pdu->ric_EventTriggerStyle_List != NULL && "Memory exhausted");
+
+    for (size_t i = 0; i<func_def->ric_event_trigger_style_list_len; i++)
+    {
+      RIC_EventTriggerStyle_Item_t * event_item = calloc(1, sizeof(RIC_EventTriggerStyle_Item_t));
+      assert(event_item != NULL && "Memory exhausted");
+
+      switch (func_def->ric_event_trigger_style_list[i].style_type)
+      {
+      case STYLE_1_RIC_EVENT_TRIGGER:
+      {
+        event_item->ric_EventTriggerStyle_Type = 1;
+
+        // RIC Event Trigger Style Name
+        int ret = OCTET_STRING_fromBuf(&event_item->ric_EventTriggerStyle_Name, 
+                              (char *)func_def->ric_event_trigger_style_list[i].style_name.buf, 
+                              func_def->ric_event_trigger_style_list[i].style_name.len);
+        assert(ret == 0);
+
+        // RIC Event Trigger Format
+        event_item->ric_EventTriggerFormat_Type = 1;
+
+        break;
+      }
+      
+      default:
+        assert(false && "Unknown RIC Event Trigger Style Type");
+      }
+
+      int rc1 = ASN_SEQUENCE_ADD(&pdu->ric_EventTriggerStyle_List->list, event_item);
+      assert(rc1 == 0);
+    }
   }
-  else
-  {
-    pdu->ric_EventTriggerStyle_List = NULL;
-  }
+
 
 
 
@@ -290,10 +325,7 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
   {
     assert(false && "RIC Report Style not yet implemented");
   }
-  else
-  {
-    pdu->ric_ReportStyle_List = NULL;
-  }
+
 
 
 

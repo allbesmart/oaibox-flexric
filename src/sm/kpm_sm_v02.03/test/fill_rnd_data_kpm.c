@@ -1295,7 +1295,7 @@ kpm_ind_msg_t fill_kpm_ind_msg(void)
 {
   kpm_ind_msg_t msg = {0};
 
-  msg.type = FORMAT_1_INDICATION_MESSAGE;  // rand()%END_INDICATION_MESSAGE;
+  msg.type = rand()%END_INDICATION_MESSAGE;
   
   switch (msg.type)
   {
@@ -1339,8 +1339,34 @@ kpm_ran_function_def_t fill_kpm_ran_function(void)
   ran_function.ran_function_Name.instance = NULL;
 
   // RIC Event Trigger Style List
-  ran_function.ric_event_trigger_style_list_len = 0;
-  ran_function.ric_event_trigger_style_list = NULL;
+  ran_function.ric_event_trigger_style_list_len = 3;  // (rand() % 63) + 0;
+  ran_function.ric_event_trigger_style_list = calloc(ran_function.ric_event_trigger_style_list_len, sizeof(ric_event_trigger_style_item_t));
+  assert(ran_function.ric_event_trigger_style_list != NULL && "Memory exhausted");
+
+  for (size_t i = 0; i<ran_function.ric_event_trigger_style_list_len; i++)
+  {
+    // RIC Event Trigger Style
+    ran_function.ric_event_trigger_style_list[i].style_type = rand()%END_STYLE_RIC_EVENT_TRIGGER;
+
+    switch (ran_function.ric_event_trigger_style_list[i].style_type)
+    {
+    case STYLE_1_RIC_EVENT_TRIGGER:
+    {
+      // RIC Event Trigger Style Name
+      ran_function.ric_event_trigger_style_list[i].style_name.buf = calloc(strlen("RIC-Style-Type-1") + 1, sizeof(char));
+      memcpy(ran_function.ric_event_trigger_style_list[i].style_name.buf, "RIC-Style-Type-1", strlen("RIC-Style-Type-1"));
+      ran_function.ric_event_trigger_style_list[i].style_name.len = strlen("RIC-Style-Type-1");
+
+      // RIC Event Trigger Format
+      ran_function.ric_event_trigger_style_list[i].format_type = FORMAT_1_RIC_EVENT_TRIGGER;
+
+      break;
+    }
+    
+    default:
+      assert(false && "Unknown RIC Event Trigger Style Type");
+    }
+  }
 
 
   // RIC Report Style List

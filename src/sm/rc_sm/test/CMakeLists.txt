@@ -151,12 +151,27 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
 
 
     ../ie/ir/e2sm_rc_ctrl_hdr_frmt_1.c
+    ../ie/ir/e2sm_rc_ctrl_hdr_frmt_2.c
+    ../ie/ir/e2sm_rc_ctrl_msg_frmt_1.c
+    ../ie/ir/e2sm_rc_ctrl_msg_frmt_2.c
+
+
+    ../ie/ir/e2sm_rc_ctrl_out_frmt_1.c
+    ../ie/ir/e2sm_rc_ctrl_out_frmt_2.c
+    ../ie/ir/e2sm_rc_ctrl_out_frmt_3.c
+
+    ../ie/ir/seq_ran_param_2.c
+    ../ie/ir/seq_ctrl_act_out.c 
+    ../ie/ir/seq_ctrl_sty_mul_out.c  
+
 
 
     ../ie/ir/param_report_def.c
-
     ../ie/ir/ran_param_test_list.c
 
+
+    ../ie/ir/seq_ctrl_sma.c
+    ../ie/ir/seq_ctrl_act.c
 
 
     ../ie/ir/seq_cell_info.c

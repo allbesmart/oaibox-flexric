@@ -23,9 +23,10 @@ extern "C" {
 typedef enum E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR {
 	E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR_NOTHING,	/* No components present */
 	E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR_controlOutcome_Format1,
-	/* Extensions may appear below */
 	E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR_controlOutcome_Format2,
 	E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR_controlOutcome_Format3
+	/* Extensions may appear below */
+	
 } E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR;
 
 /* Forward declarations */
@@ -39,12 +40,12 @@ typedef struct E2SM_RC_ControlOutcome {
 		E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR present;
 		union E2SM_RC_ControlOutcome__ric_controlOutcome_formats_u {
 			struct E2SM_RC_ControlOutcome_Format1	*controlOutcome_Format1;
+			struct E2SM_RC_ControlOutcome_Format2	*controlOutcome_Format2;
+			struct E2SM_RC_ControlOutcome_Format3	*controlOutcome_Format3;
 			/*
 			 * This type is extensible,
 			 * possible extensions are below.
 			 */
-			struct E2SM_RC_ControlOutcome_Format2	*controlOutcome_Format2;
-			struct E2SM_RC_ControlOutcome_Format3	*controlOutcome_Format3;
 		} choice;
 		
 		/* Context for parsing across buffer boundaries */

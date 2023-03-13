@@ -46,9 +46,9 @@ byte_array_t rc_enc_call_proc_id_fb(e2sm_rc_cpid_t const*);
 
 byte_array_t rc_enc_ctrl_hdr_fb(e2sm_rc_ctrl_hdr_t const*); 
 
-byte_array_t rc_enc_ctrl_msg_fb(rc_ctrl_msg_t const*); 
+byte_array_t rc_enc_ctrl_msg_fb(e2sm_rc_ctrl_msg_t const*); 
 
-byte_array_t rc_enc_ctrl_out_fb(rc_ctrl_out_t const*); 
+byte_array_t rc_enc_ctrl_out_fb(e2sm_rc_ctrl_out_t const*); 
 
 byte_array_t rc_enc_func_def_fb(rc_func_def_t const*);
 

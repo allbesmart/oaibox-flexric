@@ -1916,18 +1916,35 @@ e2sm_rc_ctrl_hdr_frmt_1_t fill_rnd_rc_ctrl_hdr_frmat_1(void)
   return dst;
 }
 
+static
+e2sm_rc_ctrl_hdr_frmt_2_t fill_rnd_rc_ctrl_hdr_frmat_2(void)
+{
+  e2sm_rc_ctrl_hdr_frmt_2_t dst = {0}; 
+ // UE ID
+ // Optional
+ // 9.3.10
+  dst.ue_id = calloc(1, sizeof(ue_id_t));
+  assert(dst.ue_id != NULL && "Memory exhausted");
+
+  *dst.ue_id = fill_rnd_ue_id();
+
+  // RIC Control decision
+  // Optional
+  dst.ric_ctrl_dec = NULL;
+
+  return dst;
+}
 
 e2sm_rc_ctrl_hdr_t fill_rnd_rc_ctrl_hdr(void)
 {
   e2sm_rc_ctrl_hdr_t dst = {0}; 
 
-  dst.format = FORMAT_1_E2SM_RC_CTRL_HDR; //rand() % END_E2SM_RC_CTRL_HDR;
+  dst.format = FORMAT_2_E2SM_RC_CTRL_HDR; //rand() % END_E2SM_RC_CTRL_HDR;
 
-  if(dst.format ==  FORMAT_1_E2SM_RC_CTRL_HDR){
+  if(dst.format == FORMAT_1_E2SM_RC_CTRL_HDR){
     dst.frmt_1 =  fill_rnd_rc_ctrl_hdr_frmat_1();
   } else if(dst.format == FORMAT_2_E2SM_RC_CTRL_HDR){
-    assert(0!=0 && "Not implemented");
-    // dst.frmt_2 =  fill_rnd_rc_ctrl_hdr_frmat_2();
+     dst.frmt_2 = fill_rnd_rc_ctrl_hdr_frmat_2();
   } else {
     assert(0!=0 && "Not implemented");
   }
@@ -1939,6 +1956,296 @@ e2sm_rc_ctrl_hdr_t fill_rnd_rc_ctrl_hdr(void)
 /////////////////////////////
 /////////////////////////////
 ////////// End of RC Control Header 
+/////////////////////////////
+/////////////////////////////
+
+/////////////////////////////
+/////////////////////////////
+////////// Start of RC Control Message 
+/////////////////////////////
+/////////////////////////////
+
+static
+e2sm_rc_ctrl_msg_frmt_1_t fill_rnd_ctrl_msg_frmt_1(void)
+{
+  e2sm_rc_ctrl_msg_frmt_1_t dst = {0}; 
+
+  // List of RAN parameters
+  // [0- 65535]
+  dst.sz_ran_param = rand() % 8;
+   
+  if(dst.sz_ran_param > 0){
+    dst.ran_param = calloc(dst.sz_ran_param , sizeof(seq_ran_param_t));
+    assert(dst.ran_param != NULL && "Memory exhausted");
+  }
+
+  for(size_t i = 0; i < dst.sz_ran_param; ++i){
+    dst.ran_param[i] = fill_rnd_seq_ran_param();
+  }
+
+  return dst;
+}
+
+static
+seq_ctrl_act_t fill_rnd_seq_ctrl_act(void)
+{
+  seq_ctrl_act_t dst = {0};
+
+  //Control Action ID
+  //Mandatory
+  //9.3.6
+  // [1 - 65535]
+  dst.ctrl_act_id = (rand() %  65535) + 1;
+
+  // Control Action Parameters
+  // Optional
+  // 9.2.1.7.1 E2SM-RC Control Message Format 1
+  dst.ctrl_msg_frmt_1 = calloc(1 , sizeof(e2sm_rc_ctrl_msg_frmt_1_t ));
+  assert(dst.ctrl_msg_frmt_1 != NULL && "Memory exhausted" );
+
+  *dst.ctrl_msg_frmt_1 = fill_rnd_ctrl_msg_frmt_1();
+
+  return dst;
+}
+
+static
+seq_ctrl_sma_t fill_rnd_seq_ctrl_sma(void)
+{
+  seq_ctrl_sma_t dst = {0};
+
+  // Indicated Control Style
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst.ctrl_style = rand();
+
+  // Sequence of Control Actions
+  // [1-63]
+  dst.sz_seq_ctrl_act = (rand() % 8) +1;
+
+  dst.seq_ctrl_act = calloc(dst.sz_seq_ctrl_act, sizeof(seq_ctrl_act_t ));
+  assert(dst.seq_ctrl_act != NULL && "Memory exhausted" );
+
+  for(size_t i = 0; i < dst.sz_seq_ctrl_act; ++i){
+    dst.seq_ctrl_act[i] = fill_rnd_seq_ctrl_act();
+  }
+
+  return dst;
+}
+
+
+static
+e2sm_rc_ctrl_msg_frmt_2_t fill_rnd_ctrl_msg_frmt_2(void)
+{
+  e2sm_rc_ctrl_msg_frmt_2_t dst = {0}; 
+
+  // Sequence of Control Styles
+  // for Multiple Actions
+  // [1 - 63]  
+  dst.sz_seq_ctrl_sma = (rand() % 8) + 1;
+
+  dst.action = calloc(dst.sz_seq_ctrl_sma, sizeof(seq_ctrl_sma_t));
+  assert(dst.action != NULL && "Memory exhausted");
+
+  for(size_t i = 0 ; i < dst.sz_seq_ctrl_sma; ++i){
+    dst.action[i] = fill_rnd_seq_ctrl_sma();
+  }
+
+  return dst;
+}
+
+
+e2sm_rc_ctrl_msg_t fill_rnd_rc_ctrl_msg(void)
+{
+  e2sm_rc_ctrl_msg_t dst = {0}; 
+  
+  dst.format = FORMAT_2_E2SM_RC_CTRL_MSG; //rand() % END_E2SM_RC_CTRL_MSG;
+  
+  if(dst.format == FORMAT_1_E2SM_RC_CTRL_MSG){
+    dst.frmt_1 = fill_rnd_ctrl_msg_frmt_1();
+  } else if (dst.format == FORMAT_2_E2SM_RC_CTRL_MSG){
+    dst.frmt_2 = fill_rnd_ctrl_msg_frmt_2();
+  } else {
+    assert(0 && "Unknown format");
+  }
+
+  return dst;
+}
+
+
+/////////////////////////////
+/////////////////////////////
+////////// End of RC Control Message 
+/////////////////////////////
+/////////////////////////////
+
+
+
+
+/////////////////////////////
+/////////////////////////////
+////////// Start of RC Control Outcome 
+/////////////////////////////
+/////////////////////////////
+
+static
+seq_ran_param_2_t fill_rnd_seq_ran_param_2(void)
+{
+  seq_ran_param_2_t dst = {0}; 
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1 - 4294967295]
+  dst.ran_param_id = (rand() % 4294967295) + 1; 
+
+  // RAN Parameter Value
+  // Mandatory
+  // 9.3.14
+  dst.ran_param_value = fill_rnd_ran_param_val();
+  
+  return dst;
+}
+
+static
+e2sm_rc_ctrl_out_frmt_1_t fill_rnd_ctrl_out_frmt_1(void)
+{
+  e2sm_rc_ctrl_out_frmt_1_t dst = {0}; 
+
+  // Sequence of RAN
+  // Parameters
+  // [0 - 255]
+  dst.sz_seq_ran_param_2 = rand() % 8;
+
+  if(dst.sz_seq_ran_param_2 > 0 ){
+    dst.ran_param = calloc(dst.sz_seq_ran_param_2, sizeof(seq_ran_param_2_t));
+    assert(dst.ran_param != NULL && "Memry exhausted" );
+  }
+
+  for(size_t i = 0; i < dst.sz_seq_ran_param_2; ++i){
+    dst.ran_param[i] = fill_rnd_seq_ran_param_2(); 
+  }
+
+  return dst;
+}
+
+static
+seq_ctrl_act_out_t fill_rnd_seq_ctrl_act_out(void) 
+{
+  seq_ctrl_act_out_t dst = {0}; 
+
+  // Control Action ID
+  // Mandatory
+  // 9.3.6
+  // [1- 65535]
+  dst.ctrl_act_id = (rand() % 65535)+1;
+
+  //Sequence of RAN
+  //Parameters
+  // [1-255]  
+  dst.sz_ran_param = (rand() % 8)+1;
+
+  dst.ran_param = calloc(dst.sz_ran_param, sizeof(seq_ran_param_2_t));
+  assert(dst.ran_param != NULL && "Memory exhausted" );
+
+  for(size_t i = 0; i < dst.sz_ran_param; ++i){
+    dst.ran_param[i] = fill_rnd_seq_ran_param_2();
+  }
+
+  return dst;
+}
+
+
+static
+seq_ctrl_sty_mul_out_t fill_rnd_seq_ctrl_sty_mul_out(void)
+{
+  seq_ctrl_sty_mul_out_t dst = {0}; 
+
+  // Indicated Control Style
+  // Mandatory
+  // 9.3.3
+  //  6.2.2.2.
+  dst.ind_ctrl_style = rand();
+
+  //Sequence of Control
+  //Actions Outcom
+  // [1-63]
+  dst.sz_seq_ctrl_act_out = (rand()%8)+ 1;
+
+  dst.seq_ctrl_act_out = calloc(dst.sz_seq_ctrl_act_out, sizeof(seq_ctrl_act_out_t));
+  assert(dst.seq_ctrl_act_out != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ctrl_act_out; ++i){
+    dst.seq_ctrl_act_out[i] = fill_rnd_seq_ctrl_act_out() ;
+  }
+
+  return dst;
+}
+
+
+static
+e2sm_rc_ctrl_out_frmt_2_t fill_rnd_ctrl_out_frmt_2(void)
+{
+
+// Sequence of Control Styles
+// for Multiple Outcomes
+// [1-63]
+  e2sm_rc_ctrl_out_frmt_2_t dst = {0};
+
+  dst.sz_seq_ctrl_sty_mul_out = (rand() % 8 ) +1; 
+
+  dst.seq_ctrl_sty_mul_out = calloc(dst.sz_seq_ctrl_sty_mul_out, sizeof(seq_ctrl_sty_mul_out_t));
+  assert(dst.seq_ctrl_sty_mul_out != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ctrl_sty_mul_out; ++i){
+    dst.seq_ctrl_sty_mul_out[i] = fill_rnd_seq_ctrl_sty_mul_out();
+  }
+
+  return dst;
+}
+
+static
+e2sm_rc_ctrl_out_frmt_3_t fill_rnd_ctrl_out_frmt_3()
+{
+  e2sm_rc_ctrl_out_frmt_3_t dst = {0}; 
+
+  //  Sequence of RAN Parameters
+  //  [0-255]
+  dst.sz_seq_ran_param = (rand() % 8) + 1;
+  dst.ran_param = calloc( dst.sz_seq_ran_param , sizeof(seq_ran_param_t));
+  assert(dst.ran_param != NULL && "memory exhausted" );
+
+  for(size_t i = 0; i < dst.sz_seq_ran_param; ++i){
+    dst.ran_param[i] = fill_rnd_seq_ran_param();
+  }
+
+  return dst;
+}
+
+
+e2sm_rc_ctrl_out_t fill_rnd_rc_ctrl_out(void)
+{
+  e2sm_rc_ctrl_out_t dst = {0}; 
+
+  dst.format = FORMAT_3_E2SM_RC_CTRL_OUT; // rand() % END_E2SM_RC_CTRL_OUT;
+  
+  if(dst.format == FORMAT_1_E2SM_RC_CTRL_OUT){
+    dst.frmt_1 = fill_rnd_ctrl_out_frmt_1();
+  } else if(dst.format == FORMAT_2_E2SM_RC_CTRL_OUT ){
+    dst.frmt_2 = fill_rnd_ctrl_out_frmt_2();
+  } else if(dst.format == FORMAT_3_E2SM_RC_CTRL_OUT ){
+    dst.frmt_3 = fill_rnd_ctrl_out_frmt_3();
+  } else {
+    assert(0!=0 && "Unknown format");
+  }
+
+  return dst;
+}
+
+/////////////////////////////
+/////////////////////////////
+////////// End of RC Control Outcome 
 /////////////////////////////
 /////////////////////////////
 

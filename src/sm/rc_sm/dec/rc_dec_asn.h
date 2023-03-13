@@ -39,9 +39,9 @@ e2sm_rc_cpid_t rc_dec_cpid_asn(size_t len, uint8_t const call_proc_id[len]);
 
 e2sm_rc_ctrl_hdr_t rc_dec_ctrl_hdr_asn(size_t len, uint8_t const ctrl_hdr[len]); 
 
-rc_ctrl_msg_t rc_dec_ctrl_msg_asn(size_t len, uint8_t const ctrl_msg[len]); 
+e2sm_rc_ctrl_msg_t rc_dec_ctrl_msg_asn(size_t len, uint8_t const ctrl_msg[len]); 
 
-rc_ctrl_out_t rc_dec_ctrl_out_asn(size_t len, uint8_t const ctrl_out[len]); 
+e2sm_rc_ctrl_out_t rc_dec_ctrl_out_asn(size_t len, uint8_t const ctrl_out[len]); 
 
 rc_func_def_t rc_dec_func_def_asn(size_t len, uint8_t const func_def[len]);
 

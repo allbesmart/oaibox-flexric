@@ -120,7 +120,25 @@
 #include "../ie/asn/E2SM-RC-ControlHeader.h"
 
 #include "../ie/asn/E2SM-RC-ControlHeader-Format1.h"
+#include "../ie/asn/E2SM-RC-ControlHeader-Format2.h"
+#include "../ie/asn/E2SM-RC-ControlMessage.h"
+#include "../ie/asn/E2SM-RC-ControlMessage-Format1.h"
+#include "../ie/asn/E2SM-RC-ControlMessage-Format1-Item.h"
+#include "../ie/asn/E2SM-RC-ControlMessage-Format2.h"
+#include "../ie/asn/E2SM-RC-ControlMessage-Format2-Style-Item.h"
+#include "../ie/asn/E2SM-RC-ControlMessage-Format2-ControlAction-Item.h"
 
+#include "../ie/asn/E2SM-RC-ControlOutcome.h"
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format1.h"
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format2.h"
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format3.h"
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format1-Item.h"
+
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format2-Style-Item.h"
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format2-ControlOutcome-Item.h"
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format2-RANP-Item.h"
+
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format3-Item.h"
 
 #include "../../../lib/sm/enc_asn_sm_common/enc_cell_global_id.h"
 
@@ -1984,6 +2002,30 @@ E2SM_RC_ControlHeader_Format1_t* enc_ctrl_hdr_frmt_1(e2sm_rc_ctrl_hdr_frmt_1_t c
   return dst;
 }
 
+static
+E2SM_RC_ControlHeader_Format2_t* enc_ctrl_hdr_frmt_2(e2sm_rc_ctrl_hdr_frmt_2_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlHeader_Format2_t* dst = calloc(1, sizeof(E2SM_RC_ControlHeader_Format2_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // UE ID
+ // Optional
+ // 9.3.10
+  if(src->ue_id != NULL){
+    dst->ueID = calloc(1, sizeof(UEID_t));
+    assert(dst->ueID != NULL && "memory exhausted");
+    *dst->ueID = enc_ue_id_asn(src->ue_id);
+  }
+
+  // RIC Control decision
+  // Optional
+  assert(src->ric_ctrl_dec == NULL && "not implemented"); 
+
+  return dst;
+}
+
 byte_array_t rc_enc_ctrl_hdr_asn(e2sm_rc_ctrl_hdr_t const* src)
 {
   assert(src != NULL);
@@ -1996,7 +2038,7 @@ byte_array_t rc_enc_ctrl_hdr_asn(e2sm_rc_ctrl_hdr_t const* src)
     dst.ric_controlHeader_formats.choice.controlHeader_Format1 = enc_ctrl_hdr_frmt_1(&src->frmt_1); 
   } else if(src->format == FORMAT_2_E2SM_RC_CTRL_HDR){
     dst.ric_controlHeader_formats.present = E2SM_RC_ControlHeader__ric_controlHeader_formats_PR_controlHeader_Format2;
-    assert(0!=0 && "Not implemented");
+    dst.ric_controlHeader_formats.choice.controlHeader_Format2 = enc_ctrl_hdr_frmt_2(&src->frmt_2); 
   } else {
     assert(0!=0 && "Unknown format");
   }
@@ -2013,21 +2055,383 @@ byte_array_t rc_enc_ctrl_hdr_asn(e2sm_rc_ctrl_hdr_t const* src)
   return ba;
 }
 
-byte_array_t rc_enc_ctrl_msg_asn(rc_ctrl_msg_t const* ctrl_msg)
+static
+E2SM_RC_ControlMessage_Format1_Item_t* enc_ctrl_msg_frmt_1_it(seq_ran_param_t const* src)
 {
-  assert(0!=0 && "Not implemented");
+  assert(src != NULL);
 
-  assert(ctrl_msg != NULL);
-  byte_array_t  ba = {0};
+  E2SM_RC_ControlMessage_Format1_Item_t* dst = calloc(1, sizeof(E2SM_RC_ControlMessage_Format1_Item_t));
+  assert(dst != NULL);
+
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ran_param_id > 0);
+  dst->ranParameter_ID = src->ran_param_id;
+
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  dst->ranParameter_valueType = cp_ran_param_value_type(&src->ran_param_val);
+
+  return dst;
+}
+
+static
+E2SM_RC_ControlMessage_Format1_t enc_ctrl_msg_frmt_1(e2sm_rc_ctrl_msg_frmt_1_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlMessage_Format1_t dst = {0}; 
+
+  // List of RAN parameters
+  // [0-]
+  assert(src->sz_ran_param < 65536);
+ 
+  for(size_t i = 0 ; i < src->sz_ran_param; ++i){
+    E2SM_RC_ControlMessage_Format1_Item_t* ie = enc_ctrl_msg_frmt_1_it(&src->ran_param[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst.ranP_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+
+static
+E2SM_RC_ControlMessage_Format2_ControlAction_Item_t* enc_ctrl_msg_frmt_2_ctrl_act_it(seq_ctrl_act_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlMessage_Format2_ControlAction_Item_t* dst = calloc(1, sizeof(E2SM_RC_ControlMessage_Format2_ControlAction_Item_t));
+  assert(dst != NULL && "memory exhausted");
+
+  //Control Action ID
+  //Mandatory
+  //9.3.6
+  // [1 - 65535]
+  assert(src->ctrl_act_id > 0);
+  dst->ric_ControlAction_ID = src->ctrl_act_id;
+
+  // Control Action Parameters
+  // BUG BUG BUG
+  // Optional in english. Mandatory in ASN. 
+  // 9.2.1.7.1 E2SM-RC Control Message Format 1
+  assert(src->ctrl_msg_frmt_1 != NULL); 
+  dst->ranP_List = enc_ctrl_msg_frmt_1(src->ctrl_msg_frmt_1);
+
+  return dst;
+}
+
+static
+E2SM_RC_ControlMessage_Format2_Style_Item_t* enc_ctrl_msg_frmt_2_it(seq_ctrl_sma_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlMessage_Format2_Style_Item_t* dst = calloc(1, sizeof(E2SM_RC_ControlMessage_Format2_Style_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // Indicated Control Style
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst->indicated_Control_Style_Type = src->ctrl_style;
+
+  // Sequence of Control Actions
+  // [1-63]
+  assert(src->sz_seq_ctrl_act > 0 && src->sz_seq_ctrl_act < 64);
+
+  for(size_t i = 0; i < src->sz_seq_ctrl_act; ++i){
+    E2SM_RC_ControlMessage_Format2_ControlAction_Item_t* ie = enc_ctrl_msg_frmt_2_ctrl_act_it(&src->seq_ctrl_act[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ric_ControlAction_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+
+
+static
+E2SM_RC_ControlMessage_Format2_t* enc_ctrl_msg_frmt_2(e2sm_rc_ctrl_msg_frmt_2_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlMessage_Format2_t* dst = calloc(1, sizeof(E2SM_RC_ControlMessage_Format2_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // Sequence of Control Styles
+  // for Multiple Actions
+  // [1 - 63]  
+  assert(src->sz_seq_ctrl_sma > 0 && src->sz_seq_ctrl_sma < 64);
+
+  for(size_t i = 0 ; i < src->sz_seq_ctrl_sma; ++i){
+    E2SM_RC_ControlMessage_Format2_Style_Item_t* ie = enc_ctrl_msg_frmt_2_it(&src->action[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ric_ControlStyle_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+
+byte_array_t rc_enc_ctrl_msg_asn(e2sm_rc_ctrl_msg_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlMessage_t dst = {0};
+  defer({  ASN_STRUCT_RESET(asn_DEF_E2SM_RC_ControlMessage, &dst); });
+
+  if(src->format == FORMAT_1_E2SM_RC_CTRL_MSG){
+    dst.ric_controlMessage_formats.present = E2SM_RC_ControlMessage__ric_controlMessage_formats_PR_controlMessage_Format1; 
+    
+    dst.ric_controlMessage_formats.choice.controlMessage_Format1 = calloc(1, sizeof(E2SM_RC_ControlMessage_Format1_t)); 
+    assert(dst.ric_controlMessage_formats.choice.controlMessage_Format1 != NULL && "Memory exhausted");
+
+    *dst.ric_controlMessage_formats.choice.controlMessage_Format1 = enc_ctrl_msg_frmt_1(&src->frmt_1);
+  } else if(src->format == FORMAT_2_E2SM_RC_CTRL_MSG){
+    dst.ric_controlMessage_formats.present = E2SM_RC_ControlMessage__ric_controlMessage_formats_PR_controlMessage_Format2; 
+    dst.ric_controlMessage_formats.choice.controlMessage_Format2 = enc_ctrl_msg_frmt_2(&src->frmt_2);
+  } else {
+    assert(0 != 0 && "Unknown format type");
+  }
+
+  xer_fprint(stdout, &asn_DEF_E2SM_RC_ControlMessage, &dst);
+  fflush(stdout);
+
+  byte_array_t ba = {.buf = malloc(16*1024), .len = 16*1024};
+  const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
+  asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_RC_ControlMessage, &dst, ba.buf, ba.len);
+  assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
+  ba.len = er.encoded;
+
   return ba;
 }
 
-byte_array_t rc_enc_ctrl_out_asn(rc_ctrl_out_t const* ctrl) 
-{
-  assert(0!=0 && "Not implemented");
 
-  assert( ctrl != NULL );
-  byte_array_t  ba = {0};
+static
+E2SM_RC_ControlOutcome_Format1_Item_t* enc_ctrl_out_frmt_1_it(seq_ran_param_2_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlOutcome_Format1_Item_t* dst = calloc(1, sizeof(E2SM_RC_ControlOutcome_Format1_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1 - 4294967295]
+  assert(src->ran_param_id > 0);
+  dst->ranParameter_ID = src->ran_param_id;
+
+  // RAN Parameter Value
+  // Mandatory
+  // 9.3.14
+  dst->ranParameter_value = cp_ran_param_val(&src->ran_param_value);
+
+  return dst;
+}
+
+static
+E2SM_RC_ControlOutcome_Format1_t* enc_ctrl_out_frmt_1(e2sm_rc_ctrl_out_frmt_1_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlOutcome_Format1_t* dst = calloc(1, sizeof(E2SM_RC_ControlOutcome_Format1_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // Sequence of RAN
+  // Parameters
+  // [0 - 255]
+  assert(src->sz_seq_ran_param_2 < 256);
+
+  for(size_t i = 0; i < src->sz_seq_ran_param_2; ++i){
+    E2SM_RC_ControlOutcome_Format1_Item_t* ie = enc_ctrl_out_frmt_1_it(&src->ran_param[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ranP_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+E2SM_RC_ControlOutcome_Format2_RANP_Item_t* enc_ctrl_out_frmt_2_ran_it(seq_ran_param_2_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlOutcome_Format2_RANP_Item_t* dst = calloc(1, sizeof(E2SM_RC_ControlOutcome_Format2_RANP_Item_t));
+  assert(dst != NULL && "memory exhausted");
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1 - 4294967295]
+  assert(src->ran_param_id > 0);
+  dst->ranParameter_ID = src->ran_param_id;
+
+  // RAN Parameter Value
+  // Mandatory
+  // 9.3.14
+  dst->ranParameter_value = cp_ran_param_val(&src->ran_param_value);
+
+  return dst;
+}
+
+
+static
+E2SM_RC_ControlOutcome_Format2_ControlOutcome_Item_t* enc_ctrl_out_frmt_2_ctrl_out(seq_ctrl_act_out_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlOutcome_Format2_ControlOutcome_Item_t* dst = calloc(1, sizeof(E2SM_RC_ControlOutcome_Format2_ControlOutcome_Item_t));
+  assert(dst != NULL && "Memory exhausyted");
+
+  // Control Action ID
+  // Mandatory
+  // 9.3.6
+  // [1- 65535]
+  assert(src->ctrl_act_id > 0);
+  dst->ric_ControlAction_ID = src->ctrl_act_id;
+
+  //Sequence of RAN
+  //Parameters
+  // [1-255]  
+  assert(src->sz_ran_param > 0 && src->sz_ran_param < 256);
+
+  for(size_t i = 0; i < src->sz_ran_param; ++i){
+    E2SM_RC_ControlOutcome_Format2_RANP_Item_t* ie = enc_ctrl_out_frmt_2_ran_it(&src->ran_param[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ranP_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+
+static
+E2SM_RC_ControlOutcome_Format2_Style_Item_t* enc_ctrl_out_frmt_2_it(seq_ctrl_sty_mul_out_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlOutcome_Format2_Style_Item_t* dst = calloc(1, sizeof(E2SM_RC_ControlOutcome_Format2_Style_Item_t));
+  assert(dst != NULL && "memory exhausted");
+
+  // Indicated Control Style
+  // Mandatory
+  // 9.3.3
+  //  6.2.2.2.
+  dst->indicated_Control_Style_Type = src->ind_ctrl_style;
+
+  //Sequence of Control
+  //Actions Outcom
+  // [1-63]
+  for(size_t i = 0; i < src->sz_seq_ctrl_act_out; ++i){
+    E2SM_RC_ControlOutcome_Format2_ControlOutcome_Item_t* ie = enc_ctrl_out_frmt_2_ctrl_out(&src->seq_ctrl_act_out[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ric_ControlOutcome_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+E2SM_RC_ControlOutcome_Format2_t* enc_ctrl_out_frmt_2(e2sm_rc_ctrl_out_frmt_2_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlOutcome_Format2_t* dst = calloc(1, sizeof(E2SM_RC_ControlOutcome_Format2_t ));
+  assert(dst != NULL && "memory exhausted");
+
+// Sequence of Control Styles
+// for Multiple Outcomes
+// [1-63]
+  assert(src->sz_seq_ctrl_sty_mul_out > 0 && src->sz_seq_ctrl_sty_mul_out < 64);
+
+  for(size_t i = 0; i < src->sz_seq_ctrl_sty_mul_out; ++i){
+    E2SM_RC_ControlOutcome_Format2_Style_Item_t* ie = enc_ctrl_out_frmt_2_it(&src->seq_ctrl_sty_mul_out[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ric_ControlStyle_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+E2SM_RC_ControlOutcome_Format3_Item_t* enc_ctrl_out_frmt_3_it(seq_ran_param_t const* src)
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlOutcome_Format3_Item_t* dst = calloc(1, sizeof(E2SM_RC_ControlOutcome_Format3_Item_t ));
+  assert(dst != NULL && "Memory exhausted");
+
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ran_param_id > 0);
+  dst->ranParameter_ID = src->ran_param_id;
+
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  dst->ranParameter_valueType = cp_ran_param_value_type(&src->ran_param_val);
+
+  return dst;
+}
+
+
+static
+E2SM_RC_ControlOutcome_Format3_t* enc_ctrl_out_frmt_3(e2sm_rc_ctrl_out_frmt_3_t const* src)
+{
+  assert(src != NULL);
+  E2SM_RC_ControlOutcome_Format3_t* dst = calloc(1, sizeof(E2SM_RC_ControlOutcome_Format3_t));
+
+  //  Sequence of RAN Parameters
+  //  [0-255]
+  assert(src->sz_seq_ran_param < 256);
+
+  for(size_t i = 0; i < src->sz_seq_ran_param; ++i){
+    E2SM_RC_ControlOutcome_Format3_Item_t* ie = enc_ctrl_out_frmt_3_it(&src->ran_param[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ranP_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+
+byte_array_t rc_enc_ctrl_out_asn(e2sm_rc_ctrl_out_t const* src) 
+{
+  assert(src != NULL);
+
+  E2SM_RC_ControlOutcome_t dst = {0};
+  defer({  ASN_STRUCT_RESET(asn_DEF_E2SM_RC_ControlOutcome, &dst); });
+
+  if(src->format == FORMAT_1_E2SM_RC_CTRL_OUT){
+    dst.ric_controlOutcome_formats.present = E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR_controlOutcome_Format1;
+    dst.ric_controlOutcome_formats.choice.controlOutcome_Format1 = enc_ctrl_out_frmt_1(&src->frmt_1);
+  } else if(src->format == FORMAT_2_E2SM_RC_CTRL_OUT){
+    dst.ric_controlOutcome_formats.present = E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR_controlOutcome_Format2;
+    dst.ric_controlOutcome_formats.choice.controlOutcome_Format2 = enc_ctrl_out_frmt_2(&src->frmt_2);
+  } else if(src->format == FORMAT_3_E2SM_RC_CTRL_OUT){
+    dst.ric_controlOutcome_formats.present = E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR_controlOutcome_Format3;
+    dst.ric_controlOutcome_formats.choice.controlOutcome_Format3 = enc_ctrl_out_frmt_3(&src->frmt_3);
+  } else {
+    assert(0!=0 && "Unknown format");
+  }
+
+
+  xer_fprint(stdout, &asn_DEF_E2SM_RC_ControlOutcome, &dst);
+  fflush(stdout);
+
+  byte_array_t ba = {.buf = malloc(16*1024), .len = 16*1024};
+  const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
+  asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_RC_ControlOutcome, &dst, ba.buf, ba.len);
+  assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
+  ba.len = er.encoded;
+
   return ba;
 }
 

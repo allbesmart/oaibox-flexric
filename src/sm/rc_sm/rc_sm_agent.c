@@ -121,13 +121,13 @@ static
   assert(0!=0 && "Dummy years are vorbei..."); 
 //  assert(hdr.dummy == 0 && "Only dummy == 0 supported ");
 
-  rc_ctrl_msg_t msg = rc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
-  assert(msg.action == 42 && "Only action number 42 supported");
+  e2sm_rc_ctrl_msg_t msg = rc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
+//  assert(msg.action == 42 && "Only action number 42 supported");
 
   sm_ag_if_wr_t wr = {.type = RC_STATS_V1_03 };
   assert(0!=0 && "Fix this!!!");
 //  wr.rc_ctrl.hdr.dummy = 0; 
-  wr.rc_ctrl.msg.action = msg.action;
+//  wr.rc_ctrl.msg.action = msg.action;
 
   sm->base.io.write(&wr);
 

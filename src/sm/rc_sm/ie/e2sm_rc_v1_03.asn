@@ -1208,8 +1208,8 @@ E2SM-RC-CallProcessID-Format1 ::= SEQUENCE {
 E2SM-RC-ControlHeader ::= SEQUENCE {
 	ric-controlHeader-formats			CHOICE {
 	controlHeader-Format1		E2SM-RC-ControlHeader-Format1,
-		...,
-		controlHeader-Format2				E2SM-RC-ControlHeader-Format2
+  controlHeader-Format2				E2SM-RC-ControlHeader-Format2,
+	...
 	},
 	...
 }
@@ -1235,9 +1235,8 @@ E2SM-RC-ControlHeader-Format2 ::= SEQUENCE {
 E2SM-RC-ControlMessage ::= SEQUENCE {
 	ric-controlMessage-formats			CHOICE {
 		controlMessage-Format1			E2SM-RC-ControlMessage-Format1,
-		...,
-		controlMessage-Format2				E2SM-RC-ControlMessage-Format2
-
+		controlMessage-Format2				E2SM-RC-ControlMessage-Format2,
+		...
 	},
 	...
 }
@@ -1278,9 +1277,10 @@ E2SM-RC-ControlMessage-Format2-ControlAction-Item ::= SEQUENCE {
 E2SM-RC-ControlOutcome ::= SEQUENCE {
 	ric-controlOutcome-formats		CHOICE {
 		controlOutcome-Format1		E2SM-RC-ControlOutcome-Format1,
-		...,
-		controlOutcome-Format2			E2SM-RC-ControlOutcome-Format2,
-		controlOutcome-Format3			E2SM-RC-ControlOutcome-Format3	},
+		controlOutcome-Format2		E2SM-RC-ControlOutcome-Format2,
+		controlOutcome-Format3		E2SM-RC-ControlOutcome-Format3,	
+		...
+    },
 	...
 }
 

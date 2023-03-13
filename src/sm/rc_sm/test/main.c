@@ -125,6 +125,34 @@ void test_rc_ctrl_hdr(void)
 }
 
 
+void test_rc_ctrl_msg(void)
+{
+  e2sm_rc_ctrl_msg_t msg = fill_rnd_rc_ctrl_msg();
+  defer({ free_e2sm_rc_ctrl_msg(&msg); });
+
+  byte_array_t ba = rc_enc_ctrl_msg_asn(&msg);
+  defer({ free_byte_array(ba); });
+
+  e2sm_rc_ctrl_msg_t out = rc_dec_ctrl_msg_asn(ba.len, ba.buf);
+  defer({ free_e2sm_rc_ctrl_msg(&out); });
+
+  assert(eq_e2sm_rc_ctrl_msg(&msg, &out) == true);
+}
+
+void test_rc_ctrl_out(void)
+{
+  e2sm_rc_ctrl_out_t msg = fill_rnd_rc_ctrl_out();
+  defer({ free_e2sm_rc_ctrl_out(&msg); });
+
+  byte_array_t ba = rc_enc_ctrl_out_asn(&msg);
+  defer({ free_byte_array(ba); });
+
+  e2sm_rc_ctrl_out_t out = rc_dec_ctrl_out_asn(ba.len, ba.buf);
+  defer({ free_e2sm_rc_ctrl_out(&out); });
+
+  assert(eq_e2sm_rc_ctrl_out(&msg, &out) == true);
+}
+
 
 
 int main()
@@ -155,9 +183,17 @@ int main()
   //test_rc_call_process_id();
   //printf("\nRC Call Process ID\nn");
 
+  // Control Header 
+  // test_rc_ctrl_hdr();
+  // printf("\nRC Control Header \n");
+
   // Control Message  
-  test_rc_ctrl_hdr();
-  printf("\nRC Control Header \n");
+  // test_rc_ctrl_msg();
+  // printf("\nRC Control Message\n");
+
+  // Control Outcome 
+  test_rc_ctrl_out();
+  printf("\nRC Control Outcome\n");
 
 
 

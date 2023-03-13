@@ -123,6 +123,28 @@
 #include "../ie/asn/E2SM-RC-ControlHeader.h"
 
 #include "../ie/asn/E2SM-RC-ControlHeader-Format1.h"
+#include "../ie/asn/E2SM-RC-ControlHeader-Format2.h"
+#include "../ie/asn/E2SM-RC-ControlMessage.h"
+#include "../ie/asn/E2SM-RC-ControlMessage-Format1.h"
+#include "../ie/asn/E2SM-RC-ControlMessage-Format1-Item.h"
+#include "../ie/asn/E2SM-RC-ControlMessage-Format2.h"
+#include "../ie/asn/E2SM-RC-ControlMessage-Format2-Style-Item.h"
+#include "../ie/asn/E2SM-RC-ControlMessage-Format2-ControlAction-Item.h"
+
+#include "../ie/asn/E2SM-RC-ControlOutcome.h"
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format1.h"
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format2.h"
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format3.h"
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format1-Item.h"
+
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format2-Style-Item.h"
+
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format2-ControlOutcome-Item.h"
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format3-Item.h"
+
+
+
+#include "../ie/asn/E2SM-RC-ControlOutcome-Format2-RANP-Item.h"
 
 #include "../ie/asn/RANParameter-LIST.h"
 
@@ -2163,7 +2185,26 @@ e2sm_rc_ctrl_hdr_frmt_1_t dec_ctrl_hdr_frmt_1(E2SM_RC_ControlHeader_Format1_t co
  return dst;
 }
 
+static
+e2sm_rc_ctrl_hdr_frmt_2_t dec_ctrl_hdr_frmt_2(E2SM_RC_ControlHeader_Format2_t const* src)
+{
+  e2sm_rc_ctrl_hdr_frmt_2_t dst = {0}; 
+ // UE ID
+ // Optional
+ // 9.3.10
+  if(src->ueID != NULL){
+    dst.ue_id = calloc(1, sizeof(ue_id_t));
+    assert(dst.ue_id != NULL && "Memory exhausted");
 
+    *dst.ue_id = dec_ue_id_asn(src->ueID);
+  }
+
+  // RIC Control decision
+  // Optional
+  assert(src->ric_ControlDecision == NULL && "Not implemented");
+
+  return dst;
+}
 
 e2sm_rc_ctrl_hdr_t rc_dec_ctrl_hdr_asn(size_t len, uint8_t const ctrl_hdr[len])
 {
@@ -2186,30 +2227,402 @@ e2sm_rc_ctrl_hdr_t rc_dec_ctrl_hdr_asn(size_t len, uint8_t const ctrl_hdr[len])
     dst.frmt_1 = dec_ctrl_hdr_frmt_1(src.ric_controlHeader_formats.choice.controlHeader_Format1);
   } else if(src.ric_controlHeader_formats.present == E2SM_RC_ControlHeader__ric_controlHeader_formats_PR_controlHeader_Format2){
     dst.format = FORMAT_2_E2SM_RC_CTRL_HDR;
-
-    assert(0!=0 && "Not implemnented");
+    dst.frmt_2 = dec_ctrl_hdr_frmt_2(src.ric_controlHeader_formats.choice.controlHeader_Format2);
   } else {
     assert(0!=0 && "Unknown format type");
   }
 
+  return dst;
+}
+
+static
+seq_ran_param_t dec_ctrl_msg_frmt_1_it(E2SM_RC_ControlMessage_Format1_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ran_param_t dst = {0}; 
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ranParameter_ID > 0 && src->ranParameter_ID <  4294967296);
+  dst.ran_param_id = src->ranParameter_ID;
+
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  dst.ran_param_val = cp_ran_param_value_type(&src->ranParameter_valueType);
 
   return dst;
 }
 
-rc_ctrl_msg_t rc_dec_ctrl_msg_asn(size_t len, uint8_t const ctrl_msg[len])
+
+static
+e2sm_rc_ctrl_msg_frmt_1_t dec_ctrl_msg_frmt_1(E2SM_RC_ControlMessage_Format1_t const* src)
 {
-  assert(0!=0 && "Not implemented");
-  assert(ctrl_msg != NULL);
-  rc_ctrl_msg_t  avoid_warning;
-  return avoid_warning;
+  assert(src != NULL);
+
+  e2sm_rc_ctrl_msg_frmt_1_t dst = {0}; 
+
+  // List of RAN parameters
+  // [0- 65535]
+  assert(src->ranP_List.list.count <  65536);
+
+  if(src->ranP_List.list.count > 0){
+    dst.sz_ran_param = src->ranP_List.list.count;
+
+    dst.ran_param = calloc(dst.sz_ran_param, sizeof(seq_ran_param_t));
+    assert(dst.ran_param != NULL && "Memory exhausted");
+  }
+
+  for(size_t i = 0;i < dst.sz_ran_param; ++i){
+    dst.ran_param[i] = dec_ctrl_msg_frmt_1_it(src->ranP_List.list.array[i]);
+  }
+
+  return dst;
 }
 
-rc_ctrl_out_t rc_dec_ctrl_out_asn(size_t len, uint8_t const ctrl_out[len]) 
+static
+seq_ctrl_act_t dec_ctrl_msg_seq_ctrl_act(E2SM_RC_ControlMessage_Format2_ControlAction_Item_t const* src)
 {
-  assert(0!=0 && "Not implemented");
-  assert( ctrl_out != NULL);
- rc_ctrl_out_t avoid_warning;
-  return avoid_warning;
+  assert(src != NULL);
+
+  seq_ctrl_act_t dst = {0}; 
+
+  //Control Action ID
+  //Mandatory
+  //9.3.6
+  // [1 - 65535]
+  assert(src->ric_ControlAction_ID > 0 && src->ric_ControlAction_ID < 65536);
+  dst.ctrl_act_id = src->ric_ControlAction_ID;
+
+  // Control Action Parameters
+  // BUG, BUG, BUG in the standard 
+  // Optional in english. Mandatory in ASN. 
+  // 9.2.1.7.1 E2SM-RC Control Message Format 1
+  dst.ctrl_msg_frmt_1 = calloc(1, sizeof( e2sm_rc_ctrl_msg_frmt_1_t));
+  assert(dst.ctrl_msg_frmt_1 != NULL && "Memory exhausted" );
+
+  *dst.ctrl_msg_frmt_1 = dec_ctrl_msg_frmt_1(&src->ranP_List); 
+
+  return dst;
+}
+
+static
+seq_ctrl_sma_t dec_ctrl_msg_seq_ctrl_sma(E2SM_RC_ControlMessage_Format2_Style_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ctrl_sma_t dst = {0}; 
+
+  // Indicated Control Style
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst.ctrl_style = src->indicated_Control_Style_Type;
+
+  // Sequence of Control Actions
+  // [1-63]
+  assert(src->ric_ControlAction_List.list.count > 0 && src->ric_ControlAction_List.list.count < 64);
+
+  dst.sz_seq_ctrl_act = src->ric_ControlAction_List.list.count;
+
+  dst.seq_ctrl_act = calloc(dst.sz_seq_ctrl_act, sizeof(seq_ctrl_act_t));
+  assert(dst.seq_ctrl_act != NULL && "Memory exhausted" );
+  
+  for(size_t i = 0; i < dst.sz_seq_ctrl_act; ++i){
+    dst.seq_ctrl_act[i] = dec_ctrl_msg_seq_ctrl_act( src->ric_ControlAction_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+
+static
+e2sm_rc_ctrl_msg_frmt_2_t dec_ctrl_msg_frmt_2(E2SM_RC_ControlMessage_Format2_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ctrl_msg_frmt_2_t dst = {0}; 
+
+  // Sequence of Control Styles
+  // for Multiple Actions
+  // [1 - 63]  
+  assert(src->ric_ControlStyle_List.list.count > 0 && src->ric_ControlStyle_List.list.count < 64);
+  
+  dst.sz_seq_ctrl_sma = src->ric_ControlStyle_List.list.count;
+  dst.action = calloc(dst.sz_seq_ctrl_sma, sizeof(seq_ctrl_sma_t));
+  assert(dst.action != NULL && "Memory exhausted");
+  
+  for(size_t i = 0; i < dst.sz_seq_ctrl_sma; ++i){
+    dst.action[i] = dec_ctrl_msg_seq_ctrl_sma(src->ric_ControlStyle_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+e2sm_rc_ctrl_msg_t rc_dec_ctrl_msg_asn(size_t len, uint8_t const ctrl_msg[len])
+{
+  assert(ctrl_msg != NULL);
+  assert(len > 0);
+
+  E2SM_RC_ControlMessage_t src = {0};
+  defer({  ASN_STRUCT_RESET(asn_DEF_E2SM_RC_ControlMessage, &src); });
+  E2SM_RC_ControlMessage_t* src_ref = &src;
+
+  asn_dec_rval_t const ret = aper_decode(NULL, & asn_DEF_E2SM_RC_ControlMessage, (void **)&src_ref, ctrl_msg, len, 0, 0);
+  assert(ret.code == RC_OK);
+
+  //  xer_fprint(stdout, &asn_DEF_E2SM_RC_ControlMessage, &src);
+  //  fflush(stdout);
+
+  e2sm_rc_ctrl_msg_t dst = {0}; 
+
+  if(src.ric_controlMessage_formats.present == E2SM_RC_ControlMessage__ric_controlMessage_formats_PR_controlMessage_Format1){
+    dst.format = FORMAT_1_E2SM_RC_CTRL_MSG;
+    dst.frmt_1 = dec_ctrl_msg_frmt_1(src.ric_controlMessage_formats.choice.controlMessage_Format1);
+  } else if(src.ric_controlMessage_formats.present == E2SM_RC_ControlMessage__ric_controlMessage_formats_PR_controlMessage_Format2){
+    dst.format = FORMAT_2_E2SM_RC_CTRL_MSG;
+    dst.frmt_2 = dec_ctrl_msg_frmt_2(src.ric_controlMessage_formats.choice.controlMessage_Format2);
+  } else {
+    assert(0 && "Unknown format");
+  }
+
+  return dst;
+}
+
+static
+seq_ran_param_2_t dec_ctrl_out_frmt_1_it(E2SM_RC_ControlOutcome_Format1_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ran_param_2_t dst = {0};
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1 - 4294967295]
+  assert(src->ranParameter_ID > 0);
+  dst.ran_param_id = src->ranParameter_ID;
+
+  // RAN Parameter Value
+  // Mandatory
+  // 9.3.14
+  dst.ran_param_value = cp_ran_param_val(&src->ranParameter_value);
+
+  return dst;
+}
+
+
+static
+e2sm_rc_ctrl_out_frmt_1_t dec_ctrl_out_frmt_1(E2SM_RC_ControlOutcome_Format1_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ctrl_out_frmt_1_t dst = {0}; 
+
+  // Sequence of RAN
+  // Parameters
+  // [0 - 255]
+  assert(src->ranP_List.list.count < 256);
+
+  if(src->ranP_List.list.count > 0){
+    dst.sz_seq_ran_param_2 = src->ranP_List.list.count;
+    dst.ran_param = calloc(dst.sz_seq_ran_param_2, sizeof(seq_ran_param_2_t ));
+    assert(dst.ran_param != NULL && "Memory exhausted");
+  }
+
+  for(size_t i = 0; i < dst.sz_seq_ran_param_2; ++i){
+    dst.ran_param[i] = dec_ctrl_out_frmt_1_it(src->ranP_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+static
+seq_ran_param_2_t dec_ctrl_out_frmt_2_ran_it(E2SM_RC_ControlOutcome_Format2_RANP_Item_t const* src) 
+{
+  assert(src != NULL);
+
+  seq_ran_param_2_t dst = {0}; 
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1 - 4294967295]
+  assert(src->ranParameter_ID > 0 && src->ranParameter_ID < 4294967296);
+  dst.ran_param_id = src->ranParameter_ID;
+
+  // RAN Parameter Value
+  // Mandatory
+  // 9.3.14
+  dst.ran_param_value = cp_ran_param_val(&src->ranParameter_value);
+
+  return dst;
+}
+
+static
+seq_ctrl_act_out_t dec_ctrl_out_frmt_2_ctrl_out_it(E2SM_RC_ControlOutcome_Format2_ControlOutcome_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ctrl_act_out_t dst = {0}; 
+
+  // Control Action ID
+  // Mandatory
+  // 9.3.6
+  // [1- 65535]
+  assert(src->ric_ControlAction_ID > 0 && src->ric_ControlAction_ID < 65536);
+  dst.ctrl_act_id = src->ric_ControlAction_ID;
+
+  //Sequence of RAN
+  //Parameters
+  // [1-255]  
+  assert(src->ranP_List.list.count > 0 && src->ranP_List.list.count < 256); 
+
+  dst.sz_ran_param = src->ranP_List.list.count;
+  dst.ran_param = calloc(dst.sz_ran_param , sizeof(seq_ran_param_2_t));
+  assert(dst.ran_param != NULL && "memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_ran_param; ++i){
+    dst.ran_param[i] = dec_ctrl_out_frmt_2_ran_it(src->ranP_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+
+static
+seq_ctrl_sty_mul_out_t dec_ctrl_out_frmt_2_sty_it(E2SM_RC_ControlOutcome_Format2_Style_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ctrl_sty_mul_out_t dst = {0}; 
+
+  // Indicated Control Style
+  // Mandatory
+  // 9.3.3
+  //  6.2.2.2.
+  dst.ind_ctrl_style = src->indicated_Control_Style_Type; 
+
+  //Sequence of Control
+  //Actions Outcom
+  // [1-63]
+  assert(src->ric_ControlOutcome_List.list.count > 0 && src->ric_ControlOutcome_List.list.count < 64);
+  dst.sz_seq_ctrl_act_out = src->ric_ControlOutcome_List.list.count;
+
+  dst.seq_ctrl_act_out = calloc(dst.sz_seq_ctrl_act_out , sizeof(seq_ctrl_act_out_t));
+  assert(dst.seq_ctrl_act_out != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ctrl_act_out; ++i){
+    dst.seq_ctrl_act_out[i] = dec_ctrl_out_frmt_2_ctrl_out_it(src->ric_ControlOutcome_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+
+static
+e2sm_rc_ctrl_out_frmt_2_t dec_ctrl_out_frmt_2(E2SM_RC_ControlOutcome_Format2_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ctrl_out_frmt_2_t dst = {0}; 
+
+// Sequence of Control Styles
+// for Multiple Outcomes
+// [1-63]
+  assert(src->ric_ControlStyle_List.list.count > 0 && src->ric_ControlStyle_List.list.count < 64);
+
+  dst.sz_seq_ctrl_sty_mul_out = src->ric_ControlStyle_List.list.count;
+
+  dst.seq_ctrl_sty_mul_out = calloc(dst.sz_seq_ctrl_sty_mul_out, sizeof(seq_ctrl_sty_mul_out_t));
+  assert(dst.seq_ctrl_sty_mul_out != NULL && "Memory exhausted" );
+
+  for(size_t i = 0; i < dst.sz_seq_ctrl_sty_mul_out; ++i){
+    dst.seq_ctrl_sty_mul_out[i] = dec_ctrl_out_frmt_2_sty_it(src->ric_ControlStyle_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+static
+seq_ran_param_t dec_ctr_out_frmt_3_it(E2SM_RC_ControlOutcome_Format3_Item_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ran_param_t dst = {0}; 
+
+  //RAN Parameter ID
+  //Mandatory
+  //9.3.8
+  // [1 - 4294967295]
+  assert(src->ranParameter_ID > 0);
+  dst.ran_param_id = src->ranParameter_ID; 
+
+  // RAN Parameter Value Type
+  // 9.3.11
+  // Mandatory
+  dst.ran_param_val = cp_ran_param_value_type(&src->ranParameter_valueType);
+
+  return dst;
+}
+
+static
+e2sm_rc_ctrl_out_frmt_3_t dec_ctrl_out_frmt_3(E2SM_RC_ControlOutcome_Format3_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ctrl_out_frmt_3_t dst = {0}; 
+
+  //  Sequence of RAN Parameters
+  //  [0-255]
+  assert(src->ranP_List.list.count < 256);
+
+  if(src->ranP_List.list.count > 0){
+    dst.sz_seq_ran_param = src->ranP_List.list.count;
+    dst.ran_param = calloc(dst.sz_seq_ran_param , sizeof(seq_ran_param_t));
+    assert(dst.ran_param != NULL && "Memory exhausted");
+  }
+
+  for(size_t i = 0; i < dst.sz_seq_ran_param; ++i){
+    dst.ran_param[i] = dec_ctr_out_frmt_3_it(src->ranP_List.list.array[i]); 
+  }
+
+  return dst;
+}
+
+
+e2sm_rc_ctrl_out_t rc_dec_ctrl_out_asn(size_t len, uint8_t const ctrl_out[len]) 
+{
+  assert(ctrl_out != NULL);
+  assert(len > 0);
+
+  E2SM_RC_ControlOutcome_t src = {0};
+  defer({  ASN_STRUCT_RESET(asn_DEF_E2SM_RC_ControlOutcome, &src); });
+  E2SM_RC_ControlOutcome_t* src_ref = &src;
+
+  asn_dec_rval_t const ret = aper_decode(NULL, &asn_DEF_E2SM_RC_ControlOutcome, (void **)&src_ref, ctrl_out, len, 0, 0);
+  assert(ret.code == RC_OK);
+
+  //  xer_fprint(stdout, &asn_DEF_E2SM_RC_ControlMessage, &src);
+  //  fflush(stdout);
+
+  e2sm_rc_ctrl_out_t dst = {0}; 
+
+  if(src.ric_controlOutcome_formats.present == E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR_controlOutcome_Format1){
+    dst.format = FORMAT_1_E2SM_RC_CTRL_OUT;
+    dst.frmt_1 = dec_ctrl_out_frmt_1(src.ric_controlOutcome_formats.choice.controlOutcome_Format1);
+  } else if(src.ric_controlOutcome_formats.present == E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR_controlOutcome_Format2){
+    dst.format = FORMAT_2_E2SM_RC_CTRL_OUT; 
+    dst.frmt_2 = dec_ctrl_out_frmt_2(src.ric_controlOutcome_formats.choice.controlOutcome_Format2);
+  } else if(src.ric_controlOutcome_formats.present == E2SM_RC_ControlOutcome__ric_controlOutcome_formats_PR_controlOutcome_Format3){
+    dst.format = FORMAT_3_E2SM_RC_CTRL_OUT; 
+    dst.frmt_3 = dec_ctrl_out_frmt_3(src.ric_controlOutcome_formats.choice.controlOutcome_Format3);
+  } else {
+    assert(0!=0 && "Unknown format");
+  }
+
+  return dst;
 }
 
 rc_func_def_t rc_dec_func_def_asn(size_t len, uint8_t const func_def[len])

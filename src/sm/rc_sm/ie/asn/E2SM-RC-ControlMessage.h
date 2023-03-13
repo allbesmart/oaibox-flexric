@@ -23,8 +23,9 @@ extern "C" {
 typedef enum E2SM_RC_ControlMessage__ric_controlMessage_formats_PR {
 	E2SM_RC_ControlMessage__ric_controlMessage_formats_PR_NOTHING,	/* No components present */
 	E2SM_RC_ControlMessage__ric_controlMessage_formats_PR_controlMessage_Format1,
-	/* Extensions may appear below */
 	E2SM_RC_ControlMessage__ric_controlMessage_formats_PR_controlMessage_Format2
+	/* Extensions may appear below */
+	
 } E2SM_RC_ControlMessage__ric_controlMessage_formats_PR;
 
 /* Forward declarations */
@@ -37,11 +38,11 @@ typedef struct E2SM_RC_ControlMessage {
 		E2SM_RC_ControlMessage__ric_controlMessage_formats_PR present;
 		union E2SM_RC_ControlMessage__ric_controlMessage_formats_u {
 			struct E2SM_RC_ControlMessage_Format1	*controlMessage_Format1;
+			struct E2SM_RC_ControlMessage_Format2	*controlMessage_Format2;
 			/*
 			 * This type is extensible,
 			 * possible extensions are below.
 			 */
-			struct E2SM_RC_ControlMessage_Format2	*controlMessage_Format2;
 		} choice;
 		
 		/* Context for parsing across buffer boundaries */

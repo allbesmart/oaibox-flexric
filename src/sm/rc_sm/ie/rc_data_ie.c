@@ -408,7 +408,7 @@ void free_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t* src)
   if(src->format == FORMAT_1_E2SM_RC_CTRL_HDR){
     free_e2sm_rc_ctrl_hdr_frmt_1(&src->frmt_1);
   } else if(src->format == FORMAT_2_E2SM_RC_CTRL_HDR ){
-    assert(0!=0 && "Not implemented");
+    free_e2sm_rc_ctrl_hdr_frmt_2(&src->frmt_2);
   } else {
     assert(0!=0 && "Unknown type");
   }
@@ -439,8 +439,8 @@ bool eq_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t const* m0, e2sm_rc_ctrl_hdr_t const*
     if(eq_e2sm_rc_ctrl_hdr_frmt_1(&m0->frmt_1, &m1->frmt_1) == false)
       return false;
   } else if(m0->format == FORMAT_2_E2SM_RC_CTRL_HDR){
-
-    assert(0!=0 && "Not implemented");
+    if(eq_e2sm_rc_ctrl_hdr_frmt_2(&m0->frmt_2, &m1->frmt_2) == false)
+      return false;
   } else {
     assert(0!=0 && "Unknown type");
   }
@@ -454,28 +454,49 @@ bool eq_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t const* m0, e2sm_rc_ctrl_hdr_t const*
 /////////////////////////////////////
 
 
-void free_rc_ctrl_msg( rc_ctrl_msg_t* src)
+void free_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t* src)
 {
   assert(src != NULL);
 
-  assert(0!=0 && "Not implemented" ); 
+  if(src->format == FORMAT_1_E2SM_RC_CTRL_MSG){
+    free_e2sm_rc_ctrl_msg_frmt_1(&src->frmt_1);
+  } else if(src->format == FORMAT_2_E2SM_RC_CTRL_MSG){
+    free_e2sm_rc_ctrl_msg_frmt_2(&src->frmt_2);
+  } else {
+    assert(0 && "Unknown format");
+  }
+
 }
 
-rc_ctrl_msg_t cp_rc_ctrl_msg(rc_ctrl_msg_t* src)
+e2sm_rc_ctrl_msg_t cp_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t* src)
 {
   assert(src != NULL);
 
   assert(0!=0 && "Not implemented" ); 
-  rc_ctrl_msg_t ret = {0};
+  e2sm_rc_ctrl_msg_t ret = {0};
   return ret;
 }
 
-bool eq_rc_ctrl_msg(rc_ctrl_msg_t* m0, rc_ctrl_msg_t* m1)
+bool eq_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t const* m0, e2sm_rc_ctrl_msg_t const* m1)
 {
-  assert(m0 != NULL);
-  assert(m1 != NULL);
+  if(m0 == m1)
+    return true;
 
-  assert(0!=0 && "Not implemented" ); 
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  if(m0->format != m1->format)
+    return false;
+
+  if(m0->format == FORMAT_1_E2SM_RC_CTRL_MSG){
+    if(eq_e2sm_rc_ctrl_msg_frmt_1(&m0->frmt_1, &m1->frmt_1) == false)
+      return false;
+  } else if(m0->format == FORMAT_2_E2SM_RC_CTRL_MSG){
+    if(eq_e2sm_rc_ctrl_msg_frmt_2(&m0->frmt_2, &m1->frmt_2) == false)
+      return false;
+  } else {
+    assert(0 && "Unknown format");
+  }
 
   return true;
 }
@@ -485,28 +506,54 @@ bool eq_rc_ctrl_msg(rc_ctrl_msg_t* m0, rc_ctrl_msg_t* m1)
 // RIC Control Outcome 
 /////////////////////////////////////
 
-void free_rc_ctrl_out(rc_ctrl_out_t* src)
+void free_e2sm_rc_ctrl_out(e2sm_rc_ctrl_out_t* src)
 {
   assert(src != NULL);
 
-  assert(0!=0 && "Not implemented" ); 
+  if(src->format == FORMAT_1_E2SM_RC_CTRL_OUT){
+    free_e2sm_rc_ctrl_out_frmt_1(&src->frmt_1);
+  } else if(src->format == FORMAT_2_E2SM_RC_CTRL_OUT){
+    free_e2sm_rc_ctrl_out_frmt_2(&src->frmt_2);
+  } else if(src->format == FORMAT_3_E2SM_RC_CTRL_OUT){
+    free_e2sm_rc_ctrl_out_frmt_3(&src->frmt_3);
+  } else {
+    assert(0!=0 && "Unknown format");
+  }
+
 }
 
-rc_ctrl_out_t cp_rc_ctrl_out(rc_ctrl_out_t* src)
+e2sm_rc_ctrl_out_t cp_e2sm_rc_ctrl_out(e2sm_rc_ctrl_out_t const* src)
 {
   assert(src != NULL);
 
   assert(0!=0 && "Not implemented" ); 
-  rc_ctrl_out_t ret = {0}; 
+  e2sm_rc_ctrl_out_t ret = {0}; 
   return ret;
 }
 
-bool eq_rc_ctrl_out(rc_ctrl_out_t* m0, rc_ctrl_out_t* m1)
+bool eq_e2sm_rc_ctrl_out(e2sm_rc_ctrl_out_t const* m0, e2sm_rc_ctrl_out_t const* m1)
 {
-  assert(m0 != NULL);
-  assert(m1 != NULL);
+  if(m0 == m1)
+    return true;
 
-  assert(0!=0 && "Not implemented" ); 
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  if(m0->format != m1->format)
+    return false;
+
+  if(m0->format == FORMAT_1_E2SM_RC_CTRL_OUT){
+    if(eq_e2sm_rc_ctrl_out_frmt_1(&m0->frmt_1, &m1->frmt_1) == false )
+      return false;
+  } else if(m0->format == FORMAT_2_E2SM_RC_CTRL_OUT){
+    if(eq_e2sm_rc_ctrl_out_frmt_2(&m0->frmt_2, &m1->frmt_2) == false )
+      return false;
+  } else if(m0->format == FORMAT_3_E2SM_RC_CTRL_OUT){
+    if(eq_e2sm_rc_ctrl_out_frmt_3(&m0->frmt_3, &m1->frmt_3) == false )
+      return false;
+  } else {
+    assert(0!=0 && "Unknown format");
+  }
 
   return true;
 }

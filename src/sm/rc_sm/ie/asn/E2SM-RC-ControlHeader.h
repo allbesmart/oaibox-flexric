@@ -23,8 +23,9 @@ extern "C" {
 typedef enum E2SM_RC_ControlHeader__ric_controlHeader_formats_PR {
 	E2SM_RC_ControlHeader__ric_controlHeader_formats_PR_NOTHING,	/* No components present */
 	E2SM_RC_ControlHeader__ric_controlHeader_formats_PR_controlHeader_Format1,
-	/* Extensions may appear below */
 	E2SM_RC_ControlHeader__ric_controlHeader_formats_PR_controlHeader_Format2
+	/* Extensions may appear below */
+	
 } E2SM_RC_ControlHeader__ric_controlHeader_formats_PR;
 
 /* Forward declarations */
@@ -37,11 +38,11 @@ typedef struct E2SM_RC_ControlHeader {
 		E2SM_RC_ControlHeader__ric_controlHeader_formats_PR present;
 		union E2SM_RC_ControlHeader__ric_controlHeader_formats_u {
 			struct E2SM_RC_ControlHeader_Format1	*controlHeader_Format1;
+			struct E2SM_RC_ControlHeader_Format2	*controlHeader_Format2;
 			/*
 			 * This type is extensible,
 			 * possible extensions are below.
 			 */
-			struct E2SM_RC_ControlHeader_Format2	*controlHeader_Format2;
 		} choice;
 		
 		/* Context for parsing across buffer boundaries */

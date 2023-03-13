@@ -85,6 +85,22 @@ extern "C" {
 #include "ir/e2sm_rc_ctrl_hdr_frmt_2.h"
 
 
+/////////////////////////////////////
+// RIC Control Message 
+/////////////////////////////////////
+
+#include "ir/e2sm_rc_ctrl_msg_frmt_1.h"
+#include "ir/e2sm_rc_ctrl_msg_frmt_2.h"
+
+
+/////////////////////////////////////
+// RIC Control Outcome 
+/////////////////////////////////////
+
+#include "ir/e2sm_rc_ctrl_out_frmt_1.h"
+#include "ir/e2sm_rc_ctrl_out_frmt_2.h"
+#include "ir/e2sm_rc_ctrl_out_frmt_3.h"
+
 
 //////////////////////////////////////
 // RIC Event Trigger Definition
@@ -281,16 +297,27 @@ bool eq_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t const* m0, e2sm_rc_ctrl_hdr_t const*
 // RIC Control Message 
 /////////////////////////////////////
 
+typedef enum{
+  FORMAT_1_E2SM_RC_CTRL_MSG,
+  FORMAT_2_E2SM_RC_CTRL_MSG,
+
+  END_E2SM_RC_CTRL_MSG,
+} e2sm_rc_ctrl_msg_e; 
+
 
 typedef struct {
-  uint32_t action;
-} rc_ctrl_msg_t;
+  e2sm_rc_ctrl_msg_e format; 
+  union{
+    e2sm_rc_ctrl_msg_frmt_1_t frmt_1; // 9.2.1.7.1 
+    e2sm_rc_ctrl_msg_frmt_2_t frmt_2; // 9.2.1.7.2 
+  };
+} e2sm_rc_ctrl_msg_t;
 
-void free_rc_ctrl_msg( rc_ctrl_msg_t* src); 
+void free_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t* src); 
 
-rc_ctrl_msg_t cp_rc_ctrl_msg(rc_ctrl_msg_t* src);
+e2sm_rc_ctrl_msg_t cp_rc_ctrl_msg(e2sm_rc_ctrl_msg_t* src);
 
-bool eq_rc_ctrl_msg(rc_ctrl_msg_t* m0, rc_ctrl_msg_t* m1);
+bool eq_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t const* m0, e2sm_rc_ctrl_msg_t const* m1);
 
 
 
@@ -299,21 +326,27 @@ bool eq_rc_ctrl_msg(rc_ctrl_msg_t* m0, rc_ctrl_msg_t* m1);
 /////////////////////////////////////
 
 typedef enum{
-  RC_CTRL_OUT_OK,
+  FORMAT_1_E2SM_RC_CTRL_OUT,
+  FORMAT_2_E2SM_RC_CTRL_OUT,
+  FORMAT_3_E2SM_RC_CTRL_OUT,
 
-  RC_CTRL_OUT_END
-} rc_ctrl_out_e;
-
+  END_E2SM_RC_CTRL_OUT,
+} e2sm_rc_ctrl_out_e; 
 
 typedef struct {
-  rc_ctrl_out_e ans;
-} rc_ctrl_out_t;
+  e2sm_rc_ctrl_out_e format; 
+  union{
+     e2sm_rc_ctrl_out_frmt_1_t frmt_1; // 9.2.1.8.1
+     e2sm_rc_ctrl_out_frmt_2_t frmt_2; // 9.2.1.8.2
+     e2sm_rc_ctrl_out_frmt_3_t frmt_3; // 9.2.1.8.3
+  };
+} e2sm_rc_ctrl_out_t;
 
-void free_rc_ctrl_out(rc_ctrl_out_t* src); 
+void free_e2sm_rc_ctrl_out(e2sm_rc_ctrl_out_t* src); 
 
-rc_ctrl_out_t cp_rc_ctrl_out(rc_ctrl_out_t* src);
+e2sm_rc_ctrl_out_t cp_e2sm_rc_ctrl_out( e2sm_rc_ctrl_out_t const* src);
 
-bool eq_rc_ctrl_out(rc_ctrl_out_t* m0, rc_ctrl_out_t* m1);
+bool eq_e2sm_rc_ctrl_out(e2sm_rc_ctrl_out_t const* m0, e2sm_rc_ctrl_out_t const* m1);
 
 
 //////////////////////////////////////
@@ -369,11 +402,11 @@ rc_ind_data_t cp_rc_ind_data(rc_ind_data_t const* src);
 
 typedef struct{
   e2sm_rc_ctrl_hdr_t hdr;
-  rc_ctrl_msg_t msg;
+  e2sm_rc_ctrl_msg_t msg;
 } rc_ctrl_req_data_t;
 
 typedef struct{
-  rc_ctrl_out_t* out;
+  e2sm_rc_ctrl_out_t* out;
 } rc_ctrl_out_data_t;
 
 ///////////////

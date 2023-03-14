@@ -23,3 +23,20 @@ bool eq_guami(guami_t const * m0, guami_t const * m1)
   return true;
 }
 
+guami_t cp_guami(const guami_t * src)
+{
+  assert(src != NULL);
+
+  guami_t dst = {0};
+
+  dst.plmn_id = cp_plmn(&src->plmn_id);
+
+  dst.amf_region_id = src->amf_region_id;
+
+  dst.amf_set_id = src->amf_set_id;
+
+  dst.amf_ptr = src->amf_ptr;
+
+
+  return dst;
+}

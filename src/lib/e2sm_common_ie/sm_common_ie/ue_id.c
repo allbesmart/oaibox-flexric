@@ -131,3 +131,50 @@ bool eq_ue_id_e2sm(ue_id_e2sm_t const * m0, ue_id_e2sm_t const * m1)
 
     return true;
 }
+
+ue_id_e2sm_t cp_ue_id_e2sm(const ue_id_e2sm_t * src)
+{
+  assert(src != NULL);
+
+  ue_id_e2sm_t dst = {0};
+
+  dst.type = src->type;
+
+  switch (dst.type)
+  {
+  case GNB_UE_ID_E2SM:
+    dst.gnb = cp_gnb_ue_id_e2sm(&src->gnb);
+    break;
+
+  case GNB_DU_UE_ID_E2SM:
+    dst.gnb_du = cp_gnb_du_ue_id_e2sm(&src->gnb_du);
+    break;
+
+  case GNB_CU_UP_UE_ID_E2SM:
+    dst.gnb_cu_up = cp_gnb_cu_up_id_e2sm(&src->gnb_cu_up);
+    break;
+
+  case NG_ENB_UE_ID_E2SM:
+    dst.ng_enb = cp_ng_enb_ue_id_e2sm(&src->ng_enb);
+    break;
+
+  case NG_ENB_DU_UE_ID_E2SM:
+    dst.ng_enb_du = cp_ng_enb_du_ue_id_e2sm(&src->ng_enb_du);
+    break;
+  
+  case EN_GNB_UE_ID_E2SM:
+    dst.en_gnb = cp_en_gnb_ue_id_e2sm(&src->en_gnb);
+    break;
+
+  case ENB_UE_ID_E2SM:
+    dst.enb = cp_enb_ue_id_e2sm(&src->enb);
+    break;
+
+  default:
+    assert(false && "Unknown UE ID Type");
+  }
+
+
+
+  return dst;
+}

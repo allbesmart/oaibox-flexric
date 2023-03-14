@@ -47,6 +47,8 @@ void free_ue_id_e2sm(ue_id_e2sm_t * src);
 
 bool eq_ue_id_e2sm(ue_id_e2sm_t const * m0, ue_id_e2sm_t const * m1);
 
+ue_id_e2sm_t cp_ue_id_e2sm(const ue_id_e2sm_t * src);
+
 #ifdef __cplusplus
 }
 #endif

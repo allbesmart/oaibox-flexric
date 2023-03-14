@@ -20,7 +20,6 @@
 
 // 'cp' is buffer in  reception to compare the received indication message against the sent one
 static kpm_ric_indication_t cp; 
-#define Logme printf
 
 
 // AGENT part of the architecture. The communication with the RAN is achieved via READ/WRITE methods below
@@ -59,7 +58,7 @@ void check_eq_ran_function(sm_agent_t * ag, sm_ric_t const* ric)
   assert(ric != NULL);
   assert(ag->ran_func_id == ric->ran_func_id);
   assert(ag->ran_func_id == SM_KPM_ID);
-  Logme ("[IE RAN function ID]: Agent and RIC are using the same RAN function ID for KPM: %d\n", SM_KPM_ID);
+  printf ("[IE RAN function ID]: Agent and RIC are using the same RAN function ID for KPM: %d\n", SM_KPM_ID);
 
   // TODO: check the encoding/decoding of RAN function definition. 
   // this can't be done until the signature of `ric_on_e2_setup_kpm_sm_ric()` is not changed to return function definition data structure.
@@ -79,10 +78,10 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   assert(ric != NULL);
  
   sm_subs_data_t data = ric->proc.on_subscription(ric, "2_ms");
-  Logme ("[IE RIC Event Trigger Definition] correctly encoded\n");
-  Logme ("[IE RIC Action Definition] correctly encoded\n");
+  printf ("[IE RIC Event Trigger Definition] correctly encoded\n");
+  printf ("[IE RIC Action Definition] correctly encoded\n");
   assert ((ag->proc.on_subscription(ag, &data)).ms == 2 && "error in decoding trigger");
-  Logme ("[IE RIC Event Trigger Definition] correctly decoded\n");
+  printf ("[IE RIC Event Trigger Definition] correctly decoded\n");
   
   free_sm_subs_data(&data);
 }
@@ -98,11 +97,11 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
 
   // sending IE indication. Behind the scenes it will call the read_RAN()
   sm_ind_data_t sm_data = ag->proc.on_indication(ag);
-  Logme ("[IE RIC Indication Header]: correctly encoded\n");
+  printf ("[IE RIC Indication Header]: correctly encoded\n");
 
   // receiving IE indication  (decoding)
   sm_ag_if_rd_t msg = ric->proc.on_indication(ric, &sm_data);
-  Logme ("[IE RIC Indication Message] correctly decoded\n");
+  printf ("[IE RIC Indication Message] correctly decoded\n");
 
   // check for indication message correctness
   kpm_ric_indication_t* data = &msg.kpm_stats;
@@ -117,23 +116,28 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
 
 int main()
 {
-  Logme("KPM SM unit test launched\n");
+  for (size_t i = 0; i<10; i++)
+  {
+
+  printf("KPM SM unit test launched\n");
   sm_io_ag_t io_ag = {.read = read_RAN, .write = write_RAN};  
   sm_agent_t* sm_ag = make_kpm_sm_agent(io_ag);
   sm_ric_t* sm_ric = make_kpm_sm_ric();
 
-  Logme("-> STEP 1. Controlling RAN function ................\n");
+  printf("-> STEP 1. Controlling RAN function ................\n");
   check_eq_ran_function(sm_ag, sm_ric);
-  Logme("-> STEP 2. Controlling Subscription procedure.......\n");
+  printf("-> STEP 2. Controlling Subscription procedure.......\n");
   check_subscription(sm_ag, sm_ric);
-  Logme("-> STEP 3. Controlling Indication procedure.........\n");
+  printf("-> STEP 3. Controlling Indication procedure.........\n");
   check_indication(sm_ag, sm_ric);
 
-  Logme("-> STEP 4. Freeing memory...........................\n");
+  printf("-> STEP 4. Freeing memory...........................\n");
   sm_ag->free_sm(sm_ag);
   sm_ric->free_sm(sm_ric);
   
-  Logme("-> Test completed with success. Closing all\n");
+  printf("-> Test completed with success. Closing all\n");
 
+  }
+  
   return EXIT_SUCCESS;
 }

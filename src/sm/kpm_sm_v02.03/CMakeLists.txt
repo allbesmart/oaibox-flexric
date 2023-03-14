@@ -38,40 +38,34 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
                       ${SM_ENCODING_KPM_SRC}
                       enc/kpm_enc_asn.c 
                       dec/kpm_dec_asn.c 
+                      $<TARGET_OBJECTS:e2sm_kpm_asn1_obj>
+                      $<TARGET_OBJECTS:kpm_ric_info_common_obj>
+                      $<TARGET_OBJECTS:kpm_ric_info_obj>
+
+                      $<TARGET_OBJECTS:kpm_dec_common_asn_obj>
+                      $<TARGET_OBJECTS:kpm_dec_ie_asn_obj>
+
+                      $<TARGET_OBJECTS:kpm_enc_common_asn_obj>
+                      $<TARGET_OBJECTS:kpm_enc_ie_asn_obj>
+
+                      $<TARGET_OBJECTS:3gpp_derived_ie_obj>
+                      $<TARGET_OBJECTS:3gpp_derived_ie_dec_asn_obj>
+                      $<TARGET_OBJECTS:3gpp_derived_ie_enc_asn_obj>
+                      $<TARGET_OBJECTS:sm_common_ie_obj>
+                      $<TARGET_OBJECTS:sm_common_dec_asn_obj>
+                      $<TARGET_OBJECTS:sm_common_enc_asn_obj>
+
+                      test/fill_rnd_data_kpm.c
+                      ie/kpm_data_ie.c
+
                       )
 
 
-  target_link_libraries(kpm_sm PUBLIC
-                                kpm_data_ie_shared
-                                kpm_e2sm_specific_ie_dec_asn_shared
-                                kpm_e2sm_specific_ie_enc_asn_shared
-                                -lm)
+  target_link_libraries(kpm_sm PUBLIC -lm)
 
   target_include_directories(kpm_sm PRIVATE "ie/asn")
   target_compile_options(kpm_sm PUBLIC "-DASN_DISABLE_OER_SUPPORT" -fPIC)
   target_compile_options(kpm_sm PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter -fPIC)
-
-
-  #Nasty solution. Do it properly, Mikel!
-
-  add_library(kpm_sm_static STATIC  #STATIC or SHARED
-
-
-                      ${SM_ENCODING_KPM_SRC}
-                      enc/kpm_enc_asn.c 
-                      dec/kpm_dec_asn.c 
-            )
-  
-  target_link_libraries(kpm_sm_static PUBLIC
-                                kpm_data_ie_shared
-                                kpm_e2sm_specific_ie_dec_asn_shared
-                                kpm_e2sm_specific_ie_enc_asn_shared
-                                -lm)
-
-  target_include_directories(kpm_sm_static PRIVATE "ie/asn")
-  target_compile_options(kpm_sm_static PRIVATE "-DASN_DISABLE_OER_SUPPORT")
-
-
 
 
 elseif(SM_ENCODING_KPM STREQUAL "FLATBUFFERS" )
@@ -81,5 +75,4 @@ else()
 endif()
 
 target_compile_definitions(kpm_sm PUBLIC ${SM_ENCODING_KPM})
-target_compile_definitions(kpm_sm_static PUBLIC ${SM_ENCODING_KPM})
 

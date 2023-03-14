@@ -26,7 +26,7 @@
  * Service Model ID (SM_KPM_ID) is needed for the agent as well as for the ric to ensure that they match. 
  * ID number chosen checking the already used one and adding one number. cfr. the other SMs in this package.
  */
-static const uint16_t SM_KPM_ID = 147; 
+static const uint16_t SM_KPM_ID = 2; 
 
 // O-RAN.WG3.E2SM-KPM-v02.02, $7.2
 #define SM_KPM_STR "ORAN-E2SM-KPM" 

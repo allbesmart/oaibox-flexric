@@ -63,3 +63,48 @@ bool eq_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t const* m0, kpm_ind_msg_format_2
 
   return true;
 }
+
+kpm_ind_msg_format_2_t cp_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t const* src)
+{
+  assert(src != NULL);
+  kpm_ind_msg_format_2_t dst = {0};
+
+  // Granularity Period
+  if (src->gran_period_ms) {
+    dst.gran_period_ms = malloc (sizeof(dst.gran_period_ms));
+    memcpy(dst.gran_period_ms, src->gran_period_ms, 4); 
+  }
+
+  // Measurement Data
+  if (src->meas_data_lst_len)
+  {
+    dst.meas_data_lst_len = src->meas_data_lst_len;
+
+    dst.meas_data_lst = calloc(src->meas_data_lst_len, sizeof(meas_data_lst_t));
+    memcpy (dst.meas_data_lst, src->meas_data_lst, src->meas_data_lst_len * sizeof(meas_data_lst_t));
+    
+    for (size_t i = 0; i<dst.meas_data_lst_len; i++)
+    {
+      dst.meas_data_lst[i].meas_record_len = src->meas_data_lst[i].meas_record_len;
+      dst.meas_data_lst[i].meas_record_lst = calloc(src->meas_data_lst[i].meas_record_len, sizeof(meas_record_lst_t));
+      memcpy (dst.meas_data_lst[i].meas_record_lst, src->meas_data_lst[i].meas_record_lst, src->meas_data_lst[i].meas_record_len * sizeof(meas_record_lst_t));
+    }
+  }
+
+  // Measurement Condition UE Information
+  if (src->meas_info_cond_ue_lst_len)
+  {
+    dst.meas_info_cond_ue_lst_len = src->meas_info_cond_ue_lst_len;
+
+    dst.meas_info_cond_ue_lst = calloc(dst.meas_info_cond_ue_lst_len, sizeof(meas_info_cond_ue_lst_t));
+    memcpy(dst.meas_info_cond_ue_lst, src->meas_info_cond_ue_lst, dst.meas_info_cond_ue_lst_len * sizeof(meas_info_cond_ue_lst_t));
+
+    for (size_t i = 0; i<dst.meas_info_cond_ue_lst_len; i++)
+    {
+      dst.meas_info_cond_ue_lst[i] = cp_kpm_meas_info_cond_ue(&src->meas_info_cond_ue_lst[i]);
+    }
+  }
+
+
+  return dst;
+}

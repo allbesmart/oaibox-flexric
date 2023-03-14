@@ -38,6 +38,8 @@ typedef struct {
 
 bool eq_global_enb_id(global_enb_id_t const * m0, global_enb_id_t const * m1);
 
+global_enb_id_t cp_global_enb_ue_id_e2sm(const global_enb_id_t * src);
+
 #ifdef __cplusplus
 }
 #endif

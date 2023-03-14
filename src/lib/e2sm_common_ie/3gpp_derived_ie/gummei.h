@@ -26,6 +26,8 @@ typedef struct {
 
 bool eq_gummei(gummei_t const * m0, gummei_t const * m1);
 
+gummei_t cp_gummei(const gummei_t * src);
+
 #ifdef __cplusplus
 }
 #endif

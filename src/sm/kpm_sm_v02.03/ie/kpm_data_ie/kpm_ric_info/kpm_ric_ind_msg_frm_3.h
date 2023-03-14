@@ -31,6 +31,8 @@ void free_kpm_ind_msg_frm_3(kpm_ind_msg_format_3_t * src);
 
 bool eq_kpm_ind_msg_frm_3(kpm_ind_msg_format_3_t const * m0, kpm_ind_msg_format_3_t const * m1);
 
+kpm_ind_msg_format_3_t cp_kpm_ind_msg_frm_3(const kpm_ind_msg_format_3_t * src);
+
 #ifdef __cplusplus
 }
 #endif

@@ -13,6 +13,8 @@
 #include "../ie/asn/E2SM-KPM-RANfunction-Description.h"
 #include "../ie/asn/RANfunction-Name.h"
 #include "../ie/asn/RIC-EventTriggerStyle-Item.h"
+#include "../ie/asn/RIC-ReportStyle-Item.h"
+#include "../ie/asn/MeasurementInfo-Action-Item.h"
 
 #include "enc_asn/enc_ric_event_trigger_frm_1.h"
 
@@ -321,13 +323,123 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
 
 
   // RIC Report Style Item
-  if (func_def->ric_report_style_list_len != 0)
+  if (func_def->ric_report_style_list != NULL || func_def->ric_report_style_list_len != 0)
   {
-    assert(false && "RIC Report Style not yet implemented");
+    assert(func_def->ric_report_style_list_len >= 1 && func_def->ric_report_style_list_len <= maxnoofRICStyles);
+
+    pdu->ric_ReportStyle_List = calloc(func_def->ric_report_style_list_len, sizeof(*pdu->ric_ReportStyle_List));
+    assert(pdu->ric_ReportStyle_List != NULL && "Memory exhausted");
+
+    for (size_t i = 0; i<func_def->ric_report_style_list_len; i++)
+    {
+      RIC_ReportStyle_Item_t * report_item = calloc(1, sizeof(RIC_ReportStyle_Item_t));
+      assert(report_item != NULL && "Memory exhausted");
+
+      // RIC Report Styles
+      switch (func_def->ric_report_style_list[i].report_style_type)
+      {
+      case STYLE_1_RIC_SERVICE_REPORT:
+      {
+        report_item->ric_ReportStyle_Type = 1;
+        report_item->ric_ActionFormat_Type = 1;
+        report_item->ric_IndicationHeaderFormat_Type = 1;
+        report_item->ric_IndicationMessageFormat_Type = 1;
+
+        break;
+      }
+
+      case STYLE_2_RIC_SERVICE_REPORT:
+      {
+        report_item->ric_ReportStyle_Type = 2;
+        report_item->ric_ActionFormat_Type = 2;
+        report_item->ric_IndicationHeaderFormat_Type = 1;
+        report_item->ric_IndicationMessageFormat_Type = 1;
+
+        break;
+      }
+
+      case STYLE_3_RIC_SERVICE_REPORT:
+      {
+        report_item->ric_ReportStyle_Type = 3;
+        report_item->ric_ActionFormat_Type = 3;
+        report_item->ric_IndicationHeaderFormat_Type = 1;
+        report_item->ric_IndicationMessageFormat_Type = 2;
+
+        break;
+      }
+
+      case STYLE_4_RIC_SERVICE_REPORT:
+      {
+        report_item->ric_ReportStyle_Type = 4;
+        report_item->ric_ActionFormat_Type = 4;
+        report_item->ric_IndicationHeaderFormat_Type = 1;
+        report_item->ric_IndicationMessageFormat_Type = 3;
+
+        break;
+      }
+
+      case STYLE_5_RIC_SERVICE_REPORT:
+      {
+        report_item->ric_ReportStyle_Type = 5;
+        report_item->ric_ActionFormat_Type = 5;
+        report_item->ric_IndicationHeaderFormat_Type = 1;
+        report_item->ric_IndicationMessageFormat_Type = 3;
+
+        break;
+      }
+      
+      default:
+        assert(false && "Unknown RIC REPORT Style Type");
+      }
+
+      // RIC REPORT Style Name
+      int ret = OCTET_STRING_fromBuf(&report_item->ric_ReportStyle_Name, 
+                              (char *)func_def->ric_report_style_list[i].report_style_name.buf, 
+                              func_def->ric_report_style_list[i].report_style_name.len);
+      assert(ret == 0);
+
+
+      // Measurement Information for Action
+      assert(func_def->ric_report_style_list[i].meas_info_for_action_lst_len >= 1 && func_def->ric_report_style_list[i].meas_info_for_action_lst_len <= maxnoofMeasurementInfo);
+
+      for (size_t j = 0; j<func_def->ric_report_style_list[i].meas_info_for_action_lst_len; j++)
+      {
+        MeasurementInfo_Action_Item_t * meas_item = calloc(1, sizeof(MeasurementInfo_Action_Item_t));
+        assert(meas_item != NULL && "Memory exhausted");
+
+        // Measurement Type Name
+        int ret = OCTET_STRING_fromBuf(&meas_item->measName, 
+                              (char *)func_def->ric_report_style_list[i].meas_info_for_action_lst[j].name.buf, 
+                              func_def->ric_report_style_list[i].meas_info_for_action_lst[j].name.len);
+        assert(ret == 0);
+
+        // Measurement Type ID
+        if (func_def->ric_report_style_list[i].meas_info_for_action_lst[j].id != NULL)
+        {
+          meas_item->measID = calloc(1, sizeof(MeasurementTypeID_t));
+          assert(meas_item->measID != NULL && "Memory exhausted");
+          memcpy(meas_item->measID, func_def->ric_report_style_list[i].meas_info_for_action_lst[j].id, 2);
+        }
+
+        // Bin Range Definition
+        // not yet implemented in ASN.1
+        if (func_def->ric_report_style_list[i].meas_info_for_action_lst[j].bin_range_def != NULL)
+          assert(false && "Not yet implemented in ASN.1");
+
+        int rc1 = ASN_SEQUENCE_ADD(&report_item->measInfo_Action_List.list, meas_item);
+        assert(rc1 == 0);
+      }
+
+
+
+      int rc1 = ASN_SEQUENCE_ADD(&pdu->ric_ReportStyle_List->list, report_item);
+      assert(rc1 == 0);
+    }
   }
 
 
-
+  xer_fprint(stderr, &asn_DEF_E2SM_KPM_RANfunction_Description, pdu);
+  fflush(stdout);
 
   byte_array_t  ba = {.buf = malloc(2048), .len = 2048};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;

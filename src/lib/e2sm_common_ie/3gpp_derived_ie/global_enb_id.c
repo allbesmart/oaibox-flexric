@@ -42,3 +42,39 @@ bool eq_global_enb_id(global_enb_id_t const * m0, global_enb_id_t const * m1)
 
     return true;
 }
+
+global_enb_id_t cp_global_enb_ue_id_e2sm(const global_enb_id_t * src)
+{
+  assert(src != NULL);
+
+  global_enb_id_t dst = {0};
+
+  dst.plmn_id = cp_plmn(&src->plmn_id);
+
+  dst.type = src->type;
+
+  switch (dst.type)
+  {
+  case MACRO_ENB_TYPE_ID:
+    dst.macro_enb_id = src->macro_enb_id;
+    break;
+
+  case HOME_ENB_TYPE_ID:
+    dst.home_enb_id = src->home_enb_id;
+    break;
+
+  case SHORT_MACRO_ENB_TYPE_ID:
+    dst.short_macro_enb_id = src->short_macro_enb_id;
+    break;
+
+  case LONG_MACRO_ENB_TYPE_ID:
+    dst.long_macro_enb_id = src->long_macro_enb_id;
+    break;
+  
+  default:
+    assert(false && "Unknown eNB Type");
+  }
+
+
+  return dst;
+}

@@ -29,6 +29,7 @@ typedef struct {
 
 bool eq_global_gnb_id(global_gnb_id_t const * m0, global_gnb_id_t const * m1);
 
+global_gnb_id_t cp_global_gnb_id (const global_gnb_id_t * src);
 
 #ifdef __cplusplus
 }

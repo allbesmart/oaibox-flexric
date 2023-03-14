@@ -38,3 +38,25 @@ bool eq_kpm_ind_hdr(kpm_ind_hdr_t const * m0, kpm_ind_hdr_t const * m1)
 
     return true;
 }
+
+kpm_ind_hdr_t cp_kpm_ind_hdr(kpm_ind_hdr_t const* src)
+{
+  assert(src != NULL);
+
+  kpm_ind_hdr_t dst = {0};
+
+  dst.type = src->type;
+
+  switch (dst.type)
+  {
+    case FORMAT_1_INDICATION_HEADER:
+        dst.kpm_ric_ind_hdr_format_1 = cp_kpm_ind_hdr_frm_1(&src->kpm_ric_ind_hdr_format_1);
+        break;
+  
+    default:
+        assert(false && "Unknown Indication Header Type");
+  }
+
+
+  return dst;  
+}

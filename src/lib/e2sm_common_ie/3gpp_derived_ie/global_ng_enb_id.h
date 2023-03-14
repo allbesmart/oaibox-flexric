@@ -36,6 +36,8 @@ typedef struct {
 
 bool eq_global_ng_enb_id(global_ng_enb_id_t const * m0, global_ng_enb_id_t const * m1);
 
+global_ng_enb_id_t cp_global_ng_enb_id(const global_ng_enb_id_t * src);
+
 #ifdef __cplusplus
 }
 #endif

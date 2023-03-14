@@ -29,6 +29,8 @@ void free_matching_cond_frm_3(matching_condition_format_3_lst_t* src);
 
 bool eq_matching_cond_frm_3(matching_condition_format_3_lst_t const * m0, matching_condition_format_3_lst_t const * m1);
 
+matching_condition_format_3_lst_t cp_kpm_matching_cond_frm_3(matching_condition_format_3_lst_t const* src);
+
 #ifdef __cplusplus
 }
 #endif

@@ -30,6 +30,8 @@ typedef struct {
 
 bool eq_global_ng_ran_node_id(global_ng_ran_node_id_t const * m0, global_ng_ran_node_id_t const * m1);
 
+global_ng_ran_node_id_t cp_global_ng_ran_node_id(const global_ng_ran_node_id_t * src);
+
 #ifdef __cplusplus
 }
 #endif

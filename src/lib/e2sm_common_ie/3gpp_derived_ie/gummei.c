@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "gummei.h"
 
@@ -19,4 +20,20 @@ bool eq_gummei(gummei_t const * m0, gummei_t const * m1)
 
 
     return true;
+}
+
+gummei_t cp_gummei(const gummei_t * src)
+{
+  assert(src != NULL);
+
+  gummei_t dst = {0};
+
+  dst.plmn_id = cp_plmn(&src->plmn_id);
+
+  memcpy(&dst.mme_group_id, &src->mme_group_id, 2);
+
+  memcpy(&dst.mme_code, &src->mme_code, 1);
+
+
+  return dst;
 }

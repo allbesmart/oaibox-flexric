@@ -56,3 +56,35 @@ bool eq_kpm_ind_msg(kpm_ind_msg_t const * m0, kpm_ind_msg_t const * m1)
 
     return true;
 }
+
+
+kpm_ind_msg_t cp_kpm_ind_msg(kpm_ind_msg_t const* src)
+{
+  assert(src != NULL);
+
+  kpm_ind_msg_t dst = {0};
+
+  dst.type = src->type;
+
+  switch (dst.type)
+  {
+    case FORMAT_1_INDICATION_MESSAGE:
+        dst.frm_1 = cp_kpm_ind_msg_frm_1(&src->frm_1);
+        break;
+    
+    case FORMAT_2_INDICATION_MESSAGE:
+        dst.frm_2 = cp_kpm_ind_msg_frm_2(&src->frm_2);
+        break;
+
+    case FORMAT_3_INDICATION_MESSAGE:
+        dst.frm_3 = cp_kpm_ind_msg_frm_3(&src->frm_3);
+        break;
+    
+    default:
+        assert(false && "Unknown Indication Message Type");
+  }
+
+
+
+  return dst;
+}

@@ -41,6 +41,8 @@ void free_kpm_ue_id_gran_period_lst(ue_id_gran_period_lst_t* src);
 
 bool eq_kpm_ue_id_gran_period_lst(ue_id_gran_period_lst_t const* m0, ue_id_gran_period_lst_t const* m1);
 
+ue_id_gran_period_lst_t cp_kpm_ue_id_gran_period_lst(const ue_id_gran_period_lst_t * src);
+
 #ifdef __cplusplus
 }
 #endif

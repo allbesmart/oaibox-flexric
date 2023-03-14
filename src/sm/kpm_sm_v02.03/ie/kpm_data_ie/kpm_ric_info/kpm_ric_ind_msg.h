@@ -35,6 +35,8 @@ void free_kpm_ind_msg(kpm_ind_msg_t * src);
 
 bool eq_kpm_ind_msg(kpm_ind_msg_t const * m0, kpm_ind_msg_t const * m1);
 
+kpm_ind_msg_t cp_kpm_ind_msg(kpm_ind_msg_t const* src);
+
 
 #ifdef __cplusplus
 }

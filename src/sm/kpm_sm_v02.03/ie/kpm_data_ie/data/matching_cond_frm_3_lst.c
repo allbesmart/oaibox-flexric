@@ -61,3 +61,38 @@ bool eq_matching_cond_frm_3(matching_condition_format_3_lst_t const * m0, matchi
 
   return true;
 }
+
+
+matching_condition_format_3_lst_t cp_kpm_matching_cond_frm_3(matching_condition_format_3_lst_t const* src)
+{
+  assert(src != NULL);
+
+  matching_condition_format_3_lst_t dst = {0};
+
+  dst.cond_type = src->cond_type;
+
+  switch (dst.cond_type)
+  {
+  case LABEL_INFO:
+    cp_label_info(&dst.label_info_lst, &src->label_info_lst);
+    break;
+
+  case TEST_INFO:
+    dst.test_info_lst = cp_kpm_test_info(&src->test_info_lst);
+    break;
+  
+  default:
+    assert(false && "Unknown Matching Condition Type");
+  }
+
+
+  // Logical OR
+  if (src->logical_OR) {
+    dst.logical_OR = malloc (sizeof(dst.logical_OR));
+    dst.logical_OR = src->logical_OR; 
+  }
+
+
+
+  return dst;
+}

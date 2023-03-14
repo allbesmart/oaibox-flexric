@@ -31,6 +31,8 @@ void free_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t* src);
 
 bool eq_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t const* m0, meas_info_cond_ue_lst_t const* m1);
 
+meas_info_cond_ue_lst_t cp_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t const* src);
+
 #ifdef __cplusplus
 }
 #endif

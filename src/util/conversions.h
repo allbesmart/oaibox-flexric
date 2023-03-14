@@ -477,7 +477,7 @@ do {                                                    \
 
 #define BIT_STRING_TO_MACRO_GNB_ID(aSN, vALUE)            \
 do {                                                      \
-    assert((aSN)->bits_unused == 4);                      \
+    assert((aSN)->bits_unused == 0);                      \
     vALUE = ((aSN)->buf[0] << 20) | ((aSN)->buf[1] << 12) \
           | ((aSN)->buf[2] << 4) | ((aSN)->buf[3] >> 4);  \
 } while(0)

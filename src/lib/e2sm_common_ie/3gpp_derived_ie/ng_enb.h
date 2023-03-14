@@ -40,6 +40,8 @@ void free_ng_enb_ue_id_e2sm(ng_enb_e2sm_t * src);
 
 bool eq_ng_enb_ue_id_e2sm(ng_enb_e2sm_t const * m0, ng_enb_e2sm_t const * m1);
 
+ng_enb_e2sm_t cp_ng_enb_ue_id_e2sm(const ng_enb_e2sm_t * src);
+
 #ifdef __cplusplus
 }
 #endif

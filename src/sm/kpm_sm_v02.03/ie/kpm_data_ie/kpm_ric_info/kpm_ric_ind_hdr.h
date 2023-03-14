@@ -31,6 +31,7 @@ void free_kpm_ind_hdr(kpm_ind_hdr_t * src);
 
 bool eq_kpm_ind_hdr(kpm_ind_hdr_t const * m0, kpm_ind_hdr_t const * m1);
 
+kpm_ind_hdr_t cp_kpm_ind_hdr(kpm_ind_hdr_t const* src);
 
 #ifdef __cplusplus
 }

@@ -100,6 +100,8 @@ void free_test_info(test_info_lst_t* src);
 
 bool eq_test_info(const test_info_lst_t *m0, const test_info_lst_t *m1);
 
+test_info_lst_t cp_kpm_test_info(const test_info_lst_t * src);
+
 #ifdef __cplusplus
 }
 #endif

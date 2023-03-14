@@ -20,37 +20,9 @@ kpm_ric_indication_t cp_kpm_ind_data(kpm_ric_indication_t const* src)
   assert(src != NULL);
   kpm_ric_indication_t ret = {0};
   
-  ret.kpm_ind_hdr.type = src->kpm_ind_hdr.type;
+  ret.kpm_ind_hdr = cp_kpm_ind_hdr(&src->kpm_ind_hdr);
 
-  switch (ret.kpm_ind_hdr.type)
-  {
-    case FORMAT_1_INDICATION_HEADER:
-        ret.kpm_ind_hdr.kpm_ric_ind_hdr_format_1 = cp_kpm_ind_hdr_frm_1(&src->kpm_ind_hdr.kpm_ric_ind_hdr_format_1);
-        break;
-  
-    default:
-        assert(false && "Unknown Indication Header Type");
-  }
-
-  ret.kpm_ind_msg.type = src->kpm_ind_msg.type;
-
-  switch (ret.kpm_ind_msg.type)
-  {
-    case FORMAT_1_INDICATION_MESSAGE:
-        ret.kpm_ind_msg.frm_1 = cp_kpm_ind_msg_frm_1(&src->kpm_ind_msg.frm_1);
-        break;
-    
-    // case FORMAT_2_INDICATION_MESSAGE:
-    //     ret.kpm_ind_msg.frm_2 = cp_kpm_ind_msg_frm_2(&src->kpm_ind_msg.frm_2);  // to be added
-    //     break;
-
-    // case FORMAT_3_INDICATION_MESSAGE:
-    //     ret.kpm_ind_msg.frm_3 = cp_kpm_ind_msg_frm_3(&src->kpm_ind_msg.frm_3);  // to be added
-    //     break;
-    
-    default:
-        assert(false && "Unknown Indication Message Type");
-  }
+  ret.kpm_ind_msg = cp_kpm_ind_msg(&src->kpm_ind_msg);
 
   return ret;
 }

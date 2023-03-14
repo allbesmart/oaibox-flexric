@@ -43,6 +43,8 @@ void free_enb_ue_id_e2sm(enb_e2sm_t * src);
 
 bool eq_enb_ue_id_e2sm(enb_e2sm_t const * m0, enb_e2sm_t const * m1);
 
+enb_e2sm_t cp_enb_ue_id_e2sm(const enb_e2sm_t * src);
+
 #ifdef __cplusplus
 }
 #endif

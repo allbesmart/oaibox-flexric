@@ -18,6 +18,8 @@ void free_gnb_du_ue_id_e2sm(gnb_du_e2sm_t * src);
 
 bool eq_gnb_du_ue_id_e2sm(gnb_du_e2sm_t const * m0, gnb_du_e2sm_t const * m1);
 
+gnb_du_e2sm_t cp_gnb_du_ue_id_e2sm(const gnb_du_e2sm_t * src);
+
 #ifdef __cplusplus
 }
 #endif
@@ -25,3 +27,4 @@ bool eq_gnb_du_ue_id_e2sm(gnb_du_e2sm_t const * m0, gnb_du_e2sm_t const * m1);
 #endif
 
 // done
+

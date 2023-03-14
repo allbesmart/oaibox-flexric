@@ -37,3 +37,36 @@ bool eq_global_ng_enb_id(global_ng_enb_id_t const * m0, global_ng_enb_id_t const
 
     return true;
 }
+
+
+global_ng_enb_id_t cp_global_ng_enb_id(const global_ng_enb_id_t * src)
+{
+  assert(src != NULL);
+
+  global_ng_enb_id_t dst = {0};
+
+  dst.plmn_id = cp_plmn(&src->plmn_id);
+
+  dst.type = src->type;
+
+  switch (dst.type)
+  {
+  case MACRO_NG_ENB_TYPE_ID:
+    dst.macro_ng_enb_id = src->macro_ng_enb_id;
+    break;
+
+  case SHORT_MACRO_NG_ENB_TYPE_ID:
+    dst.short_macro_ng_enb_id = src->short_macro_ng_enb_id;
+    break;
+
+  case LONG_MACRO_NG_ENB_TYPE_ID:
+    dst.long_macro_ng_enb_id = src->long_macro_ng_enb_id;
+    break;
+  
+  default:
+    assert(false && "Unknown Global NG eNB ID Type");
+  }
+
+
+  return dst;
+}

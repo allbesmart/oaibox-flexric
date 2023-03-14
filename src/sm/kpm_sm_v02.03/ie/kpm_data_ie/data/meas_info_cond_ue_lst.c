@@ -87,3 +87,50 @@ bool eq_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t const* m0, meas_info_cond_
 
   return true;
 }
+
+
+meas_info_cond_ue_lst_t cp_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t const* src)
+{
+  assert(src != NULL);
+
+  meas_info_cond_ue_lst_t dst = {0};
+
+  // Meas Type
+  dst.meas_type = cp_meas_type(&src->meas_type);
+
+  // Matching Condition Format 3
+  dst.matching_cond_lst_len = src->matching_cond_lst_len;
+
+  dst.matching_cond_lst = calloc(dst.matching_cond_lst_len, sizeof(matching_condition_format_3_lst_t));
+  memcpy(dst.matching_cond_lst, src->matching_cond_lst, dst.matching_cond_lst_len * sizeof(matching_condition_format_3_lst_t));
+      
+  for (size_t j = 0; j<dst.matching_cond_lst_len; j++)
+  {
+    dst.matching_cond_lst[j] = cp_kpm_matching_cond_frm_3(&src->matching_cond_lst[j]);
+  }
+
+  // List of matched UE IDs
+  dst.ue_id_matched_lst_len = src->ue_id_matched_lst_len;
+
+  dst.ue_id_matched_lst = calloc(dst.ue_id_matched_lst_len, sizeof(ue_id_e2sm_t));
+  memcpy(dst.ue_id_matched_lst, src->ue_id_matched_lst, dst.ue_id_matched_lst_len * sizeof(ue_id_e2sm_t));
+
+  for (size_t j = 0; j<dst.ue_id_matched_lst_len; j++)
+  {
+    dst.ue_id_matched_lst[j] = cp_ue_id_e2sm(&src->ue_id_matched_lst[j]);
+  }
+
+  // Sequence of Matched UE IDs for Granularity Periods
+  dst.ue_id_gran_period_lst_len = src->ue_id_gran_period_lst_len;
+
+  dst.ue_id_gran_period_lst = calloc(dst.ue_id_gran_period_lst_len, sizeof(ue_id_gran_period_lst_t));
+  memcpy(dst.ue_id_gran_period_lst, src->ue_id_gran_period_lst, dst.ue_id_gran_period_lst_len * sizeof(ue_id_gran_period_lst_t));
+
+  for (size_t j = 0; j<dst.ue_id_gran_period_lst_len; j++)
+  {
+    dst.ue_id_gran_period_lst[j] = cp_kpm_ue_id_gran_period_lst(&src->ue_id_gran_period_lst[j]);
+  }
+
+
+  return dst;
+}

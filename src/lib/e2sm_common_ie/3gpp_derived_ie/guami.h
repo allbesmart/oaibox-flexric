@@ -33,6 +33,8 @@ typedef struct{
 
 bool eq_guami(guami_t const * m0, guami_t const * m1);
 
+guami_t cp_guami(const guami_t * src);
+
 #ifdef __cplusplus
 }
 #endif

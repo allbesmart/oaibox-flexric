@@ -25,7 +25,7 @@ typedef struct {
     byte_array_t name; // 8.3.9
     uint16_t *id; // 8.3.10  -  OPTIONAL
 
-    bin_range_def_t *bin_range_def;  // 8.3.26  -  OPTIONAL
+    bin_range_def_t *bin_range_def;  // 8.3.26  -  OPTIONAL; not yet implemented in ASN.1
 
 } meas_info_for_action_lst_t;
 

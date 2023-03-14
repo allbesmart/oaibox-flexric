@@ -67,6 +67,8 @@ void free_gnb_ue_id_e2sm(gnb_e2sm_t * src);
 
 bool eq_gnb_ue_id_e2sm(gnb_e2sm_t const * m0, gnb_e2sm_t const * m1);
 
+gnb_e2sm_t cp_gnb_ue_id_e2sm(const gnb_e2sm_t * src);
+
 #ifdef __cplusplus
 }
 #endif

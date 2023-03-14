@@ -29,6 +29,8 @@ void free_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t* src);
 
 bool eq_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t const* m0, kpm_ind_msg_format_2_t const* m1);
 
+kpm_ind_msg_format_2_t cp_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t const* src);
+
 #ifdef __cplusplus
 }
 #endif

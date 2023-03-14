@@ -121,7 +121,7 @@ int main()
   printf("KPM SM enc/dec test succeeded\n");
 
   }
-  
+
 
   return EXIT_SUCCESS;
 }

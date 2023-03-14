@@ -124,3 +124,70 @@ bool eq_test_info(const test_info_lst_t *m0, const test_info_lst_t *m1)
 
   return true;
 }
+
+test_info_lst_t cp_kpm_test_info(const test_info_lst_t * src)
+{
+  assert(src != NULL);
+
+  test_info_lst_t dst = {0};
+
+  dst.test_cond_type = src->test_cond_type;
+
+  switch (dst.test_cond_type)
+  {
+  case GBR_TEST_COND_TYPE:
+    dst.GBR = src->GBR;
+    break;
+
+  case AMBR_TEST_COND_TYPE:
+    dst.AMBR = src->AMBR;
+    break;
+
+  case IsStat_TEST_COND_TYPE:
+    dst.IsStat = src->IsStat;
+    break;
+
+  case IsCatM_TEST_COND_TYPE:
+    dst.IsCatM = src->IsCatM;
+    break;
+
+  case DL_RSRP_TEST_COND_TYPE:
+    dst.DL_RSRP = src->DL_RSRP;
+    break;
+
+  case DL_RSRQ_TEST_COND_TYPE:
+    dst.DL_RSRQ = src->DL_RSRQ;
+    break;
+
+  case UL_RSRP_TEST_COND_TYPE:
+    dst.UL_RSRP = src->UL_RSRP;
+    break;
+
+  case CQI_TEST_COND_TYPE:
+    dst.CQI = src->CQI;
+    break;
+
+  case fiveQI_TEST_COND_TYPE:
+    dst.fiveQI = src->fiveQI;
+    break;
+
+  case QCI_TEST_COND_TYPE:
+    dst.QCI = src->QCI;
+    break;
+
+  case S_NSSAI_TEST_COND_TYPE:
+    dst.S_NSSAI = src->S_NSSAI;
+    break;
+  
+  default:
+    assert(false && "Condition type out of the range");
+  }
+
+  if (src->test_cond != NULL)
+    assert(false && "Test Condition not yet implemented");
+
+  if (src->test_cond_value != NULL)
+    assert(false && "Test Condition Value not yet implemented");
+
+  return dst;
+}

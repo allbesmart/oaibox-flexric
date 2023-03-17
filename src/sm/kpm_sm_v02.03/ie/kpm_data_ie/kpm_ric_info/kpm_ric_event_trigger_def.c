@@ -14,17 +14,39 @@ bool eq_kpm_event_trigger_def( kpm_event_trigger_def_t const* m0,  kpm_event_tri
   if(m0 == m1)
     return true;
 
-  if(m0 == NULL || m1 == NULL)
+  if(m0->type != m1->type)
     return false;
 
-  assert(m0->type == FORMAT_1_RIC_EVENT_TRIGGER  && "Only Format 1 supported ");
-  assert(m1->type == FORMAT_1_RIC_EVENT_TRIGGER  && "Only Format 1 supported ");
-
-
-  if(m0->kpm_ric_event_trigger_format_1.report_period_ms != m1->kpm_ric_event_trigger_format_1.report_period_ms)
-    return false;
+  switch (m0->type)
+  {
+  case FORMAT_1_RIC_EVENT_TRIGGER:
+    if (eq_kpm_event_trigger_frm_1(&m0->kpm_ric_event_trigger_format_1, &m1->kpm_ric_event_trigger_format_1) != true)
+      return false;
+    break;
+  
+  default:
+    assert(false && "Unknown Event Trigger Format Type");
+  }
 
   return true;
 }
 
 
+kpm_event_trigger_def_t cp_kpm_event_trigger_def(const kpm_event_trigger_def_t * src)
+{
+  assert(src != NULL);
+
+  kpm_event_trigger_def_t dst = {0};
+
+  switch (src->type)
+  {
+  case FORMAT_1_RIC_EVENT_TRIGGER:
+    dst.kpm_ric_event_trigger_format_1 = cp_kpm_event_trigger_def_frm_1(&src->kpm_ric_event_trigger_format_1);
+    break;
+  
+  default:
+    assert(false && "Unknown Event Trigger Format Type");
+  }
+
+  return dst;
+}

@@ -30,12 +30,13 @@
 #include "sm_io.h"
 #include "sm_proc_data.h"
 #include "sm_alloc.h"
+#include "agent_if/ans/sm_ric_if_ans.h"
 
 typedef struct sm_agent_s sm_agent_t;
 
 typedef struct{
 
-  subscribe_timer_t (*on_subscription)(sm_agent_t* sm, sm_subs_data_t const* data);
+  sm_ric_if_ans_t (*on_subscription)(sm_agent_t* sm, sm_subs_data_t const* data);
 
   sm_ind_data_t (*on_indication)(sm_agent_t* sm);
 

@@ -2,6 +2,8 @@
 
 #include "kpm_data_ie.h"
 
+/* KPM RIC INDICATION DATA */
+
 void free_kpm_ind_data(kpm_ric_indication_t* ind) 
 {
   assert(ind != NULL);
@@ -52,16 +54,54 @@ bool eq_kpm_ind_data(kpm_ric_indication_t const* ind0, kpm_ric_indication_t cons
 }
 
 
+/* KPM RIC SUBSCRIPTION DATA */
 
 void free_kpm_subscription_data(kpm_ric_subscription_t* subscription)
 {
-    assert(subscription != NULL);
+  assert(subscription != NULL);
 
     
-    // Event Trigger - nothing to free
-    free_kpm_event_trigger_def(&subscription->kpm_event_trigger_def);
+  // Event Trigger - nothing to free
+  free_kpm_event_trigger_def(&subscription->kpm_event_trigger_def);
 
-    // Action Definition
-    free_kpm_action_def(&subscription->kpm_act_def);
+  // Action Definition
+  free_kpm_action_def(&subscription->kpm_act_def);
 
+}
+
+kpm_ric_subscription_t cp_kpm_subscription_data(kpm_ric_subscription_t const* src)
+{
+  assert(src != NULL);
+
+  kpm_ric_subscription_t ret = {0};
+
+  // Event Trigger
+  ret.kpm_event_trigger_def = cp_kpm_event_trigger_def(&src->kpm_event_trigger_def);
+
+  // Action Definition
+  ret.kpm_act_def = cp_kpm_action_def(&src->kpm_act_def);
+
+  return ret;
+}
+
+bool eq_kpm_subscription_data(kpm_ric_subscription_t const* m0, kpm_ric_subscription_t const* m1)
+{
+  assert(m0 != NULL);
+  assert(m1 != NULL);
+
+  if (m0 == m1) return true;
+
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  // Event Trigger
+  if(eq_kpm_event_trigger_def(&m0->kpm_event_trigger_def, &m1->kpm_event_trigger_def) != true)
+    return false;
+
+  // Action Definition
+  if(eq_kpm_action_def(&m0->kpm_act_def, &m1->kpm_act_def) != true)
+    return false;
+
+
+  return true;
 }

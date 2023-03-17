@@ -32,3 +32,20 @@ bool eq_kpm_meas_bin_range_info(meas_bin_range_info_lst_t const * m0, meas_bin_r
 
   return true;
 }
+
+meas_bin_range_info_lst_t cp_kpm_meas_bin_range_info(const meas_bin_range_info_lst_t * src)
+{
+  assert(src != NULL);
+
+  meas_bin_range_info_lst_t dst = {0};
+
+  // Measurement Type
+  dst.meas_type = cp_meas_type(&src->meas_type);
+
+  // Bin Range
+  dst.bin_range_def = cp_kpm_bin_range_def(&src->bin_range_def);
+
+
+
+  return dst;
+}

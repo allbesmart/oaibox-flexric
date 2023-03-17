@@ -24,6 +24,8 @@ void free_matching_cond_frm_4(matching_condition_format_4_lst_t* src);
 
 bool eq_matching_cond_frm_4(matching_condition_format_4_lst_t const * m0, matching_condition_format_4_lst_t const * m1);
 
+matching_condition_format_4_lst_t cp_matching_cond_frm_4(const matching_condition_format_4_lst_t * src);
+
 #ifdef __cplusplus
 }
 #endif

@@ -29,3 +29,30 @@ bool eq_cell_global_id(cell_global_id_t const * m0, cell_global_id_t const * m1)
 
     return true;
 }
+
+cell_global_id_t cp_cell_global_id(const cell_global_id_t * src)
+{
+  assert(src != NULL);
+
+  cell_global_id_t dst = {0};
+
+  dst.type = src->type;
+
+  switch (dst.type)
+  {
+  case NR_CGI_RAT_TYPE:
+    dst.nr_cgi = cp_nr_cgi(&src->nr_cgi);
+    break;
+
+  case EUTRA_CGI_RAT_TYPE:
+    dst.eutra = cp_eutra_cgi(&src->eutra);
+    break;
+  
+  default:
+    assert(false && "Unknown Cell Global ID Type");
+  }
+
+
+
+  return dst;
+}

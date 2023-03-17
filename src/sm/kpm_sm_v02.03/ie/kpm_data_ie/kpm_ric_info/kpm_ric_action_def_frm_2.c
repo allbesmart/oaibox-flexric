@@ -30,3 +30,21 @@ bool eq_kpm_action_def_frm_2(kpm_act_def_format_2_t const * m0, kpm_act_def_form
 
     return true;
 }
+
+
+kpm_act_def_format_2_t cp_kpm_action_def_frm_2(const kpm_act_def_format_2_t * src)
+{
+  assert(src != NULL);
+
+  kpm_act_def_format_2_t dst = {0};
+
+
+  // UE ID
+  dst.ue_id = cp_ue_id_e2sm(&src->ue_id);
+
+  // Action Definition Format 1
+  dst.action_def_format_1 = cp_kpm_action_def_frm_1(&src->action_def_format_1);
+
+
+  return dst;
+}

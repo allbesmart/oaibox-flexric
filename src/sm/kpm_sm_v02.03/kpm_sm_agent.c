@@ -56,27 +56,19 @@ typedef struct{
 
 // O-RAN.WG3.E2SM-KPM-v02.02, $8.2.1.1.1
 static
-subscribe_timer_t on_subscription_kpm_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
+sm_ric_if_ans_t on_subscription_kpm_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
 { 
   assert(sm_agent != NULL);
   assert(data != NULL);
 
   sm_kpm_agent_t* sm = (sm_kpm_agent_t*)sm_agent;
  
-  kpm_ric_subscription_t subscription = {0};
+  sm_ric_if_ans_t ret = {.type = KPM_RIC_IF_SUBS_ANS_V0};
 
-  subscription.kpm_event_trigger_def = kpm_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  ret.kpm.kpm_event_trigger_def = kpm_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  ret.kpm.kpm_act_def = kpm_dec_action_def(&sm->enc, data->len_ad, data->action_def);
 
-  subscribe_timer_t timer = {.ms = subscription.kpm_event_trigger_def.kpm_ric_event_trigger_format_1.report_period_ms};
-
-// XXX: Leaving 'acd' doing nothing for the moment. We need to fix the logic upper layer and change 
-// the signature of this function
-  if (data->len_ad != 0){
-    subscription.kpm_act_def = kpm_dec_action_def(&sm->enc, data->len_ad, data->action_def);
-    free_kpm_subscription_data(&subscription);
-  }
-  
-  return timer;
+  return ret;
 }
 
 // O-RAN.WG3.E2SM-KPM-v02.02, $8.2.1.3

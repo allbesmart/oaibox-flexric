@@ -54,22 +54,19 @@ typedef struct{
 // E2 Setup and RIC Service Update. 
 //
 static
-subscribe_timer_t  on_subscription_mac_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
+sm_ric_if_ans_t on_subscription_mac_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
 {
   assert(sm_agent != NULL);
   assert(data != NULL);
 
   sm_mac_agent_t* sm = (sm_mac_agent_t*)sm_agent;
- 
-  mac_event_trigger_t ev = mac_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  
+  sm_ric_if_ans_t ret = {.type = MAC_RIC_IF_SUBS_ANS_V0};
 
-  subscribe_timer_t timer = {.ms = ev.ms };
-  return timer;
-//  const sm_wr_if_t wr = {.type = SUBSCRIBE_TIMER, .sub_timer = timer };
+  ret.mac.et = mac_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  ret.mac.ad = NULL;
 
-//  sm->base.io.write(&wr);
-
-//  printf("on_subscription called with event trigger = %u \n", ev.ms);
+  return ret;
 }
 
 static

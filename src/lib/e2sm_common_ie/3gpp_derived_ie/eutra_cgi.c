@@ -16,3 +16,17 @@ bool eq_eutra_cgi(eutra_cgi_t const * m0, eutra_cgi_t const * m1)
 
     return true;
 }
+
+eutra_cgi_t cp_eutra_cgi(const eutra_cgi_t * src)
+{
+  assert(src != NULL);
+
+  eutra_cgi_t dst = {0};
+
+  dst.plmn_id = cp_plmn(&src->plmn_id);
+
+  dst.eutra_cell_id = src->eutra_cell_id;
+
+
+  return dst;
+}

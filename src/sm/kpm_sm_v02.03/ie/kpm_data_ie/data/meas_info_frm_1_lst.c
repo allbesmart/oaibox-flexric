@@ -39,3 +39,27 @@ bool eq_meas_info_frm_1(meas_info_format_1_lst_t const * m0, meas_info_format_1_
 
     return true;
 }
+
+meas_info_format_1_lst_t cp_meas_info_frm_1(const meas_info_format_1_lst_t * src)
+{
+  assert(src != NULL);
+
+  meas_info_format_1_lst_t dst = {0};
+
+  // Meas Type
+  dst.meas_type = cp_meas_type(&src->meas_type);
+      
+  // Label Information
+  dst.label_info_lst_len = src->label_info_lst_len;
+      
+  dst.label_info_lst = calloc(src->label_info_lst_len, sizeof(label_info_lst_t));
+  memcpy (dst.label_info_lst, src->label_info_lst, src->label_info_lst_len * sizeof(label_info_lst_t));
+      
+      
+  for (size_t j = 0; j < src->label_info_lst_len; j++)
+  {
+    cp_label_info(&dst.label_info_lst[j], &src->label_info_lst[j]);  
+  }
+
+  return dst;
+}

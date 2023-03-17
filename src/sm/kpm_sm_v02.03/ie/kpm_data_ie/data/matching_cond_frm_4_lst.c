@@ -31,3 +31,24 @@ bool eq_matching_cond_frm_4(matching_condition_format_4_lst_t const * m0, matchi
 
   return true;
 }
+
+matching_condition_format_4_lst_t cp_matching_cond_frm_4(const matching_condition_format_4_lst_t * src)
+{
+  assert(src != NULL);
+
+  matching_condition_format_4_lst_t dst = {0};
+
+  // Test Information List
+  dst.test_info_lst = cp_kpm_test_info(&src->test_info_lst);
+
+  // Logical OR
+  if (src->logical_OR != NULL)
+  {
+    dst.logical_OR = calloc(1, sizeof(enum_value_e));
+    *dst.logical_OR = *src->logical_OR;
+  }
+
+
+
+  return dst;
+}

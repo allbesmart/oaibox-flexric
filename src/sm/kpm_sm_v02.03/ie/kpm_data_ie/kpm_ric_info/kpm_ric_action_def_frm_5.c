@@ -41,3 +41,28 @@ bool eq_kpm_action_def_frm_5(kpm_act_def_format_5_t const * m0, kpm_act_def_form
 
   return true;
 }
+
+kpm_act_def_format_5_t cp_kpm_action_def_frm_5(const kpm_act_def_format_5_t * src)
+{
+  assert(src != NULL);
+
+  kpm_act_def_format_5_t dst = {0};
+
+  // UE ID List
+  dst.ue_id_lst_len = src->ue_id_lst_len;
+
+  dst.ue_id_lst = calloc(dst.ue_id_lst_len, sizeof(ue_id_e2sm_t));
+  memcpy(dst.ue_id_lst, src->ue_id_lst, dst.ue_id_lst_len * sizeof(ue_id_e2sm_t));
+
+  for (size_t i = 0; i<dst.ue_id_lst_len; i++)
+  {
+    dst.ue_id_lst[i] = cp_ue_id_e2sm(&src->ue_id_lst[i]);
+  }
+
+
+  // Action Definition Format 1
+  dst.action_def_format_1 = cp_kpm_action_def_frm_1(&src->action_def_format_1);
+
+
+  return dst;
+}

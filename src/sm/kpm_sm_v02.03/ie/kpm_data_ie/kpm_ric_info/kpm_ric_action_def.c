@@ -78,3 +78,40 @@ bool eq_kpm_action_def(kpm_act_def_t const * m0, kpm_act_def_t const * m1)
 
     return true;
 }
+
+kpm_act_def_t cp_kpm_action_def(const kpm_act_def_t * src)
+{
+  assert(src != NULL);
+
+  kpm_act_def_t dst = {0};
+
+  dst.type = src->type;
+
+  switch (dst.type)
+  {
+  case FORMAT_1_ACTION_DEFINITION:
+    dst.frm_1 = cp_kpm_action_def_frm_1(&src->frm_1);
+    break;
+  
+  case FORMAT_2_ACTION_DEFINITION:
+    dst.frm_2 = cp_kpm_action_def_frm_2(&src->frm_2);
+    break;
+
+  case FORMAT_3_ACTION_DEFINITION:
+    dst.frm_3 = cp_kpm_action_def_frm_3(&src->frm_3);
+    break;
+
+  case FORMAT_4_ACTION_DEFINITION:
+    dst.frm_4 = cp_kpm_action_def_frm_4(&src->frm_4);
+    break;
+
+  case FORMAT_5_ACTION_DEFINITION:
+    dst.frm_5 = cp_kpm_action_def_frm_5(&src->frm_5);
+    break;
+
+  default:
+    assert(false && "Unknown Action Definition Type");
+  }
+
+  return dst;
+}

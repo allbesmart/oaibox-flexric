@@ -53,3 +53,37 @@ bool eq_kpm_action_def_frm_3(kpm_act_def_format_3_t const * m0, kpm_act_def_form
 
   return true;
 }
+
+kpm_act_def_format_3_t cp_kpm_action_def_frm_3(const kpm_act_def_format_3_t * src)
+{
+  assert(src != NULL);
+
+  kpm_act_def_format_3_t dst = {0};
+
+  // Measurement Information List Format 3
+  dst.meas_info_lst_len = src->meas_info_lst_len;
+    
+  dst.meas_info_lst = calloc(src->meas_info_lst_len, sizeof(meas_info_format_3_lst_t));
+  memcpy (dst.meas_info_lst, src->meas_info_lst, src->meas_info_lst_len * sizeof(meas_info_format_3_lst_t));
+    
+    
+  for (size_t i = 0; i<dst.meas_info_lst_len; i++)
+  {
+    dst.meas_info_lst[i] = cp_meas_info_frm_3(&src->meas_info_lst[i]);
+  }
+
+  // Granularity Period - Mandatory
+  dst.gran_period_ms = src->gran_period_ms;
+
+
+  // Cell Global ID - Optional
+  if (src->cell_global_id != NULL)
+  {
+    dst.cell_global_id = calloc(1, sizeof(cell_global_id_t));
+    *dst.cell_global_id = cp_cell_global_id(&src->cell_global_id);
+  }
+
+
+
+  return dst;
+}

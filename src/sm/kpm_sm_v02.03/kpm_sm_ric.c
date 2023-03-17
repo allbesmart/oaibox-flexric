@@ -52,10 +52,9 @@ typedef struct{
  * @param cmd Set trigger value in milliseconds. Range of permitted values are {"1_ms, "2_ms", "5_ms"} are defined in xApp that 
  *            specifies the E42 interface. See 'src/xApp/e42_xapp.c' for further information.
  */
-static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const char* cmd)
+static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric)
 {
   assert(sm_ric != NULL); 
-  assert(cmd != NULL); 
   sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;  
  
 
@@ -65,17 +64,17 @@ static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const c
   subscription->kpm_event_trigger_def = fill_kpm_event_trigger_def();
   subscription->kpm_act_def = fill_kpm_action_def();
 
-  const byte_array_t ba = kpm_enc_event_trigger(&sm->enc, &subscription->kpm_event_trigger_def); 
+  const byte_array_t ba_event_trigger = kpm_enc_event_trigger(&sm->enc, &subscription->kpm_event_trigger_def); 
 
-  const byte_array_t ba_ad = kpm_enc_action_def(&sm->enc, &subscription->kpm_act_def);
+  const byte_array_t ba_action_definition = kpm_enc_action_def(&sm->enc, &subscription->kpm_act_def);
   
   sm_subs_data_t data = {0}; 
 
-  data.event_trigger = ba.buf;
-  data.len_et = ba.len;
+  data.event_trigger = ba_event_trigger.buf;
+  data.len_et = ba_event_trigger.len;
 
-  data.action_def = ba_ad.buf;
-  data.len_ad = ba_ad.len;
+  data.action_def = ba_action_definition.buf;
+  data.len_ad = ba_action_definition.len;
 
   return data;
 }

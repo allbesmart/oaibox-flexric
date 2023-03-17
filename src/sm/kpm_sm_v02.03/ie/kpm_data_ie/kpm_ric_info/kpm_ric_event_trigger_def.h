@@ -38,7 +38,7 @@ void free_kpm_event_trigger_def(kpm_event_trigger_def_t* src);
 
 bool eq_kpm_event_trigger_def( kpm_event_trigger_def_t const* m0,  kpm_event_trigger_def_t const* m1);
 
-
+kpm_event_trigger_def_t cp_kpm_event_trigger_def(const kpm_event_trigger_def_t * src);
 
 #ifdef __cplusplus
 }

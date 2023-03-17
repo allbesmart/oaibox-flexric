@@ -21,6 +21,8 @@ typedef struct{
 
 bool eq_eutra_cgi(eutra_cgi_t const * m0, eutra_cgi_t const * m1);
 
+eutra_cgi_t cp_eutra_cgi(const eutra_cgi_t * src);
+
 #ifdef __cplusplus
 }
 #endif

@@ -89,7 +89,7 @@ matching_condition_format_3_lst_t cp_kpm_matching_cond_frm_3(matching_condition_
   // Logical OR
   if (src->logical_OR) {
     dst.logical_OR = malloc (sizeof(dst.logical_OR));
-    dst.logical_OR = src->logical_OR; 
+    *dst.logical_OR = *src->logical_OR; 
   }
 
 

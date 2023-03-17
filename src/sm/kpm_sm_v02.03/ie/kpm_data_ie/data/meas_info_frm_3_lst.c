@@ -55,3 +55,35 @@ bool eq_meas_info_frm_3(meas_info_format_3_lst_t const * m0, meas_info_format_3_
 
   return true;
 }
+
+meas_info_format_3_lst_t cp_meas_info_frm_3(const meas_info_format_3_lst_t * src)
+{
+  assert(src != NULL);
+
+  meas_info_format_3_lst_t dst = {0};
+
+  // Meas type
+  dst.meas_type = cp_meas_type(&src->meas_type);
+
+  // Matching Condition Format 3
+  dst.matching_cond_lst_len = src->matching_cond_lst_len;
+
+  dst.matching_cond_lst = calloc(dst.matching_cond_lst_len, sizeof(matching_condition_format_3_lst_t));
+  memcpy(dst.matching_cond_lst, src->matching_cond_lst, dst.matching_cond_lst_len * sizeof(matching_condition_format_3_lst_t));
+
+  for (size_t i = 0; i<dst.matching_cond_lst_len; i++)
+  {
+    dst.matching_cond_lst[i] = cp_kpm_matching_cond_frm_3(&src->matching_cond_lst[i]);
+  }
+
+  // Bin Range Definition
+  if (src->bin_range_def != NULL)
+  {
+    dst.bin_range_def = calloc(1, sizeof(bin_range_def_t));
+    *dst.bin_range_def = cp_kpm_bin_range_def(src->bin_range_def);
+  }
+
+
+
+  return dst;
+}

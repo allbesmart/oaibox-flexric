@@ -54,17 +54,19 @@ typedef struct{
 // E2 Setup and RIC Service Update. 
 //
 static
-subscribe_timer_t  on_subscription_rlc_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
+sm_ric_if_ans_t on_subscription_rlc_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
 {
   assert(sm_agent != NULL);
   assert(data != NULL);
 
   sm_rlc_agent_t* sm = (sm_rlc_agent_t*)sm_agent;
  
-  rlc_event_trigger_t ev = rlc_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  sm_ric_if_ans_t ret = {.type = RLC_RIC_IF_SUBS_ANS_V0};
 
-  subscribe_timer_t timer = {.ms = ev.ms };
-  return timer;
+  ret.rlc.et = rlc_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  ret.rlc.ad = NULL;
+
+  return ret;
 }
 
 static

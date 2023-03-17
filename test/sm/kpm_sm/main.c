@@ -19,7 +19,8 @@
 #include <pthread.h>
 
 // 'cp' is buffer in  reception to compare the received indication message against the sent one
-static kpm_ric_indication_t cp; 
+static kpm_ric_indication_t cp_indication; 
+static kpm_ric_subscription_t cp_subscription;
 
 
 // AGENT part of the architecture. The communication with the RAN is achieved via READ/WRITE methods below
@@ -31,7 +32,7 @@ static void read_RAN(sm_ag_if_rd_t* read)
 
 
   fill_kpm_ind_data(&read->kpm_stats); 
-  cp = cp_kpm_ind_data(&read->kpm_stats);
+  cp_indication = cp_kpm_ind_data(&read->kpm_stats);
 }
 
 static 
@@ -77,13 +78,29 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
  
-  sm_subs_data_t data = ric->proc.on_subscription(ric, "2_ms");
+  // Encoding of RIC SUBSCRIPTION message
+  sm_subs_data_t subs_data = ric->proc.on_subscription(ric);
   printf ("[IE RIC Event Trigger Definition] correctly encoded\n");
   printf ("[IE RIC Action Definition] correctly encoded\n");
-  assert ((ag->proc.on_subscription(ag, &data)).ms == 2 && "error in decoding trigger");
-  printf ("[IE RIC Event Trigger Definition] correctly decoded\n");
+
+  cp_subscription = cp_kpm_subscription_data(&subs_data);
   
-  free_sm_subs_data(&data);
+
+  // Decoding of RIC SUBSCRIPTION message
+  sm_ric_if_ans_t msg = ag->proc.on_subscription(ag, &subs_data);
+  printf ("[IE RIC Event Trigger Definition] correctly decoded\n");
+  printf ("[IE RIC Action Definition] correctly decoded\n");
+
+
+  // Checking the RIC SUBSCRIPTION correctness
+  kpm_ric_subscription_t * data = &msg.kpm;
+  assert(msg.type == KPM_RIC_IF_SUBS_ANS_V0);
+  assert(eq_kpm_subscription_data(&cp_subscription, data) == true && "Failure checking for correctness in subscription data IE");
+
+  free_kpm_subscription_data(data);
+  free_sm_subs_data(&subs_data);
+  free_kpm_subscription_data(&cp_subscription);
+
 }
 
 /* Direction: E2 -> RIC
@@ -97,7 +114,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
 
   // sending IE indication. Behind the scenes it will call the read_RAN()
   sm_ind_data_t sm_data = ag->proc.on_indication(ag);
-  printf ("[IE RIC Indication Header]: correctly encoded\n");
+  printf ("[IE RIC Indication Message]: correctly encoded\n");
 
   // receiving IE indication  (decoding)
   sm_ag_if_rd_t msg = ric->proc.on_indication(ric, &sm_data);
@@ -106,11 +123,11 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   // check for indication message correctness
   kpm_ric_indication_t* data = &msg.kpm_stats;
   assert(msg.type == KPM_STATS_V0);
-  assert(eq_kpm_ind_data(&cp, data) == true && "Failure checking for correctness in indication data IE");
+  assert(eq_kpm_ind_data(&cp_indication, data) == true && "Failure checking for correctness in indication data IE");
     
   free_kpm_ind_data(data);
   free_sm_ind_data(&sm_data);
-  free_kpm_ind_data(&cp);
+  free_kpm_ind_data(&cp_indication);
 
 }
 

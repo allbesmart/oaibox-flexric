@@ -34,7 +34,7 @@ typedef struct sm_ric_s sm_ric_t;
 
 typedef struct {
 
-  sm_subs_data_t (*on_subscription)(sm_ric_t const* ,const char* cmd);
+  sm_subs_data_t (*on_subscription)(sm_ric_t const*);
 
   sm_ag_if_rd_t (*on_indication)(sm_ric_t const*, sm_ind_data_t* data);
 

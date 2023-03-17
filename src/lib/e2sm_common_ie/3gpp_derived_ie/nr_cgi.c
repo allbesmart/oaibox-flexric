@@ -16,3 +16,17 @@ bool eq_nr_cgi(nr_cgi_t const * m0, nr_cgi_t const * m1)
 
     return true;
 }
+
+nr_cgi_t cp_nr_cgi(const nr_cgi_t * src)
+{
+  assert(src != NULL);
+
+  nr_cgi_t dst = {0};
+
+  dst.plmn_id = cp_plmn(&src->plmn_id);
+
+  dst.nr_cell_id = src->nr_cell_id;
+
+
+  return dst;
+}

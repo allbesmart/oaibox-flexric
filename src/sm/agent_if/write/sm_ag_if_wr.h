@@ -34,7 +34,6 @@
 
 
 typedef enum{
-  SUBSCRIBE_TIMER = 0,
   MAC_CTRL_REQ_V0 = 1,
   RLC_CTRL_REQ_V0 = 2,
   PDCP_CTRL_REQ_V0 = 3,
@@ -46,7 +45,6 @@ typedef enum{
 
 typedef struct {
   union{
-    subscribe_timer_t sub_timer;
     mac_ctrl_req_data_t mac_ctrl;
     rlc_ctrl_req_data_t rlc_ctrl;
     pdcp_ctrl_req_data_t pdcp_req_ctrl;

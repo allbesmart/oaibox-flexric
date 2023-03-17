@@ -7,6 +7,7 @@ set(KPM_RIC_INFO_SRCS
   kpm_ric_action_def_frm_4.c
   kpm_ric_action_def_frm_5.c
   kpm_ric_event_trigger_def.c
+  kpm_ric_event_trigger_def_frm_1.c
   kpm_ric_ind_hdr.c
   kpm_ric_ind_hdr_frm_1.c
   kpm_ric_ind_msg.c

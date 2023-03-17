@@ -129,20 +129,7 @@ kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src) {
     
     for (size_t i = 0; i<ret.meas_info_lst_len; i++)
     {
-      // Meas Type
-      ret.meas_info_lst[i].meas_type = cp_meas_type(&src->meas_info_lst[i].meas_type);
-      
-      // Label Information
-      ret.meas_info_lst[i].label_info_lst_len = src->meas_info_lst[i].label_info_lst_len;
-      
-      ret.meas_info_lst[i].label_info_lst = calloc(src->meas_info_lst[i].label_info_lst_len, sizeof(label_info_lst_t));
-      memcpy (ret.meas_info_lst[i].label_info_lst, src->meas_info_lst[i].label_info_lst, src->meas_info_lst[i].label_info_lst_len * sizeof(label_info_lst_t));
-      
-      
-      for (size_t j = 0; j < src->meas_info_lst[i].label_info_lst_len; j++)
-      {
-        cp_label_info(&ret.meas_info_lst[i].label_info_lst[j], &src->meas_info_lst[i].label_info_lst[j]);  
-      }
+      ret.meas_info_lst[i] = cp_meas_info_frm_1(&src->meas_info_lst[i]);
     }
   }
   

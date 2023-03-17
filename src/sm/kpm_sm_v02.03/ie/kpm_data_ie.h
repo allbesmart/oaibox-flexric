@@ -33,6 +33,9 @@ typedef struct {
 
 void free_kpm_subscription_data(kpm_ric_subscription_t* subscription);
 
+kpm_ric_subscription_t cp_kpm_subscription_data(kpm_ric_subscription_t const* src);
+
+bool eq_kpm_subscription_data(kpm_ric_subscription_t const* m0, kpm_ric_subscription_t const* m1);
 
 // RIC SERVICE UPDATE
 typedef struct {

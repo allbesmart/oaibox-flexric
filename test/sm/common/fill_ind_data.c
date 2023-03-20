@@ -21,6 +21,8 @@
 
 
 #include "fill_ind_data.h"
+#include "../../../src/sm/rc_sm/test/fill_rnd_data_rc.h"
+
 
 #include <math.h>
 #include <stdlib.h>
@@ -1192,3 +1194,14 @@ void fill_gtp_ind_data(gtp_ind_data_t* ind){
     ngut->teidupf=abs(rand()%mod);
   }
 }
+
+rc_ind_data_t fill_rnd_rc_ind_data(void)
+{
+  rc_ind_data_t dst = {0}; 
+
+  dst.hdr = fill_rnd_rc_ind_hdr();
+  dst.msg = fill_rnd_rc_ind_msg();
+
+  return dst;
+}
+

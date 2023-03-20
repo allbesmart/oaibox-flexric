@@ -25,6 +25,7 @@ GlobalGNB_ID_t* enc_global_gnb_id_asn(const global_gnb_id_t * global_gnb_id)
     {
         assert(false && "Unknown gNB Type");
     }
+    
 
     return global_gnb_id_asn;
 }

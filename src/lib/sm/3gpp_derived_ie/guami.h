@@ -15,7 +15,7 @@ typedef struct{
 
   // Mandatory
   // PLMN Identity 6.2.3.1
-  plmn_t plmn_id;
+  e2sm_plmn_t plmn_id;
 
   // Mandatory
   // AMF Region ID BIT STRING (SIZE(8))
@@ -30,6 +30,8 @@ typedef struct{
   uint16_t amf_ptr:6;
 
 } guami_t;
+
+guami_t cp_guami(guami_t const* src);
 
 bool eq_guami(guami_t const * m0, guami_t const * m1);
 

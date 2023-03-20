@@ -82,30 +82,27 @@ sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t* sm_agent)
 
   sm_ind_data_t ret = {0};
 
-  // Fill Indication Header
-  e2sm_rc_ind_hdr_t hdr = { 0 };
-  byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &hdr );
-  ret.ind_hdr = ba_hdr.buf;
-  ret.len_hdr = ba_hdr.len;
-
-  // Fill Indication Message 
+  // Fill Indication 
   sm_ag_if_rd_t rd_if = {0};
   rd_if.type = RC_STATS_V1_03;
   sm->base.io.read(&rd_if);
 
   // Liberate the memory if previously allocated by the RAN. It sucks
-  rc_ind_data_t* ind = &rd_if.rc_stats;
-  defer({ free_e2sm_rc_ind_hdr(&ind->hdr) ;});
-  defer({ free_e2sm_rc_ind_msg(&ind->msg) ;});
-  defer({ free_e2sm_rc_cpid(ind->proc_id);});
+  rc_ind_data_t* ind = &rd_if.rc_ind;
+  defer({  free_rc_ind_data(ind); });
 
-  byte_array_t ba = rc_enc_ind_msg(&sm->enc, &rd_if.rc_stats.msg);
-  ret.ind_msg = ba.buf;
-  ret.len_msg = ba.len;
+  // Fill Indication Header
+  byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &rd_if.rc_ind.hdr);
+  ret.ind_hdr = ba_hdr.buf;
+  ret.len_hdr = ba_hdr.len;
+
+  // Fill Indication Message
+  byte_array_t ba_msg = rc_enc_ind_msg(&sm->enc, &rd_if.rc_ind.msg);
+  ret.ind_msg = ba_msg.buf;
+  ret.len_msg = ba_msg.len;
 
   // Fill Call Process ID
-  ret.call_process_id = NULL;
-  ret.len_cpid = 0;
+  assert(ind->proc_id == NULL && "Not implemented" );
 
   return ret;
 }
@@ -124,7 +121,7 @@ static
   e2sm_rc_ctrl_msg_t msg = rc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
 //  assert(msg.action == 42 && "Only action number 42 supported");
 
-  sm_ag_if_wr_t wr = {.type = RC_STATS_V1_03 };
+  sm_ag_if_wr_t wr = {.type = RC_CTRL_V1_03 };
   assert(0!=0 && "Fix this!!!");
 //  wr.rc_ctrl.hdr.dummy = 0; 
 //  wr.rc_ctrl.msg.action = msg.action;

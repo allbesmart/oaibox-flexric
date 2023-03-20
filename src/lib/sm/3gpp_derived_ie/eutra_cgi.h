@@ -14,12 +14,16 @@ extern "C" {
 //  6.2.3.11  E-UTRA CGI
 typedef struct{
 
-  plmn_t plmn_id; // 6.2.3.1
+  e2sm_plmn_t plmn_id; // 6.2.3.1
   uint32_t eutra_cell_id; // bit string of 28 bits
 
 } eutra_cgi_t ;
 
+void free_eutra_cgi(eutra_cgi_t* src);
+
 bool eq_eutra_cgi(eutra_cgi_t const * m0, eutra_cgi_t const * m1);
+
+eutra_cgi_t cp_eutra_cgi(eutra_cgi_t const* src);
 
 #ifdef __cplusplus
 }

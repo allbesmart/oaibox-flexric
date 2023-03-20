@@ -2,9 +2,9 @@
 
 #include "dec_gnb_cu_up.h"
 
-gnb_cu_up_t dec_gNB_CU_UP_UE_asn(const UEID_GNB_CU_UP_t * gnb_cu_up_asn)
+gnb_cu_up_e2sm_t dec_gNB_CU_UP_UE_asn(const UEID_GNB_CU_UP_t * gnb_cu_up_asn)
 {
-    gnb_cu_up_t gnb_cu_up = {0};
+    gnb_cu_up_e2sm_t gnb_cu_up = {0};
 
     // gNB CU CP UE E1AP
     memcpy(&gnb_cu_up.gnb_cu_cp_ue_e1ap, &gnb_cu_up_asn->gNB_CU_CP_UE_E1AP_ID, 4);

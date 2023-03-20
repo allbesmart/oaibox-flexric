@@ -591,8 +591,6 @@ e2sm_rc_event_trigger_t fill_rnd_rc_event_trigger(void)
 
   dst.format = rand() % END_E2SM_RC_EV_TRIGGER_FORMAT;
 
-  dst.format = FORMAT_4_E2SM_RC_EV_TRIGGER_FORMAT; 
-
   if(dst.format == FORMAT_1_E2SM_RC_EV_TRIGGER_FORMAT){
     dst.frmt_1 = fill_rnd_rc_event_trigger_frmt_1() ;
 
@@ -991,9 +989,9 @@ e2sm_rc_ind_hdr_frmt_1_t fill_rnd_rc_ind_hdr_frmt_1(void)
 }
 
 static
-gnb_t fill_gnb_data(void)
+gnb_e2sm_t fill_gnb_data(void)
 {
-  gnb_t gnb = {0};
+  gnb_e2sm_t gnb = {0};
 
   // 6.2.3.16
   // Mandatory
@@ -1002,7 +1000,7 @@ gnb_t fill_gnb_data(void)
 
   // Mandatory
   //GUAMI 6.2.3.17 
-  gnb.guami.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+  gnb.guami.plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
   
   gnb.guami.amf_region_id = (rand() % 2^8) + 0;
   gnb.guami.amf_set_id = (rand() % 2^10) + 0;
@@ -1059,13 +1057,13 @@ gnb_t fill_gnb_data(void)
   switch (gnb.global_ng_ran_node_id->type)
   {
   case GNB_GLOBAL_TYPE_ID:
-    gnb.global_ng_ran_node_id->global_gnb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+    gnb.global_ng_ran_node_id->global_gnb_id.plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
 //    gnb.global_ng_ran_node_id->global_gnb_id.type = GNB_TYPE_ID;
     gnb.global_ng_ran_node_id->global_gnb_id.gnb_id = (rand() % 4294967296) + 0;
     break;
   
   case NG_ENB_GLOBAL_TYPE_ID:
-    gnb.global_ng_ran_node_id->global_ng_enb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+    gnb.global_ng_ran_node_id->global_ng_enb_id.plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
     gnb.global_ng_ran_node_id->global_ng_enb_id.type = LONG_MACRO_NG_ENB_TYPE_ID;  // rand()%END_NG_ENB_TYPE_ID;
 
     switch (gnb.global_ng_ran_node_id->global_ng_enb_id.type)
@@ -1095,9 +1093,9 @@ gnb_t fill_gnb_data(void)
 }
 
 static
-gnb_du_t fill_gnb_du_data(void)
+gnb_du_e2sm_t fill_gnb_du_data(void)
 {
-  gnb_du_t gnb_du = {0};
+  gnb_du_e2sm_t gnb_du = {0};
   gnb_du.gnb_cu_ue_f1ap = (rand() % 4294967296) + 0;
 
   gnb_du.ran_ue_id = calloc(1, sizeof(*gnb_du.ran_ue_id));
@@ -1107,9 +1105,9 @@ gnb_du_t fill_gnb_du_data(void)
 }
 
 static
-gnb_cu_up_t fill_gnb_cu_up_data(void)
+gnb_cu_up_e2sm_t fill_gnb_cu_up_data(void)
 {
-  gnb_cu_up_t gnb_cu_up = {0};
+  gnb_cu_up_e2sm_t gnb_cu_up = {0};
   gnb_cu_up.gnb_cu_cp_ue_e1ap = (rand() % 4294967296) + 0;
 
   gnb_cu_up.ran_ue_id = calloc(1, sizeof(*gnb_cu_up.ran_ue_id));
@@ -1118,9 +1116,9 @@ gnb_cu_up_t fill_gnb_cu_up_data(void)
   return gnb_cu_up;
 }
 
-ng_enb_t fill_ng_enb_data(void)
+ng_enb_e2sm_t fill_ng_enb_data(void)
 {
-  ng_enb_t ng_enb = {0};
+  ng_enb_e2sm_t ng_enb = {0};
 
   // 6.2.3.16
   // Mandatory
@@ -1130,7 +1128,7 @@ ng_enb_t fill_ng_enb_data(void)
   // 6.2.3.17
   // Mandatory
   // GUAMI
-  ng_enb.guami.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+  ng_enb.guami.plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
   
   ng_enb.guami.amf_region_id = (rand() % 2^8) + 0;
   ng_enb.guami.amf_set_id = (rand() % 2^10) + 0;
@@ -1154,7 +1152,7 @@ ng_enb_t fill_ng_enb_data(void)
   // This IE shall not be used. Global NG-RAN Node ID IE shall replace this IE
   ng_enb.global_ng_enb_id = calloc(1, sizeof(*ng_enb.global_ng_enb_id));
   assert(ng_enb.global_ng_enb_id != NULL && "Memory exhausted");
-  ng_enb.global_ng_enb_id->plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+  ng_enb.global_ng_enb_id->plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
 
   ng_enb.global_ng_enb_id->type = rand()%END_NG_ENB_TYPE_ID;
 
@@ -1187,13 +1185,13 @@ ng_enb_t fill_ng_enb_data(void)
   switch (ng_enb.global_ng_ran_node_id->type)
   {
   case GNB_GLOBAL_TYPE_ID:
-    ng_enb.global_ng_ran_node_id->global_gnb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+    ng_enb.global_ng_ran_node_id->global_gnb_id.plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
     //ng_enb.global_ng_ran_node_id->global_gnb_id.type = GNB_TYPE_ID;
     ng_enb.global_ng_ran_node_id->global_gnb_id.gnb_id = (rand() % 4294967296) + 0;
     break;
   
   case NG_ENB_GLOBAL_TYPE_ID:
-    ng_enb.global_ng_ran_node_id->global_ng_enb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+    ng_enb.global_ng_ran_node_id->global_ng_enb_id.plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
     ng_enb.global_ng_ran_node_id->global_ng_enb_id.type = LONG_MACRO_NG_ENB_TYPE_ID;  // rand()%END_NG_ENB_TYPE_ID;
 
     switch (ng_enb.global_ng_ran_node_id->global_ng_enb_id.type)
@@ -1222,9 +1220,9 @@ ng_enb_t fill_ng_enb_data(void)
   return ng_enb;
 }
 
-ng_enb_du_t fill_ng_enb_du_data(void)
+ng_enb_du_e2sm_t fill_ng_enb_du_data(void)
 {
-  ng_enb_du_t ng_enb_du = {0};
+  ng_enb_du_e2sm_t ng_enb_du = {0};
 
   // 6.2.3.22
   // C-if CU DU separated
@@ -1234,9 +1232,9 @@ ng_enb_du_t fill_ng_enb_du_data(void)
   return ng_enb_du;
 }
 
-en_gnb_t fill_en_gnb_data(void)
+en_gnb_e2sm_t fill_en_gnb_data(void)
 {
-  en_gnb_t en_gnb = {0};
+  en_gnb_e2sm_t en_gnb = {0};
 
   // 6.2.3.23
   // Mandatory
@@ -1253,7 +1251,7 @@ en_gnb_t fill_en_gnb_data(void)
   // 6.2.3.9
   // Mandatory
   // Global eNB ID
-  en_gnb.global_enb_id.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+  en_gnb.global_enb_id.plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
 
   en_gnb.global_enb_id.type = rand()%SHORT_MACRO_ENB_TYPE_ID;
 
@@ -1306,9 +1304,9 @@ en_gnb_t fill_en_gnb_data(void)
   return en_gnb;
 }
 
-enb_t fill_enb_data(void)
+enb_e2sm_t fill_enb_data(void)
 {
-  enb_t enb = {0};
+  enb_e2sm_t enb = {0};
 
   // 6.2.3.26
   // Mandatory
@@ -1318,7 +1316,7 @@ enb_t fill_enb_data(void)
   // 6.2.3.18
   // Mandatory
   // GUMMEI
-  enb.gummei.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+  enb.gummei.plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
   enb.gummei.mme_group_id = (rand() % 2^16) + 0;
   enb.gummei.mme_code = (rand() % 2^8) + 0;
 
@@ -1342,7 +1340,7 @@ enb_t fill_enb_data(void)
   enb.global_enb_id = calloc(1, sizeof(*enb.global_enb_id));
   assert(enb.global_enb_id != NULL && "Memory exhausted");
 
-  enb.global_enb_id->plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+  enb.global_enb_id->plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
 
   enb.global_enb_id->type = MACRO_ENB_TYPE_ID;  // rand()%END_ENB_TYPE_ID;
 
@@ -1373,39 +1371,39 @@ enb_t fill_enb_data(void)
 }
 
 static
-ue_id_t fill_rnd_ue_id(void)
+ue_id_e2sm_t fill_rnd_ue_id(void)
 {
-  ue_id_t ue_id_data = {0};
+  ue_id_e2sm_t ue_id_data = {0};
 
-  ue_id_data.type = GNB_UE_ID; // rand()%END_UE_ID;
+  ue_id_data.type = GNB_UE_ID_E2SM; // rand()%END_UE_ID;
 
   switch (ue_id_data.type)
   {
-  case GNB_UE_ID:
+  case GNB_UE_ID_E2SM:
     ue_id_data.gnb = fill_gnb_data();
     break;
 
-  case GNB_DU_UE_ID:
+  case GNB_DU_UE_ID_E2SM:
     ue_id_data.gnb_du = fill_gnb_du_data();
     break;
   
-  case GNB_CU_UP_UE_ID:
+  case GNB_CU_UP_UE_ID_E2SM:
     ue_id_data.gnb_cu_up = fill_gnb_cu_up_data();
     break;
 
-  case NG_ENB_UE_ID:
+  case NG_ENB_UE_ID_E2SM:
     ue_id_data.ng_enb = fill_ng_enb_data();
     break;
 
-  case NG_ENB_DU_UE_ID:
+  case NG_ENB_DU_UE_ID_E2SM:
     ue_id_data.ng_enb_du = fill_ng_enb_du_data();
     break;
 
-  case EN_GNB_UE_ID:
+  case EN_GNB_UE_ID_E2SM:
     ue_id_data.en_gnb = fill_en_gnb_data();
     break;
 
-  case ENB_UE_ID:
+  case ENB_UE_ID_E2SM:
     ue_id_data.enb = fill_enb_data();
     break;
   
@@ -1463,7 +1461,7 @@ e2sm_rc_ind_hdr_frmt_3_t fill_rnd_rc_ind_hdr_frmt_3(void)
   // UE ID
   // Optional 
   // 9.3.10
-  dst.ue_id = calloc(1, sizeof( ue_id_t)); 
+  dst.ue_id = calloc(1, sizeof( ue_id_e2sm_t)); 
   assert(dst.ue_id != NULL && "Memory exhausted" );
 
   *dst.ue_id = fill_rnd_ue_id();
@@ -1476,7 +1474,7 @@ e2sm_rc_ind_hdr_t fill_rnd_rc_ind_hdr(void)
 {
   e2sm_rc_ind_hdr_t dst = {0};
 
-  dst.format = FORMAT_3_E2SM_RC_IND_HDR; //  rand()%END_E2SM_RC_IND_HDR;
+  dst.format =  rand()%END_E2SM_RC_IND_HDR;
 
   if(dst.format ==  FORMAT_1_E2SM_RC_IND_HDR){
     dst.frmt_1 = fill_rnd_rc_ind_hdr_frmt_1();
@@ -1565,10 +1563,10 @@ cell_global_id_t fill_rnd_cell_global_id()
   // Mandatory
   dst.type = rand() % END_CGI_RAT_TYPE;
   if(dst.type == NR_CGI_RAT_TYPE){
-    dst.nr_cgi.plmn_id = (plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
+    dst.nr_cgi.plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
     dst.nr_cgi.nr_cell_id = rand()% (1UL << 36);
   } else if(dst.type == EUTRA_CGI_RAT_TYPE ){
-    dst.eutra.plmn_id =  (plmn_t) {.mcc = 222, .mnc = 99, .mnc_digit_len = 2};
+    dst.eutra.plmn_id =  (e2sm_plmn_t) {.mcc = 222, .mnc = 99, .mnc_digit_len = 2};
     dst.eutra.eutra_cell_id = rand()% (1 << 28); 
   } else {
     assert( 0!=0 && "Unknown type");
@@ -1824,7 +1822,7 @@ e2sm_rc_ind_msg_t fill_rnd_rc_ind_msg(void)
 {
   e2sm_rc_ind_msg_t dst = {0};
   
-  dst.format = FORMAT_6_E2SM_RC_IND_MSG; //  rand()% END_E2SM_RC_IND_MSG;
+  dst.format = rand()% END_E2SM_RC_IND_MSG;
 
   if( dst.format == FORMAT_1_E2SM_RC_IND_MSG){
     dst.frmt_1 = fill_rnd_ind_msg_frmt_1();
@@ -1923,7 +1921,7 @@ e2sm_rc_ctrl_hdr_frmt_2_t fill_rnd_rc_ctrl_hdr_frmat_2(void)
  // UE ID
  // Optional
  // 9.3.10
-  dst.ue_id = calloc(1, sizeof(ue_id_t));
+  dst.ue_id = calloc(1, sizeof(ue_id_e2sm_t));
   assert(dst.ue_id != NULL && "Memory exhausted");
 
   *dst.ue_id = fill_rnd_ue_id();
@@ -1939,7 +1937,7 @@ e2sm_rc_ctrl_hdr_t fill_rnd_rc_ctrl_hdr(void)
 {
   e2sm_rc_ctrl_hdr_t dst = {0}; 
 
-  dst.format = FORMAT_2_E2SM_RC_CTRL_HDR; //rand() % END_E2SM_RC_CTRL_HDR;
+  dst.format = rand() % END_E2SM_RC_CTRL_HDR;
 
   if(dst.format == FORMAT_1_E2SM_RC_CTRL_HDR){
     dst.frmt_1 =  fill_rnd_rc_ctrl_hdr_frmat_1();
@@ -2060,7 +2058,7 @@ e2sm_rc_ctrl_msg_t fill_rnd_rc_ctrl_msg(void)
 {
   e2sm_rc_ctrl_msg_t dst = {0}; 
   
-  dst.format = FORMAT_2_E2SM_RC_CTRL_MSG; //rand() % END_E2SM_RC_CTRL_MSG;
+  dst.format = rand() % END_E2SM_RC_CTRL_MSG;
   
   if(dst.format == FORMAT_1_E2SM_RC_CTRL_MSG){
     dst.frmt_1 = fill_rnd_ctrl_msg_frmt_1();
@@ -2228,7 +2226,7 @@ e2sm_rc_ctrl_out_t fill_rnd_rc_ctrl_out(void)
 {
   e2sm_rc_ctrl_out_t dst = {0}; 
 
-  dst.format = FORMAT_3_E2SM_RC_CTRL_OUT; // rand() % END_E2SM_RC_CTRL_OUT;
+  dst.format = rand() % END_E2SM_RC_CTRL_OUT;
   
   if(dst.format == FORMAT_1_E2SM_RC_CTRL_OUT){
     dst.frmt_1 = fill_rnd_ctrl_out_frmt_1();

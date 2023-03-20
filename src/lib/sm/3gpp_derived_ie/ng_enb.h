@@ -34,11 +34,13 @@ typedef struct {
     // 6.2.3.2
     global_ng_ran_node_id_t *global_ng_ran_node_id;
 
-} ng_enb_t;
+} ng_enb_e2sm_t;
 
-void free_ng_enb_ue_id(ng_enb_t * src);
+void free_ng_enb_ue_id_e2sm(ng_enb_e2sm_t * src);
 
-bool eq_ng_enb_ue_id(ng_enb_t const * m0, ng_enb_t const * m1);
+bool eq_ng_enb_ue_id_e2sm(ng_enb_e2sm_t const * m0, ng_enb_e2sm_t const * m1);
+
+ng_enb_e2sm_t cp_ng_enb_ue_id_e2sm(const ng_enb_e2sm_t * src);
 
 #ifdef __cplusplus
 }

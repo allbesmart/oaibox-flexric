@@ -37,11 +37,13 @@ typedef struct {
     // C-ifDCSetup
     global_enb_id_t *global_enb_id;
 
-} enb_t;
+} enb_e2sm_t;
 
-void free_enb_ue_id(enb_t * src);
+void free_enb_ue_id_e2sm(enb_e2sm_t * src);
 
-bool eq_enb_ue_id(enb_t const * m0, enb_t const * m1);
+bool eq_enb_ue_id_e2sm(enb_e2sm_t const * m0, enb_e2sm_t const * m1);
+
+enb_e2sm_t cp_enb_ue_id_e2sm(const enb_e2sm_t * src);
 
 #ifdef __cplusplus
 }

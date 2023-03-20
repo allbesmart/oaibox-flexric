@@ -17,7 +17,7 @@ void free_e2sm_rc_ind_hdr_frmt_3(e2sm_rc_ind_hdr_frmt_3_t* src)
   // Optional 
   // 9.3.10
   if(src->ue_id != NULL){
-    free_ue_id(src->ue_id);
+    free_ue_id_e2sm(src->ue_id);
     free(src->ue_id);
   }
 
@@ -53,7 +53,7 @@ bool eq_e2sm_rc_ind_hdr_frmt_3(e2sm_rc_ind_hdr_frmt_3_t const* m0, e2sm_rc_ind_h
     if(m0->ue_id == NULL || m1->ue_id == NULL)
       return false;
 
-    if(eq_ue_id(m0->ue_id, m1->ue_id) == false)
+    if(eq_ue_id_e2sm(m0->ue_id, m1->ue_id) == false)
       return false;
   }
 

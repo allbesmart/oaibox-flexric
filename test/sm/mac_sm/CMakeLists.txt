@@ -17,6 +17,7 @@ if(SM_ENCODING_MAC  STREQUAL "PLAIN")
                      ../../../src/util/alg_ds/alg/eq_float.c
                      ../../../src/sm/mac_sm/ie/mac_data_ie.c
                       ../common/fill_ind_data.c
+                      ../../../src/sm/rc_sm/test/fill_rnd_data_rc.c
               )
 elseif(SM_ENCODING_MAC STREQUAL "ASN")
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}../ie/asn/ )

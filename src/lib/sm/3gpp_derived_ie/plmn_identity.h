@@ -37,13 +37,15 @@ typedef struct {
   uint16_t mcc;
   uint16_t mnc;
   uint8_t mnc_digit_len;
-} plmn_t;
+} e2sm_plmn_t;
 
-bool eq_plmn(const plmn_t* m0, const plmn_t* m1);
+void free_e2sm_plmn( e2sm_plmn_t* src); // 6.2.3.1
 
-plmn_t cp_plmn(const plmn_t* src);
+bool eq_e2sm_plmn(const e2sm_plmn_t* m0, const e2sm_plmn_t* m1);
 
-int cmp_plmn(const plmn_t* m0, const plmn_t* m1);
+e2sm_plmn_t cp_e2sm_plmn(const  e2sm_plmn_t* src);
+
+int cmp_e2sm_plmn(const  e2sm_plmn_t* m0, const  e2sm_plmn_t* m1);
 
 #ifdef __cplusplus
 }

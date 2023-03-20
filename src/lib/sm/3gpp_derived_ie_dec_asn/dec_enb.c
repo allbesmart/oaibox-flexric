@@ -1,14 +1,14 @@
 #include <assert.h>
 
 #include "../../../util/conversions.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/asn_constant.h"
+#include "../../../sm/rc_sm/ie/asn/asn_constant.h"
 
 #include "dec_enb.h"
 #include "dec_global_enb_id.h"
 
-enb_t dec_eNB_UE_asn(const UEID_ENB_t * enb_asn)
+enb_e2sm_t dec_eNB_UE_asn(const UEID_ENB_t * enb_asn)
 {
-    enb_t enb = {0};
+    enb_e2sm_t enb = {0};
 
 
     // Mandatory

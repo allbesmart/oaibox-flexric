@@ -7,6 +7,8 @@ extern "C" {
 
 #include "plmn_identity.h"
 
+#include <stdbool.h>
+
 //  6.2.3.9 Global eNB ID
 
 typedef enum {
@@ -21,7 +23,7 @@ typedef enum {
 
 
 typedef struct {
-    plmn_t plmn_id;
+    e2sm_plmn_t plmn_id;
 
     enb_type_id_e type;
     union {
@@ -34,6 +36,9 @@ typedef struct {
 
 } global_enb_id_t;
 
+global_enb_id_t cp_global_enb_ue_id_e2sm(  global_enb_id_t const* src);
+
+bool eq_global_enb_id(global_enb_id_t const * m0, global_enb_id_t const * m1);
 
 #ifdef __cplusplus
 }

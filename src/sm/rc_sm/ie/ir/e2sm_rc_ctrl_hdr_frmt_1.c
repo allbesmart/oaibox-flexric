@@ -9,7 +9,7 @@ void free_e2sm_rc_ctrl_hdr_frmt_1(e2sm_rc_ctrl_hdr_frmt_1_t* src)
   // UE ID
   // Mandatory
   // 9.3.10
-  free_ue_id(&src->ue_id);
+  free_ue_id_e2sm(&src->ue_id);
 
   // RIC Style Type
   // Mandatory
@@ -42,7 +42,7 @@ bool eq_e2sm_rc_ctrl_hdr_frmt_1(e2sm_rc_ctrl_hdr_frmt_1_t const* m0, e2sm_rc_ctr
     // UE ID
   // Mandatory
   // 9.3.10
-  if(eq_ue_id(&m0->ue_id, &m1->ue_id) == false) 
+  if(eq_ue_id_e2sm(&m0->ue_id, &m1->ue_id) == false) 
     return false;
 
   // RIC Style Type

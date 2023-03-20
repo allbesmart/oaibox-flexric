@@ -11,7 +11,7 @@ typedef struct{
   // Mandatory
   // 9.3.10
   // Defined in KPM
-  ue_id_t ue_id;
+  ue_id_e2sm_t ue_id;
 
  // RAN Parameter Testing for Individual UE
  // Optional

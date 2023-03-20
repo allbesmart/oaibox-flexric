@@ -12,7 +12,7 @@ typedef struct{
   // UE ID
   // Mandatory
   // 9.3.10
-  ue_id_t ue_id; 
+  ue_id_e2sm_t ue_id; 
 
   // UE Context Information
   // Optiona;

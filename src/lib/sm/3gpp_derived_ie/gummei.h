@@ -15,7 +15,7 @@ typedef struct {
 
     // all are mandatory
 
-    plmn_t plmn_id;
+    e2sm_plmn_t plmn_id;
 
     uint16_t mme_group_id;
 
@@ -23,6 +23,9 @@ typedef struct {
 
 
 } gummei_t;
+
+
+gummei_t cp_gummei(gummei_t const* src);
 
 bool eq_gummei(gummei_t const * m0, gummei_t const * m1);
 

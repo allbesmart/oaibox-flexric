@@ -9,7 +9,7 @@ void free_seq_ue_info(seq_ue_info_t* src)
   // UE ID
   // Mandatory
   // 9.3.10
-  free_ue_id(&src->ue_id);
+  free_ue_id_e2sm(&src->ue_id);
 
   // UE Context Information
   // Optiona;
@@ -34,7 +34,7 @@ bool eq_seq_ue_info(seq_ue_info_t const* m0,  seq_ue_info_t const* m1)
   // UE ID
   // Mandatory
   // 9.3.10
-  if(eq_ue_id(&m0->ue_id, &m1->ue_id ) == false)
+  if(eq_ue_id_e2sm(&m0->ue_id, &m1->ue_id ) == false)
     return false;
 
   // UE Context Information

@@ -21,7 +21,7 @@ typedef enum {
 
 
 typedef struct {
-    plmn_t plmn_id;
+    e2sm_plmn_t plmn_id;
 
     ng_enb_type_id_e type;
     union {
@@ -32,6 +32,7 @@ typedef struct {
 
 } global_ng_enb_id_t;
 
+global_ng_enb_id_t cp_global_ng_enb_id( global_ng_enb_id_t const* src);
 
 bool eq_global_ng_enb_id(global_ng_enb_id_t const * m0, global_ng_enb_id_t const * m1);
 

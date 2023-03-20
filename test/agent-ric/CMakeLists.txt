@@ -4,6 +4,7 @@
 
 add_executable(test_near_ric 
               test_near_ric.c 
+                ../../src/sm/rc_sm/test/fill_rnd_data_rc.c
               ../sm/common/fill_ind_data.c)
 
 target_link_libraries(test_near_ric
@@ -12,8 +13,6 @@ target_link_libraries(test_near_ric
                       ${FlatCC} 
                       #/home/mir/workspace/flatcc/lib/libflatccrt_d.a
                       near_ric_test
-                      #ToDO: get rid of nng dependency
-                      #-lnng
                       -pthread
                       -lsctp
                       -ldl)

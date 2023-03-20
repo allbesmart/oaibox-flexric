@@ -472,7 +472,7 @@ do {                                                    \
     (bITsTRING)->buf[2] = (mACRO) >> 4;                 \
     (bITsTRING)->buf[3] = ((mACRO) & 0x0f) << 4;        \
     (bITsTRING)->size = 4;                              \
-    (bITsTRING)->bits_unused = 0;                       \
+    (bITsTRING)->bits_unused = 4;                       \
 } while(0)
 
 #define BIT_STRING_TO_MACRO_GNB_ID(aSN, vALUE)            \

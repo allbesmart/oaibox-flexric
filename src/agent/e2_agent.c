@@ -60,8 +60,14 @@ e2_setup_request_t generate_setup_request(e2_agent_t* ag)
     assert(sm->ran_func_id == *(uint16_t*)assoc_key(&ag->plugin.sm_ds, it) && "RAN function mismatch");
 
     ran_func[i].id = sm->ran_func_id; 
-    ran_func[i].rev = 0;
-    ran_func[i].oid = NULL;
+    ran_func[i].rev = 1;
+    ran_func[i].oid = calloc(1, sizeof(byte_array_t));
+    assert(ran_func[i].oid != NULL && "Memory exhausted" );
+    assert(i < 1 && "Clean this shit!"); 
+    const char oid[] = "1.3.6.1.4.1.53148.1.1.2.3";
+    ran_func[i].oid->buf = calloc(1, strlen(oid));    
+    memcpy(ran_func[i].oid->buf, oid,strlen(oid) );
+    ran_func[i].oid->len = strlen(oid);
 
     sm_e2_setup_t def = sm->proc.on_e2_setup(sm);
     byte_array_t ba = {.len = def.len_rfd, .buf = def.ran_fun_def};

@@ -2,12 +2,12 @@
 #include <stdio.h>
 
 #include "../../../util/conversions.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/asn_constant.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/asn_SEQUENCE_OF.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-CP-F1AP-ID-Item.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-F1AP-ID-List.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-CP-E1AP-ID-Item.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
+#include "../../../sm/rc_sm/ie/asn/asn_constant.h"
+#include "../../../sm/rc_sm/ie/asn/asn_SEQUENCE_OF.h"
+#include "../../../sm/rc_sm/ie/asn/UEID-GNB-CU-CP-F1AP-ID-Item.h"
+#include "../../../sm/rc_sm/ie/asn/UEID-GNB-CU-F1AP-ID-List.h"
+#include "../../../sm/rc_sm/ie/asn/UEID-GNB-CU-CP-E1AP-ID-Item.h"
+#include "../../../sm/rc_sm/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
 
 #include "enc_global_gnb_id.h"
 #include "enc_global_ng_ran.h"
@@ -15,7 +15,7 @@
 #include "enc_gnb.h"
 
 
-UEID_GNB_t* enc_gNB_UE_asn(const gnb_t* gnb)
+UEID_GNB_t* enc_gNB_UE_asn(const gnb_e2sm_t* gnb)
 {
   UEID_GNB_t * gnb_asn = calloc(1, sizeof(UEID_GNB_t));
   assert(gnb_asn != NULL && "Memory exhausted");
@@ -31,6 +31,7 @@ UEID_GNB_t* enc_gNB_UE_asn(const gnb_t* gnb)
 
   memcpy(gnb_asn->amf_UE_NGAP_ID.buf, &gnb->amf_ue_ngap_id, 5);
   gnb_asn->amf_UE_NGAP_ID.size = 5;
+
 
   // GUAMI
   MCC_MNC_TO_PLMNID(gnb->guami.plmn_id.mcc, gnb->guami.plmn_id.mnc, gnb->guami.plmn_id.mnc_digit_len, &gnb_asn->guami.pLMNIdentity);

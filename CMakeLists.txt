@@ -123,6 +123,12 @@ set(SM_ENCODING_KPM "ASN" CACHE STRING "The KPM SM encoding to use")
 set_property(CACHE SM_ENCODING_KPM PROPERTY STRINGS "PLAIN" "ASN" "FLATBUFFERS")
 message(STATUS "Selected KPM SM_ENCODING: ${SM_ENCODING_KPM}")
 
+# RC service Model encoding definitions
+set(SM_ENCODING_RC "ASN" CACHE STRING "The RC SM encoding to use")
+set_property(CACHE SM_ENCODING_RC PROPERTY STRINGS "PLAIN" "ASN" "FLATBUFFERS")
+message(STATUS "Selected RC SM_ENCODING: ${SM_ENCODING_RC}")
+
+
 # MAC Service Model
 set(SM_ENCODING_MAC "PLAIN" CACHE STRING "The MAC SM encoding to use")
 set_property(CACHE SM_ENCODING_MAC PROPERTY STRINGS "PLAIN" "ASN" "FLATBUFFERS")
@@ -209,7 +215,7 @@ install(TARGETS pdcp_sm DESTINATION ${CMAKE_INSTALL_LIBDIR}/flexric)
 install(TARGETS slice_sm DESTINATION ${CMAKE_INSTALL_LIBDIR}/flexric)
 install(TARGETS tc_sm DESTINATION ${CMAKE_INSTALL_LIBDIR}/flexric)
 install(TARGETS gtp_sm DESTINATION ${CMAKE_INSTALL_LIBDIR}/flexric)
-install(TARGETS kpm_sm DESTINATION ${CMAKE_INSTALL_LIBDIR}/flexric)
+#install(TARGETS kpm_sm DESTINATION ${CMAKE_INSTALL_LIBDIR}/flexric)
 
 ###
 # Install the configuration file

@@ -1,18 +1,18 @@
 #include <assert.h>
 
 #include "../../../util/conversions.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/asn_constant.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-F1AP-ID-List.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
+#include "../../../sm/rc_sm/ie/asn/asn_constant.h"
+#include "../../../sm/rc_sm/ie/asn/UEID-GNB-CU-F1AP-ID-List.h"
+#include "../../../sm/rc_sm/ie/asn/UEID-GNB-CU-CP-E1AP-ID-List.h"
 
 #include "dec_gnb.h"
 #include "dec_global_gnb_id.h"
 #include "dec_global_ng_ran.h"
 
 
-gnb_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
+gnb_e2sm_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
 {
-    gnb_t gnb = {0};
+    gnb_e2sm_t gnb = {0};
 
     // 6.2.3.16
     // Mandatory

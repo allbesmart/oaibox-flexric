@@ -8,7 +8,7 @@ bool eq_global_gnb_id(global_gnb_id_t const * m0, global_gnb_id_t const * m1)
     assert(m0 != NULL);
     assert(m1 != NULL);
 
-    if (eq_plmn(&m0->plmn_id, &m1->plmn_id) != true)
+    if (eq_e2sm_plmn(&m0->plmn_id, &m1->plmn_id) != true)
       return false;
 
     if (m0->type != m1->type)
@@ -27,3 +27,23 @@ bool eq_global_gnb_id(global_gnb_id_t const * m0, global_gnb_id_t const * m1)
 
     return true;
 }
+
+
+global_gnb_id_t cp_global_gnb_id(global_gnb_id_t const* src)
+{
+  assert(src != NULL);
+
+  global_gnb_id_t dst = {0}; 
+
+  dst.plmn_id = cp_e2sm_plmn(&src->plmn_id);
+
+  dst.type = src->type;
+
+  assert(dst.type == GNB_TYPE_ID && "Only one type supported");
+
+  dst.gnb_id = src->gnb_id;
+
+  return dst;
+}
+
+

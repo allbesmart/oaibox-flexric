@@ -1,9 +1,10 @@
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "ng_enb_du.h"
 
-void free_ng_enb_du_ue_id(ng_enb_du_t * src)
+void free_ng_enb_du_ue_id_e2sm(ng_enb_du_e2sm_t * src)
 {
     assert(src != NULL);
 
@@ -12,7 +13,7 @@ void free_ng_enb_du_ue_id(ng_enb_du_t * src)
 
 }
 
-bool eq_ng_enb_du_ue_id(ng_enb_du_t const * m0, ng_enb_du_t const * m1)
+bool eq_ng_enb_du_ue_id_e2sm(ng_enb_du_e2sm_t const * m0, ng_enb_du_e2sm_t const * m1)
 {
     assert(m0 != NULL);
     assert(m1 != NULL);
@@ -21,4 +22,16 @@ bool eq_ng_enb_du_ue_id(ng_enb_du_t const * m0, ng_enb_du_t const * m1)
         return false;
 
     return true;
+}
+
+
+ng_enb_du_e2sm_t cp_ng_enb_du_ue_id_e2sm(const ng_enb_du_e2sm_t * src)
+{
+  assert(src != NULL);
+
+  ng_enb_du_e2sm_t dst = {0};
+
+  memcpy(&dst.ng_enb_cu_ue_w1ap_id, &src->ng_enb_cu_ue_w1ap_id, 4);
+
+  return dst;
 }

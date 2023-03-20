@@ -17,20 +17,16 @@ set(SM_ENCODING_RC_SRC
 
 
 if(SM_ENCODING_RC STREQUAL "PLAIN")
-  add_library(rc_sm SHARED
-                      ${SM_ENCODING_RC_SRC}
-                      enc/rc_enc_plain.c 
-                      dec/rc_dec_plain.c 
-                      )
-
+  message(FATAL_ERROR "RC SM FB not implemented")
 elseif(SM_ENCODING_RC STREQUAL "ASN" )
-  message(FATAL_ERROR "RC SM ASN not implemented")
   add_subdirectory(ie/asn)
 
   add_library(rc_sm SHARED
                      ${SM_ENCODING_RC_SRC}
                       enc/rc_enc_asn.c 
                       dec/rc_dec_asn.c 
+                      $<TARGET_OBJECTS:e2sm_rc_asn1_obj>
+
                       )
   target_include_directories(rc_sm PRIVATE "ie/asn")
   target_compile_options(rc_sm PUBLIC "-DASN_DISABLE_OER_SUPPORT")

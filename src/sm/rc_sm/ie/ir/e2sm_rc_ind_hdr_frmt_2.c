@@ -9,7 +9,7 @@ void free_e2sm_rc_ind_hdr_frmt_2(e2sm_rc_ind_hdr_frmt_2_t* src)
   // UE ID
   // Mandatory
   // 9.3.10
-  free_ue_id(&src->ue_id);
+  free_ue_id_e2sm(&src->ue_id);
 
   // RIC Insert Style Type
   // Mandatory
@@ -39,7 +39,7 @@ bool eq_e2sm_rc_ind_hdr_frmt_2(e2sm_rc_ind_hdr_frmt_2_t const* m0, e2sm_rc_ind_h
   // UE ID
   // Mandatory
   // 9.3.10
-  if(eq_ue_id(&m0->ue_id, &m1->ue_id ) == false ){
+  if(eq_ue_id_e2sm(&m0->ue_id, &m1->ue_id ) == false ){
     assert(0!=0 && "Debug assert");
     return false;
   }

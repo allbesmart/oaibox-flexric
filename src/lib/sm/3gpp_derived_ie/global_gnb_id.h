@@ -17,7 +17,7 @@ typedef enum {
 } gnb_type_id_e;
 
 typedef struct {
-    plmn_t plmn_id;
+    e2sm_plmn_t plmn_id;
 
     gnb_type_id_e type;
     union {
@@ -26,6 +26,9 @@ typedef struct {
     
 
 } global_gnb_id_t;
+
+
+global_gnb_id_t cp_global_gnb_id(global_gnb_id_t const* src);
 
 bool eq_global_gnb_id(global_gnb_id_t const * m0, global_gnb_id_t const * m1);
 

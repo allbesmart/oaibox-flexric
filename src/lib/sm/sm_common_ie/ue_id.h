@@ -1,5 +1,5 @@
-#ifndef UE_ID_H
-#define UE_ID_H
+#ifndef UE_ID_E2SM_H
+#define UE_ID_E2SM_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,35 +17,37 @@ extern "C" {
 #include "../3gpp_derived_ie/enb.h"
 
 typedef enum{
-  GNB_UE_ID,
-	GNB_DU_UE_ID,
-	GNB_CU_UP_UE_ID,
-	NG_ENB_UE_ID,
-	NG_ENB_DU_UE_ID,
-	EN_GNB_UE_ID,
-  ENB_UE_ID,
+  GNB_UE_ID_E2SM,
+	GNB_DU_UE_ID_E2SM,
+	GNB_CU_UP_UE_ID_E2SM,
+	NG_ENB_UE_ID_E2SM,
+	NG_ENB_DU_UE_ID_E2SM,
+	EN_GNB_UE_ID_E2SM,
+  ENB_UE_ID_E2SM,
 
-  END_UE_ID
+  END_UE_ID_E2SM
 
-} ue_id_e; 
+} ue_id_e2sm_e; 
 
 typedef struct {
-  ue_id_e type;
+  ue_id_e2sm_e type;
   union{
-    gnb_t gnb;
-    gnb_du_t  gnb_du;
-    gnb_cu_up_t  gnb_cu_up;
-    ng_enb_t ng_enb;
-    ng_enb_du_t  ng_enb_du;
-    en_gnb_t  en_gnb;
-    enb_t enb;
+    gnb_e2sm_t gnb;
+    gnb_du_e2sm_t  gnb_du;
+    gnb_cu_up_e2sm_t  gnb_cu_up;
+    ng_enb_e2sm_t ng_enb;
+    ng_enb_du_e2sm_t  ng_enb_du;
+    en_gnb_e2sm_t  en_gnb;
+    enb_e2sm_t enb;
   };
 	
-} ue_id_t;
+} ue_id_e2sm_t;
 
-void free_ue_id(ue_id_t * src);
+void free_ue_id_e2sm(ue_id_e2sm_t * src);
 
-bool eq_ue_id(ue_id_t const * m0, ue_id_t const * m1);
+bool eq_ue_id_e2sm(ue_id_e2sm_t const * m0, ue_id_e2sm_t const * m1);
+
+ue_id_e2sm_t cp_ue_id_e2sm(const ue_id_e2sm_t * src);
 
 #ifdef __cplusplus
 }

@@ -8,7 +8,7 @@ typedef struct{
   // PLMN Identity
   // Mandatory
   // 6.2.3.1
-  plmn_t plmn;
+  e2sm_plmn_t plmn;
 
   // en-gNB ID
   // Mandatory

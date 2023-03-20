@@ -10,7 +10,7 @@ extern "C" {
 
 #include "../sm_common_ie/ue_id.h"
 
-UEID_t enc_ue_id_asn(const ue_id_t * ue_id);
+UEID_t enc_ue_id_asn(const ue_id_e2sm_t * ue_id);
 
 #ifdef __cplusplus
 }

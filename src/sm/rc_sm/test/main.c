@@ -161,46 +161,40 @@ int main()
   srand((unsigned) time(&t));
 
   // Test off all the functions
-  //printf("\nRC SM enc/dec test launched\n");
+  printf("\nRC SM enc/dec test launched\n");
 
   // Event Trigger
-  //test_ric_event_trigger_rc();
-  //printf("\nRC Event Trigger test succeeded\n");
+  test_ric_event_trigger_rc();
+  printf("\nRC Event Trigger test succeeded\n");
 
   // Action Definition
-  //test_rc_act_def();
-  //printf("\nRC Action Definition test succeeded\n");
+  test_rc_act_def();
+  printf("\nRC Action Definition test succeeded\n");
 
   // Indication Header
-  //test_rc_ind_hdr();
-  //printf("\nRC Indication Header test succeeded\n");
+  test_rc_ind_hdr();
+  printf("\nRC Indication Header test succeeded\n");
 
   // Indication Message
-  //test_rc_ind_msg();
-  //printf("\nRC Indication Message test succeeded\n");
+  test_rc_ind_msg();
+  printf("\nRC Indication Message test succeeded\n");
 
   // Call Process ID 
-  //test_rc_call_process_id();
-  //printf("\nRC Call Process ID\nn");
+  test_rc_call_process_id();
+  printf("\nRC Call Process ID\nn");
 
   // Control Header 
-  // test_rc_ctrl_hdr();
-  // printf("\nRC Control Header \n");
+   test_rc_ctrl_hdr();
+   printf("\nRC Control Header \n");
 
   // Control Message  
-  // test_rc_ctrl_msg();
-  // printf("\nRC Control Message\n");
+   test_rc_ctrl_msg();
+   printf("\nRC Control Message\n");
 
   // Control Outcome 
   test_rc_ctrl_out();
   printf("\nRC Control Outcome\n");
 
-
-
-
-
   return EXIT_SUCCESS;
 }
-
-
 

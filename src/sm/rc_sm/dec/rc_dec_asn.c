@@ -1629,7 +1629,7 @@ e2sm_rc_ind_hdr_frmt_3_t cp_ind_hdr_frmt_3(E2SM_RC_IndicationHeader_Format3_t co
   // 9.3.10
   if(src->ueID != NULL){
   
-    dst.ue_id = calloc(1, sizeof(ue_id_t));
+    dst.ue_id = calloc(1, sizeof(ue_id_e2sm_t));
     assert(dst.ue_id != NULL && "Memory exhausted");
     
     *dst.ue_id = dec_ue_id_asn(src->ueID);
@@ -2193,7 +2193,7 @@ e2sm_rc_ctrl_hdr_frmt_2_t dec_ctrl_hdr_frmt_2(E2SM_RC_ControlHeader_Format2_t co
  // Optional
  // 9.3.10
   if(src->ueID != NULL){
-    dst.ue_id = calloc(1, sizeof(ue_id_t));
+    dst.ue_id = calloc(1, sizeof(ue_id_e2sm_t));
     assert(dst.ue_id != NULL && "Memory exhausted");
 
     *dst.ue_id = dec_ue_id_asn(src->ueID);

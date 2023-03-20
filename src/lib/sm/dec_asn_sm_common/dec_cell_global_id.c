@@ -2,10 +2,9 @@
 #include <stdlib.h>
 // #include "../../ap/ie/asn/OCTET_STRING.h"
 #include "../../../util/conversions.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/OCTET_STRING.h"
-
-#include "../../../sm/kpm_sm_v02.03/ie/asn/NR-CGI.h"
-#include "../../../sm/kpm_sm_v02.03/ie/asn/EUTRA-CGI.h"
+#include "../../../sm/rc_sm/ie/asn/OCTET_STRING.h"
+#include "../../../sm/rc_sm/ie/asn/NR-CGI.h"
+#include "../../../sm/rc_sm/ie/asn/EUTRA-CGI.h"
 
 #include "dec_cell_global_id.h"
 

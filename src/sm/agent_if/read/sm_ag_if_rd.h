@@ -59,7 +59,7 @@ typedef struct{
     tc_ind_data_t tc_stats;
     gtp_ind_data_t gtp_stats;
     kpm_ind_data_t kpm_stats;
-    rc_ind_data_t rc_stats;
+    rc_ind_data_t rc_ind;
   };
   sm_ag_if_rd_e type;
 } sm_ag_if_rd_t;

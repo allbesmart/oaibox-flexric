@@ -23,6 +23,7 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
                       ../../../src/util/alg_ds/alg/eq_float.c
                       ../../../src/util/byte_array.c
                       ../common/fill_ind_data.c
+                      ../../../src/sm/rc_sm/test/fill_rnd_data_rc.c
                       ${asn_sources}
                       )
                         

@@ -9,12 +9,16 @@ extern "C" {
 
 
 typedef struct {
-    byte_array_t	 short_name;
-	byte_array_t	 E2SM_OID;
+  byte_array_t	 name;
+	byte_array_t	 oid;
 	byte_array_t	 description;
 	long	        *instance;	/* OPTIONAL: it is suggested to be used when E2 Node declares
                                    multiple RAN Function ID supporting the same  E2SM specification   ask Mikel */
 } ran_function_name_t;
+
+void free_ran_function_name(ran_function_name_t* src);
+
+bool eq_ran_function_name(ran_function_name_t const * m0, ran_function_name_t const * m1);
 
 #ifdef __cplusplus
 }

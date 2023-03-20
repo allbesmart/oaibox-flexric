@@ -25,12 +25,22 @@
 #include <assert.h>
 #include <stddef.h>
 
-
-plmn_t cp_plmn(const plmn_t* src)
+void free_e2sm_plmn(e2sm_plmn_t* src) // 6.2.3.1
 {
   assert(src != NULL);
 
-  plmn_t dst = {0};
+ // uint16_t mcc;
+ // uint16_t mnc;
+ // uint8_t mnc_digit_len;
+
+}
+
+
+ e2sm_plmn_t cp_e2sm_plmn(const e2sm_plmn_t* src)
+{
+  assert(src != NULL);
+
+  e2sm_plmn_t dst = {0};
 
   dst.mcc = src->mcc;
   dst.mnc = src->mnc;
@@ -39,7 +49,7 @@ plmn_t cp_plmn(const plmn_t* src)
   return dst;
 }
 
-bool eq_plmn(const plmn_t* m0, const plmn_t* m1)
+bool eq_e2sm_plmn(const e2sm_plmn_t* m0, const e2sm_plmn_t* m1)
 {
   if(m0 == m1) return true;
 
@@ -58,7 +68,7 @@ bool eq_plmn(const plmn_t* m0, const plmn_t* m1)
 }
 
 
-int cmp_plmn(const plmn_t* m0, const plmn_t* m1)
+int cmp_e2sm_plmn(const e2sm_plmn_t* m0, const e2sm_plmn_t* m1)
 {
   assert(m0 != NULL);
   assert(m1 != NULL);

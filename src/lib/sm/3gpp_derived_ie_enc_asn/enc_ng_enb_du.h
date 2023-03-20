@@ -6,10 +6,10 @@
 extern "C" {
 #endif
 
-#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-NG-ENB-DU.h"
+#include "../../../sm/rc_sm/ie/asn/UEID-NG-ENB-DU.h"
 #include "../3gpp_derived_ie/ng_enb_du.h"
 
-UEID_NG_ENB_DU_t * enc_ng_eNB_DU_UE_asn(const ng_enb_du_t * ng_enb_du);
+UEID_NG_ENB_DU_t * enc_ng_eNB_DU_UE_asn(const ng_enb_du_e2sm_t * ng_enb_du);
 
 #ifdef __cplusplus
 }

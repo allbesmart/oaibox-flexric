@@ -239,7 +239,7 @@ typedef struct {
 
 void free_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t* src); 
 
-e2sm_rc_ind_msg_t cp_rc_ind_msg(e2sm_rc_ind_msg_t const* src);
+e2sm_rc_ind_msg_t cp_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t const* src);
 
 bool eq_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t const* m0, e2sm_rc_ind_msg_t const* m1);
 

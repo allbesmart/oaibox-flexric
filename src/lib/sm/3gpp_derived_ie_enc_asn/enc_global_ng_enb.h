@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#include "../../../sm/kpm_sm_v02.03/ie/asn/GlobalNgENB-ID.h"
+#include "../../../sm/rc_sm/ie/asn/GlobalNgENB-ID.h"
 #include "../3gpp_derived_ie/global_ng_enb_id.h"
 
 GlobalNgENB_ID_t * enc_global_ng_enb_asn(const global_ng_enb_id_t * global_ng_enb_id);

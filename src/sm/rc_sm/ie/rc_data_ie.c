@@ -304,7 +304,7 @@ void free_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t* src)
 
 }
 
-e2sm_rc_ind_msg_t cp_rc_ind_msg(e2sm_rc_ind_msg_t const* src)
+e2sm_rc_ind_msg_t cp_e2sm_rc_ind_msg(e2sm_rc_ind_msg_t const* src)
 {
   assert(src != NULL);
 
@@ -608,7 +608,7 @@ rc_ind_data_t cp_rc_ind_data(rc_ind_data_t const* src)
   rc_ind_data_t dst = {0};
 
   dst.hdr = cp_e2sm_rc_ind_hdr(&src->hdr);
-  dst.msg = cp_rc_ind_msg(&src->msg);
+  dst.msg = cp_e2sm_rc_ind_msg(&src->msg);
 
   if(src->proc_id != NULL){
     dst.proc_id = malloc(sizeof(e2sm_rc_cpid_t));

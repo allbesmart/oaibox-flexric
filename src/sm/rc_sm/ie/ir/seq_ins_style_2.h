@@ -27,5 +27,7 @@ void free_seq_ins_style_2(seq_ins_style_2_t* src);
 
 bool eq_seq_ins_style_2(seq_ins_style_2_t const* m0, seq_ins_style_2_t const* m1);
 
+seq_ins_style_2_t cp_seq_ins_style_2(seq_ins_style_2_t const* src); 
+
 #endif
 

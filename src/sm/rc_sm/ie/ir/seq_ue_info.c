@@ -52,3 +52,27 @@ bool eq_seq_ue_info(seq_ue_info_t const* m0,  seq_ue_info_t const* m1)
   return true;
 }
 
+seq_ue_info_t cp_seq_ue_info(seq_ue_info_t const* src)
+{
+  assert(src != NULL);
+  seq_ue_info_t dst = {0}; 
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst.ue_id = cp_ue_id_e2sm(&src->ue_id);  
+
+  // UE Context Information
+  // Optiona;
+  // OCTET STRING
+  assert(src->ue_ctx_info == NULL && "Not implemented");
+
+  // Cell Global ID
+  // Mandatory
+  // 9.3.36
+  dst.cell_global_id = cp_cell_global_id(&src->cell_global_id);
+
+  return dst;
+}
+
+

@@ -92,19 +92,9 @@ sm_ag_if_rd_t on_indication_rc_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t* dat
 
   sm_ag_if_rd_t rd_if = {.type = RC_STATS_V1_03};
 
-
-  assert(0!=0 && "Not implemented");
-
-
-  //rd_if.rc_stats.msg = rc_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
-  //rd_if.rc_stats.hdr = rc_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
-
-  // ToDO: fill the structure properly
-//  assert(sizeof(rc_ind_msg_t) == sizeof(rc_rd_stats_t) && "memcpy not allowed if the structs are different");
-//  memcpy(&rd_if.rc_stats, &ind_msg, sizeof(rc_rd_stats_t));
-
-  //rd_if.rc_stats.tx_bytes = msg.tx_bytes;
-  //rd_if.rc_stats.tx_pkts = msg.tx_pkts;
+  rd_if.rc_ind.hdr = rc_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
+  rd_if.rc_ind.msg = rc_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+  assert(data->call_process_id == NULL && "Not implemented");
 
   return rd_if;
 }

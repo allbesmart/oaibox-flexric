@@ -3,10 +3,6 @@
 
 #include <stdbool.h>
 
-// #include "ran_param_list.h"
-// #include "ran_param_struct.h"
-// #include "ran_parameter_value.h"
-
 typedef struct ran_parameter_value_s ran_parameter_value_t;
 typedef struct ran_param_struct_s ran_param_struct_t;
 typedef struct ran_param_list_s  ran_param_list_t;
@@ -39,6 +35,8 @@ typedef struct{
 void free_ran_param_val_type(ran_param_val_type_t *src);
 
 bool eq_ran_param_val_type(ran_param_val_type_t const* m0, ran_param_val_type_t const* m1);
+
+ran_param_val_type_t cp_ran_param_val_type( ran_param_val_type_t const* src);
 
 #endif
 

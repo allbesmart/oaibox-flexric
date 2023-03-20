@@ -66,5 +66,32 @@ bool eq_seq_cell_info( seq_cell_info_t const* m0,  seq_cell_info_t const* m1)
 }
 
 
+seq_cell_info_t cp_seq_cell_info(seq_cell_info_t const* src)
+{
+  assert(src != NULL);
+  seq_cell_info_t dst = {0};
 
+  // Cell Global ID
+  // Mandatory
+  // 9.3.36
+  // 6.2.2.5
+  dst.cell_global_id = cp_cell_global_id(&src->cell_global_id);
+
+  // Cell Context Information
+  // Optional
+  // OCTET STRING
+  assert(src->cell_ctx_info == NULL && "Not implemented");
+
+  // Cell Deleted
+  // Optional
+  // BOOLEAN
+  assert(src->cell_del == NULL && "Not implemented");
+
+  // Neighbour Relation Table
+  // Optional
+  // 9.3.38
+  assert(src->neighbour_rela_tbl == NULL && "Not implemented");
+
+  return dst;
+}
 

@@ -917,12 +917,12 @@ E2SM_RC_ActionDefinition_Format1_t*	cp_act_def_frmt_1(e2sm_rc_act_def_frmt_1_t c
   return dst;
 }
 
-// Forward declaration to avoid the cycle between  cp_ran_param_value_type and cp_ran_param_struct
+// Forward declaration to avoid the cycle between  cp_ran_param_value_type and enc_ran_param_struct
 static
 RANParameter_ValueType_t cp_ran_param_value_type(ran_param_val_type_t const* src);
 
 static
-RANParameter_STRUCTURE_Item_t* cp_ran_param_struct(seq_ran_param_t const* src)
+RANParameter_STRUCTURE_Item_t* enc_ran_param_struct(seq_ran_param_t const* src)
 {
   assert(src != NULL);
 
@@ -948,7 +948,7 @@ RANParameter_STRUCTURE_Item_t* cp_ran_param_struct(seq_ran_param_t const* src)
 }
 
 static
-RANParameter_STRUCTURE_t* cp_lst_ran_param(lst_ran_param_t const* src)
+RANParameter_STRUCTURE_t* enc_lst_ran_param(lst_ran_param_t const* src)
 {
   assert(src != NULL);
 
@@ -982,7 +982,7 @@ RANParameter_STRUCTURE_t* cp_lst_ran_param(lst_ran_param_t const* src)
   //ran_param_struct_t ran_param_struct;
 
   for(size_t i = 0; i < src->ran_param_struct.sz_ran_param_struct; ++i){
-    RANParameter_STRUCTURE_Item_t* ie = cp_ran_param_struct(&src->ran_param_struct.ran_param_struct[i]);
+    RANParameter_STRUCTURE_Item_t* ie = enc_ran_param_struct(&src->ran_param_struct.ran_param_struct[i]);
     int rc = ASN_SEQUENCE_ADD(&dst->sequence_of_ranParameters->list, ie);
     assert(rc == 0);
   }
@@ -1034,7 +1034,7 @@ RANParameter_ValueType_t cp_ran_param_value_type(ran_param_val_type_t const* src
     assert(dst.choice.ranP_Choice_Structure->ranParameter_Structure->sequence_of_ranParameters != NULL && "Memory exhausted");
 
     for(size_t i = 0; i < src->strct->sz_ran_param_struct; ++i){
-      RANParameter_STRUCTURE_Item_t* ie = cp_ran_param_struct(&src->strct->ran_param_struct[i]);
+      RANParameter_STRUCTURE_Item_t* ie = enc_ran_param_struct(&src->strct->ran_param_struct[i]);
       int rc = ASN_SEQUENCE_ADD(&dst.choice.ranP_Choice_Structure->ranParameter_Structure->sequence_of_ranParameters->list, ie);
       assert(rc == 0);
     }
@@ -1049,7 +1049,7 @@ RANParameter_ValueType_t cp_ran_param_value_type(ran_param_val_type_t const* src
     assert(dst.choice.ranP_Choice_List->ranParameter_List != NULL && "Memory exhausted" );
 
     for(size_t i = 0; i < src->lst->sz_lst_ran_param; ++i){
-      RANParameter_STRUCTURE_t* ie = cp_lst_ran_param(&src->lst->lst_ran_param[i]);
+      RANParameter_STRUCTURE_t* ie = enc_lst_ran_param(&src->lst->lst_ran_param[i]);
       int rc = ASN_SEQUENCE_ADD(&dst.choice.ranP_Choice_List->ranParameter_List->list_of_ranParameter.list, ie);
       assert(rc == 0);
     }

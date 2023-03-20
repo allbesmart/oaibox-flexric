@@ -67,3 +67,37 @@ bool eq_e2sm_rc_ind_msg_frmt_4( e2sm_rc_ind_msg_frmt_4_t const* m0,  e2sm_rc_ind
   return true;
 }
 
+
+e2sm_rc_ind_msg_frmt_4_t cp_e2sm_rc_ind_msg_frmt_4(e2sm_rc_ind_msg_frmt_4_t const* src)
+{
+  assert(src != NULL);
+  e2sm_rc_ind_msg_frmt_4_t dst = {0}; 
+
+  //Sequence of UE Information
+  // [0-65535]
+  if(src->sz_seq_ue_info > 0){
+    dst.sz_seq_ue_info = src->sz_seq_ue_info;
+    dst.seq_ue_info = calloc( dst.sz_seq_ue_info, sizeof(seq_ue_info_t));
+    assert(dst.seq_ue_info != NULL && "Memory exhausted" );
+  }
+
+  for(size_t i = 0; i < dst.sz_seq_ue_info; ++i){
+    dst.seq_ue_info[i] = cp_seq_ue_info(&src->seq_ue_info[i]);
+  }
+
+  // Sequence of Cell Information
+  // [0-65535]
+  if(src->sz_seq_cell_info_2 > 0){
+    dst.sz_seq_cell_info_2 = src->sz_seq_cell_info_2;
+
+    dst.seq_cell_info_2 = calloc(dst.sz_seq_cell_info_2, sizeof(seq_cell_info_2_t));
+    assert(dst.seq_cell_info_2 != NULL && "Memory exhausted");
+  }
+
+  for(size_t i = 0; i < dst.sz_seq_cell_info_2; ++i){
+    dst.seq_cell_info_2[i] = cp_seq_cell_info_2(&src->seq_cell_info_2[i]);
+  }
+
+  return dst;
+}
+

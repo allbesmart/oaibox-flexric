@@ -53,3 +53,30 @@ bool eq_seq_ins_style_2(seq_ins_style_2_t const* m0, seq_ins_style_2_t const* m1
   return true;
 }
 
+seq_ins_style_2_t cp_seq_ins_style_2(seq_ins_style_2_t const* src)
+{
+  assert(src != NULL);
+  seq_ins_style_2_t dst = {0}; 
+
+  // Indicated Insert Style
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst.ind_ins_style = src->ind_ins_style;
+
+  // Sequence of Insert Indication Actions
+  // [1-63]
+  assert(src->sz_seq_ins_ind_act_2 > 0 && src->sz_seq_ins_ind_act_2 < 64);
+  dst.sz_seq_ins_ind_act_2 = src->sz_seq_ins_ind_act_2;
+
+  dst.seq_ins_ind_act = calloc(dst.sz_seq_ins_ind_act_2, sizeof( seq_ins_ind_act_2_t));
+
+
+  for(size_t i = 0; i < dst.sz_seq_ins_ind_act_2; ++i){
+    dst.seq_ins_ind_act[i] = cp_seq_ins_ind_act_2(&src->seq_ins_ind_act[i]);
+  }
+
+
+  return dst;
+}

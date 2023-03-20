@@ -66,4 +66,32 @@ bool eq_e2sm_rc_ind_hdr_frmt_2(e2sm_rc_ind_hdr_frmt_2_t const* m0, e2sm_rc_ind_h
   return true;
 }
 
+e2sm_rc_ind_hdr_frmt_2_t cp_e2sm_rc_ind_hdr_frmt_2(e2sm_rc_ind_hdr_frmt_2_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ind_hdr_frmt_2_t dst = {0}; 
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst.ue_id = cp_ue_id_e2sm(&src->ue_id);
+
+  // RIC Insert Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2. From common SM
+  // RIC Style Type 
+  // Integer
+  dst.ric_style_type = src->ric_style_type;
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1 - 65535]
+  assert(src->ins_ind_id > 0); 
+  dst.ins_ind_id = src->ins_ind_id; 
+
+  return dst;
+}
 

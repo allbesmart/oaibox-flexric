@@ -38,5 +38,7 @@ void free_ran_parameter_value(ran_parameter_value_t* src);
 
 bool eq_ran_parameter_value(ran_parameter_value_t const* m0, ran_parameter_value_t const* m1);
 
+ran_parameter_value_t cp_ran_parameter_value(ran_parameter_value_t const* src);
+
 #endif
 

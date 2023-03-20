@@ -24,5 +24,7 @@ void free_lst_ran_param(lst_ran_param_t* src);
 
 bool eq_lst_ran_param(lst_ran_param_t const* m0, lst_ran_param_t const* m1);
 
+lst_ran_param_t cp_lst_ran_param(lst_ran_param_t const* src);
+
 #endif
 

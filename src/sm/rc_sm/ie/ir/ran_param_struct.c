@@ -39,3 +39,23 @@ bool eq_ran_param_struct(ran_param_struct_t const* m0, ran_param_struct_t const*
   return true;
 }
 
+ran_param_struct_t cp_ran_param_struct(ran_param_struct_t const* src)
+{
+  assert(src != NULL);
+  ran_param_struct_t dst = {0}; 
+
+  // [1-65535]
+  assert(src->sz_ran_param_struct > 0 && src->sz_ran_param_struct < 65536);
+
+  dst.ran_param_struct = calloc(src->sz_ran_param_struct, sizeof(seq_ran_param_t ) );
+  assert(dst.ran_param_struct != NULL && "Memory exhausted");
+
+  dst.sz_ran_param_struct = src->sz_ran_param_struct;
+
+  for(size_t i = 0; i < src->sz_ran_param_struct; ++i){
+    dst.ran_param_struct[i] = cp_seq_ran_param(&src->ran_param_struct[i]);
+  }
+
+  return dst;
+}
+

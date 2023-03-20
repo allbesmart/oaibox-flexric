@@ -991,7 +991,7 @@ e2sm_rc_act_def_frmt_1_t cp_act_def_frmt_1( E2SM_RC_ActionDefinition_Format1_t c
 }
 
 static
-ran_parameter_value_t cp_ran_parameter_value(RANParameter_Value_t	const* src)
+ran_parameter_value_t dec_ran_parameter_value(RANParameter_Value_t	const* src)
 {
   assert(src != NULL);
 
@@ -1115,7 +1115,7 @@ ran_param_list_t* cp_ran_param_list( RANParameter_STRUCTURE_t const* src)
 */
 
 static
-seq_ran_param_t cp_ran_param_struct(RANParameter_STRUCTURE_Item_t const* src)
+seq_ran_param_t dec_ran_param_struct(RANParameter_STRUCTURE_Item_t const* src)
 {
   assert(src != NULL);
 
@@ -1138,7 +1138,7 @@ seq_ran_param_t cp_ran_param_struct(RANParameter_STRUCTURE_Item_t const* src)
 }
 
 static
-lst_ran_param_t cp_lst_ran_param(RANParameter_STRUCTURE_t const* src)
+lst_ran_param_t dec_lst_ran_param(RANParameter_STRUCTURE_t const* src)
 {
   assert(src != NULL);
 
@@ -1175,7 +1175,7 @@ lst_ran_param_t cp_lst_ran_param(RANParameter_STRUCTURE_t const* src)
   assert(dst.ran_param_struct.ran_param_struct != NULL && "Memory exhausted");
 
   for(size_t i = 0; i < sz; ++i){
-   dst.ran_param_struct.ran_param_struct[i] = cp_ran_param_struct(src->sequence_of_ranParameters->list.array[i]);
+   dst.ran_param_struct.ran_param_struct[i] = dec_ran_param_struct(src->sequence_of_ranParameters->list.array[i]);
   }
 
   return dst;
@@ -1195,7 +1195,7 @@ ran_param_val_type_t cp_ran_param_value_type(RANParameter_ValueType_t	const* src
     dst.flag_true = calloc(1, sizeof( ran_parameter_value_t)); 
     assert(dst.flag_true != NULL && "Memory exhausted" );
 
-    *dst.flag_true = cp_ran_parameter_value(&src->choice.ranP_Choice_ElementTrue->ranParameter_value);
+    *dst.flag_true = dec_ran_parameter_value(&src->choice.ranP_Choice_ElementTrue->ranParameter_value);
 
   } else if(src->present == RANParameter_ValueType_PR_ranP_Choice_ElementFalse ){
     dst.type = ELEMENT_KEY_FLAG_FALSE_RAN_PARAMETER_VAL_TYPE;  
@@ -1203,7 +1203,7 @@ ran_param_val_type_t cp_ran_param_value_type(RANParameter_ValueType_t	const* src
     dst.flag_false = calloc(1, sizeof( ran_parameter_value_t)); 
     assert(dst.flag_false != NULL && "Memory exhausted" );
 
-    *dst.flag_false = cp_ran_parameter_value(src->choice.ranP_Choice_ElementFalse->ranParameter_value);
+    *dst.flag_false = dec_ran_parameter_value(src->choice.ranP_Choice_ElementFalse->ranParameter_value);
 
   }else if(src->present ==  RANParameter_ValueType_PR_ranP_Choice_Structure){
     dst.type = STRUCTURE_RAN_PARAMETER_VAL_TYPE;  
@@ -1218,7 +1218,7 @@ ran_param_val_type_t cp_ran_param_value_type(RANParameter_ValueType_t	const* src
     dst.lst->lst_ran_param = calloc( dst.lst->sz_lst_ran_param, sizeof(lst_ran_param_t));
     assert(dst.lst->lst_ran_param != NULL && "Memory exhausted");
     for(size_t i =0; i < dst.lst->sz_lst_ran_param; ++i){
-      dst.lst->lst_ran_param[i] = cp_lst_ran_param(src->choice.ranP_Choice_List->ranParameter_List->list_of_ranParameter.list.array[i]); 
+      dst.lst->lst_ran_param[i] = dec_lst_ran_param(src->choice.ranP_Choice_List->ranParameter_List->list_of_ranParameter.list.array[i]); 
     }
 
   } else {
@@ -1229,7 +1229,7 @@ ran_param_val_type_t cp_ran_param_value_type(RANParameter_ValueType_t	const* src
 }
 
 static
-seq_ran_param_t cp_seq_ran_param(RIC_PolicyAction_RANParameter_Item_t const* src)
+seq_ran_param_t dec_seq_ran_param(RIC_PolicyAction_RANParameter_Item_t const* src)
 {
   assert(src != NULL);
   
@@ -1276,7 +1276,7 @@ policy_action_t cp_policy_action(RIC_PolicyAction_t const* src)
     assert(dst.seq_ran_param != NULL && "Memory exhausted");
 
     for(int i = 0; i < src->ranParameters_List->list.count; ++i ){
-     dst.seq_ran_param[i] = cp_seq_ran_param(src->ranParameters_List->list.array[i]); 
+     dst.seq_ran_param[i] = dec_seq_ran_param(src->ranParameters_List->list.array[i]); 
     }
   }
 

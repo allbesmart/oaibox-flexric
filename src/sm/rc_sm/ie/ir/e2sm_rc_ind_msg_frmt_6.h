@@ -20,5 +20,7 @@ void free_e2sm_rc_ind_msg_frmt_6(e2sm_rc_ind_msg_frmt_6_t* src);
 
 bool eq_e2sm_rc_ind_msg_frmt_6( e2sm_rc_ind_msg_frmt_6_t const* m0, e2sm_rc_ind_msg_frmt_6_t const* m1);
 
+e2sm_rc_ind_msg_frmt_6_t cp_e2sm_rc_ind_msg_frmt_6(e2sm_rc_ind_msg_frmt_6_t const* src);
+
 #endif
 

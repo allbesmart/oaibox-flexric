@@ -24,5 +24,7 @@ void free_seq_ran_param(seq_ran_param_t* src);
 
 bool eq_seq_ran_param(seq_ran_param_t const* m0, seq_ran_param_t const* m1);
 
+seq_ran_param_t cp_seq_ran_param(seq_ran_param_t const* src);
+
 #endif
 

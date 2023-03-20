@@ -37,3 +37,23 @@ bool eq_ran_param_list(ran_param_list_t const* m0, ran_param_list_t const* m1)
   return true;
 }
 
+ran_param_list_t cp_ran_param_list(ran_param_list_t const* src)
+{
+  assert(src != NULL);
+  ran_param_list_t dst = {0}; 
+
+  // [0- 65535]
+  if(src->sz_lst_ran_param > 0){
+    dst.sz_lst_ran_param = src->sz_lst_ran_param;
+
+    dst.lst_ran_param = calloc(dst.sz_lst_ran_param, sizeof(lst_ran_param_t));
+    assert(dst.lst_ran_param != NULL && "Memory exhausted" );
+  }
+
+  for(size_t i = 0; i < src->sz_lst_ran_param; ++i){
+    dst.lst_ran_param[i] = cp_lst_ran_param(&src->lst_ran_param[i]);
+  }
+
+  return dst;
+}
+

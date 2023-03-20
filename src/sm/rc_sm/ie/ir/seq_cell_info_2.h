@@ -32,5 +32,7 @@ void free_seq_cell_info_2(seq_cell_info_2_t* src);
 
 bool eq_seq_cell_info_2(seq_cell_info_2_t const* m0, seq_cell_info_2_t const* m1);
 
+seq_cell_info_2_t cp_seq_cell_info_2(seq_cell_info_2_t const* src); 
+
 #endif
 

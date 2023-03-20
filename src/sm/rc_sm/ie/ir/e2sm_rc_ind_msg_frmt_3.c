@@ -39,3 +39,24 @@ bool eq_e2sm_rc_ind_msg_frmt_3(e2sm_rc_ind_msg_frmt_3_t const* m0, e2sm_rc_ind_m
   return true;
 }
 
+e2sm_rc_ind_msg_frmt_3_t cp_e2sm_rc_ind_msg_frmt_3(e2sm_rc_ind_msg_frmt_3_t const* src)
+{
+  assert(src != NULL);
+  e2sm_rc_ind_msg_frmt_3_t dst = {0}; 
+
+  // Sequence of Cell Information
+  // [1 - 65535]
+  assert(src->sz_seq_cell_info > 0 && src->sz_seq_cell_info <  65536);
+  dst.sz_seq_cell_info = src->sz_seq_cell_info;
+
+  dst.seq_cell_info = calloc(dst.sz_seq_cell_info, sizeof( seq_cell_info_t ));
+  assert(dst.seq_cell_info != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_cell_info; ++i){
+    dst.seq_cell_info[i] = cp_seq_cell_info(&src->seq_cell_info[i]);
+  }
+
+  return dst;
+}
+
+

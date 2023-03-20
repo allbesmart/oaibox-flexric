@@ -37,4 +37,23 @@ bool eq_lst_ran_param(lst_ran_param_t const* m0, lst_ran_param_t const* m1)
   return true;
 }
 
+lst_ran_param_t cp_lst_ran_param(lst_ran_param_t const* src)
+{
+  assert(src != NULL);
+
+  lst_ran_param_t dst = {0};
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  //1.. 4294967295
+  assert(src->ran_param_id > 0);
+  dst.ran_param_id = src->ran_param_id;
+
+  // RAN Parameter Structure
+  // Mandatory
+  // 9.3.12
+  dst.ran_param_struct = cp_ran_param_struct(&src->ran_param_struct);
+  
+  return dst;
+}
 

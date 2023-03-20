@@ -52,3 +52,31 @@ bool eq_seq_ue_id(seq_ue_id_t const* m0, seq_ue_id_t const* m1)
 }
 
 
+
+seq_ue_id_t cp_seq_ue_id( seq_ue_id_t const* src)
+{
+  assert(src != NULL);
+
+  seq_ue_id_t dst = {0}; 
+
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst.ue_id = cp_ue_id_e2sm(&src->ue_id);
+
+  // Sequence of
+  // RAN Parameter
+  // [1- 65535]
+  assert(src->sz_seq_ran_param > 0);
+  dst.sz_seq_ran_param = src->sz_seq_ran_param;
+
+  dst.seq_ran_param = calloc(dst.sz_seq_ran_param, sizeof(seq_ran_param_t));
+  assert(dst.seq_ran_param != NULL && "Memory exhausted" );
+
+  for(size_t i = 0; i < dst.sz_seq_ran_param; ++i){
+    dst.seq_ran_param[i] = cp_seq_ran_param(&src->seq_ran_param[i]);
+  }
+
+  return dst;
+}
+

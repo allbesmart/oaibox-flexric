@@ -41,3 +41,26 @@ bool eq_e2sm_rc_ind_msg_frmt_1( e2sm_rc_ind_msg_frmt_1_t const* m0,  e2sm_rc_ind
 }
 
 
+e2sm_rc_ind_msg_frmt_1_t cp_e2sm_rc_ind_msg_frmt_1(e2sm_rc_ind_msg_frmt_1_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ind_msg_frmt_1_t dst = {0}; 
+
+  //  Sequence of RAN
+  //  Parameters
+  //  [1 - 65535]
+  assert(src->sz_seq_ran_param > 0);
+  
+  dst.seq_ran_param = calloc(src->sz_seq_ran_param, sizeof(seq_ran_param_t) );
+  assert(dst.seq_ran_param != NULL && "Memory exhausted");
+
+  dst.sz_seq_ran_param = src->sz_seq_ran_param;
+
+  for(size_t i = 0; i < src->sz_seq_ran_param; ++i){
+    dst.seq_ran_param[i] = cp_seq_ran_param(&src->seq_ran_param[i]);
+  }
+
+  return dst;
+}
+

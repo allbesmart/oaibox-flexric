@@ -60,3 +60,32 @@ bool eq_e2sm_rc_ind_hdr_frmt_3(e2sm_rc_ind_hdr_frmt_3_t const* m0, e2sm_rc_ind_h
   return true;
 }
 
+e2sm_rc_ind_hdr_frmt_3_t cp_e2sm_rc_ind_hdr_frmt_3(e2sm_rc_ind_hdr_frmt_3_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ind_hdr_frmt_3_t dst = {0}; 
+  // Event Trigger Condition ID
+  // Optional
+  // 9.3.21
+  // [1 - 65535]
+  if(src->ev_trigger_cond != NULL){
+    assert(*src->ev_trigger_cond > 0); 
+
+    dst.ev_trigger_cond = malloc(sizeof(uint16_t));
+    assert(dst.ev_trigger_cond != NULL && "Memory exhausted");
+    *dst.ev_trigger_cond = *src->ev_trigger_cond;
+  }
+
+  // UE ID
+  // Optional 
+  // 9.3.10
+  if(src->ue_id != NULL){
+    dst.ue_id = calloc(1, sizeof(ue_id_e2sm_t ));
+    assert(dst.ue_id != NULL && "Memory exhausted");
+    *dst.ue_id = cp_ue_id_e2sm(src->ue_id);
+  } 
+
+  return dst;
+}
+

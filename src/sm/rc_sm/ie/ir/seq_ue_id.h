@@ -27,6 +27,7 @@ void free_seq_ue_id(seq_ue_id_t* src);
 
 bool eq_seq_ue_id(seq_ue_id_t const* m0, seq_ue_id_t const* m1);
 
+seq_ue_id_t cp_seq_ue_id( seq_ue_id_t const* src);
 
 #endif
 

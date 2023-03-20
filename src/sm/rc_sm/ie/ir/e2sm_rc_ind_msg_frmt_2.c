@@ -35,3 +35,26 @@ bool eq_e2sm_rc_ind_msg_frmt_2( e2sm_rc_ind_msg_frmt_2_t const* m0,  e2sm_rc_ind
   return true;
 }
 
+e2sm_rc_ind_msg_frmt_2_t cp_e2sm_rc_ind_msg_frmt_2(e2sm_rc_ind_msg_frmt_2_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ind_msg_frmt_2_t dst = {0}; 
+
+  //Sequence of UE Identifier
+  //[1-65535]
+  assert(src->sz_seq_ue_id > 0 && src->sz_seq_ue_id < 65536);
+
+  dst.sz_seq_ue_id = src->sz_seq_ue_id;
+
+  dst.seq_ue_id = calloc(dst.sz_seq_ue_id, sizeof(seq_ue_id_t));
+  assert(dst.seq_ue_id != NULL && "Memory exhausted" );
+
+  for(size_t i = 0; i < dst.sz_seq_ue_id; ++i){
+    dst.seq_ue_id[i] = cp_seq_ue_id(&src->seq_ue_id[i]);
+  }
+
+  return dst;
+}
+
+

@@ -30,5 +30,7 @@ void free_seq_ue_info( seq_ue_info_t* src);
 
 bool eq_seq_ue_info(seq_ue_info_t const* m0,  seq_ue_info_t const* m1);
 
+seq_ue_info_t cp_seq_ue_info(seq_ue_info_t const* src);
+
 #endif
 

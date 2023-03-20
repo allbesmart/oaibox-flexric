@@ -67,3 +67,29 @@ bool eq_ran_parameter_value(ran_parameter_value_t const* m0, ran_parameter_value
   return true;
 }
 
+
+ran_parameter_value_t cp_ran_parameter_value(ran_parameter_value_t const* src)
+{
+  assert(src != NULL);
+
+  ran_parameter_value_t dst = {.type = src->type};
+
+  if(dst.type == BOOLEAN_RAN_PARAMETER_VALUE ){
+    dst.bool_ran = src->bool_ran;
+  } else if(dst.type == INTEGER_RAN_PARAMETER_VALUE){
+    dst.int_ran = src->int_ran;
+  } else if(dst.type == REAL_RAN_PARAMETER_VALUE){
+    dst.real_ran = src->real_ran;
+  } else if(dst.type == BIT_STRING_RAN_PARAMETER_VALUE){
+    dst.bit_str_ran = copy_byte_array(src->bit_str_ran);
+  } else if(dst.type == OCTET_STRING_RAN_PARAMETER_VALUE){
+    dst.octet_str_ran = copy_byte_array(src->octet_str_ran);
+  } else if(dst.type == PRINTABLESTRING_RAN_PARAMETER_VALUE){
+    dst.printable_str_ran = copy_byte_array(src->printable_str_ran);
+  } else {
+    assert(0!=0 && "Unknown type");
+  }
+
+  return dst;
+}
+

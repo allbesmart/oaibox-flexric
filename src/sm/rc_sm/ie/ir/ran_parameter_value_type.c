@@ -59,3 +59,34 @@ bool eq_ran_param_val_type(ran_param_val_type_t const* m0, ran_param_val_type_t 
   return true;
 }
 
+ran_param_val_type_t cp_ran_param_val_type(ran_param_val_type_t const* src)
+{
+  assert(src != NULL);
+  ran_param_val_type_t dst = {0};
+
+  dst.type = src->type;
+ 
+  if(dst.type == ELEMENT_KEY_FLAG_TRUE_RAN_PARAMETER_VAL_TYPE){
+    dst.flag_true = calloc(1, sizeof(ran_parameter_value_t ));
+    assert(dst.flag_true != NULL && "Memory exhausted");
+    *dst.flag_true = cp_ran_parameter_value(src->flag_true);
+  } else if(dst.type == ELEMENT_KEY_FLAG_FALSE_RAN_PARAMETER_VAL_TYPE){
+    dst.flag_false = calloc(1, sizeof(ran_parameter_value_t ));
+    assert(dst.flag_false != NULL && "Memory exhausted");
+    *dst.flag_false = cp_ran_parameter_value(src->flag_false);
+  }else if(dst.type == STRUCTURE_RAN_PARAMETER_VAL_TYPE){
+    dst.strct = calloc(1, sizeof(ran_param_struct_t));
+    assert(dst.strct != NULL && "Memory exhausted");
+    *dst.strct = cp_ran_param_struct(src->strct);
+  }else if(dst.type == LIST_RAN_PARAMETER_VAL_TYPE){
+    dst.lst = calloc(1, sizeof(ran_param_list_t));
+    assert(dst.lst != NULL && "Memory exhausted");
+    *dst.lst = cp_ran_param_list(src->lst);
+  } else {
+    assert(0!=0 && "Unknown type");
+  }
+
+  return dst;
+}
+
+

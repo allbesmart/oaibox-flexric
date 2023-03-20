@@ -19,5 +19,7 @@ void free_ran_param_list(ran_param_list_t* src);
 
 bool eq_ran_param_list(ran_param_list_t const* m0, ran_param_list_t const* m1);
 
+ran_param_list_t cp_ran_param_list(ran_param_list_t const* src);
+
 #endif
 

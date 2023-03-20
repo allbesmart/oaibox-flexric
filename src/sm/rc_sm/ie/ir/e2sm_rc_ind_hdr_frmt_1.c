@@ -38,3 +38,24 @@ bool eq_e2sm_rc_ind_hdr_frmt_1(e2sm_rc_ind_hdr_frmt_1_t const* m0,e2sm_rc_ind_hd
   return true;
 }
 
+e2sm_rc_ind_hdr_frmt_1_t cp_e2sm_rc_ind_hdr_frmt_1(e2sm_rc_ind_hdr_frmt_1_t const* src)
+{
+  assert(src != NULL);
+  e2sm_rc_ind_hdr_frmt_1_t dst = {0}; 
+
+  // Event Trigger Condition ID
+  // Optional
+  // 9.3.21
+  // [1 - 65535]
+  assert(src->ev_trigger_id != NULL && "Optional but not much sense to be void"); 
+  assert(*src->ev_trigger_id > 1);
+
+  dst.ev_trigger_id = malloc(sizeof(uint16_t));
+  assert(dst.ev_trigger_id != NULL && "Not implemented");
+
+  *dst.ev_trigger_id = *src->ev_trigger_id;
+
+  return dst;
+}
+
+

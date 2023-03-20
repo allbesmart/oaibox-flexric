@@ -58,3 +58,29 @@ bool eq_seq_ins_ind_act_2(seq_ins_ind_act_2_t const* m0, seq_ins_ind_act_2_t con
 }
 
 
+seq_ins_ind_act_2_t cp_seq_ins_ind_act_2(seq_ins_ind_act_2_t const* src)
+{
+  assert(src != NULL);
+  seq_ins_ind_act_2_t dst = {0}; 
+  //  Insert Indication ID
+  //  Mandatory
+  //  9.3.16
+  //  1.. 65535
+  assert(src->ins_ind_id > 0);
+  dst.ins_ind_id = src->ins_ind_id;
+
+  // List of RAN parameters requested
+  // [0-65535]
+  if(src->sz_ran_param_req > 0){
+    dst.sz_ran_param_req = src->sz_ran_param_req;
+    dst.ran_param_req = calloc(dst.sz_ran_param_req, sizeof(ran_param_req_t ));
+    assert(dst.ran_param_req != NULL && "Memory exhausted");
+  }
+
+  for(size_t i = 0; i < dst.sz_ran_param_req; ++i){
+    dst.ran_param_req[i] = cp_ran_param_req(&src->ran_param_req[i]);
+  }
+
+  return dst;
+}
+

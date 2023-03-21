@@ -20,12 +20,6 @@
 static
 tc_ind_data_t cp;
 
-void free_ag_tc(void)
-{
-
-
-}
-
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
@@ -47,10 +41,12 @@ static
 void read_RAN(sm_ag_if_rd_t* read)
 {
   assert(read != NULL);
-  assert(read->type == TC_STATS_V0);
 
-  fill_tc_ind_data(&read->tc_stats);
-  cp.msg = cp_tc_ind_msg(&read->tc_stats.msg);
+  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(read->ind.type == TC_STATS_V0);
+
+  fill_tc_ind_data(read->ind.tc_ind);
+  cp.msg = cp_tc_ind_msg(&read->ind.tc_ind->msg);
 }
 
 
@@ -58,12 +54,13 @@ static
 sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
 {
   assert(data != NULL);
-  assert(data->type == TC_CTRL_REQ_V0 );
+  assert(data->type == CONTROL_SM_AG_IF_WR );
+  assert(data->ctrl.type == TC_CTRL_REQ_V0 );
 
   sm_ag_if_ans_t ans = {0};
 
   if(data->type == TC_CTRL_REQ_V0){
-    tc_ctrl_req_data_t const* ctrl = &data->tc_req_ctrl;
+    tc_ctrl_req_data_t const* ctrl = data->ctrl.tc_req_ctrl;
 
     tc_ctrl_msg_e const t = ctrl->msg.type;
 
@@ -71,7 +68,8 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
           || t == TC_CTRL_SM_V0_QUEUE || t ==TC_CTRL_SM_V0_SCH 
           || t == TC_CTRL_SM_V0_SHP || t == TC_CTRL_SM_V0_PCR);
 
-    ans.type = TC_AGENT_IF_CTRL_ANS_V0; 
+    ans.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0;
+    ans.ctrl_out.type = TC_AGENT_IF_CTRL_ANS_V0; 
 
   } else {
     assert(0!=0 && "Unknown type");
@@ -118,7 +116,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
 
   sm_ag_if_rd_t msg = ric->proc.on_indication(ric, &sm_data);
 
-  tc_ind_data_t* data = &msg.tc_stats;
+  tc_ind_data_t* data = msg.ind.tc_ind;
   assert(msg.type == TC_STATS_V0);
 
   assert(eq_tc_ind_msg(&cp.msg, &data->msg) == true);
@@ -136,14 +134,15 @@ void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ag_if_wr_t ctrl = {.type = TC_CTRL_REQ_V0 };
+  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
+  wr.ctrl.type = TC_CTRL_REQ_V0; 
 
-  fill_tc_ctrl(&ctrl.tc_req_ctrl);
+  fill_tc_ctrl(wr.ctrl.tc_req_ctrl);
 
-  cp_ctrl.hdr = cp_tc_ctrl_hdr(&ctrl.tc_req_ctrl.hdr);
-  cp_ctrl.msg = cp_tc_ctrl_msg(&ctrl.tc_req_ctrl.msg);
+  cp_ctrl.hdr = cp_tc_ctrl_hdr(&wr.ctrl.tc_req_ctrl->hdr);
+  cp_ctrl.msg = cp_tc_ctrl_msg(&wr.ctrl.tc_req_ctrl->msg);
 
-  sm_ctrl_req_data_t ctrl_req = ric->proc.on_control_req(ric, &ctrl);
+  sm_ctrl_req_data_t ctrl_req = ric->proc.on_control_req(ric, &wr);
 
   sm_ctrl_out_data_t out_data = ag->proc.on_control(ag, &ctrl_req);
 
@@ -159,10 +158,10 @@ void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
   if(out_data.len_out > 0)
     free(out_data.ctrl_out);
 
-  free_tc_ctrl_out(&ans.tc);
+  free_tc_ctrl_out(ans.ctrl_out.tc);
 
-  free_tc_ctrl_hdr(&ctrl.tc_req_ctrl.hdr); 
-  free_tc_ctrl_msg(&ctrl.tc_req_ctrl.msg); 
+  free_tc_ctrl_hdr(&wr.ctrl.tc_req_ctrl->hdr); 
+  free_tc_ctrl_msg(&wr.ctrl.tc_req_ctrl->msg); 
 
   free_tc_ctrl_hdr(&cp_ctrl.hdr);
   free_tc_ctrl_msg(&cp_ctrl.msg);

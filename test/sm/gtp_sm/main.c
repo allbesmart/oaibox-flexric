@@ -45,9 +45,9 @@ void read_RAN(sm_ag_if_rd_t* read)
   assert(read != NULL);
   assert(read->type == GTP_STATS_V0);
 
-  fill_gtp_ind_data(&read->gtp_stats);
-  cp.hdr = cp_gtp_ind_hdr(&read->gtp_stats.hdr);
-  cp.msg = cp_gtp_ind_msg(&read->gtp_stats.msg);
+  fill_gtp_ind_data(read->ind.gtp_ind);
+  cp.hdr = cp_gtp_ind_hdr(&read->ind.gtp_ind->hdr);
+  cp.msg = cp_gtp_ind_msg(&read->ind.gtp_ind->msg);
 }
 
 
@@ -103,16 +103,16 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
     assert(sm_data.len_msg != 0);
   }
 
- sm_ag_if_rd_t msg = ric->proc.on_indication(ric, &sm_data);
+  sm_ag_if_rd_t msg = ric->proc.on_indication(ric, &sm_data);
 
   assert(msg.type == GTP_STATS_V0);
 
 
-  gtp_ind_data_t* data = &msg.gtp_stats;
+  gtp_ind_data_t* data = msg.ind.gtp_ind;
 
- if(msg.gtp_stats.msg.ngut != NULL){
-      assert(msg.gtp_stats.msg.len != 0);
- } 
+  if(msg.ind.gtp_ind->msg.ngut != NULL){
+    assert(msg.ind.gtp_ind->msg.len != 0);
+  } 
 
 
   assert(eq_gtp_ind_hdr(&data->hdr, &cp.hdr) == true);

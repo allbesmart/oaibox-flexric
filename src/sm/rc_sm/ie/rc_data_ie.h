@@ -415,7 +415,7 @@ typedef struct{
 
 typedef struct{
   rc_func_def_t func_def;
-} rc_e2_setup_data_t;
+} rc_e2_setup_t;
 
 ///////////////
 // RIC Service Update

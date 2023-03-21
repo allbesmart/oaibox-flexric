@@ -52,10 +52,11 @@ static
 void read_RAN(sm_ag_if_rd_t* read)
 {
   assert(read != NULL);
-  assert(read->type == SLICE_STATS_V0);
+  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(read->ind.type == SLICE_STATS_V0);
 
-  fill_slice_ind_data(&read->slice_stats);
-  cp.msg = cp_slice_ind_msg(&read->slice_stats.msg);
+  fill_slice_ind_data(read->ind.slice_ind);
+  cp.msg = cp_slice_ind_msg(&read->ind.slice_ind->msg);
 }
 
 
@@ -63,21 +64,24 @@ static
 sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
 {
   assert(data != NULL);
-  assert(data->type == SLICE_CTRL_REQ_V0);
+  assert(data->type == CONTROL_SM_AG_IF_WR);
+  assert(data->ctrl.type == SLICE_CTRL_REQ_V0);
 
   if(data->type ==  SLICE_CTRL_REQ_V0){
     //printf("SLICE Control called \n");
-    ctrl_slice(&data->slice_req_ctrl);
+    ctrl_slice(data->ctrl.slice_req_ctrl);
   } else {
     assert(0!=0 && "Unknown data type");
   }
 
-  sm_ag_if_ans_t ans = {.type = SLICE_AGENT_IF_CTRL_ANS_V0}; 
+  sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0}; 
  
   const char* str = "THIS IS ANS STRING";
-  ans.slice.len_diag = strlen(str);
-  ans.slice.diagnostic = malloc(strlen(str));
-  assert(ans.slice.diagnostic != NULL && "Memory exhausted");
+  ans.ctrl_out.slice->len_diag = strlen(str);
+  ans.ctrl_out.slice->diagnostic = malloc(strlen(str));
+  assert(ans.ctrl_out.slice->diagnostic != NULL && "Memory exhausted");
+
+  memcpy(ans.ctrl_out.slice->diagnostic, str, strlen(str));
 
   return ans;
 }
@@ -137,19 +141,20 @@ void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ag_if_wr_t ctrl = {.type = SLICE_CTRL_REQ_V0 };
+  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
 
-  fill_slice_ctrl(&ctrl.slice_req_ctrl);
+  fill_slice_ctrl(wr.ctrl.slice_req_ctrl);
 
-  cp_ctrl.hdr = cp_slice_ctrl_hdr(&ctrl.slice_req_ctrl.hdr);
-  cp_ctrl.msg = cp_slice_ctrl_msg(&ctrl.slice_req_ctrl.msg);
+  cp_ctrl.hdr = cp_slice_ctrl_hdr(&wr.ctrl.slice_req_ctrl->hdr);
+  cp_ctrl.msg = cp_slice_ctrl_msg(&wr.ctrl.slice_req_ctrl->msg);
 
-  sm_ctrl_req_data_t ctrl_req = ric->proc.on_control_req(ric, &ctrl);
+  sm_ctrl_req_data_t ctrl_req = ric->proc.on_control_req(ric, &wr);
 
   sm_ctrl_out_data_t out_data = ag->proc.on_control(ag, &ctrl_req);
 
   sm_ag_if_ans_t ans = ric->proc.on_control_out(ric, &out_data);
-  assert(ans.type == SLICE_AGENT_IF_CTRL_ANS_V0 );
+  assert(ans.type ==CTRL_OUTCOME_SM_AG_IF_ANS_V0 );
+  assert(ans.ctrl_out.type == SLICE_AGENT_IF_CTRL_ANS_V0);
 
   if(ctrl_req.len_hdr > 0)
     free(ctrl_req.ctrl_hdr);
@@ -160,10 +165,10 @@ void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
   if(out_data.len_out > 0)
     free(out_data.ctrl_out);
 
-  free_slice_ctrl_out(&ans.slice);
+  free_slice_ctrl_out(ans.ctrl_out.slice);
 
-  free_slice_ctrl_hdr(&ctrl.slice_req_ctrl.hdr); 
-  free_slice_ctrl_msg(&ctrl.slice_req_ctrl.msg); 
+  free_slice_ctrl_hdr(&wr.ctrl.slice_req_ctrl->hdr); 
+  free_slice_ctrl_msg(&wr.ctrl.slice_req_ctrl->msg); 
 
   free_slice_ctrl_hdr(&cp_ctrl.hdr);
   free_slice_ctrl_msg(&cp_ctrl.msg);

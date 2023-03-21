@@ -46,10 +46,13 @@ void read_RAN(sm_ag_if_rd_t* read)
 {
   assert(read != NULL);
   assert(read->type == PDCP_STATS_V0);
+  assert(read->ind.pdcp_ind != NULL);
 
-  fill_pdcp_ind_data(&read->pdcp_stats);
-  cp.hdr = cp_pdcp_ind_hdr(&read->pdcp_stats.hdr);
-  cp.msg = cp_pdcp_ind_msg(&read->pdcp_stats.msg);
+  pdcp_ind_data_t* ind = read->ind.pdcp_ind;
+
+  fill_pdcp_ind_data(ind);
+  cp.hdr = cp_pdcp_ind_hdr(&ind->hdr);
+  cp.msg = cp_pdcp_ind_msg(&ind->msg);
 }
 
 
@@ -57,23 +60,28 @@ static
 sm_ag_if_ans_t write_RAN(const sm_ag_if_wr_t* data)
 {
   assert(data != NULL);
-  assert(data->type == SUBSCRIBE_TIMER  
-         || data->type == PDCP_CTRL_REQ_V0 );
 
-  if(data->type == SUBSCRIBE_TIMER){
-    printf("SUBSCRIBE_TIMER called with ms = %u \n", data->sub_timer.ms);
-    sm_ag_if_ans_t ans = {.type =PDCP_AGENT_IF_CTRL_ANS_V0  };
-    return ans;
-  } 
+  sm_ag_if_ans_t ans = {.type = NONE_SM_AG_IF_ANS_V0};
 
-  assert(data->type == PDCP_CTRL_REQ_V0 );
-  pdcp_ctrl_req_data_t const* req = &data->pdcp_req_ctrl;
+  if(data->type == CONTROL_SM_AG_IF_WR){
+    assert(data->ctrl.type == PDCP_CTRL_REQ_V0);
+    pdcp_ctrl_req_data_t const* req = data->ctrl.pdcp_req_ctrl;
 
-  assert(req->hdr.dummy == 0); 
-  assert(req->msg.action == 42); 
+    assert(req->hdr.dummy == 0); 
+    assert(req->msg.action == 42); 
 
-  pdcp_ctrl_out_t out = {.ans = PDCP_CTRL_OUT_OK };
-  sm_ag_if_ans_t ans = {.type = PDCP_AGENT_IF_CTRL_ANS_V0, .pdcp = out };
+    ans.ctrl_out.pdcp = calloc(1, sizeof(pdcp_ctrl_out_t ));
+    assert(ans.ctrl_out.pdcp != NULL && "Memory exhausted" );
+    ans.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0;
+  } else if(data->type == SUBSCRIPTION_SM_AG_IF_WR){
+    assert(data->subs.type == PDCP_SUBS_V0); 
+    assert(data->subs.pdcp != NULL);
+
+    printf("SUBSCRIBE_TIMER called with ms = %u \n", data->subs.pdcp->et.ms);
+
+  } else {
+    assert(0!=0 && "Unknown type");
+  }
 
   return ans;
 }
@@ -117,7 +125,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   sm_ag_if_rd_t msg = ric->proc.on_indication(ric, &sm_data);
 
   assert(msg.type == PDCP_STATS_V0);
-  pdcp_ind_data_t* data = &msg.pdcp_stats;
+  pdcp_ind_data_t* data = msg.ind.pdcp_ind;
   defer({ ric->alloc.free_ind_data(data); });
 
   assert(eq_pdcp_ind_hdr(&data->hdr, &cp.hdr) == true);
@@ -139,7 +147,8 @@ void check_control(sm_agent_t* ag, sm_ric_t* ric)
   data.hdr.dummy = 0; 
   data.msg.action = 42; 
 
-  sm_ag_if_wr_t wr = {.type = PDCP_CTRL_REQ_V0, .pdcp_req_ctrl = data }; 
+  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR }; 
+  wr.ctrl.type = PDCP_CTRL_REQ_V0 ;
 
   sm_ctrl_req_data_t sm_data = ric->proc.on_control_req(ric, &wr);
   defer({ ric->alloc.free_ctrl_req_data(&sm_data); } );
@@ -148,8 +157,9 @@ void check_control(sm_agent_t* ag, sm_ric_t* ric)
   defer({ free_sm_ctrl_out_data(&out); });
 
   sm_ag_if_ans_t sm_data_out = ric->proc.on_control_out(ric, &out);
-  assert(sm_data_out.type == PDCP_AGENT_IF_CTRL_ANS_V0 );
-  assert(sm_data_out.pdcp.ans == PDCP_CTRL_OUT_OK  );
+  assert(sm_data_out.type == CTRL_OUTCOME_SM_AG_IF_ANS_V0 );
+  assert(sm_data_out.ctrl_out.type == PDCP_AGENT_IF_CTRL_ANS_V0);
+  assert(sm_data_out.ctrl_out.pdcp->ans == PDCP_CTRL_OUT_OK );
 }
 
 

@@ -76,12 +76,12 @@ typedef struct{
 typedef struct{
   uint8_t* ran_fun_def;
   size_t len_rfd;
-} sm_e2_setup_t;
+} sm_e2_setup_data_t;
 
 typedef struct{
   uint8_t* ran_fun_def;
   size_t len_rfd;
-} sm_ric_service_update_t;
+} sm_ric_service_update_data_t;
 
 void free_sm_subs_data(sm_subs_data_t*);
 
@@ -91,9 +91,9 @@ void free_sm_ctrl_req_data(sm_ctrl_req_data_t*);
 
 void free_sm_ctrl_out_data(sm_ctrl_out_data_t*);
 
-void free_sm_e2_setup(sm_e2_setup_t* ); 
+void free_sm_e2_setup(sm_e2_setup_data_t* ); 
 
-void free_sm_ric_service_update(sm_ric_service_update_t*);  
+void free_sm_ric_service_update(sm_ric_service_update_data_t*);  
 
 #endif
 

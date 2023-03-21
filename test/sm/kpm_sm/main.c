@@ -30,9 +30,11 @@ static void read_RAN(sm_ag_if_rd_t* read)
   assert(read != NULL);
   assert(read->type == KPM_STATS_V0);
 
-  fill_kpm_ind_data(&read->kpm_stats); 
-  cp.hdr = cp_kpm_ind_hdr(&read->kpm_stats.hdr);
-  cp.msg = cp_kpm_ind_msg(&read->kpm_stats.msg);
+  kpm_ind_data_t* ind = read->ind.kpm_ind;
+
+  fill_kpm_ind_data(ind); 
+  cp.hdr = cp_kpm_ind_hdr(&ind->hdr);
+  cp.msg = cp_kpm_ind_msg(&ind->msg);
 }
 
 static 

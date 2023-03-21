@@ -35,15 +35,15 @@ typedef struct sm_agent_s sm_agent_t;
 
 typedef struct{
 
-  subscribe_timer_t (*on_subscription)(sm_agent_t* sm, sm_subs_data_t const* data);
+  sm_ag_if_wr_subs_t (*on_subscription)(sm_agent_t const* sm, sm_subs_data_t const* data);
 
-  sm_ind_data_t (*on_indication)(sm_agent_t* sm);
+  sm_ind_data_t (*on_indication)(sm_agent_t const* sm);
 
-  sm_ctrl_out_data_t (*on_control)(sm_agent_t* sm, sm_ctrl_req_data_t const* data);
+  sm_ctrl_out_data_t (*on_control)(sm_agent_t const* sm, sm_ctrl_req_data_t const* data);
 
-  sm_e2_setup_t (*on_e2_setup)(sm_agent_t* sm);
+  sm_e2_setup_data_t (*on_e2_setup)(sm_agent_t* const sm);
 
-  void (*on_ric_service_update)(sm_agent_t* sm, sm_ric_service_update_t const* data);
+  sm_ric_service_update_data_t (*on_ric_service_update)(sm_agent_t const* sm);
 
 } sm_e2ap_procedures_agent_t;
 

@@ -43,11 +43,12 @@ static
 void read_RAN(sm_ag_if_rd_t* read)
 {
   assert(read != NULL);
-  assert(read->type == RLC_STATS_V0);
+  assert(read->type == INDICATION_MSG__AGENT_IF_ANS_V0);
+  assert(read->ind.type == RLC_STATS_V0);
 
-  fill_rlc_ind_data(&read->rlc_stats);
-  cp.hdr = cp_rlc_ind_hdr(&read->rlc_stats.hdr);
-  cp.msg = cp_rlc_ind_msg(&read->rlc_stats.msg);
+  fill_rlc_ind_data(read->ind.rlc_ind);
+  cp.hdr = cp_rlc_ind_hdr(&read->ind.rlc_ind->hdr);
+  cp.msg = cp_rlc_ind_msg(&read->ind.rlc_ind->msg);
 }
 
 
@@ -105,15 +106,14 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
 
  sm_ag_if_rd_t msg = ric->proc.on_indication(ric, &sm_data);
 
-  assert(msg.type == RLC_STATS_V0);
+  assert(msg.type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(msg.ind.type == RLC_STATS_V0);
 
+  rlc_ind_data_t* data = msg.ind.rlc_ind;
 
-  rlc_ind_data_t* data = &msg.rlc_stats;
-
- if(msg.rlc_stats.msg.rb != NULL){
-      assert(msg.rlc_stats.msg.len != 0);
+ if(msg.ind.rlc_ind->msg.rb != NULL){
+      assert(msg.ind.rlc_ind->msg.len != 0);
  } 
-
 
   assert(eq_rlc_ind_hdr(&data->hdr, &cp.hdr) == true);
   assert(eq_rlc_ind_msg(&data->msg, &cp.msg) == true);

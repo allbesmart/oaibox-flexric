@@ -90,6 +90,8 @@ void check_eq_ran_function(sm_agent_t const* ag, sm_ric_t const* ric)
   assert(ag->ran_func_id == ric->ran_func_id);
 }
 
+*/
+
 // RIC -> E2
 static
 void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
@@ -98,11 +100,12 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   assert(ric != NULL);
  
   sm_subs_data_t data = ric->proc.on_subscription(ric, "2_ms");
+
+
   ag->proc.on_subscription(ag, &data); 
 
   free_sm_subs_data(&data);
 }
-*/
 
 // E2 -> RIC
 static
@@ -179,7 +182,7 @@ int main()
 
 //  for(int i =0 ; i < 256*4096; ++i){
  //   check_eq_ran_function(sm_ag, sm_ric);
-//    check_subscription(sm_ag, sm_ric);
+    check_subscription(sm_ag, sm_ric);
     check_indication(sm_ag, sm_ric);
 //    check_ctrl(sm_ag, sm_ric);
 //  }

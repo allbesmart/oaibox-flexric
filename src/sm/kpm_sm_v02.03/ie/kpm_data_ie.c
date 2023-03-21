@@ -105,3 +105,36 @@ bool eq_kpm_subscription_data(kpm_ric_subscription_t const* m0, kpm_ric_subscrip
 
   return true;
 }
+
+
+/* E2 SETUP */
+
+void free_kpm_e2_setup(kpm_e2_setup_t * e2_setup)
+{
+  assert(e2_setup != NULL);
+
+  free_kpm_ran_function_def(&e2_setup->kpm_ran_function_def);
+}
+
+kpm_e2_setup_t cp_kpm_e2_setup(kpm_e2_setup_t const* src)
+{
+  assert(src != NULL);
+
+  kpm_e2_setup_t dst = {0};
+
+  dst.kpm_ran_function_def = cp_kpm_ran_function_def(&src->kpm_ran_function_def);
+
+  return dst;
+}
+
+bool eq_kpm_e2_setup(kpm_e2_setup_t const * m0, kpm_e2_setup_t const * m1)
+{
+  assert(m0 != NULL);
+  assert(m1 != NULL);
+
+  if (eq_kpm_ran_function_def(&m0->kpm_ran_function_def, &m1->kpm_ran_function_def) != true)
+    return false;
+
+
+  return true;
+}

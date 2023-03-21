@@ -52,5 +52,10 @@ typedef struct {
 
 } kpm_e2_setup_t;
 
+void free_kpm_e2_setup(kpm_e2_setup_t * e2_setup);
+
+kpm_e2_setup_t cp_kpm_e2_setup(kpm_e2_setup_t const* src);
+
+bool eq_kpm_e2_setup(kpm_e2_setup_t const * m0, kpm_e2_setup_t const * m1);
 
 #endif

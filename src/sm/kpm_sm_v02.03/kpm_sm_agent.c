@@ -56,14 +56,14 @@ typedef struct{
 
 // O-RAN.WG3.E2SM-KPM-v02.02, $8.2.1.1.1
 static
-sm_ric_if_ans_t on_subscription_kpm_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
+sm_ag_if_wr_t on_subscription_kpm_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
 { 
   assert(sm_agent != NULL);
   assert(data != NULL);
 
   sm_kpm_agent_t* sm = (sm_kpm_agent_t*)sm_agent;
  
-  sm_ric_if_ans_t ret = {.type = KPM_RIC_IF_SUBS_ANS_V0};
+  sm_ag_if_wr_t ret = {.type = KPM_RIC_IF_SUBS_ANS_V0};
 
   ret.kpm.kpm_event_trigger_def = kpm_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
   ret.kpm.kpm_act_def = kpm_dec_action_def(&sm->enc, data->len_ad, data->action_def);

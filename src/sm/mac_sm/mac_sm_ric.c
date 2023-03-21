@@ -135,13 +135,17 @@ sm_ag_if_ans_t ric_on_control_out_mac_sm_ric(sm_ric_t const* sm_ric,const sm_ctr
 }
 
 static
-void ric_on_e2_setup_mac_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* setup)
+sm_ag_if_ans_t ric_on_e2_setup_mac_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* setup)
 {
   assert(sm_ric != NULL); 
   assert(setup == NULL); 
-//  sm_mac_ric_t* sm = (sm_mac_ric_t*)sm_ric;  
+  sm_mac_ric_t* sm = (sm_mac_ric_t*)sm_ric;  
 
-  assert(0!=0 && "Not implemented");
+  sm_ag_if_ans_t ret = {.type = MAC_E2_SETUP_ANS_V0};
+
+  ret.mac_e2_setup = mac_dec_func_def(&sm->enc, setup->len_rfd, setup->ran_fun_def);
+
+  return ret;
 }
 
 static

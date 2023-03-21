@@ -21,6 +21,7 @@
 // 'cp' is buffer in  reception to compare the received indication message against the sent one
 static kpm_ric_indication_t cp_indication; 
 static kpm_ric_subscription_t cp_subscription;
+static kpm_e2_setup_t cp_e2_setup;
 
 
 // AGENT part of the architecture. The communication with the RAN is achieved via READ/WRITE methods below
@@ -61,12 +62,24 @@ void check_eq_ran_function(sm_agent_t * ag, sm_ric_t const* ric)
   assert(ag->ran_func_id == SM_KPM_ID);
   printf ("[IE RAN function ID]: Agent and RIC are using the same RAN function ID for KPM: %d\n", SM_KPM_ID);
 
-  // TODO: check the encoding/decoding of RAN function definition. 
-  // this can't be done until the signature of `ric_on_e2_setup_kpm_sm_ric()` is not changed to return function definition data structure.
-  sm_e2_setup_t data = ag->proc.on_e2_setup(ag);
-  ric->proc.on_e2_setup(ric, &data);
+  // Encoding of E2 Setup message
+  sm_e2_setup_t e2_setup_data = ag->proc.on_e2_setup(ag);
+  printf ("[IE E2 Setup] correctly encoded\n");
+  
+  cp_e2_setup = cp_kpm_e2_setup(&e2_setup_data);
 
-  free_sm_e2_setup(&data);
+  // Decoding of E2 Setup message
+  sm_ag_if_ans_t msg = ric->proc.on_e2_setup(ric, &e2_setup_data);
+  printf ("[IE E2 Setup] correctly decoded\n");
+
+  // Checking the E2 Setup correctness
+  kpm_e2_setup_t * data = &msg.kpm_e2_setup;
+  assert(msg.type == KPM_E2_SETUP_ANS_V0);
+  assert(eq_kpm_e2_setup(&cp_e2_setup, data) == true && "Failure checking for correctness in E2 Setup data IE");
+
+  free_sm_e2_setup(&e2_setup_data);
+  free_kpm_e2_setup(&cp_e2_setup);
+  free_kpm_e2_setup(data);
 }
 
 /* Direction: RIC -> E2 
@@ -87,7 +100,7 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   
 
   // Decoding of RIC SUBSCRIPTION message
-  sm_ric_if_ans_t msg = ag->proc.on_subscription(ag, &subs_data);
+  sm_ag_if_wr_t msg = ag->proc.on_subscription(ag, &subs_data);
   printf ("[IE RIC Event Trigger Definition] correctly decoded\n");
   printf ("[IE RIC Action Definition] correctly decoded\n");
 

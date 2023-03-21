@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <string.h>
 
 #include "bin_range_def.h"
 

@@ -35,7 +35,6 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
   
   add_subdirectory(ie/asn)
   add_library(kpm_sm SHARED
-                      ${SM_ENCODING_KPM_SRC}
                       enc/kpm_enc_asn.c 
                       dec/kpm_dec_asn.c 
                       $<TARGET_OBJECTS:e2sm_kpm_asn1_obj>
@@ -58,6 +57,7 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
                       test/fill_rnd_data_kpm.c
                       ie/kpm_data_ie.c
 
+                      ${SM_ENCODING_KPM_SRC}
                       )
 
 

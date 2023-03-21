@@ -142,7 +142,7 @@ e2ap_msg_t e2ap_handle_subscription_request_agent(e2_agent_t* ag, const e2ap_msg
   sm_subs_data_t data = generate_sm_subs_data(sr);
   uint16_t const ran_func_id = sr->ric_id.ran_func_id; 
   sm_agent_t* sm = sm_plugin_ag(&ag->plugin, ran_func_id);
-  sm_ric_if_ans_t subs_data = sm->proc.on_subscription(sm, &data);
+  sm_ag_if_wr_t subs_data = sm->proc.on_subscription(sm, &data);
 
   uint32_t time_ms = {0};
 

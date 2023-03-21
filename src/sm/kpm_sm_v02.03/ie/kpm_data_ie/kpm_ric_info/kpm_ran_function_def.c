@@ -139,3 +139,23 @@ bool eq_kpm_ran_function_def(kpm_ran_function_def_t const * m0, kpm_ran_function
 
   return true;
 }
+
+
+kpm_ran_function_def_t cp_kpm_ran_function_def(kpm_ran_function_def_t const * src)
+{
+  assert(src != NULL);
+
+  kpm_ran_function_def_t dst = {0};
+
+  dst.ran_function_Name = cp_kpm_ran_function_name(&src->ran_function_Name);
+
+  if(src->ric_event_trigger_style_list != NULL)
+    assert(false && "Not yet implemented");
+
+
+  if(src->ric_report_style_list != NULL)
+    assert(false && "Not yet implemented");
+
+
+  return dst;
+}

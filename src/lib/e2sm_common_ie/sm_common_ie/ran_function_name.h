@@ -20,6 +20,8 @@ void free_kpm_ran_function_name(ran_function_name_t* src);
 
 bool eq_kpm_ran_function_name(ran_function_name_t const * m0, ran_function_name_t const * m1);
 
+ran_function_name_t cp_kpm_ran_function_name(ran_function_name_t const * src);
+
 #ifdef __cplusplus
 }
 #endif

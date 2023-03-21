@@ -116,17 +116,18 @@ void free_ind_data_kpm_sm_ric(void* msg)
 }
 
 static
-void ric_on_e2_setup_kpm_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* data)
+sm_ag_if_ans_t ric_on_e2_setup_kpm_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* data)
 {
   assert(sm_ric != NULL); 
   assert(data != NULL); 
 
   sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;
- 
-  kpm_ran_function_def_t fdef = kpm_dec_func_def(&sm->enc, data->len_rfd, data->ran_fun_def);
-  // we do nothing with function definition for the moment, so we can free here with defer()
-  free_kpm_ran_function_def(&fdef);
+
+  sm_ag_if_ans_t ret = {.type = KPM_E2_SETUP_ANS_V0};
+
+  ret.kpm_e2_setup = kpm_dec_func_def(&sm->enc, data->len_rfd, data->ran_fun_def);
   
+  return ret;
 }
 
 static

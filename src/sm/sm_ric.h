@@ -42,7 +42,7 @@ typedef struct {
 
   sm_ag_if_ans_t (*on_control_out)(sm_ric_t const*, sm_ctrl_out_data_t const*);
  
-  void (*on_e2_setup)(sm_ric_t const*, const sm_e2_setup_t*);
+  sm_ag_if_ans_t (*on_e2_setup)(sm_ric_t const*, const sm_e2_setup_t*);
 
   sm_ric_service_update_t (*on_ric_service_update)(sm_ric_t const*, const char*);
 

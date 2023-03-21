@@ -66,6 +66,8 @@ void free_kpm_ran_function_def(kpm_ran_function_def_t* src);
 
 bool eq_kpm_ran_function_def(kpm_ran_function_def_t const * m0, kpm_ran_function_def_t const * m1);
 
+kpm_ran_function_def_t cp_kpm_ran_function_def(kpm_ran_function_def_t const * src);
+
 #ifdef __cplusplus
 }
 #endif

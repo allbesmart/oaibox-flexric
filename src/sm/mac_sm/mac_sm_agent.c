@@ -54,14 +54,14 @@ typedef struct{
 // E2 Setup and RIC Service Update. 
 //
 static
-sm_ric_if_ans_t on_subscription_mac_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
+sm_ag_if_wr_t on_subscription_mac_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
 {
   assert(sm_agent != NULL);
   assert(data != NULL);
 
   sm_mac_agent_t* sm = (sm_mac_agent_t*)sm_agent;
   
-  sm_ric_if_ans_t ret = {.type = MAC_RIC_IF_SUBS_ANS_V0};
+  sm_ag_if_wr_t ret = {.type = MAC_RIC_IF_SUBS_ANS_V0};
 
   ret.mac.et = mac_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
   ret.mac.ad = NULL;

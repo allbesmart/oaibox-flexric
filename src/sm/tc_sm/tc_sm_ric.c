@@ -117,13 +117,17 @@ static
 
 
 static
-void ric_on_e2_setup_tc_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* setup)
+sm_ag_if_ans_t ric_on_e2_setup_tc_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* setup)
 {
   assert(sm_ric != NULL); 
   assert(setup == NULL); 
-//  sm_tc_ric_t* sm = (sm_tc_ric_t*)sm_ric;  
+  sm_tc_ric_t* sm = (sm_tc_ric_t*)sm_ric;  
 
-  assert(0!=0 && "Not implemented");
+  sm_ag_if_ans_t ret = {.type = TC_E2_SETUP_ANS_V0};
+
+  ret.tc_e2_setup = tc_dec_func_def(&sm->enc, setup->len_rfd, setup->ran_fun_def);
+
+  return ret;
 }
 
 static

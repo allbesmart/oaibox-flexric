@@ -35,3 +35,25 @@ bool eq_kpm_ran_function_name(ran_function_name_t const * m0, ran_function_name_
 
   return true;
 }
+
+ran_function_name_t cp_kpm_ran_function_name(ran_function_name_t const * src)
+{
+  assert(src != NULL);
+
+  ran_function_name_t dst = {0};
+
+  dst.description = copy_byte_array(src->description);
+
+  dst.short_name = copy_byte_array(src->short_name);
+
+  dst.E2SM_OID = copy_byte_array(src->E2SM_OID);
+
+  if (src->instance != NULL)
+  {
+    dst.instance = calloc(1, sizeof(*dst.instance));
+    *dst.instance = *src->instance;
+  }
+
+
+  return dst;
+}

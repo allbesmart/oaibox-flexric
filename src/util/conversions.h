@@ -121,6 +121,12 @@ do {                            \
         ((buf)[3]);             \
 } while(0)
 
+
+OCTET_STRING_t int_64_to_octet_string(uint64_t x);
+
+uint64_t octet_string_to_int_64(OCTET_STRING_t asn);
+
+
 /* Convert an integer on 32 bits to an octet string from aSN1c tool */
 #define INT32_TO_OCTET_STRING(x, aSN)           \
 do {                                            \

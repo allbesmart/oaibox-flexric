@@ -1,7 +1,9 @@
+add_subdirectory(ie)
 add_subdirectory(3gpp_derived_ie)
 add_subdirectory(3gpp_derived_ie_dec_asn)
 add_subdirectory(3gpp_derived_ie_enc_asn)
 add_subdirectory(sm_common_ie)
 add_subdirectory(dec_asn_sm_common)
 add_subdirectory(enc_asn_sm_common)
+
 

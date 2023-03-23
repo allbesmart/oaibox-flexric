@@ -46,7 +46,7 @@
 #include "../sm/slice_sm/slice_sm_id.h"
 #include "../sm/tc_sm/tc_sm_id.h"
 #include "../sm/gtp_sm/gtp_sm_id.h"
-#include "../sm/kpm_sm_v02.03/kpm_sm_id.h"
+#include "../sm/kpm_sm_v03.00/kpm_sm_id.h"
 
 
 #include <assert.h>

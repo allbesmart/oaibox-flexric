@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#include "../../../sm/kpm_sm_v02.03/ie/asn/GlobalNGRANNodeID.h"
+#include "../ie/asn/GlobalNGRANNodeID.h"
 #include "../3gpp_derived_ie/global_ng_ran_node_id.h"
 
 global_ng_ran_node_id_t * dec_global_ng_ran_asn(const GlobalNGRANNodeID_t * global_ng_ran_asn);

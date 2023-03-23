@@ -22,7 +22,7 @@
 
 #include "fill_ind_data.h"
 
-#include "../../../src/sm/kpm_sm_v02.03/test/fill_rnd_data_kpm.h"
+#include "../../encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.h"
 
 #include <math.h>
 #include <stdio.h>

@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#include "../../../sm/kpm_sm_v02.03/ie/asn/UEID-ENB.h"
+#include "../ie/asn/UEID-ENB.h"
 #include "../3gpp_derived_ie/enb.h"
 
 enb_e2sm_t dec_eNB_UE_asn(const UEID_ENB_t * enb_asn);

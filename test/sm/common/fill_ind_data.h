@@ -28,7 +28,7 @@
 #include "../../../src/sm/slice_sm/ie/slice_data_ie.h"
 #include "../../../src/sm/tc_sm/ie/tc_data_ie.h"
 #include "../../../src/sm/gtp_sm/ie/gtp_data_ie.h"
-#include "../../../src/sm/kpm_sm_v02.03/ie/kpm_data_ie.h"
+#include "../../../src/sm/kpm_sm_v03.00/ie/kpm_data_ie.h"
 
 void fill_mac_ind_data(mac_ind_data_t* ind);
 

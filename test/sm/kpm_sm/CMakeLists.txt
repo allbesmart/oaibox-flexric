@@ -30,7 +30,7 @@ if(SM_ENCODING_KPM STREQUAL "ASN")
   # XXX-IMPROVE: maybe we can avoid recompiling objects like asn_sources. 
   target_compile_options(test_kpm_sm PUBLIC "-DASN_DISABLE_OER_SUPPORT")
   target_compile_options(test_kpm_sm PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter)
-  target_include_directories(test_kpm_sm PRIVATE "../../../src/sm/kpm_sm_v02.03/ie/asn")
+  target_include_directories(test_kpm_sm PRIVATE "../../../src/sm/kpm_sm_v03.00/ie/asn")
 else()
   message(FATAL_ERROR "unsupported encoding type")
 endif()

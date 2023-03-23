@@ -297,7 +297,7 @@ void print_kpm_stats(kpm_ric_indication_t const* kpm)
 
   // From Indication Header : Collect Start Time
   // To be defined better, switch/case for specific format
-  uint32_t truncated_ts = (uint32_t)kpm->kpm_ind_hdr.kpm_ric_ind_hdr_format_1.collectStartTime * 1000000;
+  uint64_t truncated_ts = (uint64_t)kpm->kpm_ind_hdr.kpm_ric_ind_hdr_format_1.collectStartTime;
 
 
 

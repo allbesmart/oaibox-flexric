@@ -1,5 +1,5 @@
-#ifndef NR_CGI_KPM_V2_H
-#define NR_CGI_KPM_V2_H
+#ifndef NR_CGI_KPM_V3_H
+#define NR_CGI_KPM_V3_H
 
 #ifdef __cplusplus
 extern "C" {

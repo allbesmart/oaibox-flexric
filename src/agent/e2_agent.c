@@ -69,7 +69,7 @@ e2_setup_request_t generate_setup_request(e2_agent_t* ag)
     memcpy(ran_func[i].oid->buf, oid,strlen(oid) );
     ran_func[i].oid->len = strlen(oid);
 
-    sm_e2_setup_t def = sm->proc.on_e2_setup(sm);
+    sm_e2_setup_data_t def = sm->proc.on_e2_setup(sm);
     byte_array_t ba = {.len = def.len_rfd, .buf = def.ran_fun_def};
     ran_func[i].def = ba; 
 

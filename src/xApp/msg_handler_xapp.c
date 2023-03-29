@@ -250,9 +250,9 @@ sm_ind_data_t ind_sm_payload(ric_indication_t const* src)
 
   sm_ind_data_t ind_data = ind_sm_payload(src);
 
-  msg_dispatch_t msg_disp = {0};
-  msg_disp.rd = sm->proc.on_indication(sm,&ind_data);
-  assert(msg_disp.rd.type == MAC_STATS_V0 || msg_disp.rd.type == RLC_STATS_V0 || msg_disp.rd.type == PDCP_STATS_V0 || msg_disp.rd.type == SLICE_STATS_V0 || msg_disp.rd.type == KPM_STATS_V0 || msg_disp.rd.type == GTP_STATS_V0);
+  msg_dispatch_t msg_disp = {.rd.type = INDICATION_MSG_AGENT_IF_ANS_V0 };
+  msg_disp.rd.ind = sm->proc.on_indication(sm,&ind_data);
+  assert(msg_disp.rd.ind.type == MAC_STATS_V0 || msg_disp.rd.ind.type == RLC_STATS_V0 || msg_disp.rd.ind.type == PDCP_STATS_V0 || msg_disp.rd.ind.type == SLICE_STATS_V0 || msg_disp.rd.ind.type == KPM_STATS_V0 || msg_disp.rd.ind.type == GTP_STATS_V0);
   
   act_proc_ans_t ans = find_act_proc(&xapp->act_proc, src->ric_id.ric_req_id);
 

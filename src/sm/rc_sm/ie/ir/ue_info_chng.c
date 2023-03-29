@@ -23,7 +23,7 @@ void free_ue_info_chng(ue_info_chng_t* src)
       // UE Identifier Change
       // [1 - 512]
       // uint16_t ue_id_chng;
-
+      assert(src-> ue_id_chng > 0 && src->ue_id_chng < 513);
   } else if(src->type == L2_STATE_UE_INFO_CHNG_TRIGGER_TYPE){
     // L2 State
     // 9.3.29
@@ -109,6 +109,50 @@ bool eq_ue_info_chng(ue_info_chng_t const* m0, ue_info_chng_t const* m1)
   assert(m1->log_or == NULL && "Not implemented");
 
   return true;
+}
+
+
+ue_info_chng_t cp_ue_info_chng(ue_info_chng_t const* src)
+{
+  assert(src != NULL);
+ue_info_chng_t dst = {0}; 
+  //  Event Trigger Condition ID
+  //  Mandatory
+  //  9.3.21
+  // INTEGER (1..65535, …)
+  assert(src->ev_trig_cond_id > 0);
+  dst.ev_trig_cond_id = src->ev_trig_cond_id;
+
+  // CHOICE Trigger Type
+  dst.type = src->type;
+  if(dst.type == RRC_STATE_UE_INFO_CHNG_TRIGGER_TYPE){
+    // RRC State
+    dst.rrc_state = cp_rrc_state_lst(&src->rrc_state);  
+  } else if(dst.type == UE_ID_CHANGE_UE_INFO_CHNG_TRIGGER_TYPE){
+    // UE Identifier Change
+    // [1 - 512]
+    assert(src->ue_id_chng > 0 && src->ue_id_chng < 513);
+    dst.ue_id_chng = src->ue_id_chng;
+  } else if(dst.type == L2_STATE_UE_INFO_CHNG_TRIGGER_TYPE ){
+     // L2 State
+    // 9.3.29
+    // RAN Parameter Conditional Criteria Definition
+    dst.l2_state = cp_ran_param_cond_crit_def(&src->l2_state);
+  } else {
+    assert(0!=0 && "Not implemented");
+  } 
+
+  // Associated UE Info 
+  // Optional
+  // 9.3.26
+  assert(src->assoc_ue_info == NULL && "Not implemented");
+
+  // Logical OR
+  // Optional
+  // 9.3.25
+  assert(src->log_or == NULL && "Not implemented");
+
+return dst;
 }
 
 

@@ -47,6 +47,112 @@ typedef struct{
 
 } sm_rc_agent_t;
 
+static
+byte_array_t cp_str_to_ba(const char* str)
+{
+  assert(str != NULL);
+  
+  const size_t sz = strlen(str);
+
+  byte_array_t dst = {.len = sz};
+
+  dst.buf = calloc(sz,sizeof(uint8_t));
+  assert(dst.buf != NULL && "Memory exhausted");
+
+  memcpy(dst.buf, str, sz);
+
+  return dst;
+}
+
+static
+ran_function_name_t fill_rc_ran_func_name(void)
+{
+  ran_function_name_t dst = {0}; 
+
+    // RAN Function Short Name
+    // Mandatory
+    // PrintableString [1-150]
+    dst.name = cp_str_to_ba(SM_RAN_CTRL_SHORT_NAME);
+
+    // RAN Function Service Model OID
+    // Mandatory
+    // PrintableString [1-1000]
+    
+    //iso(1) identified-organization(3)
+    //dod(6) internet(1) private(4)
+    //enterprise(1) 53148 e2(1)
+    // version1 (1) e2sm(2) e2sm-RC-
+    // IEs (3)
+    dst.oid = cp_str_to_ba(SM_RAN_CTRL_OID);
+
+    // RAN Function Description
+    // Mandatory
+    // PrintableString [1- 150]
+    //RAN function RC “RAN Control” performs the following
+    //functionalities:
+    //- Exposure of RAN control and UE context related
+    //information.
+    //- Modification and initiation of RAN control related call
+    //processes and messages
+    //- Execution of policies that may result in change of
+    //RAN control behavior 
+
+    dst.description = cp_str_to_ba( SM_RAN_CTRL_DESCRIPTION);
+
+    // RAN Function Instance
+    // Optional
+    // INTEGER
+//    long* instance;	/* OPTIONAL: it is suggested to be used when E2 Node declares
+//                                multiple RAN Function ID supporting the same  E2SM specification   ask Mikel */
+
+  return dst;
+}
+
+static
+e2sm_rc_func_def_t fill_rc_ran_func_def(sm_rc_agent_t const* sm)
+{
+  assert(sm != NULL);
+
+  e2sm_rc_func_def_t dst = {0}; 
+
+  //  RAN Function Name
+  //  Mandatory
+  //  9.3.2
+  //  6.2.2.1.
+  dst.name = fill_rc_ran_func_name();  
+
+  // ToDO: Call the RAN and fill the data  
+  sm_ag_if_rd_t rd = {.type = E2_SETUP_AGENT_IF_ANS_V0};
+  rd.e2ap.type = RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0;
+  sm->base.io.read(&rd);
+
+  // RAN Function Definition for EVENT TRIGGER
+  // Optional
+  // 9.2.2.2
+  // ran_func_def_ev_trig_t* ev_trig;
+
+  // RAN Function Definition for REPORT
+  // Optional
+  // 9.2.2.3
+  // ran_func_def_report_t* report;
+
+  // RAN Function Definition for INSERT
+  // Optional
+  // 9.2.2.4
+  // ran_func_def_insert_t* insert;
+
+  // RAN Function Definition for CONTROL
+  // Optional
+  // 9.2.2.5
+  // ran_func_def_ctrl_t* ctrl;
+
+  // RAN Function Definition for POLICY
+  // Optional
+  // 9.2.2.6
+  // ran_func_def_policy_t* policy;
+
+  return dst;
+}
 
 // Function pointers provided by the RAN for the 
 // 5 procedures, 
@@ -54,26 +160,28 @@ typedef struct{
 // E2 Setup and RIC Service Update. 
 //
 static
-subscribe_timer_t  on_subscription_rc_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
+subscribe_timer_t on_subscription_rc_sm_ag(sm_agent_t const* sm_agent, const sm_subs_data_t* data)
 {
   assert(sm_agent != NULL);
-  assert(data != NULL);
-  assert(0!=0 && "Not implemented");
-  
-
-/*
   sm_rc_agent_t* sm = (sm_rc_agent_t*)sm_agent;
- 
-  rc_event_trigger_t ev = rc_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  assert(data != NULL);
 
-  */
-  subscribe_timer_t timer = {0};
+  sm_ag_if_wr_t wr = {.type = SUBSCRIPTION_SM_AG_IF_WR};
+
+  wr.subs.type = RAN_CTRL_SUBS_V1_03;
+  wr.subs.rc_sub.et = rc_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  defer({ free_e2sm_rc_event_trigger(&wr.subs.rc_sub.et); });
+  // wr.subs.rc_subs.ad = ;
+
+  sm->base.io.write(&wr);
+
+  subscribe_timer_t timer = {.ms = -1};
 
   return timer;
 }
 
 static
-sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t* sm_agent)
+sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t const* sm_agent)
 {
 //  printf("on_indication RC called \n");
 
@@ -83,21 +191,21 @@ sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t* sm_agent)
   sm_ind_data_t ret = {0};
 
   // Fill Indication 
-  sm_ag_if_rd_t rd_if = {0};
-  rd_if.type = RC_STATS_V1_03;
+  sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
+  rd_if.ind.type = RAN_CTRL_STATS_V1_03;
   sm->base.io.read(&rd_if);
 
   // Liberate the memory if previously allocated by the RAN. It sucks
-  rc_ind_data_t* ind = &rd_if.rc_ind;
-  defer({  free_rc_ind_data(ind); });
+  rc_ind_data_t* ind = &rd_if.ind.rc_ind;
+  defer({ free_rc_ind_data(ind); });
 
   // Fill Indication Header
-  byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &rd_if.rc_ind.hdr);
+  byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &rd_if.ind.rc_ind.hdr);
   ret.ind_hdr = ba_hdr.buf;
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message
-  byte_array_t ba_msg = rc_enc_ind_msg(&sm->enc, &rd_if.rc_ind.msg);
+  byte_array_t ba_msg = rc_enc_ind_msg(&sm->enc, &rd_if.ind.rc_ind.msg);
   ret.ind_msg = ba_msg.buf;
   ret.len_msg = ba_msg.len;
 
@@ -108,60 +216,61 @@ sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t* sm_agent)
 }
 
 static
- sm_ctrl_out_data_t on_control_rc_sm_ag(sm_agent_t* sm_agent, sm_ctrl_req_data_t const* data)
+sm_ctrl_out_data_t on_control_rc_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_req_data_t const* data)
 {
   assert(sm_agent != NULL);
   assert(data != NULL);
-  sm_rc_agent_t* sm = (sm_rc_agent_t*) sm_agent;
+  sm_rc_agent_t* sm = (sm_rc_agent_t*)sm_agent;
 
-  e2sm_rc_ctrl_hdr_t hdr = rc_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
-  assert(0!=0 && "Dummy years are vorbei..."); 
-//  assert(hdr.dummy == 0 && "Only dummy == 0 supported ");
+  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
+  wr.ctrl.type = RAN_CONTROL_CTRL_V1_03;
 
-  e2sm_rc_ctrl_msg_t msg = rc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
-//  assert(msg.action == 42 && "Only action number 42 supported");
+  wr.ctrl.rc_ctrl.hdr = rc_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
+  wr.ctrl.rc_ctrl.msg = rc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
 
-  sm_ag_if_wr_t wr = {.type = RC_CTRL_V1_03 };
-  assert(0!=0 && "Fix this!!!");
-//  wr.rc_ctrl.hdr.dummy = 0; 
-//  wr.rc_ctrl.msg.action = msg.action;
-
-  sm->base.io.write(&wr);
+  sm_ag_if_ans_t ret = sm->base.io.write(&wr);
+  assert(ret.type == CTRL_OUTCOME_SM_AG_IF_ANS_V0);
+  assert(ret.ctrl_out.type == RAN_CTRL_V1_3_AGENT_IF_CTRL_ANS_V0);
+  defer({ free_e2sm_rc_ctrl_out(&ret.ctrl_out.rc); });
 
   // Answer from the E2 Node
-  sm_ctrl_out_data_t ret = {0};
-  ret.ctrl_out = NULL;
-  ret.len_out = 0;
+  byte_array_t ba = rc_enc_ctrl_out(&sm->enc, &ret.ctrl_out.rc);
+  sm_ctrl_out_data_t ans = {.ctrl_out = ba.buf, .len_out = ba.len};
 
   printf("on_control called \n");
-  return ret;
+  return ans;
 }
 
 static
-sm_e2_setup_t on_e2_setup_rc_sm_ag(sm_agent_t* sm_agent)
+sm_e2_setup_data_t on_e2_setup_rc_sm_ag(sm_agent_t const* sm_agent)
 {
   assert(sm_agent != NULL);
   //printf("on_e2_setup called \n");
   sm_rc_agent_t* sm = (sm_rc_agent_t*)sm_agent;
 
-  sm_e2_setup_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
+  e2sm_rc_func_def_t ran_func = fill_rc_ran_func_def(sm);
+  defer({ free_e2sm_rc_func_def(&ran_func); });
 
-  setup.len_rfd = strlen(sm->base.ran_func_name);
-  setup.ran_fun_def = calloc(1, strlen(sm->base.ran_func_name));
-  assert(setup.ran_fun_def != NULL);
-  memcpy(setup.ran_fun_def, sm->base.ran_func_name, strlen(sm->base.ran_func_name));
+  sm_e2_setup_data_t setup = {0}; 
+  
+  byte_array_t ba = rc_enc_func_def(&sm->enc, &ran_func);
+
+  setup.len_rfd = ba.len;
+  setup.ran_fun_def = ba.buf;
 
   return setup;
 }
 
 static
-void on_ric_service_update_rc_sm_ag(sm_agent_t* sm_agent, sm_ric_service_update_t const* data)
+sm_ric_service_update_data_t on_ric_service_update_rc_sm_ag(sm_agent_t const* sm_agent)
 {
   assert(sm_agent != NULL);
-  assert(data != NULL);
 
+  assert(0!=0 && "Not implemented");
 
   printf("on_ric_service_update called \n");
+  sm_ric_service_update_data_t dst = {0};
+  return dst;
 }
 
 static
@@ -190,8 +299,8 @@ sm_agent_t* make_rc_sm_agent(sm_io_ag_t io)
   sm->base.proc.on_e2_setup = on_e2_setup_rc_sm_ag;
   sm->base.handle = NULL;
 
-  assert(strlen(SM_RC_STR) < sizeof( sm->base.ran_func_name) );
-  memcpy(sm->base.ran_func_name, SM_RC_STR, strlen(SM_RC_STR)); 
+  assert(strlen(SM_RAN_CTRL_SHORT_NAME) < sizeof( sm->base.ran_func_name) );
+  memcpy(sm->base.ran_func_name, SM_RAN_CTRL_SHORT_NAME, strlen(SM_RAN_CTRL_SHORT_NAME)); 
 
   return &sm->base;
 }

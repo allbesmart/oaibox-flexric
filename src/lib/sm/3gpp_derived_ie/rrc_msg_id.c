@@ -57,3 +57,30 @@ bool eq_rrc_msg_id(rrc_msg_id_t const* m0, rrc_msg_id_t const* m1)
 
   return true;
 }
+
+rrc_msg_id_t cp_rrc_msg_id(rrc_msg_id_t const* src)
+{
+  assert(src != NULL);
+
+  rrc_msg_id_t dst = {0};
+  // Mandatory
+  dst.type = src->type;
+  if(dst.type == LTE_RRC_MESSAGE_ID){
+    dst.lte = src->lte;
+  } else if(dst.type == NR_RRC_MESSAGE_ID ){
+    dst.nr = src->nr;
+  } else {
+    assert(0 !=0 && "Unknown type");
+  }
+
+  // Mandatory
+  // Integer
+  // Number starts from 0 from the first
+  // entry of a given RRC message class
+  // defined in TS 36.331 [14] or TS
+  // 38.331 [15].
+  dst.rrc_msg_id = src->rrc_msg_id; 
+
+  return dst;
+}
+

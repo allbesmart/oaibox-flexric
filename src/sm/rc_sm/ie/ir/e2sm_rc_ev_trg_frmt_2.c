@@ -72,3 +72,35 @@ bool eq_e2sm_rc_ev_trg_frmt_2(e2sm_rc_ev_trg_frmt_2_t const* m0, e2sm_rc_ev_trg_
   return true;
 }
 
+e2sm_rc_ev_trg_frmt_2_t cp_e2sm_rc_ev_trg_frmt_2(e2sm_rc_ev_trg_frmt_2_t const* src)
+{
+  assert(src != NULL);
+  e2sm_rc_ev_trg_frmt_2_t dst = {0}; 
+
+  //  Call Process Type ID
+  //  Mandatory
+  //  9.3.15
+  //  INTEGER (1.. 65535, …)
+  assert(src->call_proc_type_id > 0); 
+  dst.call_proc_type_id = src->call_proc_type_id;
+
+  // Call Breakpoint ID
+  // Mandatory
+  // 9.3.49
+  // INTEGER (1.. 65535, …)
+  assert(src->call_break_id > 0);
+  dst.call_break_id = src->call_break_id;
+
+  // Associated E2 Node Info
+  // Optional
+  // 9.3.29
+  assert(src->assoc_e2_node_info == NULL && "Not implemented");
+
+  // Associated UE Info
+  // Optional
+  // 9.3.26
+  assert(src->assoc_ue_info == NULL && "Not implemented");
+
+  return dst;
+}
+

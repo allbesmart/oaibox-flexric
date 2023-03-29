@@ -28,5 +28,7 @@ void free_network_interface_e2rc( network_interface_e2rc_t* src);
 
 bool eq_network_interface_e2rc( network_interface_e2rc_t const* m0, network_interface_e2rc_t const* m1);
 
+network_interface_e2rc_t cp_network_interface_e2rc(network_interface_e2rc_t const* src);
+
 #endif
 

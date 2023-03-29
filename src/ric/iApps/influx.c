@@ -64,7 +64,7 @@ void init_udp_socket()
 
 }
 
-void notify_influx_listener(sm_ag_if_rd_t const* data)
+void notify_influx_listener(sm_ag_if_rd_ind_t const* data)
 {
   assert(data != NULL);
 
@@ -73,7 +73,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
 
 //  printf("Influx db data called!!!\n");
   if(data->type == MAC_STATS_V0){
-    mac_ind_msg_t const* ind =  &data->mac_stats.msg;
+    mac_ind_msg_t const* ind =  &data->mac_ind.msg;
 
     for(uint32_t i = 0; i < ind->len_ue_stats; ++i){
       char stats[1024] = {0};
@@ -82,7 +82,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
       assert(rc != -1);
     }
   } else if (data->type == RLC_STATS_V0){
-    rlc_ind_msg_t const* rlc = &data->rlc_stats.msg;
+    rlc_ind_msg_t const* rlc = &data->rlc_ind.msg;
 
     for(uint32_t i = 0; i < rlc->len; ++i){
 
@@ -94,7 +94,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
     }
 
   } else if (data->type == PDCP_STATS_V0){
-    pdcp_ind_msg_t const* pdcp = &data->pdcp_stats.msg;
+    pdcp_ind_msg_t const* pdcp = &data->pdcp_ind.msg;
 
     for(uint32_t i = 0; i < pdcp->len; ++i){
       char stats[512] = {0};
@@ -105,7 +105,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
       assert(rc != -1);
     } 
   } else if(data->type == SLICE_STATS_V0){
-    slice_ind_msg_t const* slice = &data->slice_stats.msg;
+    slice_ind_msg_t const* slice = &data->slice_ind.msg;
 
     char stats[2048] = {0};
 
@@ -113,7 +113,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
     int const rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
     assert(rc != -1);
   } else if (data->type == GTP_STATS_V0){
-    gtp_ind_msg_t const* gtp = &data->gtp_stats.msg;
+    gtp_ind_msg_t const* gtp = &data->gtp_ind.msg;
 
     for(uint32_t i = 0; i < gtp->len; ++i){
       char stats[512] = {0};
@@ -124,7 +124,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
       assert(rc != -1);
     }
   } else if(data->type == KPM_STATS_V0){
-    kpm_ind_data_t const* kpm = &data->kpm_stats;
+    kpm_ind_data_t const* kpm = &data->kpm_ind;
     char stats[1024] = {0};
     int max = 1024;
 

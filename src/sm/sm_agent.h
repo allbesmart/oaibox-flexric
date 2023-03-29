@@ -35,13 +35,14 @@ typedef struct sm_agent_s sm_agent_t;
 
 typedef struct{
 
-  sm_ag_if_wr_subs_t (*on_subscription)(sm_agent_t const* sm, sm_subs_data_t const* data);
+  // @return granularity in ms or -1 if no periodic timer needed
+  subscribe_timer_t (*on_subscription)(sm_agent_t const* sm, sm_subs_data_t const* data);
 
   sm_ind_data_t (*on_indication)(sm_agent_t const* sm);
 
   sm_ctrl_out_data_t (*on_control)(sm_agent_t const* sm, sm_ctrl_req_data_t const* data);
 
-  sm_e2_setup_data_t (*on_e2_setup)(sm_agent_t* const sm);
+  sm_e2_setup_data_t (*on_e2_setup)(sm_agent_t const* sm);
 
   sm_ric_service_update_data_t (*on_ric_service_update)(sm_agent_t const* sm);
 

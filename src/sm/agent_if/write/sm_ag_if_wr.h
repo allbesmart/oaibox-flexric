@@ -46,7 +46,7 @@ typedef enum{
   SLICE_CTRL_REQ_V0 = 3,
   TC_CTRL_REQ_V0 = 4,
   GTP_CTRL_REQ_V0 = 5,
-  RC_CTRL_V1_03 = 6, 
+  RAN_CONTROL_CTRL_V1_03 = 6, 
 
   SM_AGENT_IF_WRITE_CTRL_V0_END,
 } sm_ag_if_ctrl_e;
@@ -54,13 +54,13 @@ typedef enum{
 typedef struct{
   sm_ag_if_ctrl_e type;
   union{
-    mac_ctrl_req_data_t* mac_ctrl;
-    rlc_ctrl_req_data_t* rlc_ctrl;
-    pdcp_ctrl_req_data_t* pdcp_req_ctrl;
-    slice_ctrl_req_data_t* slice_req_ctrl;
-    tc_ctrl_req_data_t* tc_req_ctrl;
-    gtp_ctrl_req_data_t* gtp_ctrl;
-    rc_ctrl_req_data_t* rc_ctrl;
+    mac_ctrl_req_data_t mac_ctrl;
+    rlc_ctrl_req_data_t rlc_ctrl;
+    pdcp_ctrl_req_data_t pdcp_req_ctrl;
+    slice_ctrl_req_data_t slice_req_ctrl;
+    tc_ctrl_req_data_t tc_req_ctrl;
+    gtp_ctrl_req_data_t gtp_ctrl;
+    rc_ctrl_req_data_t rc_ctrl;
   };
 }  sm_ag_if_wr_ctrl_t;
 
@@ -86,13 +86,13 @@ typedef enum{
 typedef struct{
   sm_ag_if_subs_e type;
   union{
-    mac_sub_data_t* mac;
-    rlc_sub_data_t* rlc;
-    pdcp_sub_data_t* pdcp;
-    slice_sub_data_t* slice;
-    tc_sub_data_t* tc;
-    gtp_sub_data_t* gtp;
-    rc_sub_data_t* rc_sub;
+    mac_sub_data_t mac;
+    rlc_sub_data_t rlc;
+    pdcp_sub_data_t pdcp;
+    slice_sub_data_t slice;
+    tc_sub_data_t tc;
+    gtp_sub_data_t gtp;
+    rc_sub_data_t rc_sub;
   };
 } sm_ag_if_wr_subs_t;
 

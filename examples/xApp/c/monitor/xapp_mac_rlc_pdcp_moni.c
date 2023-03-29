@@ -32,32 +32,37 @@ static
 void sm_cb_mac(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == MAC_STATS_V0);
-
+  assert(rd->type ==INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == MAC_STATS_V0);
+ 
   int64_t now = time_now_us();
-  printf("MAC ind_msg latency = %ld \n", now - rd->mac_stats.msg.tstamp);
+  printf("MAC ind_msg latency = %ld \n", now - rd->ind.mac_ind.msg.tstamp);
 }
 
 static
 void sm_cb_rlc(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == RLC_STATS_V0);
+  assert(rd->type ==INDICATION_MSG_AGENT_IF_ANS_V0);
+
+  assert(rd->ind.type == RLC_STATS_V0);
 
   int64_t now = time_now_us();
 
-  printf("RLC ind_msg latency = %ld \n", now - rd->rlc_stats.msg.tstamp);
+  printf("RLC ind_msg latency = %ld \n", now - rd->ind.rlc_ind.msg.tstamp);
 }
 
 static
 void sm_cb_pdcp(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == PDCP_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+
+  assert(rd->ind.type == PDCP_STATS_V0);
 
   int64_t now = time_now_us();
 
-  printf("PDCP ind_msg latency = %ld \n", now - rd->pdcp_stats.msg.tstamp);
+  printf("PDCP ind_msg latency = %ld \n", now - rd->ind.pdcp_ind.msg.tstamp);
 }
 
 int main(int argc, char *argv[])

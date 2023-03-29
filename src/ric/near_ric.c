@@ -495,7 +495,7 @@ void free_near_ric(near_ric_t* ric)
 }
 
 static
-ric_subscription_request_t generate_subscription_request(near_ric_t* ric, sm_ric_t const* sm, uint16_t ran_func_id, const char* cmd)
+ric_subscription_request_t generate_subscription_request(near_ric_t* ric, sm_ric_t const* sm, uint16_t ran_func_id, void* cmd)
 {
   assert(ric != NULL);
   ric_subscription_request_t sr = {0}; 
@@ -555,7 +555,7 @@ seq_arr_t conn_e2_nodes(near_ric_t* ric)
   return arr;
 }
 
-void report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, const char* cmd)
+void report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd)
 {
   assert(ric != NULL);
   assert(ran_func_id != 0 && "Reserved SM ID value");
@@ -579,7 +579,6 @@ void report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uin
   byte_array_t ba_msg = e2ap_enc_subscription_request_ric(&ric->ap, &sr); 
 
   printf("[NEAR-RIC]: Report Service Asked from nb_id = %d \n", id->nb_id);
-  //assert(0!=0 && "Here we are");
 
   e2ap_send_bytes_ric(&ric->ep, id, ba_msg);
    
@@ -610,7 +609,7 @@ ric_subscription_delete_request_t generate_subscription_delete_request(near_ric_
 }
 */
 
-void rm_report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, const char* cmd)
+void rm_report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd)
 {
   assert(ric != NULL);
   assert(ran_func_id > 0);
@@ -653,7 +652,7 @@ void rm_report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, 
 }
 
 static
-ric_control_request_t generate_control_request(near_ric_t* ric, sm_ric_t* sm, sm_ag_if_wr_t* wr )
+ric_control_request_t generate_control_request(near_ric_t* ric, sm_ric_t* sm, sm_ag_if_wr_ctrl_t const* wr)
 {
   assert(ric != NULL);
   assert(sm != NULL);
@@ -676,18 +675,18 @@ ric_control_request_t generate_control_request(near_ric_t* ric, sm_ric_t* sm, sm
   return ctrl_req;
 }
 
-void control_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, const char* cmd)
+void control_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, sm_ag_if_wr_ctrl_t const* ctrl)
 {
   assert(ric != NULL);
   assert(ran_func_id > 0);
-  assert(cmd != NULL);
+  assert(ctrl != NULL);
 
   sm_ric_t* sm = sm_plugin_ric(&ric->plugin ,ran_func_id); 
   assert((sm->ran_func_id == 142 || sm->ran_func_id == 145) && "Only ctrl for MAC supported");
 
-  sm_ag_if_wr_t* wr = (sm_ag_if_wr_t*) cmd;
+//  sm_ag_if_wr_t* wr = (sm_ag_if_wr_t*) cmd;
 
-  ric_control_request_t ctrl_req = generate_control_request(ric, sm, wr);
+  ric_control_request_t ctrl_req = generate_control_request(ric, sm, ctrl);
 
   // A pending event is created along with a timer of 1000 ms,
   // after which an event will be generated

@@ -140,6 +140,10 @@
 
 #include "../ie/asn/E2SM-RC-ControlOutcome-Format3-Item.h"
 
+#include "../ie/asn/E2SM-RC-RANFunctionDefinition.h"
+
+
+
 #include "../../../lib/sm/enc_asn_sm_common/enc_cell_global_id.h"
 
 
@@ -475,7 +479,7 @@ E2SM_RC_EventTrigger_Format3_t* cp_rc_ev_trigger_format_3(e2sm_rc_ev_trg_frmt_3_
 }
 
 static
-TriggerType_Choice_RRCstate_Item_t* cp_rrc_state(rrc_state_t const* src)
+TriggerType_Choice_RRCstate_Item_t* enc_rrc_state(rrc_state_t const* src)
 {
   assert(src != NULL);
 
@@ -544,7 +548,7 @@ RANParameter_Testing_Item_Choice_ElementTrue_t cp_elm_true(ran_parameter_value_t
 }
 
 static
-e_RANParameter_TestingCondition__ranP_Choice_comparison cp_ran_param_test_cond_comp(ran_param_test_cond_comp_e src)
+e_RANParameter_TestingCondition__ranP_Choice_comparison enc_ran_param_test_cond_comp(ran_param_test_cond_comp_e src)
 {
   e_RANParameter_TestingCondition__ranP_Choice_comparison dst = {0}; 
 
@@ -568,7 +572,7 @@ e_RANParameter_TestingCondition__ranP_Choice_comparison cp_ran_param_test_cond_c
 }
 
 static
-e_RANParameter_TestingCondition__ranP_Choice_presence cp_ran_param_test_cond_presence(ran_param_test_cond_presence_e src)
+e_RANParameter_TestingCondition__ranP_Choice_presence enc_ran_param_test_cond_presence(ran_param_test_cond_presence_e src)
 {
   e_RANParameter_TestingCondition__ranP_Choice_presence dst = {0}; 
 
@@ -588,7 +592,7 @@ e_RANParameter_TestingCondition__ranP_Choice_presence cp_ran_param_test_cond_pre
 }
 
 static
-RANParameter_TestingCondition_t cp_ran_param_test_cond(ran_param_test_cond_t const* src)
+RANParameter_TestingCondition_t enc_ran_param_test_cond(ran_param_test_cond_t const* src)
 {
   assert(src != NULL);
 
@@ -596,10 +600,10 @@ RANParameter_TestingCondition_t cp_ran_param_test_cond(ran_param_test_cond_t con
 
   if(src->cond == COMPARISON_RAN_PARAM_TEST_COND){
     dst.present = RANParameter_TestingCondition_PR_ranP_Choice_comparison;
-    dst.choice.ranP_Choice_comparison = cp_ran_param_test_cond_comp(src->comp);
+    dst.choice.ranP_Choice_comparison = enc_ran_param_test_cond_comp(src->comp);
   } else if(src->cond == PRESENCE_RAN_PARAM_TEST_COND){
     dst.present = RANParameter_TestingCondition_PR_ranP_Choice_presence;
-    dst.choice.ranP_Choice_presence = cp_ran_param_test_cond_presence(src->presence);
+    dst.choice.ranP_Choice_presence = enc_ran_param_test_cond_presence(src->presence);
   } else {
     assert(0!=0 && "Unknown type" );
   }
@@ -617,7 +621,7 @@ RANParameter_Testing_Item_Choice_ElementFalse_t	cp_elm_false(ran_param_elm_key_f
   // RAN Parameter Test Condition
   // 9.3.31
   // Mandatory
-  dst.ranParameter_TestCondition = cp_ran_param_test_cond(&src->test_cond);  
+  dst.ranParameter_TestCondition = enc_ran_param_test_cond(&src->test_cond);  
 
   // RAN Parameter Value
   // Optional
@@ -633,7 +637,7 @@ RANParameter_Testing_Item_Choice_ElementFalse_t	cp_elm_false(ran_param_elm_key_f
 }
 
 static
-RANParameter_Testing_Item_t* cp_ran_param_test(ran_param_test_t const* src)
+RANParameter_Testing_Item_t* enc_ran_param_test(ran_param_test_t const* src)
 {
   assert(src != NULL);
 
@@ -659,7 +663,7 @@ RANParameter_Testing_Item_t* cp_ran_param_test(ran_param_test_t const* src)
     assert(dst->ranParameter_Type.choice.ranP_Choice_List->ranParameter_List != NULL && "Memory exhausted");
 
     for(size_t i = 0; i < src->lst.sz_lst; ++i ) {
-      RANParameter_Testing_Item_t* ie = cp_ran_param_test(&src->lst.ran_param_test[i]);
+      RANParameter_Testing_Item_t* ie = enc_ran_param_test(&src->lst.ran_param_test[i]);
       int rc = ASN_SEQUENCE_ADD(&dst->ranParameter_Type.choice.ranP_Choice_List->ranParameter_List->list, ie);
       assert(rc == 0);
     }
@@ -675,7 +679,7 @@ RANParameter_Testing_Item_t* cp_ran_param_test(ran_param_test_t const* src)
     assert(dst->ranParameter_Type.choice.ranP_Choice_Structure->ranParameter_Structure != NULL && "Memory exhausted");
 
     for(size_t i = 0; i < src->strct.sz_strct; ++i){
-      RANParameter_Testing_Item_t* ie = cp_ran_param_test(&src->strct.ran_param_test[i]);
+      RANParameter_Testing_Item_t* ie = enc_ran_param_test(&src->strct.ran_param_test[i]);
       int rc = ASN_SEQUENCE_ADD(&dst->ranParameter_Type.choice.ranP_Choice_Structure->ranParameter_Structure->list, ie);
       assert(rc == 0);
     }
@@ -733,7 +737,7 @@ E2SM_RC_EventTrigger_Format4_Item_t* cp_rc_ev_trigger_format_4_it(ue_info_chng_t
     // [1 - 8]
     assert(src->rrc_state.sz_rrc_state > 0 &&  src->rrc_state.sz_rrc_state < 9); 
     for(size_t i = 0; i < src->rrc_state.sz_rrc_state; ++i){
-      TriggerType_Choice_RRCstate_Item_t* ie = cp_rrc_state(&src->rrc_state.state_chng_to[i]);
+      TriggerType_Choice_RRCstate_Item_t* ie = enc_rrc_state(&src->rrc_state.state_chng_to[i]);
       int rc = ASN_SEQUENCE_ADD(&dst_rrc->rrcState_List.list, ie);
       assert(rc == 0);
     }
@@ -757,7 +761,7 @@ E2SM_RC_EventTrigger_Format4_Item_t* cp_rc_ev_trigger_format_4_it(ue_info_chng_t
     // [1-255]
     assert(src->l2_state.sz_ran_param_test > 0 && src->l2_state.sz_ran_param_test < 256);  
     for(size_t i = 0; i < src->l2_state.sz_ran_param_test; ++i){
-      RANParameter_Testing_Item_t* ie = cp_ran_param_test(&src->l2_state.ran_param_test[i]);
+      RANParameter_Testing_Item_t* ie = enc_ran_param_test(&src->l2_state.ran_param_test[i]);
       int rc = ASN_SEQUENCE_ADD(&dst_l2->associatedL2variables.list, ie);
       assert(rc == 0);
     }
@@ -2435,12 +2439,83 @@ byte_array_t rc_enc_ctrl_out_asn(e2sm_rc_ctrl_out_t const* src)
   return ba;
 }
 
-byte_array_t rc_enc_func_def_asn(rc_func_def_t const* func)
+static
+RANfunction_Name_t enc_ran_func_name(ran_function_name_t const* src)
 {
-  assert(0!=0 && "Not implemented");
+  assert(src != NULL);
 
-  assert(func != NULL);
-  byte_array_t  ba = {0};
+  RANfunction_Name_t dst = {0}; 
+
+  // RAN Function Short Name
+  // Mandatory
+  // PrintableString [1-150]
+  dst.ranFunction_ShortName = copy_ba_to_ostring(src->name);
+
+  // RAN Function Service Model OID
+  // Mandatory
+  // PrintableString [1-1000]
+  dst.ranFunction_E2SM_OID = copy_ba_to_ostring(src->oid);
+
+  // RAN Function Description
+  // Mandatory
+  // PrintableString [1- 150]
+  dst.ranFunction_Description = copy_ba_to_ostring(src->description);
+
+  // RAN Function Instance
+  // Optional
+  // INTEGER
+  assert(src->instance == NULL && "not implemented");
+
+  return dst;
+}
+
+byte_array_t rc_enc_func_def_asn(e2sm_rc_func_def_t const* src)
+{
+  assert(src != NULL);
+  
+  E2SM_RC_RANFunctionDefinition_t dst = {0};
+  defer({  ASN_STRUCT_RESET(asn_DEF_E2SM_RC_RANFunctionDefinition, &dst); });
+
+  //  RAN Function Name
+  //  Mandatory
+  //  9.3.2
+  //  6.2.2.1.
+  dst.ranFunction_Name = enc_ran_func_name(&src->name);
+
+  // RAN Function Definition for EVENT TRIGGER
+  // Optional
+  // 9.2.2.2
+  assert(src->ev_trig == NULL&& "Not implemented");
+
+  // RAN Function Definition for REPORT
+  // Optional
+  // 9.2.2.3
+  assert(src->report == NULL&& "Not implemented");
+
+  // RAN Function Definition for INSERT
+  // Optional
+  // 9.2.2.4
+  assert(src->insert == NULL&& "Not implemented");
+
+  // RAN Function Definition for CONTROL
+  // Optional
+  // 9.2.2.5
+  assert(src->ctrl == NULL && "Not implemeneted");
+
+  // RAN Function Definition for POLICY
+  // Optional
+  // 9.2.2.6
+  assert(src->policy == NULL && "Not implemented");
+
+  xer_fprint(stdout, &asn_DEF_E2SM_RC_RANFunctionDefinition, &dst);
+  fflush(stdout);
+
+  byte_array_t ba = {.buf = malloc(16*1024), .len = 16*1024};
+  const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
+  asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_RC_RANFunctionDefinition, &dst, ba.buf, ba.len);
+  assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
+  ba.len = er.encoded;
+
   return ba;
 }
 

@@ -101,6 +101,16 @@ extern "C" {
 #include "ir/e2sm_rc_ctrl_out_frmt_2.h"
 #include "ir/e2sm_rc_ctrl_out_frmt_3.h"
 
+/////////////////////////////////////
+// RAN Function Definition 
+/////////////////////////////////////
+
+#include "../../../lib/sm/sm_common_ie/ran_function_name.h"
+#include "ir/ran_func_def_ev_trig.h"
+#include "ir/ran_func_def_report.h"
+#include "ir/ran_func_def_insert.h"
+#include "ir/ran_func_def_ctrl.h"
+#include "ir/ran_func_def_policy.h"
 
 //////////////////////////////////////
 // RIC Event Trigger Definition
@@ -116,8 +126,6 @@ typedef enum{
   END_E2SM_RC_EV_TRIGGER_FORMAT
 } e2sm_rc_ev_trigger_format_e ;
 
-
-
 typedef struct {
   e2sm_rc_ev_trigger_format_e format;
   union{
@@ -127,15 +135,13 @@ typedef struct {
     e2sm_rc_ev_trg_frmt_4_t frmt_4;     
     e2sm_rc_ev_trg_frmt_5_t frmt_5;     
   };
-
 } e2sm_rc_event_trigger_t;
 
 void free_e2sm_rc_event_trigger(e2sm_rc_event_trigger_t* src); 
 
-e2sm_rc_event_trigger_t cp_e2sm_rc_event_trigger( e2sm_rc_event_trigger_t* src);
+e2sm_rc_event_trigger_t cp_e2sm_rc_event_trigger(e2sm_rc_event_trigger_t const* src);
 
 bool eq_e2sm_rc_event_trigger(e2sm_rc_event_trigger_t const* m0, e2sm_rc_event_trigger_t const* m1);
-     
 
 
 //////////////////////////////////////
@@ -274,7 +280,6 @@ typedef enum{
   FORMAT_2_E2SM_RC_CTRL_HDR,
 
   END_E2SM_RC_CTRL_HDR,
-
 } e2sm_rc_ctrl_hdr_e; 
 
 
@@ -288,7 +293,7 @@ typedef struct {
 
 void free_e2sm_rc_ctrl_hdr( e2sm_rc_ctrl_hdr_t* src); 
 
-e2sm_rc_ctrl_hdr_t cp_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t* src);
+e2sm_rc_ctrl_hdr_t cp_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t const* src);
 
 bool eq_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t const* m0, e2sm_rc_ctrl_hdr_t const* m1);
 
@@ -315,7 +320,7 @@ typedef struct {
 
 void free_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t* src); 
 
-e2sm_rc_ctrl_msg_t cp_rc_ctrl_msg(e2sm_rc_ctrl_msg_t* src);
+e2sm_rc_ctrl_msg_t cp_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t const* src);
 
 bool eq_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t const* m0, e2sm_rc_ctrl_msg_t const* m1);
 
@@ -354,14 +359,44 @@ bool eq_e2sm_rc_ctrl_out(e2sm_rc_ctrl_out_t const* m0, e2sm_rc_ctrl_out_t const*
 /////////////////////////////////////
 
 typedef struct {
-  uint32_t dummy;
-} rc_func_def_t;
+  //  RAN Function Name
+  //  Mandatory
+  //  9.3.2
+  //  6.2.2.1.
+  ran_function_name_t name;
 
-void free_rc_func_def( rc_func_def_t* src); 
+  // RAN Function Definition for EVENT TRIGGER
+  // Optional
+  // 9.2.2.2
+  ran_func_def_ev_trig_t* ev_trig;
 
-rc_func_def_t cp_rc_func_def(rc_func_def_t* src);
+  // RAN Function Definition for REPORT
+  // Optional
+  // 9.2.2.3
+  ran_func_def_report_t* report;
 
-bool eq_rc_func_def(rc_func_def_t* m0, rc_func_def_t* m1);
+  // RAN Function Definition for INSERT
+  // Optional
+  // 9.2.2.4
+  ran_func_def_insert_t* insert;
+
+  // RAN Function Definition for CONTROL
+  // Optional
+  // 9.2.2.5
+  ran_func_def_ctrl_t* ctrl;
+
+  // RAN Function Definition for POLICY
+  // Optional
+  // 9.2.2.6
+  ran_func_def_policy_t* policy;
+
+} e2sm_rc_func_def_t;
+
+void free_e2sm_rc_func_def( e2sm_rc_func_def_t* src); 
+
+e2sm_rc_func_def_t cp_rc_func_def(e2sm_rc_func_def_t const* src);
+
+bool eq_e2sm_rc_func_def(e2sm_rc_func_def_t const* m0, e2sm_rc_func_def_t const* m1);
 
 /////////////////////////////////////////////////
 //////////////////////////////////////////////////
@@ -382,6 +417,12 @@ typedef struct{
   e2sm_rc_action_def_t* ad;
 } rc_sub_data_t;
 
+void free_rc_sub_data(rc_sub_data_t* ind);
+
+bool eq_rc_sub_data(rc_sub_data_t const* m0, rc_sub_data_t const* m1);
+
+rc_sub_data_t cp_rc_sub_data(rc_sub_data_t const* src);
+
 ///////////////
 // RIC Indication
 ///////////////
@@ -394,6 +435,8 @@ typedef struct{
 
 void free_rc_ind_data(rc_ind_data_t* ind);
 
+bool eq_rc_ind_data(rc_ind_data_t const* m0, rc_ind_data_t const* m1);
+
 rc_ind_data_t cp_rc_ind_data(rc_ind_data_t const* src);
 
 ///////////////
@@ -405,6 +448,13 @@ typedef struct{
   e2sm_rc_ctrl_msg_t msg;
 } rc_ctrl_req_data_t;
 
+void free_rc_ctrl_req_data(rc_ctrl_req_data_t* src);
+
+bool eq_rc_ctrl_req_data(rc_ctrl_req_data_t const* m0, rc_ctrl_req_data_t  const* m1);
+
+rc_ctrl_req_data_t cp_rc_ctrl_req_data(rc_ctrl_req_data_t const* src);
+
+
 typedef struct{
   e2sm_rc_ctrl_out_t* out;
 } rc_ctrl_out_data_t;
@@ -414,7 +464,7 @@ typedef struct{
 ///////////////
 
 typedef struct{
-  rc_func_def_t func_def;
+  e2sm_rc_func_def_t func_def;
 } rc_e2_setup_t;
 
 ///////////////
@@ -422,7 +472,7 @@ typedef struct{
 ///////////////
 
 typedef struct{
-  rc_func_def_t func_def;
+  e2sm_rc_func_def_t func_def;
 } rc_ric_service_update_t;
 
 

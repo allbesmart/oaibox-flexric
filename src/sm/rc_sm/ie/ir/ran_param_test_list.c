@@ -37,5 +37,23 @@ bool eq_ran_param_test_lst(ran_param_test_lst_t const* m0, ran_param_test_lst_t 
 
 }
 
+ran_param_test_lst_t cp_ran_param_test_lst(ran_param_test_lst_t const* src)
+{
+  assert(src != NULL);
+  ran_param_test_lst_t dst = {0}; 
 
+  // [1- 65535]
+  assert(src->sz_lst > 0 && src->sz_lst < 65536); 
+  dst.sz_lst = src->sz_lst;
+  // RAN Parameter Testing
+  // 9.3.30
+  dst.ran_param_test = calloc(dst.sz_lst, sizeof(ran_param_test_t)); 
+  assert(dst.ran_param_test != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_lst; ++i){
+    dst.ran_param_test[i] = cp_ran_param_test(&src->ran_param_test[i]);
+  }
+
+  return dst;
+}
 

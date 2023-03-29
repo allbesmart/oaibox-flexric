@@ -23,7 +23,9 @@ typedef struct{
 
 void free_seq_ran_param_2(seq_ran_param_2_t* src);
 
-bool eq_seq_ran_param_2( seq_ran_param_2_t const* m0, seq_ran_param_2_t const* m1);
+bool eq_seq_ran_param_2(seq_ran_param_2_t const* m0, seq_ran_param_2_t const* m1);
+
+seq_ran_param_2_t cp_seq_ran_param_2( seq_ran_param_2_t const* src);
 
 #endif
 

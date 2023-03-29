@@ -35,8 +35,14 @@
 #include <unistd.h>
 
 static
-void read_RAN(sm_ag_if_rd_t* data)
+void read_RAN(sm_ag_if_rd_t* ag_if)
 {
+  assert(ag_if != NULL);
+
+  assert(ag_if->type == INDICATION_MSG_AGENT_IF_ANS_V0 );
+
+ sm_ag_if_rd_ind_t*  data = &ag_if->ind;
+
   assert(data->type == MAC_STATS_V0 || 
         data->type == RLC_STATS_V0 ||  
         data->type == PDCP_STATS_V0 || 
@@ -45,30 +51,36 @@ void read_RAN(sm_ag_if_rd_t* data)
         data->type == GTP_STATS_V0);
 
   if(data->type == MAC_STATS_V0 ){
-    fill_mac_ind_data(&data->mac_stats);
+    fill_mac_ind_data(&data->mac_ind);
   } else if(data->type == RLC_STATS_V0) {
-    fill_rlc_ind_data(&data->rlc_stats);
+    fill_rlc_ind_data(&data->rlc_ind);
   } else if (data->type == PDCP_STATS_V0 ){
-    fill_pdcp_ind_data(&data->pdcp_stats);
+    fill_pdcp_ind_data(&data->pdcp_ind);
   } else if(data->type == SLICE_STATS_V0 ){
-    fill_slice_ind_data(&data->slice_stats);
+    fill_slice_ind_data(&data->slice_ind);
   } else if(data->type == GTP_STATS_V0 ){
-    fill_gtp_ind_data(&data->gtp_stats);
+    fill_gtp_ind_data(&data->gtp_ind);
   } else if(data->type == KPM_STATS_V0 ){
-    fill_kpm_ind_data(&data->kpm_stats);
+    fill_kpm_ind_data(&data->kpm_ind);
   } else {
     assert("Invalid data type");
   }
 }
 
 static
-sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
+sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* ag_wr)
 {
-  assert(data != NULL);
+  assert(ag_wr != NULL);
+  assert(ag_wr->type == CONTROL_SM_AG_IF_WR );
+
+  sm_ag_if_wr_ctrl_t const* data = &ag_wr->ctrl; 
+
+
   if(data->type == MAC_CTRL_REQ_V0){
     //printf("Control message called in the RAN \n");
-    sm_ag_if_ans_t ans = {.type = MAC_AGENT_IF_CTRL_ANS_V0};
-    ans.mac.ans = MAC_CTRL_OUT_OK;
+    sm_ag_if_ans_t ans = {.type =  CTRL_OUTCOME_SM_AG_IF_ANS_V0};
+    ans.ctrl_out.type = MAC_AGENT_IF_CTRL_ANS_V0;
+    ans.ctrl_out.mac.ans = MAC_CTRL_OUT_OK;
     return ans;
   } else if(data->type == SLICE_CTRL_REQ_V0 ){
 
@@ -85,16 +97,18 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
       assert(0!=0 && "Unknown msg_type!");
     }
 
-    sm_ag_if_ans_t ans = {.type =  SLICE_AGENT_IF_CTRL_ANS_V0};
+    sm_ag_if_ans_t ans = {.type =  CTRL_OUTCOME_SM_AG_IF_ANS_V0};
+    ans.ctrl_out.type = SLICE_AGENT_IF_CTRL_ANS_V0;
     return ans;
+
   } else {
     assert(0 != 0 && "Not supported function ");
   }
-  sm_ag_if_ans_t ans = {0};
+  sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
   return ans;
 }
 
-
+/*
 static
 void sm_cb_kpm(sm_ag_if_rd_t const* rd)
 {
@@ -107,46 +121,51 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
   // Only reasonable latency value to print is a rounded one to seconds.
   printf("KPM ind_msg latency > %ld s\n", now/1000000 - (int64_t)rd->kpm_stats.hdr.collectStartTime);
 }
-
+*/
 
 static
 void sm_cb_mac(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == MAC_STATS_V0); 
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == MAC_STATS_V0); 
 
   int64_t now = time_now_us();
-  printf("MAC ind_msg latency = %ld μs\n", now - rd->mac_stats.msg.tstamp);
+  printf("MAC ind_msg latency = %ld μs\n", now - rd->ind.mac_ind.msg.tstamp);
 }
 
 static
 void sm_cb_rlc(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == RLC_STATS_V0); 
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == RLC_STATS_V0); 
 
   int64_t now = time_now_us();
 
-  printf("RLC ind_msg latency = %ld μs\n", now - rd->rlc_stats.msg.tstamp);
+  printf("RLC ind_msg latency = %ld μs\n", now - rd->ind.rlc_ind.msg.tstamp);
 }
 
 static
 void sm_cb_gtp(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == GTP_STATS_V0); 
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == GTP_STATS_V0); 
 
   int64_t now = time_now_us();
-  printf("GTP ind_msg latency = %ld μs\n", now - rd->gtp_stats.msg.tstamp);
+  printf("GTP ind_msg latency = %ld μs\n", now - rd->ind.gtp_ind.msg.tstamp);
 }
 
 static
 sm_ag_if_wr_t create_add_slice(void)
 {
-  sm_ag_if_wr_t ctrl_msg = {.type = SLICE_CTRL_REQ_V0 };
-  ctrl_msg.slice_req_ctrl.hdr.dummy = 2;
+  sm_ag_if_wr_t ctrl_msg = {.type =CONTROL_SM_AG_IF_WR };
+  ctrl_msg.ctrl.type = SLICE_CTRL_REQ_V0;
+
+  ctrl_msg.ctrl.slice_req_ctrl.hdr.dummy = 2;
  
-  slice_ctrl_msg_t* sl_ctrl_msg = &ctrl_msg.slice_req_ctrl.msg;
+  slice_ctrl_msg_t* sl_ctrl_msg = &ctrl_msg.ctrl.slice_req_ctrl.msg;
   sl_ctrl_msg->type = SLICE_CTRL_SM_V0_ADD;
   char sched_name[] = "My scheduler";
   size_t const sz = strlen(sched_name);
@@ -168,10 +187,11 @@ sm_ag_if_wr_t create_add_slice(void)
 static
 sm_ag_if_wr_t create_assoc_slice(void)
 {
-  sm_ag_if_wr_t ctrl_msg = { .type = SLICE_CTRL_REQ_V0 };
-  ctrl_msg.slice_req_ctrl.hdr.dummy = 2;
+  sm_ag_if_wr_t ctrl_msg = {.type =CONTROL_SM_AG_IF_WR };
+  ctrl_msg.ctrl.type = SLICE_CTRL_REQ_V0;
+  ctrl_msg.ctrl.slice_req_ctrl.hdr.dummy = 2;
  
-  slice_ctrl_msg_t* sl_ctrl_msg = &ctrl_msg.slice_req_ctrl.msg;
+  slice_ctrl_msg_t* sl_ctrl_msg = &ctrl_msg.ctrl.slice_req_ctrl.msg;
   sl_ctrl_msg->type = SLICE_CTRL_SM_V0_UE_SLICE_ASSOC;
 
   ue_slice_conf_t* ue_slice = &sl_ctrl_msg->u.ue_slice;
@@ -222,11 +242,11 @@ int main(int argc, char *argv[])
   for(size_t i = 0; i < n->len_rf; ++i)
     printf("Registered ran func id = %d \n ", n->ack_rf[i].id );
 
-  inter_xapp_e i = ms_1;
+ // inter_xapp_e i = ms_1;
   // returns a handle for KPM
-  sm_ans_xapp_t h = report_sm_xapp_api(&nodes.n[0].id, SM_KPM_ID, i, sm_cb_kpm);
-  assert(h.success == true);
-  sleep(2);
+  //sm_ans_xapp_t h = report_sm_xapp_api(&nodes.n[0].id, SM_KPM_ID, i, sm_cb_kpm);
+ // assert(h.success == true);
+ // sleep(2);
 
   inter_xapp_e i_1 = ms_1;
   // returns a handle
@@ -249,20 +269,20 @@ int main(int argc, char *argv[])
   // Control ADD slice
   sm_ag_if_wr_t ctrl_msg_add = create_add_slice();
   control_sm_xapp_api(&nodes.n[0].id, SM_SLICE_ID, &ctrl_msg_add);
-  free(ctrl_msg_add.slice_req_ctrl.msg.u.add_mod_slice.dl.slices); 
-  free(ctrl_msg_add.slice_req_ctrl.msg.u.add_mod_slice.dl.sched_name);
+  free(ctrl_msg_add.ctrl.slice_req_ctrl.msg.u.add_mod_slice.dl.slices); 
+  free(ctrl_msg_add.ctrl.slice_req_ctrl.msg.u.add_mod_slice.dl.sched_name);
 
   sleep(1);
 
   // Control ASSOC slice
   sm_ag_if_wr_t ctrl_msg_assoc = create_assoc_slice();
   control_sm_xapp_api(&nodes.n[0].id, SM_SLICE_ID, &ctrl_msg_assoc);
-  free(ctrl_msg_assoc.slice_req_ctrl.msg.u.ue_slice.ues); 
+  free(ctrl_msg_assoc.ctrl.slice_req_ctrl.msg.u.ue_slice.ues); 
 
   sleep(1);
 
   // Remove the handle previously returned
-  rm_report_sm_xapp_api(h.u.handle);
+  //rm_report_sm_xapp_api(h.u.handle);
 
   // Remove the handle previously returned
   rm_report_sm_xapp_api(h_1.u.handle);

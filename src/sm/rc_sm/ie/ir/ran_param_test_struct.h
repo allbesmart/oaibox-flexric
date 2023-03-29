@@ -20,10 +20,7 @@ void free_ran_param_test_strct(ran_param_test_strct_t* src);
 
 bool eq_ran_param_test_strct(ran_param_test_strct_t const* m0, ran_param_test_strct_t const* m1);
 
-
-
-
-
+ran_param_test_strct_t cp_ran_param_test_strct( ran_param_test_strct_t const* src);
 
 #endif
 

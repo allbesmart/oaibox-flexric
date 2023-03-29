@@ -59,3 +59,30 @@ bool eq_seq_ctrl_act_out(seq_ctrl_act_out_t const* m0, seq_ctrl_act_out_t const*
   return true;
 }
 
+seq_ctrl_act_out_t cp_seq_ctrl_act_out(seq_ctrl_act_out_t const* src)
+{
+  assert(src != NULL);
+  seq_ctrl_act_out_t dst = {0}; 
+
+  // Control Action ID
+  // Mandatory
+  // 9.3.6
+  // [1- 65535]
+  assert(src->ctrl_act_id > 0);
+  dst.ctrl_act_id = src->ctrl_act_id;
+
+  //Sequence of RAN
+  //Parameters
+  // [1-255]  
+  assert(src->sz_ran_param > 0 && src->sz_ran_param < 256);
+  dst.sz_ran_param = src->sz_ran_param;
+
+  dst.ran_param = calloc(dst.sz_ran_param, sizeof(seq_ran_param_2_t));
+
+  for(size_t i = 0; i < dst.sz_ran_param; ++i){
+    dst.ran_param[i] = cp_seq_ran_param_2(&src->ran_param[i]);
+  }
+
+  return dst;
+}
+

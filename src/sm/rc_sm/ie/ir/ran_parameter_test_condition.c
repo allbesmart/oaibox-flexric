@@ -39,3 +39,19 @@ bool eq_ran_param_test_cond(ran_param_test_cond_t const* m0, ran_param_test_cond
 
   return true;
 }
+
+ran_param_test_cond_t cp_ran_param_test_cond(ran_param_test_cond_t const src)
+{
+  ran_param_test_cond_t dst = {.cond = src.cond }; 
+
+  if(dst.cond == COMPARISON_RAN_PARAM_TEST_COND){
+    dst.comp = src.comp;
+  } else if(dst.cond == PRESENCE_RAN_PARAM_TEST_COND){
+    dst.presence = src.presence;
+  } else {
+    assert(0!=0 && "Unknwon cond");
+  }
+
+  return dst;
+}
+

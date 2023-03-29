@@ -45,6 +45,7 @@ void free_ran_param_test( ran_param_test_t * src);
 
 bool eq_ran_param_test(ran_param_test_t const* m0, ran_param_test_t const* m1);
 
+ran_param_test_t cp_ran_param_test(ran_param_test_t const* src);
 
 #endif
 

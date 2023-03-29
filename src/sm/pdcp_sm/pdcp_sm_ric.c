@@ -46,12 +46,13 @@ typedef struct{
 
 
 static
-sm_subs_data_t on_subscription_pdcp_sm_ric(sm_ric_t const* sm_ric, const char* cmd)
+sm_subs_data_t on_subscription_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_subs_t const* subs)
 {
   assert(sm_ric != NULL); 
-  assert(cmd != NULL); 
+  assert(subs != NULL); 
   sm_pdcp_ric_t* sm = (sm_pdcp_ric_t*)sm_ric;  
- 
+
+  /*
   pdcp_event_trigger_t ev = {0};
 
   const int max_str_sz = 10;
@@ -66,7 +67,9 @@ sm_subs_data_t on_subscription_pdcp_sm_ric(sm_ric_t const* sm_ric, const char* c
   } else {
     assert(0 != 0 && "Invalid input");
   }
-  const byte_array_t ba = pdcp_enc_event_trigger(&sm->enc, &ev); 
+  */
+
+  const byte_array_t ba = pdcp_enc_event_trigger(&sm->enc, &subs->pdcp.et); 
 
   sm_subs_data_t data = {0}; 
   
@@ -82,23 +85,23 @@ sm_subs_data_t on_subscription_pdcp_sm_ric(sm_ric_t const* sm_ric, const char* c
 }
 
 static
-sm_ag_if_rd_t on_indication_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t* data)
+sm_ag_if_rd_ind_t on_indication_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t const* data)
 {
   assert(sm_ric != NULL); 
   assert(data != NULL); 
   sm_pdcp_ric_t* sm = (sm_pdcp_ric_t*)sm_ric;  
 
-  sm_ag_if_rd_t rd_if = {0};
+  sm_ag_if_rd_ind_t rd_if = {0};
   rd_if.type = PDCP_STATS_V0;
 
-  rd_if.pdcp_stats.hdr = pdcp_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
-  rd_if.pdcp_stats.msg = pdcp_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+  rd_if.pdcp_ind.hdr = pdcp_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
+  rd_if.pdcp_ind.msg = pdcp_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
 
   return rd_if;
 }
 
 static
-sm_ctrl_req_data_t on_control_req_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_t const* data_v)
+sm_ctrl_req_data_t on_control_req_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_ctrl_t const* data_v)
 {
   assert(sm_ric != NULL); 
   assert(data_v != NULL); 
@@ -122,7 +125,7 @@ sm_ctrl_req_data_t on_control_req_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_w
 }
 
 static  
-sm_ag_if_ans_t on_control_out_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ctrl_out_data_t const* out)
+sm_ag_if_ans_ctrl_t on_control_out_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ctrl_out_data_t const* out)
 {
   assert(sm_ric != NULL);
   assert(out != NULL);
@@ -130,7 +133,7 @@ sm_ag_if_ans_t on_control_out_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ctrl_out_da
   assert(out->len_out > 0);
   assert(out->ctrl_out != NULL);
 
-  sm_ag_if_ans_t ans = { 0 }; 
+  sm_ag_if_ans_ctrl_t ans = { 0 }; 
   ans.type = PDCP_AGENT_IF_CTRL_ANS_V0;
   ans.pdcp = pdcp_dec_ctrl_out(&sm->enc, out->len_out, out->ctrl_out);
 
@@ -138,23 +141,27 @@ sm_ag_if_ans_t on_control_out_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ctrl_out_da
 }
 
 static
-void on_e2_setup_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* setup)
+sm_ag_if_rd_e2setup_t on_e2_setup_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_data_t const* setup)
 {
   assert(sm_ric != NULL); 
   assert(setup == NULL); 
-//  sm_pdcp_ric_t* sm = (sm_pdcp_ric_t*)sm_ric;  
+  //  sm_pdcp_ric_t* sm = (sm_pdcp_ric_t*)sm_ric;  
 
   assert(0!=0 && "Not implemented");
+  sm_ag_if_rd_e2setup_t dst = {0}; 
+  return dst;
 }
 
 static
-sm_ric_service_update_t on_ric_service_update_pdcp_sm_ric(sm_ric_t const* sm_ric, const char* data)
+sm_ag_if_rd_rsu_t on_ric_service_update_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ric_service_update_data_t const* data)
 {
   assert(sm_ric != NULL); 
   assert(data != NULL); 
-//  sm_pdcp_ric_t* sm = (sm_pdcp_ric_t*)sm_ric;  
+  //  sm_pdcp_ric_t* sm = (sm_pdcp_ric_t*)sm_ric;  
 
   assert(0!=0 && "Not implemented");
+  sm_ag_if_rd_rsu_t dst = {0}; 
+  return dst;
 }
 
 static

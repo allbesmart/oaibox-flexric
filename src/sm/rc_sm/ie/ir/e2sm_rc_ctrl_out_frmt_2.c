@@ -45,3 +45,25 @@ bool eq_e2sm_rc_ctrl_out_frmt_2(e2sm_rc_ctrl_out_frmt_2_t const* m0, e2sm_rc_ctr
   return true;
 }
 
+e2sm_rc_ctrl_out_frmt_2_t cp_e2sm_rc_ctrl_out_frmt_2(e2sm_rc_ctrl_out_frmt_2_t const* src)
+{
+  assert(src != NULL);
+  e2sm_rc_ctrl_out_frmt_2_t dst = {0}; 
+
+  // Sequence of Control Styles
+  // for Multiple Outcomes
+  // [1-63]
+  assert(src->sz_seq_ctrl_sty_mul_out > 0 && src->sz_seq_ctrl_sty_mul_out < 64);
+  dst.sz_seq_ctrl_sty_mul_out = src->sz_seq_ctrl_sty_mul_out;
+
+  dst.seq_ctrl_sty_mul_out = calloc(dst.sz_seq_ctrl_sty_mul_out, sizeof(seq_ctrl_sty_mul_out_t ) );
+  assert(dst.seq_ctrl_sty_mul_out != NULL && "Memory exhausted");
+
+  for(size_t i = 0 ; i < dst.sz_seq_ctrl_sty_mul_out; ++i){
+    dst.seq_ctrl_sty_mul_out[i] = cp_seq_ctrl_sty_mul_out(&src->seq_ctrl_sty_mul_out[i]);
+  }
+
+  return dst;
+}
+
+

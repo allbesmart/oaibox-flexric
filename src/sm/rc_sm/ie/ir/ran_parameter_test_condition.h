@@ -29,12 +29,10 @@ typedef enum{
 
 
 typedef enum{
-
   COMPARISON_RAN_PARAM_TEST_COND,
   PRESENCE_RAN_PARAM_TEST_COND,
 
   END_RAN_PARAM_TEST_COND,
-
 } ran_param_test_cond_e ;
 
 typedef struct{
@@ -50,5 +48,7 @@ typedef struct{
 void free_ran_param_test_cond(ran_param_test_cond_t* src);
 
 bool eq_ran_param_test_cond(ran_param_test_cond_t const* m0, ran_param_test_cond_t const* m1); 
+
+ran_param_test_cond_t cp_ran_param_test_cond(ran_param_test_cond_t const src);
 
 #endif

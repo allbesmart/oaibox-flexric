@@ -120,7 +120,7 @@ void free_e2_nodes_api(e2_nodes_api_t* src)
   free(src->n);
 }
 
-void report_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_func_id, const char* cmd )
+void report_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd )
 {
   assert(ric != NULL);
   assert(ran_func_id != 0 && "Reserved SM ID");  
@@ -129,7 +129,7 @@ void report_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_fun
   return report_service_near_ric(ric, id, ran_func_id, cmd);
 }
 
-void rm_report_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_func_id, const char* cmd )
+void rm_report_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd )
 {
   assert(ric != NULL);
   assert(ran_func_id != 0 && "Reserved SM ID");  
@@ -138,7 +138,7 @@ void rm_report_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_
   return rm_report_service_near_ric(ric, id, ran_func_id, cmd);
 }
 
-void control_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_func_id, const char* cmd)
+void control_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd)
 {
   assert(ric!= NULL);
   assert(ran_func_id != 0 && "Reserved SM ID");  

@@ -58,3 +58,40 @@ bool eq_seq_ctrl_sty_mul_out(seq_ctrl_sty_mul_out_t const* m0, seq_ctrl_sty_mul_
   return true;
 }
 
+seq_ctrl_sty_mul_out_t cp_seq_ctrl_sty_mul_out( seq_ctrl_sty_mul_out_t const* src)
+{
+  assert(src != NULL);
+
+seq_ctrl_sty_mul_out_t dst = {0};
+
+
+  // Indicated Control Style
+  // Mandatory
+  // 9.3.3
+  //  6.2.2.2.
+  dst.ind_ctrl_style = src->ind_ctrl_style;
+
+  //Sequence of Control
+  //Actions Outcom
+  // [1-63]
+  assert(src->sz_seq_ctrl_act_out > 0 && src->sz_seq_ctrl_act_out < 64);
+  
+  dst.sz_seq_ctrl_act_out = src->sz_seq_ctrl_act_out;
+
+  dst.seq_ctrl_act_out = calloc(dst.sz_seq_ctrl_act_out , sizeof(seq_ctrl_act_out_t));
+  assert(dst.seq_ctrl_act_out != NULL && "memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ctrl_act_out; ++i){
+    dst.seq_ctrl_act_out[i] = cp_seq_ctrl_act_out( &src->seq_ctrl_act_out[i] );
+  }
+
+  size_t sz_seq_ctrl_act_out;
+  seq_ctrl_act_out_t* seq_ctrl_act_out;
+
+
+
+
+return dst;
+
+}
+

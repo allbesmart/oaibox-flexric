@@ -33,31 +33,42 @@
 
 
 static
-void read_RAN(sm_ag_if_rd_t* data)
+void read_RAN(sm_ag_if_rd_t* ag_rd)
 {
+  assert(ag_rd != NULL);
+  assert(ag_rd->type == INDICATION_MSG_AGENT_IF_ANS_V0 );
+  
+  sm_ag_if_rd_ind_t* data = &ag_rd->ind; 
+
   assert(data->type == MAC_STATS_V0 || data->type == RLC_STATS_V0 ||  data->type == PDCP_STATS_V0 || data->type == SLICE_STATS_V0);
 
   if(data->type == MAC_STATS_V0 ){
-      fill_mac_ind_data(&data->mac_stats);
+      fill_mac_ind_data(&data->mac_ind);
   } else if(data->type == RLC_STATS_V0) {
-      fill_rlc_ind_data(&data->rlc_stats);
+      fill_rlc_ind_data(&data->rlc_ind);
   } else if (data->type == PDCP_STATS_V0 ){
-      fill_pdcp_ind_data(&data->pdcp_stats);
+      fill_pdcp_ind_data(&data->pdcp_ind);
   } else if(data->type == SLICE_STATS_V0 ){
-    fill_slice_ind_data(&data->slice_stats);
+    fill_slice_ind_data(&data->slice_ind);
   } else {
     assert("Invalid data type");
   }
 }
 
 static
-sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
+sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* ag_wr)
 {
+  assert(ag_wr != NULL);
+  assert(ag_wr->type == CONTROL_SM_AG_IF_WR);
+ 
+  sm_ag_if_wr_ctrl_t const* data = &ag_wr->ctrl;
+
   assert(data != NULL);
   if(data->type == MAC_CTRL_REQ_V0){
     //printf("Control message called in the RAN \n");
-    sm_ag_if_ans_t ans = {.type = MAC_AGENT_IF_CTRL_ANS_V0};
-    ans.mac.ans = MAC_CTRL_OUT_OK;
+    sm_ag_if_ans_t ans = {.type =CTRL_OUTCOME_SM_AG_IF_ANS_V0};
+    ans.ctrl_out.type = MAC_AGENT_IF_CTRL_ANS_V0;
+    ans.ctrl_out.mac.ans = MAC_CTRL_OUT_OK;
     return ans;
   } else {
     assert(0 != 0 && "Not supported function ");

@@ -21,5 +21,7 @@ void free_ran_param_cond_crit_def(ran_param_cond_crit_def_t* src);
 
 bool eq_ran_param_cond_crit_def(ran_param_cond_crit_def_t const* m0, ran_param_cond_crit_def_t const* m1);
 
+ran_param_cond_crit_def_t cp_ran_param_cond_crit_def(ran_param_cond_crit_def_t const* src);
+
 #endif
 

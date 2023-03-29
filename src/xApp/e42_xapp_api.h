@@ -30,7 +30,6 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
-//#include "../sm/slice_sm/ie/slice_data_ie.h"
 #include "../lib/msg_hand/e2_node_arr.h"
 #include "../sm/agent_if/write/sm_ag_if_wr.h"
 #include "../sm/agent_if/read/sm_ag_if_rd.h"

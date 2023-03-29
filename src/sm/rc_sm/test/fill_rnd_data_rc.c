@@ -122,7 +122,7 @@ msg_ev_trg_t fill_rnd_msg_ev_trg(void)
   }
 
   //Message Direction
-  //Optinonal
+  //Optional
   dst.msg_dir = NULL;
 
   //  Associated UE Info
@@ -2244,6 +2244,120 @@ e2sm_rc_ctrl_out_t fill_rnd_rc_ctrl_out(void)
 /////////////////////////////
 /////////////////////////////
 ////////// End of RC Control Outcome 
+/////////////////////////////
+/////////////////////////////
+
+/////////////////////////////
+/////////////////////////////
+////////// Start RAN Function Definition 
+/////////////////////////////
+/////////////////////////////
+
+static
+ran_function_name_t fill_rc_ran_func_name(void)
+{
+  ran_function_name_t dst = {0}; 
+
+    // RAN Function Short Name
+    // Mandatory
+    // PrintableString [1-150]
+    const char name[] = "E2SM-RC";
+    dst.name = cp_str_to_ba(name);
+
+    // RAN Function Service Model OID
+    // Mandatory
+    // PrintableString [1-1000]
+    
+    //iso(1) identified-organization(3)
+    //dod(6) internet(1) private(4)
+    //enterprise(1) 53148 e2(1)
+    // version1 (1) e2sm(2) e2sm-RC-
+    // IEs (3)
+    const char oid[] = "1.3.6.1.4.1.53148.1.1.2.3"; 
+    dst.oid = cp_str_to_ba(oid);
+
+    // RAN Function Description
+    // Mandatory
+    // PrintableString [1- 150]
+    //RAN function RC “RAN Control” performs the following
+    //functionalities:
+    //- Exposure of RAN control and UE context related
+    //information.
+    //- Modification and initiation of RAN control related call
+    //processes and messages
+    //- Execution of policies that may result in change of
+    //RAN control behavior 
+
+    const char description[] = "RAN Control"; 
+    dst.description = cp_str_to_ba(description);
+
+    // RAN Function Instance
+    // Optional
+    // INTEGER
+//    long* instance;	/* OPTIONAL: it is suggested to be used when E2 Node declares
+//                                multiple RAN Function ID supporting the same  E2SM specification   ask Mikel */
+
+  return dst;
+}
+
+static
+ran_func_def_ev_trig_t fill_ran_func_def_ev_trig(void)
+{
+ran_func_def_ev_trig_t dst = {0}; 
+
+
+return dst;
+}
+
+
+
+e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void)
+{
+  e2sm_rc_func_def_t dst = {0}; 
+
+  //  RAN Function Name
+  //  Mandatory
+  //  9.3.2
+  //  6.2.2.1.
+  dst.name = fill_rc_ran_func_name();  
+
+  // RAN Function Definition for EVENT TRIGGER
+  // Optional
+  // 9.2.2.2
+  dst.ev_trig = calloc(1, sizeof( ran_func_def_ev_trig_t )); 
+  assert(dst.ev_trig != NULL && "Memory exhausted");
+  // dst.ev_trig = fill_ran_func_def_ev_trig();
+
+  // ran_func_def_ev_trig_t* ev_trig;
+
+  // RAN Function Definition for REPORT
+  // Optional
+  // 9.2.2.3
+  // ran_func_def_report_t* report;
+
+  // RAN Function Definition for INSERT
+  // Optional
+  // 9.2.2.4
+  // ran_func_def_insert_t* insert;
+
+  // RAN Function Definition for CONTROL
+  // Optional
+  // 9.2.2.5
+  // ran_func_def_ctrl_t* ctrl;
+
+  // RAN Function Definition for POLICY
+  // Optional
+  // 9.2.2.6
+  // ran_func_def_policy_t* policy;
+
+  return dst;
+}
+
+
+
+/////////////////////////////
+/////////////////////////////
+////////// End of RAN Function Definition 
 /////////////////////////////
 /////////////////////////////
 

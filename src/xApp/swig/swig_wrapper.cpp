@@ -82,10 +82,11 @@ static
 void sm_cb_mac(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == MAC_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == MAC_STATS_V0);
   assert(hndlr_mac_cb != NULL);
 
-  mac_ind_data_t const* data = &rd->mac_stats; 
+  mac_ind_data_t const* data = &rd->ind.mac_ind; 
 
   swig_mac_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -166,10 +167,11 @@ static
 void sm_cb_rlc(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == RLC_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == RLC_STATS_V0);
   assert(hndlr_rlc_cb != NULL);
 
-  rlc_ind_data_t const* data = &rd->rlc_stats; 
+  rlc_ind_data_t const* data = &rd->ind.rlc_ind; 
 
   swig_rlc_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -247,10 +249,11 @@ static
 void sm_cb_pdcp(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == PDCP_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == PDCP_STATS_V0);
   assert(hndlr_pdcp_cb != NULL);
 
-  pdcp_ind_data_t const* data = &rd->pdcp_stats; 
+  pdcp_ind_data_t const* data = &rd->ind.pdcp_ind; 
 
   swig_pdcp_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -325,10 +328,11 @@ static
 void sm_cb_slice(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == SLICE_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == SLICE_STATS_V0);
   assert(hndlr_slice_cb != NULL);
 
-  slice_ind_data_t const* data = &rd->slice_stats;
+  slice_ind_data_t const* data = &rd->ind.slice_ind;
 
   swig_slice_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -469,8 +473,9 @@ void control_slice_sm(global_e2_node_id_t* id, slice_ctrl_msg_t* ctrl)
   }
 
   sm_ag_if_wr_t wr;
-  wr.type = SLICE_CTRL_REQ_V0;
-  wr.slice_req_ctrl.msg = cp_slice_ctrl_msg(ctrl);
+  wr.type = CONTROL_SM_AG_IF_WR;
+  wr.ctrl.type = SLICE_CTRL_REQ_V0;
+  wr.ctrl.slice_req_ctrl.msg = cp_slice_ctrl_msg(ctrl);
 
   control_sm_xapp_api(id, SM_SLICE_ID,  &wr);
 }
@@ -486,10 +491,11 @@ static
 void sm_cb_gtp(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == GTP_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == GTP_STATS_V0);
   assert(hndlr_gtp_cb != NULL);
 
-  gtp_ind_data_t const* data = &rd->gtp_stats; 
+  gtp_ind_data_t const* data = &rd->ind.gtp_ind; 
 
   swig_gtp_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;

@@ -79,3 +79,32 @@ bool eq_ran_param_test(ran_param_test_t const* m0, ran_param_test_t const* m1)
   return true;
 }
 
+ran_param_test_t cp_ran_param_test(ran_param_test_t const* src)
+{
+  assert(src != NULL);
+
+  ran_param_test_t dst = {0};
+  //RAN Parameter ID
+  //Mandatory
+  //Bug in the standard. 9.3.9 wrote in section 9. 
+  //9.3.8 in ASN language. Probably 9.3.8 intended
+  //1.. 4294967295
+  assert(src->ran_param_id > 0);
+  dst.ran_param_id = src->ran_param_id;
+
+  dst.type = src->type;
+  if(dst.type == LIST_RAN_PARAMETER_TYPE){
+    dst.lst = cp_ran_param_test_lst(&src->lst);
+  } else if(dst.type == STRUCTURE_RAN_PARAMETER_TYPE){
+    dst.strct = cp_ran_param_test_strct(&src->strct);  
+  } else if(dst.type == ELEMENT_WITH_KEY_FLAG_TRUE_RAN_PARAMETER_TYPE){
+    dst.flag_true = cp_ran_parameter_value(&src->flag_true);  
+  } else if(dst.type == ELEMENT_WITH_KEY_FLAG_FALSE_RAN_PARAMETER_TYPE){
+    dst.flag_false = cp_ran_param_elm_key_false(&src->flag_false);
+  } else {
+    assert(0 != 0 && "Unknown type");
+  }
+
+  return dst;
+}
+

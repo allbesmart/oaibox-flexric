@@ -45,12 +45,13 @@ typedef struct{
 
 
 static
-sm_subs_data_t on_subscription_gtp_sm_ric(sm_ric_t const* sm_ric, const char* cmd)
+sm_subs_data_t on_subscription_gtp_sm_ric(sm_ric_t const* sm_ric, const  sm_ag_if_wr_subs_t* subs)
 {
   assert(sm_ric != NULL); 
-  assert(cmd != NULL); 
+  assert(subs != NULL); 
   sm_gtp_ric_t* sm = (sm_gtp_ric_t*)sm_ric;  
- 
+
+  /*
   gtp_event_trigger_t ev = {0};
 
   const int max_str_sz = 10;
@@ -65,7 +66,9 @@ sm_subs_data_t on_subscription_gtp_sm_ric(sm_ric_t const* sm_ric, const char* cm
   } else {
     assert(0 != 0 && "Invalid input");
   }
-  const byte_array_t ba = gtp_enc_event_trigger(&sm->enc, &ev); 
+  */
+
+  const byte_array_t ba = gtp_enc_event_trigger(&sm->enc, &subs->gtp.et); 
 
   sm_subs_data_t data = {0}; 
   
@@ -81,16 +84,16 @@ sm_subs_data_t on_subscription_gtp_sm_ric(sm_ric_t const* sm_ric, const char* cm
 }
 
 static
-sm_ag_if_rd_t on_indication_gtp_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t* data)
+sm_ag_if_rd_ind_t on_indication_gtp_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t const* data)
 {
   assert(sm_ric != NULL); 
   assert(data != NULL); 
   sm_gtp_ric_t* sm = (sm_gtp_ric_t*)sm_ric;  
 
-  sm_ag_if_rd_t rd_if = {.type = GTP_STATS_V0};
+ sm_ag_if_rd_ind_t rd_if = {.type = GTP_STATS_V0};
 
-  rd_if.gtp_stats.msg = gtp_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
-  rd_if.gtp_stats.hdr = gtp_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
+  rd_if.gtp_ind.msg = gtp_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+  rd_if.gtp_ind.hdr = gtp_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
 
   // ToDO: fill the structure properly
 //  assert(sizeof(gtp_ind_msg_t) == sizeof(gtp_rd_stats_t) && "memcpy not allowed if the structs are different");
@@ -103,7 +106,7 @@ sm_ag_if_rd_t on_indication_gtp_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t* da
 }
 
 static
- sm_ctrl_req_data_t ric_on_control_req_gtp_sm_ric(sm_ric_t const* sm_ric, const sm_ag_if_wr_t* data)
+ sm_ctrl_req_data_t ric_on_control_req_gtp_sm_ric(sm_ric_t const* sm_ric, const sm_ag_if_wr_ctrl_t* data)
 {
   assert(sm_ric != NULL); 
   assert(data != NULL); 
@@ -128,14 +131,14 @@ static
 }
 
 static
-sm_ag_if_ans_t ric_on_control_out_gtp_sm_ric(sm_ric_t const* sm_ric,const sm_ctrl_out_data_t * out)
+sm_ag_if_ans_ctrl_t ric_on_control_out_gtp_sm_ric(sm_ric_t const* sm_ric,const sm_ctrl_out_data_t * out)
 {
   assert(sm_ric != NULL); 
   assert(out != NULL);
 
   sm_gtp_ric_t* sm = (sm_gtp_ric_t*)sm_ric;  
 
-  sm_ag_if_ans_t ag_if = {.type =  MAC_AGENT_IF_CTRL_ANS_V0};  
+  sm_ag_if_ans_ctrl_t ag_if = {.type =  MAC_AGENT_IF_CTRL_ANS_V0};  
   ag_if.gtp = gtp_dec_ctrl_out(&sm->enc, out->len_out, out->ctrl_out);
   assert(ag_if.gtp.ans ==  GTP_CTRL_OUT_OK);
 
@@ -143,23 +146,26 @@ sm_ag_if_ans_t ric_on_control_out_gtp_sm_ric(sm_ric_t const* sm_ric,const sm_ctr
 }
 
 static
-void ric_on_e2_setup_gtp_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* setup)
+sm_ag_if_rd_e2setup_t ric_on_e2_setup_gtp_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_data_t const* setup)
 {
   assert(sm_ric != NULL); 
   assert(setup == NULL); 
-//  sm_gtp_ric_t* sm = (sm_gtp_ric_t*)sm_ric;  
 
   assert(0!=0 && "Not implemented");
+  sm_ag_if_rd_e2setup_t dst = {0};
+  return dst;
 }
 
 static
-sm_ric_service_update_t on_ric_service_update_gtp_sm_ric(sm_ric_t const* sm_ric, const char* data)
+sm_ag_if_rd_rsu_t on_ric_service_update_gtp_sm_ric(sm_ric_t const* sm_ric, sm_ric_service_update_data_t const* sud)
 {
-  assert(sm_ric != NULL); 
-  assert(data != NULL); 
-//  sm_gtp_ric_t* sm = (sm_gtp_ric_t*)sm_ric;  
+  assert(sm_ric != NULL);  
+  assert(sud != NULL);
+  //  sm_gtp_ric_t* sm = (sm_gtp_ric_t*)sm_ric;  
 
   assert(0!=0 && "Not implemented");
+  sm_ag_if_rd_rsu_t dst = {0};
+  return dst;
 }
 
 static

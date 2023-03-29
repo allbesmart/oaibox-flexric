@@ -228,7 +228,7 @@ e2ap_msg_t e2ap_msg_handle_ric(near_ric_t* ric, const e2ap_msg_t* msg)
 }
 
 static
-void publish_ind_msg(near_ric_t* ric,  uint16_t ran_func_id, sm_ag_if_rd_t* d)
+void publish_ind_msg(near_ric_t* ric,  uint16_t ran_func_id, sm_ag_if_rd_ind_t* d)
 {
 
   // find RIC request ID, pass the data to the assoc. SM
@@ -275,14 +275,14 @@ void publish_ind_msg(near_ric_t* ric,  uint16_t ran_func_id, sm_ag_if_rd_t* d)
     data.len_cpid = ric_ind->call_process_id->len;
   }
 
-  sm_ag_if_rd_t d = sm->proc.on_indication(sm, &data);
+  sm_ag_if_rd_ind_t d = sm->proc.on_indication(sm, &data);
   defer({ sm->alloc.free_ind_data(&d); } );
   assert(d.type == MAC_STATS_V0 || d.type == RLC_STATS_V0 || d.type == PDCP_STATS_V0 || d.type == SLICE_STATS_V0 || d.type == KPM_STATS_V0 || d.type == GTP_STATS_V0);
 
   publish_ind_msg(ric, ran_func_id, &d);
 
-  if(d.type ==  MAC_STATS_V0 )
-    ((e2ap_msg_t*)msg)->tstamp = d.mac_stats.msg.tstamp;
+//  if(d.type ==  MAC_STATS_V0 )
+//    ((e2ap_msg_t*)msg)->tstamp = d.mac_stats.msg.tstamp;
 
   // Notify the iApp
 #ifndef TEST_AGENT_RIC  

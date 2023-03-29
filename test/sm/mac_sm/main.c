@@ -42,9 +42,10 @@ static
 void read_RAN(sm_ag_if_rd_t* read)
 {
   assert(read != NULL);
-  assert(read->type == MAC_STATS_V0);
+  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(read->ind.type == MAC_STATS_V0);
 
-  mac_ind_data_t* ind = read->ind.mac_ind;
+  mac_ind_data_t* ind = &read->ind.mac_ind;
 
   fill_mac_ind_data(ind);
   cp.hdr = cp_mac_ind_hdr(&ind->hdr);
@@ -79,9 +80,13 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
 {
   assert(ag != NULL);
   assert(ric != NULL);
- 
-  sm_subs_data_t data = ric->proc.on_subscription(ric, "2_ms");
-  ag->proc.on_subscription(ag, &data); 
+
+  sm_ag_if_wr_subs_t sub = {.type = MAC_SUBS_V0};
+  sub.mac.et.ms = 2;
+  sm_subs_data_t data = ric->proc.on_subscription(ric, &sub);
+
+  subscribe_timer_t t = ag->proc.on_subscription(ag, &data); 
+  assert(t.ms == sub.mac.et.ms);
 
   free_sm_subs_data(&data);
 }
@@ -94,10 +99,10 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ric != NULL);
 
   sm_ind_data_t sm_data = ag->proc.on_indication(ag);
-  sm_ag_if_rd_t msg = ric->proc.on_indication(ric, &sm_data);
+  sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
 
   assert(msg.type == MAC_STATS_V0);
-  mac_ind_data_t* data = msg.ind.mac_ind;
+  mac_ind_data_t* data = &msg.mac_ind;
 
   assert(eq_mac_ind_hdr(&data->hdr, &cp.hdr) == true);
   assert(eq_mac_ind_msg(&data->msg, &cp.msg) == true);

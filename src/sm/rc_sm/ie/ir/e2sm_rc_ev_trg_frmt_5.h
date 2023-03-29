@@ -39,6 +39,7 @@ void free_e2sm_rc_ev_trg_frmt_5(e2sm_rc_ev_trg_frmt_5_t* src);
 
 bool eq_e2sm_rc_ev_trg_frmt_5(e2sm_rc_ev_trg_frmt_5_t const* m0, e2sm_rc_ev_trg_frmt_5_t const* m1);
 
+e2sm_rc_ev_trg_frmt_5_t cp_e2sm_rc_ev_trg_frmt_5(e2sm_rc_ev_trg_frmt_5_t const* src);
 
 #endif
 

@@ -27,7 +27,11 @@ ric_subscription_request_t generate_subscription_request(ric_gen_id_t ric_id , s
 {
   assert(sm != NULL);
 
-  sm_subs_data_t data = sm->proc.on_subscription(sm, cmd);
+  assert(0!=0 && "Clean this and not implemented");
+  
+  sm_ag_if_wr_subs_t dummy = {0};
+  (void)cmd;
+  sm_subs_data_t data = sm->proc.on_subscription(sm, &dummy);
 
   ric_subscription_request_t sr = {0}; 
   sr.ric_id = ric_id;
@@ -90,7 +94,7 @@ e42_setup_request_t generate_e42_setup_request(e42_xapp_t* xapp)
     ran_func[i].rev = 0;
     ran_func[i].oid = NULL;
 
-    sm_e2_setup_t def = sm->proc.on_e2_setup(sm);
+    sm_e2_setup_data_t def = sm->proc.on_e2_setup(sm);
     byte_array_t ba = {.len = def.len_rfd, .buf = def.ran_fun_def};
     ran_func[i].def = ba; 
 
@@ -111,7 +115,11 @@ ric_control_request_t generate_ric_control_request(ric_gen_id_t ric_id, sm_ric_t
 {
   assert(sm != NULL);
 
-  sm_ctrl_req_data_t const data = sm->proc.on_control_req(sm, ctrl_msg);
+  assert(0!=0 && "Clean this up!");
+  (void)ctrl_msg;
+  sm_ag_if_wr_ctrl_t dummy = {0}; 
+
+  sm_ctrl_req_data_t const data = sm->proc.on_control_req(sm, &dummy);
   assert(data.len_hdr < 2049 && "Check that the SM is built with the same flags as FlexRIC ");
   assert(data.len_msg < 2049 && "Check that the SM is built with the same flags as FlexRIC");
 

@@ -43,7 +43,7 @@ e2sm_rc_ctrl_msg_t rc_dec_ctrl_msg_plain(size_t len, uint8_t const ctrl_msg[len]
 
 e2sm_rc_ctrl_out_t rc_dec_ctrl_out_plain(size_t len, uint8_t const ctrl_out[len]); 
 
-rc_func_def_t rc_dec_func_def_plain(size_t len, uint8_t const func_def[len]);
+e2sm_rc_func_def_t rc_dec_func_def_plain(size_t len, uint8_t const func_def[len]);
 
 #endif
 

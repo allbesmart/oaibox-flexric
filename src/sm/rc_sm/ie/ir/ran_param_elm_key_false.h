@@ -30,5 +30,7 @@ void free_ran_param_elm_key_false(ran_param_elm_key_false_t* src);
 
 bool eq_ran_param_elm_key_false(ran_param_elm_key_false_t const* m0, ran_param_elm_key_false_t const* m1);
 
+ran_param_elm_key_false_t cp_ran_param_elm_key_false( ran_param_elm_key_false_t const* src);
+
 #endif
 

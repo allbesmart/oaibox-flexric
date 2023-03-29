@@ -6,7 +6,6 @@
 #include <stdint.h>
 
 typedef enum{
-
   LTE_RRC_MESSAGE_ID,
   NR_RRC_MESSAGE_ID,
 
@@ -57,7 +56,6 @@ typedef enum{
 // 9.3.35 E2 RC
 
 typedef struct{
-
   // Mandatory
   rrc_message_id_e type;
   union{
@@ -78,6 +76,8 @@ typedef struct{
 void free_rrc_msg_id( rrc_msg_id_t* src);
 
 bool eq_rrc_msg_id(rrc_msg_id_t const* m0, rrc_msg_id_t const* m1);
+
+rrc_msg_id_t cp_rrc_msg_id(rrc_msg_id_t const* src);
 
 #endif
 

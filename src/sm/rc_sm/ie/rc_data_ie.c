@@ -62,39 +62,6 @@ void free_e2sm_rc_event_trigger(e2sm_rc_event_trigger_t* src)
 
 }
 
-static
-bool eq_e2sm_rc_event_trigger_frmt_1(e2sm_rc_ev_trg_frmt_1_t const* m0, e2sm_rc_ev_trg_frmt_1_t const* m1)
-{
-  if(m0 == m1)
-    return true;
-
-  if(m0 == NULL || m1 == NULL)
-    return false;
-
-  // [1 - 65535]
-  assert(m0->sz_msg_ev_trg > 0 && m0->sz_msg_ev_trg < 65535 + 1);
-  assert(m1->sz_msg_ev_trg > 0 && m1->sz_msg_ev_trg < 65535 + 1);
-  assert(m0->msg_ev_trg != NULL);
-  assert(m1->msg_ev_trg != NULL);
-
-  if(m0->sz_msg_ev_trg  != m1->sz_msg_ev_trg)
-    return false;
-
-  for(size_t i = 0; i < m0->sz_msg_ev_trg; ++i){
-    if(eq_msg_ev_trg(&m0->msg_ev_trg[i], &m1->msg_ev_trg[i]) == false)
-      return false;
-  }
-
-  // Global Associated UE Info
-  // Optional
-  // 9.3.26
-  assert(m0->global_assoc_ue_info == NULL && "Not implemented");
-  assert(m1->global_assoc_ue_info == NULL && "Not implemented");
-
-  return true;
-}
-
-
 bool eq_e2sm_rc_event_trigger(e2sm_rc_event_trigger_t const* m0, e2sm_rc_event_trigger_t const* m1)
 {
   if(m0 == m1)
@@ -104,7 +71,7 @@ bool eq_e2sm_rc_event_trigger(e2sm_rc_event_trigger_t const* m0, e2sm_rc_event_t
     return false;
 
   if(m0->format == FORMAT_1_E2SM_RC_EV_TRIGGER_FORMAT){
-    return eq_e2sm_rc_event_trigger_frmt_1(&m0->frmt_1, &m1->frmt_1);
+    return eq_e2sm_rc_ev_trg_frmt_1(&m0->frmt_1, &m1->frmt_1);
 
   } else if(m0->format == FORMAT_2_E2SM_RC_EV_TRIGGER_FORMAT ){
     return eq_e2sm_rc_ev_trg_frmt_2(&m0->frmt_2, &m1->frmt_2);
@@ -126,6 +93,34 @@ bool eq_e2sm_rc_event_trigger(e2sm_rc_event_trigger_t const* m0, e2sm_rc_event_t
   return false;
 }
 
+
+e2sm_rc_event_trigger_t cp_e2sm_rc_event_trigger(e2sm_rc_event_trigger_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_event_trigger_t dst = {.format = src->format};
+
+  if(src->format == FORMAT_1_E2SM_RC_EV_TRIGGER_FORMAT){
+    dst.frmt_1 = cp_e2sm_rc_ev_trg_frmt_1(&src->frmt_1); 
+
+  } else if(src->format == FORMAT_2_E2SM_RC_EV_TRIGGER_FORMAT){
+    dst.frmt_2 = cp_e2sm_rc_ev_trg_frmt_2(&src->frmt_2);
+
+  }else if(src->format == FORMAT_3_E2SM_RC_EV_TRIGGER_FORMAT ){
+    dst.frmt_3 = cp_e2sm_rc_ev_trg_frmt_3(&src->frmt_3);
+
+  }else if(src->format == FORMAT_4_E2SM_RC_EV_TRIGGER_FORMAT ){
+     dst.frmt_4 = cp_e2sm_rc_ev_trg_frmt_4(&src->frmt_4);
+
+  }else if(src->format == FORMAT_5_E2SM_RC_EV_TRIGGER_FORMAT ){
+     dst.frmt_5 = cp_e2sm_rc_ev_trg_frmt_5(&src->frmt_5);
+
+  } else {
+    assert(0!=0 && "Not implemented");
+  }
+
+  return dst;
+}
 
 
 
@@ -243,7 +238,7 @@ void free_e2sm_rc_ind_hdr(e2sm_rc_ind_hdr_t* src)
 e2sm_rc_ind_hdr_t cp_e2sm_rc_ind_hdr(e2sm_rc_ind_hdr_t const* src)
 {
   assert(src != NULL);
-  e2sm_rc_ind_hdr_t dst = {0}; 
+  e2sm_rc_ind_hdr_t dst = {.format = src->format}; 
 
   if(src->format == FORMAT_1_E2SM_RC_IND_HDR){
     dst.frmt_1 = cp_e2sm_rc_ind_hdr_frmt_1(&src->frmt_1);
@@ -438,12 +433,20 @@ void free_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t* src)
 
 }
 
-e2sm_rc_ctrl_hdr_t cp_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t* src)
+e2sm_rc_ctrl_hdr_t cp_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t const* src)
 {
   assert(src != NULL);
-  assert(0!=0 && "Not implemented" ); 
-  e2sm_rc_ctrl_hdr_t ret = {0};
-  return ret;
+  e2sm_rc_ctrl_hdr_t dst = {.format = src->format};
+
+  if(dst.format == FORMAT_1_E2SM_RC_CTRL_HDR){
+    dst.frmt_1 = cp_e2sm_rc_ctrl_hdr_frmt_1(&src->frmt_1);
+  } else if(dst.format == FORMAT_2_E2SM_RC_CTRL_HDR){
+    dst.frmt_2 = cp_e2sm_rc_ctrl_hdr_frmt_2(&src->frmt_2);
+  } else{
+    assert(0!=0 && "Unknown format type");
+  } 
+
+  return dst;
 }
 
 bool eq_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t const* m0, e2sm_rc_ctrl_hdr_t const* m1)
@@ -454,7 +457,6 @@ bool eq_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t const* m0, e2sm_rc_ctrl_hdr_t const*
   if(m0 == NULL || m1 == NULL)
     return false;
 
-  
   if(m0->format != m1->format)
     return false;
 
@@ -491,13 +493,21 @@ void free_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t* src)
 
 }
 
-e2sm_rc_ctrl_msg_t cp_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t* src)
+e2sm_rc_ctrl_msg_t cp_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t const* src)
 {
   assert(src != NULL);
 
-  assert(0!=0 && "Not implemented" ); 
-  e2sm_rc_ctrl_msg_t ret = {0};
-  return ret;
+  e2sm_rc_ctrl_msg_t dst = {.format = src->format};
+
+  if(src->format == FORMAT_1_E2SM_RC_CTRL_MSG){
+    dst.frmt_1 = cp_e2sm_rc_ctrl_msg_frmt_1(&src->frmt_1);   
+  } else if(src->format ==  FORMAT_2_E2SM_RC_CTRL_MSG){
+    dst.frmt_2 = cp_e2sm_rc_ctrl_msg_frmt_2(&src->frmt_2);   
+  } else {
+    assert(0!=0 && "Unknown format");
+  }
+
+  return dst;;
 }
 
 bool eq_e2sm_rc_ctrl_msg(e2sm_rc_ctrl_msg_t const* m0, e2sm_rc_ctrl_msg_t const* m1)
@@ -549,9 +559,19 @@ e2sm_rc_ctrl_out_t cp_e2sm_rc_ctrl_out(e2sm_rc_ctrl_out_t const* src)
 {
   assert(src != NULL);
 
-  assert(0!=0 && "Not implemented" ); 
-  e2sm_rc_ctrl_out_t ret = {0}; 
-  return ret;
+  e2sm_rc_ctrl_out_t dst = {.format = src->format}; 
+  
+  if(dst.format == FORMAT_1_E2SM_RC_CTRL_OUT ){
+    dst.frmt_1 = cp_e2sm_rc_ctrl_out_frmt_1(&src->frmt_1) ;
+  } else if(dst.format ==FORMAT_2_E2SM_RC_CTRL_OUT ){
+    dst.frmt_2 = cp_e2sm_rc_ctrl_out_frmt_2(&src->frmt_2);
+  } else if(dst.format ==FORMAT_3_E2SM_RC_CTRL_OUT ){
+    dst.frmt_3 = cp_e2sm_rc_ctrl_out_frmt_3(&src->frmt_3) ;
+  }  else{
+    assert(0!=0 && "Unknown format");
+  }
+
+  return dst;
 }
 
 bool eq_e2sm_rc_ctrl_out(e2sm_rc_ctrl_out_t const* m0, e2sm_rc_ctrl_out_t const* m1)
@@ -586,29 +606,175 @@ bool eq_e2sm_rc_ctrl_out(e2sm_rc_ctrl_out_t const* m0, e2sm_rc_ctrl_out_t const*
 // RAN Function Definition 
 /////////////////////////////////////
 
-void free_rc_func_def( rc_func_def_t* src)
+void free_e2sm_rc_func_def(e2sm_rc_func_def_t* src)
 {
   assert(src != NULL);
+  //  RAN Function Name
+  //  Mandatory
+  //  9.3.2
+  //  6.2.2.1.
+  free_ran_function_name(&src->name);
 
-  assert(0!=0 && "Not implemented" ); 
+  // RAN Function Definition for EVENT TRIGGER
+  // Optional
+  // 9.2.2.2
+  assert(src->ev_trig == NULL && "Not implemented");
+
+  // RAN Function Definition for REPORT
+  // Optional
+  // 9.2.2.3
+  assert(src->report == NULL && "Not implemented");
+
+  // RAN Function Definition for INSERT
+  // Optional
+  // 9.2.2.4
+  assert(src->insert == NULL && "Not implemented");
+
+  // RAN Function Definition for CONTROL
+  // Optional
+  // 9.2.2.5
+  assert(src->ctrl == NULL && "Not implemented");
+
+  // RAN Function Definition for POLICY
+  // Optional
+  // 9.2.2.6
+  assert(src->policy == NULL && "Not implemented");
+
 }
 
-rc_func_def_t cp_rc_func_def(rc_func_def_t* src)
+e2sm_rc_func_def_t cp_e2sm_rc_func_def(e2sm_rc_func_def_t const* src)
 {
   assert(src != NULL);
+ 
+  e2sm_rc_func_def_t dst = {0}; 
+  
+  //  RAN Function Name
+  //  Mandatory
+  //  9.3.2
+  //  6.2.2.1.
+  dst.name = cp_ran_function_name(&src->name);
 
-  assert(0!=0 && "Not implemented" ); 
-  rc_func_def_t ret = {0};
-  return ret;
+  // RAN Function Definition for EVENT TRIGGER
+  // Optional
+  // 9.2.2.2
+  assert(src->ev_trig == NULL && "not implemented"); 
+
+  // RAN Function Definition for REPORT
+  // Optional
+  // 9.2.2.3
+  assert(src->report == NULL && "not implemented"); 
+
+  // RAN Function Definition for INSERT
+  // Optional
+  // 9.2.2.4
+  assert(src->insert == NULL && "not implemented"); 
+
+  // RAN Function Definition for CONTROL
+  // Optional
+  // 9.2.2.5
+  assert(src->ctrl == NULL && "not implemented"); 
+
+  // RAN Function Definition for POLICY
+  // Optional
+  // 9.2.2.6
+  assert(src->policy == NULL && "not implemented"); 
+
+  return dst;
 }
 
-bool eq_rc_func_def(rc_func_def_t* m0, rc_func_def_t* m1)
+bool eq_e2sm_rc_func_def(e2sm_rc_func_def_t const* m0, e2sm_rc_func_def_t const* m1)
 {
-  assert(m0 != NULL);
-  assert(m1 != NULL);
+  if(m0 == m1)
+    return true;
 
-  assert(0!=0 && "Not implemented" ); 
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  //  RAN Function Name
+  //  Mandatory
+  //  9.3.2
+  //  6.2.2.1.
+  if(eq_ran_function_name(&m0->name, &m1->name) == false) 
+    return false;
+
+  // RAN Function Definition for EVENT TRIGGER
+  // Optional
+  // 9.2.2.2
+  assert(m0->ev_trig == NULL && "Not implemented");
+  assert(m1->ev_trig == NULL && "Not implemented");
+
+  // RAN Function Definition for REPORT
+  // Optional
+  // 9.2.2.3
+  assert(m0->report == NULL && "Not implemented");
+  assert(m1->report == NULL && "Not implemented");
+
+  // RAN Function Definition for INSERT
+  // Optional
+  // 9.2.2.4
+  assert(m0->insert == NULL && "Not implemented");
+  assert(m1->insert == NULL && "Not implemented");
+
+  // RAN Function Definition for CONTROL
+  // Optional
+  // 9.2.2.5
+  assert(m0->ctrl == NULL && "Not implemented");
+  assert(m1->ctrl == NULL && "Not implemented");
+
+  // RAN Function Definition for POLICY
+  // Optional
+  // 9.2.2.6
+  assert(m0->policy == NULL && "Not implemented");
+  assert(m1->policy == NULL && "Not implemented");
+
   return true;
+}
+
+///////////////
+/// RIC Subscription
+///////////////
+
+void free_rc_sub_data(rc_sub_data_t* src)
+{
+  assert(src != NULL);
+
+  free_e2sm_rc_event_trigger(&src->et);
+  if(src->ad != NULL){
+    free_e2sm_rc_action_def(src->ad);
+    free(src->ad);
+  }
+}
+
+bool eq_rc_sub_data(rc_sub_data_t const* m0, rc_sub_data_t const* m1)
+{
+  if(m0 == m1)
+    return true;
+
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  if(eq_e2sm_rc_event_trigger(&m0->et, &m1->et) == false)
+    return false;
+
+  if(eq_e2sm_rc_action_def(m0->ad, m1->ad) == false)
+    return false;
+
+  return true;
+}
+
+rc_sub_data_t cp_rc_sub_data(rc_sub_data_t const* src)
+{
+  assert(src != NULL);
+  rc_sub_data_t dst = {0}; 
+
+  dst.et = cp_e2sm_rc_event_trigger(&src->et);
+  if(src->ad != NULL){
+    dst.ad = calloc(1, sizeof(e2sm_rc_action_def_t));
+    assert(dst.ad != NULL && "Memory exhausted");
+    *dst.ad = cp_e2sm_rc_action_def(src->ad); 
+  }
+
+  return dst;
 }
 
 
@@ -625,6 +791,27 @@ void free_rc_ind_data(rc_ind_data_t* ind)
   if(ind->proc_id != NULL)
     free_e2sm_rc_cpid(ind->proc_id); 
 }
+
+bool eq_rc_ind_data(rc_ind_data_t const* m0, rc_ind_data_t const* m1)
+{
+  if(m0 == m1)
+    return true;
+
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  if(eq_e2sm_rc_ind_hdr(&m0->hdr, &m1->hdr) == false)
+    return false;
+
+  if(eq_e2sm_rc_ind_msg(&m0->msg, &m1->msg) == false)
+    return false;
+
+  if(eq_e2sm_rc_cpid(m0->proc_id, m1->proc_id) == false)
+    return false;
+
+  return true;
+}
+
 
 rc_ind_data_t cp_rc_ind_data(rc_ind_data_t const* src)
 {
@@ -643,4 +830,44 @@ rc_ind_data_t cp_rc_ind_data(rc_ind_data_t const* src)
   return dst;
 }
 
+
+///////////////
+// RIC Control
+///////////////
+
+void free_rc_ctrl_req_data(rc_ctrl_req_data_t* src)
+{
+  assert(src != NULL);
+
+  free_e2sm_rc_ctrl_hdr(&src->hdr);
+  free_e2sm_rc_ctrl_msg(&src->msg);
+}
+
+bool eq_rc_ctrl_req_data(rc_ctrl_req_data_t const* m0, rc_ctrl_req_data_t  const* m1)
+{
+  if(m0 == m1)
+    return true;
+
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  if(eq_e2sm_rc_ctrl_hdr(&m0->hdr, &m1->hdr) == false)
+    return false;
+
+  if(eq_e2sm_rc_ctrl_msg(&m0->msg, &m1->msg ) == false)
+    return false;
+
+  return true;
+}
+
+rc_ctrl_req_data_t cp_rc_ctrl_req_data(rc_ctrl_req_data_t const* src)
+{
+  assert(src != NULL);
+  rc_ctrl_req_data_t dst = {0};
+
+  dst.hdr = cp_e2sm_rc_ctrl_hdr(&src->hdr);
+  dst.msg = cp_e2sm_rc_ctrl_msg(&src->msg);
+
+  return dst;
+}
 

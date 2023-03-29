@@ -53,3 +53,27 @@ bool eq_ran_param_elm_key_false(ran_param_elm_key_false_t const* m0, ran_param_e
   return true;
 }
 
+ran_param_elm_key_false_t cp_ran_param_elm_key_false( ran_param_elm_key_false_t const* src)
+{
+  assert(src != NULL);
+  ran_param_elm_key_false_t dst = {0}; 
+
+  // RAN Parameter Test Condition
+  // 9.3.31
+  // Mandatory
+  dst.test_cond = cp_ran_param_test_cond(src->test_cond);
+
+  // RAN Parameter Value
+  // Optional
+  // 9.3.14
+  assert(src->value == NULL && "Not implemented"); 
+
+  // Logical OR
+  // Optional
+  // 9.3.25
+  assert(src->logical_or == NULL && "Not implemented");
+
+  return dst;
+}
+
+

@@ -9,7 +9,6 @@
 
 
 typedef enum{
-
   RRC_STATE_UE_INFO_CHNG_TRIGGER_TYPE,
   UE_ID_CHANGE_UE_INFO_CHNG_TRIGGER_TYPE,
   L2_STATE_UE_INFO_CHNG_TRIGGER_TYPE,
@@ -21,7 +20,6 @@ typedef enum{
 
 
 typedef struct{
-
   //  Event Trigger Condition ID
   //  Mandatory
   //  9.3.21
@@ -43,8 +41,6 @@ typedef struct{
     // RAN Parameter Conditional Criteria Definition
     ran_param_cond_crit_def_t l2_state;
   };
-
-
   // Associated UE Info 
   // Optional
   // 9.3.26
@@ -60,6 +56,8 @@ typedef struct{
 void free_ue_info_chng(ue_info_chng_t* src);
 
 bool eq_ue_info_chng(ue_info_chng_t const* m0, ue_info_chng_t const* m1);
+
+ue_info_chng_t cp_ue_info_chng(ue_info_chng_t const* src);
 
 #endif
 

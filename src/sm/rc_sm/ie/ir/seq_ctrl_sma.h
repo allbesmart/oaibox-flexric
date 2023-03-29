@@ -25,7 +25,9 @@ typedef struct{
 
 void free_seq_ctrl_sma(seq_ctrl_sma_t* src);
 
-bool eq_seq_ctrl_sma( seq_ctrl_sma_t const* m0, seq_ctrl_sma_t const* m1);
+bool eq_seq_ctrl_sma(seq_ctrl_sma_t const* m0, seq_ctrl_sma_t const* m1);
+
+seq_ctrl_sma_t cp_seq_ctrl_sma(seq_ctrl_sma_t const* src);
 
 #endif
 

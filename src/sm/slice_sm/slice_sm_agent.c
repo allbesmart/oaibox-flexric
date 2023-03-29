@@ -32,7 +32,7 @@ typedef struct{
 // E2 Setup and RIC Service Update. 
 //
 static
-subscribe_timer_t  on_subscription_slice_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
+subscribe_timer_t on_subscription_slice_sm_ag(sm_agent_t const* sm_agent, const sm_subs_data_t* data)
 {
   assert(sm_agent != NULL);
   assert(data != NULL);
@@ -51,7 +51,7 @@ subscribe_timer_t  on_subscription_slice_sm_ag(sm_agent_t* sm_agent, const sm_su
 }
 
 static
-sm_ind_data_t on_indication_slice_sm_ag(sm_agent_t* sm_agent)
+sm_ind_data_t on_indication_slice_sm_ag(sm_agent_t const* sm_agent)
 {
 //  printf("on_indication SLICE called \n");
 
@@ -67,17 +67,17 @@ sm_ind_data_t on_indication_slice_sm_ag(sm_agent_t* sm_agent)
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message 
-  sm_ag_if_rd_t rd_if = {0};
-  rd_if.type = SLICE_STATS_V0;
+  sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
+  rd_if.ind.type = SLICE_STATS_V0;
   sm->base.io.read(&rd_if);
 
 // Liberate the memory if previously allocated by the RAN. It sucks
-  slice_ind_data_t* ind = &rd_if.slice_stats;
+  slice_ind_data_t* ind = &rd_if.ind.slice_ind;
   defer({ free_slice_ind_hdr(&ind->hdr) ;});
   defer({ free_slice_ind_msg(&ind->msg) ;});
   defer({ free_slice_call_proc_id(ind->proc_id);});
 
-  byte_array_t ba = slice_enc_ind_msg(&sm->enc, &rd_if.slice_stats.msg);
+  byte_array_t ba = slice_enc_ind_msg(&sm->enc, &rd_if.ind.slice_ind.msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 
@@ -89,24 +89,29 @@ sm_ind_data_t on_indication_slice_sm_ag(sm_agent_t* sm_agent)
 }
 
 static
-sm_ctrl_out_data_t on_control_slice_sm_ag(sm_agent_t* sm_agent, sm_ctrl_req_data_t const* data)
+sm_ctrl_out_data_t on_control_slice_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_req_data_t const* data)
 {
   assert(sm_agent != NULL);
   assert(data != NULL);
   sm_slice_agent_t* sm = (sm_slice_agent_t*) sm_agent;
 
-  sm_ag_if_wr_t wr = {.type = SLICE_CTRL_REQ_V0 };
-  wr.slice_req_ctrl.hdr = slice_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
-  defer({ free_slice_ctrl_hdr(&wr.slice_req_ctrl.hdr ); });
+  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+  wr.ctrl.type = SLICE_CTRL_REQ_V0; 
 
-  wr.slice_req_ctrl.msg = slice_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
-  defer({ free_slice_ctrl_msg(&wr.slice_req_ctrl.msg); });
+  wr.ctrl.slice_req_ctrl.hdr = slice_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
+  defer({ free_slice_ctrl_hdr(&wr.ctrl.slice_req_ctrl.hdr ); });
+
+  wr.ctrl.slice_req_ctrl.msg = slice_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
+  defer({ free_slice_ctrl_msg(&wr.ctrl.slice_req_ctrl.msg); });
 
   sm_ag_if_ans_t ans = sm->base.io.write(&wr);
-  assert(ans.type == SLICE_AGENT_IF_CTRL_ANS_V0);
-  defer({free_slice_ctrl_out(&ans.slice); });
+  assert(ans.type ==CTRL_OUTCOME_SM_AG_IF_ANS_V0);
+  assert(ans.ctrl_out.type == SLICE_AGENT_IF_CTRL_ANS_V0);
+ 
 
-  byte_array_t ba = slice_enc_ctrl_out(&sm->enc, &ans.slice);
+  defer({free_slice_ctrl_out(&ans.ctrl_out.slice); });
+
+  byte_array_t ba = slice_enc_ctrl_out(&sm->enc, &ans.ctrl_out.slice);
 
   sm_ctrl_out_data_t ret = {0};
   ret.len_out = ba.len;
@@ -116,14 +121,16 @@ sm_ctrl_out_data_t on_control_slice_sm_ag(sm_agent_t* sm_agent, sm_ctrl_req_data
 }
 
 static
-sm_e2_setup_t on_e2_setup_slice_sm_ag(sm_agent_t* sm_agent)
+sm_e2_setup_data_t on_e2_setup_slice_sm_ag(sm_agent_t const* sm_agent)
 {
   assert(sm_agent != NULL);
 //  printf("on_e2_setup called \n");
 
   sm_slice_agent_t* sm = (sm_slice_agent_t*)sm_agent;
 
-  sm_e2_setup_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
+  // ToDo: Call the RAN to fill the RAN Function
+
+  sm_e2_setup_data_t setup = {.len_rfd =0, .ran_fun_def = NULL }; 
 
   setup.len_rfd = strlen(sm->base.ran_func_name);
   setup.ran_fun_def = calloc(1, strlen(sm->base.ran_func_name));
@@ -135,13 +142,15 @@ sm_e2_setup_t on_e2_setup_slice_sm_ag(sm_agent_t* sm_agent)
 }
 
 static
-void on_ric_service_update_slice_sm_ag(sm_agent_t* sm_agent, sm_ric_service_update_t const* data)
+sm_ric_service_update_data_t on_ric_service_update_slice_sm_ag(sm_agent_t const* sm_agent)
 {
   assert(sm_agent != NULL);
-  assert(data != NULL);
 
+  assert(0 != 0 && "Not implemented");
 
   printf("on_ric_service_update called \n");
+  sm_ric_service_update_data_t dst = {0};
+  return dst;
 }
 
 static

@@ -33,37 +33,46 @@
 
 
 static
-void read_RAN(sm_ag_if_rd_t* data)
+void read_RAN(sm_ag_if_rd_t* ag_rd)
 {
+  assert(ag_rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  sm_ag_if_rd_ind_t* data = &ag_rd->ind;
   assert(data->type == MAC_STATS_V0 || data->type == RLC_STATS_V0 ||  data->type == PDCP_STATS_V0 || data->type == SLICE_STATS_V0 || data->type == KPM_STATS_V0 || data->type == GTP_STATS_V0);
 
 
   if(data->type == MAC_STATS_V0 ){
-    fill_mac_ind_data(&data->mac_stats);
+    fill_mac_ind_data(&data->mac_ind);
   } else if(data->type == RLC_STATS_V0) {
-    fill_rlc_ind_data(&data->rlc_stats);
+    fill_rlc_ind_data(&data->rlc_ind);
   } else if (data->type == PDCP_STATS_V0 ){
-    fill_pdcp_ind_data(&data->pdcp_stats);
+    fill_pdcp_ind_data(&data->pdcp_ind);
   } else if(data->type == SLICE_STATS_V0 ){
-    fill_slice_ind_data(&data->slice_stats);
+    fill_slice_ind_data(&data->slice_ind);
   } else if(data->type == GTP_STATS_V0 ){
-    fill_gtp_ind_data(&data->gtp_stats);
+    fill_gtp_ind_data(&data->gtp_ind);
   } else if(data->type == KPM_STATS_V0 ){
-    fill_kpm_ind_data(&data->kpm_stats);
+    fill_kpm_ind_data(&data->kpm_ind);
   } else {
     assert("Invalid data type");
   }
 }
 
 static
-sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
+sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* ag_wr)
 {
-  assert(data != NULL);
+  assert(ag_wr!= NULL);
+  assert(ag_wr->type == CONTROL_SM_AG_IF_WR);
+
+  sm_ag_if_wr_ctrl_t const* data = &ag_wr->ctrl; 
+
+
   if(data->type == MAC_CTRL_REQ_V0){
     //printf("Control message called in the RAN \n");
-    sm_ag_if_ans_t ans = {.type = MAC_AGENT_IF_CTRL_ANS_V0};
-    ans.mac.ans = MAC_CTRL_OUT_OK;
+    sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
+    ans.ctrl_out.type = MAC_AGENT_IF_CTRL_ANS_V0;
+    ans.ctrl_out.mac.ans = MAC_CTRL_OUT_OK;
     return ans;
+
   } else if(data->type == SLICE_CTRL_REQ_V0 ){
 
     slice_ctrl_req_data_t const* slice_req_ctrl = &data->slice_req_ctrl;
@@ -79,8 +88,10 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
       assert(0!=0 && "Unknown msg_type!");
     }
 
-    sm_ag_if_ans_t ans = {.type =  SLICE_AGENT_IF_CTRL_ANS_V0};
+    sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
+    ans.ctrl_out.type = SLICE_AGENT_IF_CTRL_ANS_V0;
     return ans;
+
   } else  if(data->type == TC_CTRL_REQ_V0){
     tc_ctrl_req_data_t const* ctrl = &data->tc_req_ctrl;
 
@@ -90,7 +101,8 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
           || t == TC_CTRL_SM_V0_QUEUE || t ==TC_CTRL_SM_V0_SCH 
           || t == TC_CTRL_SM_V0_SHP || t == TC_CTRL_SM_V0_PCR);
 
-    sm_ag_if_ans_t ans = {.type =  TC_AGENT_IF_CTRL_ANS_V0};
+    sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
+    ans.ctrl_out.type = TC_AGENT_IF_CTRL_ANS_V0;
     return ans;
 
   } else {

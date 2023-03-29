@@ -26,6 +26,8 @@ typedef struct{
 
 void free_seq_ctrl_sty_mul_out( seq_ctrl_sty_mul_out_t* src);
 
+seq_ctrl_sty_mul_out_t cp_seq_ctrl_sty_mul_out( seq_ctrl_sty_mul_out_t const* src);
+
 bool eq_seq_ctrl_sty_mul_out( seq_ctrl_sty_mul_out_t const* m0,  seq_ctrl_sty_mul_out_t const* m1);
 
 #endif

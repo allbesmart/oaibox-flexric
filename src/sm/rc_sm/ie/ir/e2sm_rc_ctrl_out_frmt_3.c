@@ -41,3 +41,25 @@ bool eq_e2sm_rc_ctrl_out_frmt_3( e2sm_rc_ctrl_out_frmt_3_t const* m0,  e2sm_rc_c
   return true;
 }
 
+e2sm_rc_ctrl_out_frmt_3_t cp_e2sm_rc_ctrl_out_frmt_3(e2sm_rc_ctrl_out_frmt_3_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ctrl_out_frmt_3_t dst = {0};
+
+  //  Sequence of RAN Parameters
+  //  [0-255]
+  assert(src->sz_seq_ran_param < 256);
+  if(src->sz_seq_ran_param > 0){
+    dst.sz_seq_ran_param = src->sz_seq_ran_param;
+    dst.ran_param = calloc(dst.sz_seq_ran_param, sizeof(seq_ran_param_t));
+    assert(dst.ran_param != NULL && "memory exhausted");
+  }
+
+  for(size_t i = 0; i < dst.sz_seq_ran_param; ++i){
+    dst.ran_param[i] = cp_seq_ran_param(&src->ran_param[i]);
+  }
+
+  return dst;
+}
+

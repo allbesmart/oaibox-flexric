@@ -49,29 +49,28 @@ typedef enum{
 typedef struct{
   sm_ag_if_ans_ctrl_e type;
   union {
-    mac_ctrl_out_t* mac;
-    rlc_ctrl_out_t* rlc;
-    pdcp_ctrl_out_t* pdcp;
-    slice_ctrl_out_t* slice;
-    tc_ctrl_out_t* tc;
-    gtp_ctrl_out_t* gtp;
-    e2sm_rc_ctrl_out_t* rc;
+    mac_ctrl_out_t mac;
+    rlc_ctrl_out_t rlc;
+    pdcp_ctrl_out_t pdcp;
+    slice_ctrl_out_t slice;
+    tc_ctrl_out_t tc;
+    gtp_ctrl_out_t gtp;
+    e2sm_rc_ctrl_out_t rc;
   };
 } sm_ag_if_ans_ctrl_t;
 
-typedef enum{
+typedef enum {
   CTRL_OUTCOME_SM_AG_IF_ANS_V0,
   NONE_SM_AG_IF_ANS_V0,
 
   END_SM_AG_IF_ANS_V0,
-} sm_ag_if_ans_e ;
+} sm_ag_if_ans_e;
 
 typedef struct{
   sm_ag_if_ans_e type; 
   union{
     sm_ag_if_ans_ctrl_t ctrl_out;
   };
-
 } sm_ag_if_ans_t; 
 
 #endif

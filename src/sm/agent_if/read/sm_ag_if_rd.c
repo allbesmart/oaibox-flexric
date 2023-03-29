@@ -37,29 +37,21 @@ void free_sm_ag_if_rd_ind(sm_ag_if_rd_ind_t* d)
   assert(d != NULL);
   
   if(d->type == MAC_STATS_V0){
-    free_mac_ind_data(d->mac_ind);
-    free(d->mac_ind);
+    free_mac_ind_data(&d->mac_ind);
   } else if(d->type == RLC_STATS_V0){
-    free_rlc_ind_data(d->rlc_ind);
-    free(d->rlc_ind);
+    free_rlc_ind_data(&d->rlc_ind);
   } else if(d->type == PDCP_STATS_V0){
-    free_pdcp_ind_data(d->pdcp_ind);
-    free(d->pdcp_ind);
+    free_pdcp_ind_data(&d->pdcp_ind);
   } else if(d->type == SLICE_STATS_V0){
-    free_slice_ind_data(d->slice_ind);
-    free(d->slice_ind);
+    free_slice_ind_data(&d->slice_ind);
   } else if(d->type == TC_STATS_V0){
-    free_tc_ind_data(d->tc_ind);
-    free(d->tc_ind);
+    free_tc_ind_data(&d->tc_ind);
   } else if(d->type == GTP_STATS_V0){
-    free_gtp_ind_data(d->gtp_ind);
-    free(d->gtp_ind);
+    free_gtp_ind_data(&d->gtp_ind);
   } else if(d->type == KPM_STATS_V0){
-    free_kpm_ind_data(d->kpm_ind);
-    free(d->kpm_ind);
+    free_kpm_ind_data(&d->kpm_ind);
   } else if(d->type == RAN_CTRL_STATS_V1_03 ){
-    free_rc_ind_data(d->rc_ind);
-    free(d->rc_ind);
+    free_rc_ind_data(&d->rc_ind);
   } else {
     assert(0!=0 && "Unforeseen case");
   }
@@ -73,41 +65,59 @@ sm_ag_if_rd_ind_t cp_sm_ag_if_rd_ind(sm_ag_if_rd_ind_t const* d)
   sm_ag_if_rd_ind_t ans = {.type = d->type};
 
   if(ans.type == MAC_STATS_V0){
-    ans.mac_ind = calloc(1, sizeof(mac_ind_data_t));
-    assert(ans.mac_ind != NULL && "Memory exhausted");
-    *ans.mac_ind = cp_mac_ind_data(d->mac_ind);
+    ans.mac_ind = cp_mac_ind_data(&d->mac_ind);
   } else if(ans.type == RLC_STATS_V0 ){
-    ans.rlc_ind = calloc(1, sizeof(rlc_ind_data_t ));
-    assert(ans.rlc_ind != NULL && "Memory exhausted" );
-    *ans.rlc_ind = cp_rlc_ind_data(d->rlc_ind);
+    ans.rlc_ind = cp_rlc_ind_data(&d->rlc_ind);
   } else if(ans.type == PDCP_STATS_V0) {
-    ans.pdcp_ind = calloc(1, sizeof(pdcp_ind_data_t));
-    assert(ans.pdcp_ind != NULL && "Memory exhausted");
-    *ans.pdcp_ind = cp_pdcp_ind_data(d->pdcp_ind);
+    ans.pdcp_ind = cp_pdcp_ind_data(&d->pdcp_ind);
   } else if(ans.type == SLICE_STATS_V0) {
-    ans.slice_ind = calloc(1, sizeof(slice_ind_data_t));
-    assert(ans.slice_ind != NULL && "Memory exhausted");
-    *ans.slice_ind = cp_slice_ind_data(d->slice_ind);
+    ans.slice_ind = cp_slice_ind_data(&d->slice_ind);
   } else if(ans.type == TC_STATS_V0) {
-    ans.tc_ind = calloc(1, sizeof(tc_ind_data_t));
-    assert(ans.tc_ind != NULL && "Memory exhausted" );
-    *ans.tc_ind = cp_tc_ind_data(d->tc_ind);
+    ans.tc_ind = cp_tc_ind_data(&d->tc_ind);
   } else if(ans.type == GTP_STATS_V0) {
-    ans.gtp_ind = calloc(1, sizeof(gtp_ind_data_t )); 
-    assert(ans.gtp_ind != NULL && "Memory exhausted");
-    *ans.gtp_ind = cp_gtp_ind_data(d->gtp_ind);
+    ans.gtp_ind = cp_gtp_ind_data(&d->gtp_ind);
   } else if(ans.type == KPM_STATS_V0) {
-    ans.kpm_ind = calloc(1, sizeof(kpm_ind_data_t ));
-    assert( ans.kpm_ind != NULL && "Memory exhausted");
-    *ans.kpm_ind = cp_kpm_ind_data(d->kpm_ind);
+    ans.kpm_ind = cp_kpm_ind_data(&d->kpm_ind);
   } else if(ans.type == RAN_CTRL_STATS_V1_03) {
-    ans.rc_ind = calloc(1, sizeof(rc_ind_data_t));
-    assert(ans.rc_ind != NULL && "Memory exhausted" );
-    *ans.rc_ind = cp_rc_ind_data(d->rc_ind);
+    ans.rc_ind = cp_rc_ind_data(&d->rc_ind);
   }  else {
     assert("Unknown type or not implemented");
   }
 
   return ans;
+}
+
+void free_sm_ag_if_rd(sm_ag_if_rd_t* src)
+{
+  assert(src != NULL);
+
+  if(src->type == INDICATION_MSG_AGENT_IF_ANS_V0){
+    free_sm_ag_if_rd_ind(&src->ind);
+  } else if(src->type == E2_SETUP_AGENT_IF_ANS_V0){
+    assert(0!=0 && "Not implemented ");
+  } else if(src->type == RIC_SERV_UPDATE_AGENT_IF_ANS_V0){
+    assert(0!=0 && "Not implemented ");
+  } else {
+    assert(0!=0 && "Unknown type");
+  }
+
+}
+
+sm_ag_if_rd_t cp_sm_ag_if_rd(sm_ag_if_rd_t const* src)
+{
+  assert(src != NULL);
+  sm_ag_if_rd_t dst = {.type = src->type}; 
+
+  if(src->type == INDICATION_MSG_AGENT_IF_ANS_V0){
+    dst.ind = cp_sm_ag_if_rd_ind(&src->ind);
+  } else if(src->type == E2_SETUP_AGENT_IF_ANS_V0){
+    assert(0!=0 && "Not implemented ");
+  } else if(src->type == RIC_SERV_UPDATE_AGENT_IF_ANS_V0){
+    assert(0!=0 && "Not implemented ");
+  } else {
+    assert(0!=0 && "Unknown type");
+  }
+
+  return dst;
 }
 

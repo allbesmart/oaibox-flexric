@@ -51,13 +51,14 @@ static
 void sm_cb_rlc(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == RLC_STATS_V0); 
+  assert(rd == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == RLC_STATS_V0); 
 
 //  int64_t now = time_now_us();
 //  printf("RLC ind_msg latency = %ld \n", now - rd->rlc_stats.msg.tstamp);
 
 
-  rlc_ind_msg_t const* msg = &rd->rlc_stats.msg;
+  rlc_ind_msg_t const* msg = &rd->ind.rlc_ind.msg;
 
   for(size_t i =0; i < msg->len; ++i){
     rlc_radio_bearer_stats_t const* rb  = &msg->rb[i]; 
@@ -226,31 +227,37 @@ int main()
     if(new_queues == 1){
 	printf("Delay at RLC buffer > 10 ms detected tstamp %ld \n", time_now_us() );
 	// Pacer
-	sm_ag_if_wr_t wr = {.type = TC_CTRL_REQ_V0 };
-        wr.tc_req_ctrl.msg = gen_mod_bdp_pcr();
+	sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+wr.ctrl.type = TC_CTRL_REQ_V0;
+
+        wr.ctrl.tc_req_ctrl.msg = gen_mod_bdp_pcr();
 
         control_sm_xapp_api(&nodes.n[0].id, TC_SM_ID_TEST, &wr);
-        free_tc_ctrl_msg(&wr.tc_req_ctrl.msg);
+        free_tc_ctrl_msg(&wr.ctrl.tc_req_ctrl.msg);
 
 	printf("PACER done tstamp %ld \n", time_now_us() );
 
 	// Queue
-	sm_ag_if_wr_t wr_q = {.type = TC_CTRL_REQ_V0 };
-        wr_q.tc_req_ctrl.msg = gen_add_codel_queue();
+	sm_ag_if_wr_t wr_q = {.type =CONTROL_SM_AG_IF_WR };
+wr.ctrl.type = TC_CTRL_REQ_V0;
+
+        wr_q.ctrl.tc_req_ctrl.msg = gen_add_codel_queue();
 
         control_sm_xapp_api(&nodes.n[0].id, TC_SM_ID_TEST, &wr_q);
-        free_tc_ctrl_msg(&wr_q.tc_req_ctrl.msg);
+        free_tc_ctrl_msg(&wr_q.ctrl.tc_req_ctrl.msg);
 
 	printf("Queue done tstamp %ld \n", time_now_us() );
 
 
 	// Classifier
-	wr.type = TC_CTRL_REQ_V0;
+	wr.type =CONTROL_SM_AG_IF_WR; 
+  wr.ctrl.type = TC_CTRL_REQ_V0;
+
 	uint32_t dst_port = 5201; 
-        wr.tc_req_ctrl.msg = gen_add_osi_cls(dst_port);
+        wr.ctrl.tc_req_ctrl.msg = gen_add_osi_cls(dst_port);
 
         control_sm_xapp_api(&nodes.n[0].id, TC_SM_ID_TEST, &wr);
-        free_tc_ctrl_msg(&wr.tc_req_ctrl.msg);
+        free_tc_ctrl_msg(&wr.ctrl.tc_req_ctrl.msg);
 
 	printf("Classifier done tstamp %ld \n", time_now_us() );
 

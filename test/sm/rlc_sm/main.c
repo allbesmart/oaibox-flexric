@@ -43,12 +43,12 @@ static
 void read_RAN(sm_ag_if_rd_t* read)
 {
   assert(read != NULL);
-  assert(read->type == INDICATION_MSG__AGENT_IF_ANS_V0);
+  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
   assert(read->ind.type == RLC_STATS_V0);
 
-  fill_rlc_ind_data(read->ind.rlc_ind);
-  cp.hdr = cp_rlc_ind_hdr(&read->ind.rlc_ind->hdr);
-  cp.msg = cp_rlc_ind_msg(&read->ind.rlc_ind->msg);
+  fill_rlc_ind_data(&read->ind.rlc_ind);
+  cp.hdr = cp_rlc_ind_hdr(&read->ind.rlc_ind.hdr);
+  cp.msg = cp_rlc_ind_msg(&read->ind.rlc_ind.msg);
 }
 
 
@@ -79,9 +79,13 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
 {
   assert(ag != NULL);
   assert(ric != NULL);
+
+  sm_ag_if_wr_subs_t sub = {.type = RLC_SUBS_V0};
+  sub.rlc.et.ms = 2;
+  sm_subs_data_t data = ric->proc.on_subscription(ric, &sub);
  
-  sm_subs_data_t data = ric->proc.on_subscription(ric, "2_ms");
-  ag->proc.on_subscription(ag, &data); 
+  subscribe_timer_t t = ag->proc.on_subscription(ag, &data); 
+  assert(t.ms == sub.rlc.et.ms);
 
   free_sm_subs_data(&data);
 }
@@ -104,15 +108,14 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
     assert(sm_data.len_msg != 0);
   }
 
- sm_ag_if_rd_t msg = ric->proc.on_indication(ric, &sm_data);
+ sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
 
-  assert(msg.type == INDICATION_MSG_AGENT_IF_ANS_V0);
-  assert(msg.ind.type == RLC_STATS_V0);
+  assert(msg.type == RLC_STATS_V0);
 
-  rlc_ind_data_t* data = msg.ind.rlc_ind;
+  rlc_ind_data_t* data = &msg.rlc_ind;
 
- if(msg.ind.rlc_ind->msg.rb != NULL){
-      assert(msg.ind.rlc_ind->msg.len != 0);
+ if(msg.rlc_ind.msg.rb != NULL){
+      assert(msg.rlc_ind.msg.len != 0);
  } 
 
   assert(eq_rlc_ind_hdr(&data->hdr, &cp.hdr) == true);

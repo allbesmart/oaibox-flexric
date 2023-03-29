@@ -286,21 +286,21 @@ void print_kpm_stats(kpm_ind_data_t const* kpm)
   fputs("\n", fp);
 }
 
-void notify_stdout_listener(sm_ag_if_rd_t const* data)
+void notify_stdout_listener(sm_ag_if_rd_ind_t  const* data)
 {
   assert(data != NULL);
   if(data->type == MAC_STATS_V0)  
-    print_mac_stats(&data->mac_stats.msg);
+    print_mac_stats(&data->mac_ind.msg);
   else if (data->type == RLC_STATS_V0)
-    print_rlc_stats(&data->rlc_stats.msg);
+    print_rlc_stats(&data->rlc_ind.msg);
   else if (data->type == PDCP_STATS_V0)
-    print_pdcp_stats(&data->pdcp_stats.msg);
+    print_pdcp_stats(&data->pdcp_ind.msg);
   else if (data->type == SLICE_STATS_V0)
-    print_slice_stats(&data->slice_stats.msg);
+    print_slice_stats(&data->slice_ind.msg);
   else if (data->type == GTP_STATS_V0)
-    print_gtp_stats(&data->gtp_stats.msg);
+    print_gtp_stats(&data->gtp_ind.msg);
   else if (data->type == KPM_STATS_V0)
-    print_kpm_stats(&data->kpm_stats);
+    print_kpm_stats(&data->kpm_ind);
   else
     assert(0!= 0);
 }

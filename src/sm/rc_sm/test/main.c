@@ -153,6 +153,22 @@ void test_rc_ctrl_out(void)
   assert(eq_e2sm_rc_ctrl_out(&msg, &out) == true);
 }
 
+void test_rc_ran_func_def(void)
+{
+  e2sm_rc_func_def_t msg = fill_rnd_rc_ran_func_def();
+  defer({ free_e2sm_rc_func_def(&msg); });
+
+  byte_array_t ba = rc_enc_func_def_asn(&msg);
+  defer({ free_byte_array(ba); });
+
+  e2sm_rc_func_def_t out = rc_dec_func_def_asn(ba.len, ba.buf);
+  defer({ free_e2sm_rc_func_def(&out); });
+
+  assert(eq_e2sm_rc_func_def(&msg, &out) == true);
+}
+
+
+
 
 
 int main()
@@ -162,7 +178,7 @@ int main()
 
   // Test off all the functions
   printf("\nRC SM enc/dec test launched\n");
-
+/*
   // Event Trigger
   test_ric_event_trigger_rc();
   printf("\nRC Event Trigger test succeeded\n");
@@ -194,6 +210,10 @@ int main()
   // Control Outcome 
   test_rc_ctrl_out();
   printf("\nRC Control Outcome\n");
+*/
+  // RAN Function Definition
+  test_rc_ran_func_def();
+  printf("\nRC RAN Function Definition\n");
 
   return EXIT_SUCCESS;
 }

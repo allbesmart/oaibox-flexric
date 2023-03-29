@@ -1205,3 +1205,29 @@ rc_ind_data_t fill_rnd_rc_ind_data(void)
   return dst;
 }
 
+rc_sub_data_t fill_rnd_rc_subscription(void) 
+{
+  rc_sub_data_t dst = {0}; 
+
+  dst.et = fill_rnd_rc_event_trigger();
+
+  // Action Definition
+
+  return dst;
+}
+
+e2sm_rc_ctrl_out_t fill_rc_ctrl_out(void)
+{
+  e2sm_rc_ctrl_out_t dst = fill_rnd_rc_ctrl_out();
+
+  return dst;
+}
+
+rc_ctrl_req_data_t fill_rc_ctrl(void)
+{
+rc_ctrl_req_data_t dst = {0};
+  dst.hdr = fill_rnd_rc_ctrl_hdr(); 
+  dst.msg = fill_rnd_rc_ctrl_msg();
+  return dst;
+}
+

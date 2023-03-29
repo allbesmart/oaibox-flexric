@@ -20,4 +20,6 @@ e2sm_rc_ctrl_msg_t fill_rnd_rc_ctrl_msg(void);
 
 e2sm_rc_ctrl_out_t fill_rnd_rc_ctrl_out(void);
 
+e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void);
+
 #endif

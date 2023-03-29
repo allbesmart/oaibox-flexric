@@ -56,7 +56,7 @@ set_property(CACHE SM_ENCODING_RC PROPERTY STRINGS "PLAIN" "ASN" "FLATBUFFERS")
 message(STATUS "Selected RC SM_ENCODING: ${SM_ENCODING_RC}")
 
 
-if(SM_ENCODING_RC  STREQUAL "PLAIN")
+if(SM_ENCODING_RC STREQUAL "PLAIN")
   include_directories(${CMAKE_CURRENT_SOURCE_DIR} )
   add_executable(test_rc_sm
                       main.c 
@@ -181,6 +181,10 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
     ../ie/ir/seq_ins_ind_act_def.c
     ../ie/ir/seq_ins_style_2.c
     ../ie/ir/seq_ins_ind_act_2.c
+
+
+    ../../../lib/sm/sm_common_ie/ran_function_name.c
+
 
     ../ie/ir/seq_ins_style_multiple_action.c 
 

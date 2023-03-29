@@ -36,5 +36,7 @@ void free_e2_node_info_chng(e2_node_info_chng_t* src);
 
 bool eq_e2_node_info_chng(e2_node_info_chng_t const* m0, e2_node_info_chng_t const* m1);
 
+e2_node_info_chng_t cp_e2_node_info_chng( e2_node_info_chng_t const* src);
+
 #endif
 

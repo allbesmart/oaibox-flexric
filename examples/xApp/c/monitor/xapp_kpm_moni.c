@@ -34,12 +34,13 @@ static
 void sm_cb_kpm(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == KPM_STATS_V0);
+  assert(rd->type ==INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == KPM_STATS_V0);
 
   int64_t now = time_now_us();
       
   // KPM has 1 second resolution in its indication header, while 'now' is in microseconds
-  int64_t diff = now/1000000 - (int64_t)rd->kpm_stats.hdr.collectStartTime;
+  int64_t diff = now/1000000 - (int64_t)rd->ind.kpm_stats.hdr.collectStartTime;
   if (diff > 1)
     printf("KPM ind_msg latency = %lu seconds\n", diff);
   else

@@ -54,7 +54,7 @@ typedef struct{
 // E2 Setup and RIC Service Update. 
 //
 static
-subscribe_timer_t  on_subscription_mac_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
+subscribe_timer_t on_subscription_mac_sm_ag(sm_agent_t const* sm_agent, const sm_subs_data_t* data)
 {
   assert(sm_agent != NULL);
   assert(data != NULL);
@@ -66,14 +66,12 @@ subscribe_timer_t  on_subscription_mac_sm_ag(sm_agent_t* sm_agent, const sm_subs
   subscribe_timer_t timer = {.ms = ev.ms };
   return timer;
 //  const sm_wr_if_t wr = {.type = SUBSCRIBE_TIMER, .sub_timer = timer };
-
 //  sm->base.io.write(&wr);
-
 //  printf("on_subscription called with event trigger = %u \n", ev.ms);
 }
 
 static
-sm_ind_data_t on_indication_mac_sm_ag(sm_agent_t* sm_agent)
+sm_ind_data_t on_indication_mac_sm_ag(sm_agent_t const* sm_agent)
 {
   //printf("on_indication called \n");
 
@@ -89,21 +87,20 @@ sm_ind_data_t on_indication_mac_sm_ag(sm_agent_t* sm_agent)
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message 
-  
-  sm_ag_if_rd_t rd_if = {0};
+  sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
+  rd_if.ind.type = MAC_STATS_V0;
 
-  rd_if.type = MAC_STATS_V0;
   // This may allocate memory by the RAN
   sm->base.io.read(&rd_if);
-  // Liberate the memory if previously allocated by the RAN. It sucks
+  // Liberate the memory if previously allocated by the RAN. It sucks. Profoundly
 //  defer({ free_sm_rd_if(&rd_if); }; );
-    mac_ind_data_t* ind = &rd_if.mac_stats;
+    mac_ind_data_t* ind = &rd_if.ind.mac_ind;
   defer({ free_mac_ind_hdr(&ind->hdr) ;});
   defer({ free_mac_ind_msg(&ind->msg) ;});
   defer({ free_mac_call_proc_id(ind->proc_id);});
 
 
-  byte_array_t ba = mac_enc_ind_msg(&sm->enc, &rd_if.mac_stats.msg);
+  byte_array_t ba = mac_enc_ind_msg(&sm->enc, &ind->msg);
 
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
@@ -116,7 +113,7 @@ sm_ind_data_t on_indication_mac_sm_ag(sm_agent_t* sm_agent)
 }
 
 static
- sm_ctrl_out_data_t on_control_mac_sm_ag(sm_agent_t* sm_agent, sm_ctrl_req_data_t const* data)
+sm_ctrl_out_data_t on_control_mac_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_req_data_t const* data)
 {
   assert(sm_agent != NULL);
   assert(data != NULL);
@@ -128,9 +125,11 @@ static
   mac_ctrl_msg_t msg = mac_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
   assert(msg.action == 42 && "Only action number 42 supported");
 
-  sm_ag_if_wr_t wr = {.type = MAC_CTRL_REQ_V0 };
-  wr.mac_ctrl.hdr.dummy = 0;
-  wr.mac_ctrl.msg.action = msg.action;
+  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
+  wr.ctrl.type = MAC_CTRL_REQ_V0; 
+
+  wr.ctrl.mac_ctrl.hdr.dummy = 0;
+  wr.ctrl.mac_ctrl.msg.action = msg.action;
 
   sm->base.io.write(&wr);
   sm_ctrl_out_data_t ret = {0};
@@ -142,14 +141,23 @@ static
 }
 
 static
-sm_e2_setup_t on_e2_setup_mac_sm_ag(sm_agent_t* sm_agent)
+sm_e2_setup_data_t on_e2_setup_mac_sm_ag(sm_agent_t const* sm_agent)
 {
   assert(sm_agent != NULL);
 //  printf("[E2SM MAC] on_e2_setup called \n");
 
+  // Fill E2 Setup Request 
+  // sm_ag_if_rd_t rd_if = {.type = E2_SETUP__AGENT_IF_ANS_V0};
+  // rd_if.e2ap.type = MAC_AGENT_IF_E2_SETUP_ANS_V0;
+
+  // This may allocate memory by the RAN
+  // sm->base.io.read(&rd_if);
+  // Liberate the memory if previously allocated by the RAN. It sucks. Profoundly
+  //mac_e2_setup_data_t* setup = &rd_if.e2ap.mac;
+
   sm_mac_agent_t* sm = (sm_mac_agent_t*)sm_agent;
 
-  sm_e2_setup_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
+  sm_e2_setup_data_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
 
   setup.len_rfd = strlen(sm->base.ran_func_name);
   setup.ran_fun_def = calloc(1, strlen(sm->base.ran_func_name));
@@ -160,13 +168,14 @@ sm_e2_setup_t on_e2_setup_mac_sm_ag(sm_agent_t* sm_agent)
 }
 
 static
-void on_ric_service_update_mac_sm_ag(sm_agent_t* sm_agent, sm_ric_service_update_t const* data)
+ sm_ric_service_update_data_t on_ric_service_update_mac_sm_ag(sm_agent_t const* sm_agent)
 {
   assert(sm_agent != NULL);
-  assert(data != NULL);
-
+  assert(0!=0 && "Not implemented");
 
   printf("on_ric_service_update called \n");
+  sm_ric_service_update_data_t dst = {0}; 
+  return dst;
 }
 
 static
@@ -182,7 +191,6 @@ sm_agent_t* make_mac_sm_agent(sm_io_ag_t io)
 {
   sm_mac_agent_t* sm = calloc(1, sizeof(sm_mac_agent_t));
   assert(sm != NULL && "Memory exhausted!!!");
-
 
   sm->base.io = io;
   sm->base.free_sm = free_mac_sm_ag;

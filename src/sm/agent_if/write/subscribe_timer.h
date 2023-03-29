@@ -27,7 +27,7 @@
 #include <stdint.h>
 
 typedef struct{
-  uint32_t ms;
+  int64_t ms;
 } subscribe_timer_t;
 
 #endif

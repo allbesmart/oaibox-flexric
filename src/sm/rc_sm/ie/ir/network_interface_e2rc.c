@@ -47,3 +47,26 @@ bool eq_network_interface_e2rc( network_interface_e2rc_t const* m0, network_inte
   return true;
 }
 
+network_interface_e2rc_t cp_network_interface_e2rc(network_interface_e2rc_t const* src)
+{
+  assert(src != NULL);
+
+  network_interface_e2rc_t dst = {0}; 
+  // NI Type
+  // Mandatory
+  // 9.3.32
+  dst.ni_type = src->ni_type;
+
+  // NI Identifier
+  // Optional
+  // 9.3.33
+  assert(src->ni_id == NULL && "Not implemented");
+
+  // NI Message
+  // Optional
+  // 9.3.34
+  assert(src->ni_msg_id == NULL && "Not implemented");
+
+  return dst;
+}
+

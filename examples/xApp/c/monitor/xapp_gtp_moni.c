@@ -33,11 +33,13 @@ static
 void sm_cb_gtp(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == GTP_STATS_V0);
+  assert(rd->type ==INDICATION_MSG_AGENT_IF_ANS_V0);
+
+  assert(rd->ind.type == GTP_STATS_V0);
 
   int64_t now = time_now_us();
 
-  printf("GTP ind_msg latency = %ld \n", now - rd->gtp_stats.msg.tstamp);
+  printf("GTP ind_msg latency = %ld \n", now - rd->ind.gtp_ind.msg.tstamp);
 }
 
 int main(int argc, char *argv[])

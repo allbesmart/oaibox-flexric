@@ -70,3 +70,34 @@ bool eq_e2sm_rc_ctrl_hdr_frmt_1(e2sm_rc_ctrl_hdr_frmt_1_t const* m0, e2sm_rc_ctr
   return true;
 }
 
+e2sm_rc_ctrl_hdr_frmt_1_t cp_e2sm_rc_ctrl_hdr_frmt_1( e2sm_rc_ctrl_hdr_frmt_1_t const* src)
+{
+  assert(src != NULL);
+
+  e2sm_rc_ctrl_hdr_frmt_1_t dst = {0}; 
+  // UE ID
+  // Mandatory
+  // 9.3.10
+  dst.ue_id = cp_ue_id_e2sm(&src->ue_id);   
+
+  // RIC Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2. 
+  // INTEGER
+  dst.ric_style_type = src->ric_style_type;
+
+  // Control Action ID
+  // Mandatory
+  // 9.3.6
+  // [1- 65535]
+  assert(src->ctrl_act_id > 0); 
+  dst.ctrl_act_id = src->ctrl_act_id;
+
+  // RIC Control decision
+  // Optional
+  assert(src->ric_ctrl_decision == NULL && "Not implemented");
+
+  return dst;
+}
+

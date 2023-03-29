@@ -116,7 +116,9 @@ void* worker_thread(void* arg)
     for(size_t i = 0; i < sz; ++i){
       write_db_gen(db->handler, &data[i].id, &data[i].rd);
       free_global_e2_node_id(&data[i].id);
-      free_sm_ag_if_rd(&data[i].rd);
+
+      assert(data[i].rd.type == INDICATION_MSG_AGENT_IF_ANS_V0);
+      free_sm_ag_if_rd_ind(&data[i].rd.ind);
     }
   }
   db->q.stopped = true;
@@ -144,7 +146,9 @@ void free_e2_node_ag_if_wrapper(void* it)
 
   e2_node_ag_if_t* d = (e2_node_ag_if_t*)it;
   free_global_e2_node_id(&d->id);
-  free_sm_ag_if_rd(&d->rd);
+
+  assert(d->rd.type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  free_sm_ag_if_rd_ind(&d->rd.ind);
 }
 
 
@@ -162,6 +166,7 @@ void write_db_xapp(db_xapp_t* db, global_e2_node_id_t const* id, sm_ag_if_rd_t c
   assert(db != NULL);
   assert(rd != NULL);
   assert(id != NULL);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
 
   e2_node_ag_if_t d = { .rd = cp_sm_ag_if_rd(rd) ,
                         .id = cp_global_e2_node_id(id) };

@@ -10,7 +10,6 @@
 // 9.2.1.1.4
 
 typedef struct{
-
  // Sequence of UE Information Change
  // [ 1 - 65535]
  size_t sz_ue_info_chng;
@@ -21,6 +20,8 @@ typedef struct{
 void free_e2sm_rc_ev_trg_frmt_4(e2sm_rc_ev_trg_frmt_4_t* src);
 
 bool eq_e2sm_rc_ev_trg_frmt_4( e2sm_rc_ev_trg_frmt_4_t const* m0, e2sm_rc_ev_trg_frmt_4_t const* m1);
+
+e2sm_rc_ev_trg_frmt_4_t cp_e2sm_rc_ev_trg_frmt_4(e2sm_rc_ev_trg_frmt_4_t const* src);
 
 #endif
 

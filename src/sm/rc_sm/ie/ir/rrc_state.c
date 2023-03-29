@@ -35,3 +35,18 @@ bool eq_rrc_state(rrc_state_t const* m0, rrc_state_t const* m1)
   return true;
 }
 
+rrc_state_t cp_rrc_state(rrc_state_t const* src)
+{
+  assert(src != NULL);
+  rrc_state_t dst = {0};
+
+  // 9.3.37
+  dst.state_chngd_to = src->state_chngd_to; 
+
+  // 9.3.25
+  // Logical OR
+  assert(src->log_or == NULL && "Not implemented");
+
+  return dst;
+}
+

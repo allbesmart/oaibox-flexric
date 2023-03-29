@@ -38,3 +38,27 @@ bool eq_ran_param_test_strct(ran_param_test_strct_t const* m0, ran_param_test_st
   return true;
 }
 
+ran_param_test_strct_t cp_ran_param_test_strct( ran_param_test_strct_t const* src)
+{
+  assert(src != NULL);
+
+  ran_param_test_strct_t dst = {0}; 
+
+  // [1- 65535]
+  assert(src->sz_strct > 0 && src->sz_strct <  65536);
+  dst.sz_strct = src->sz_strct;
+
+  // RAN Parameter Testing
+  // 9.3.30
+  dst.ran_param_test = calloc(dst.sz_strct, sizeof(ran_param_test_t) );
+  assert(dst.ran_param_test != NULL && "memory exhausted");
+
+  // RAN Parameter Testing
+  // 9.3.30
+  for(size_t i = 0; i < dst.sz_strct; ++i){
+    dst.ran_param_test[i] = cp_ran_param_test(&src->ran_param_test[i]);
+  } 
+
+  return dst;
+}
+

@@ -49,7 +49,7 @@ byte_array_t rc_enc_ctrl_msg_asn(e2sm_rc_ctrl_msg_t const*);
 
 byte_array_t rc_enc_ctrl_out_asn(e2sm_rc_ctrl_out_t const*); 
 
-byte_array_t rc_enc_func_def_asn(rc_func_def_t const*);
+byte_array_t rc_enc_func_def_asn(e2sm_rc_func_def_t const*);
 
 #endif
 

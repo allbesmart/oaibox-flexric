@@ -20,8 +20,8 @@
  */
 
 
-#ifndef RC_ENCRYPTION_GENERIC
-#define RC_ENCRYPTION_GENERIC 
+#ifndef RAN_CONTROL_ENCODE_GENERIC_H
+#define RAN_CONTROL_ENCODE_GENERIC_H 
 
 #include "rc_enc_asn.h"
 #include "rc_enc_fb.h"
@@ -73,13 +73,13 @@
                            rc_enc_plain_t*: rc_enc_ctrl_msg_plain , \
                            rc_enc_asn_t*: rc_enc_ctrl_msg_asn, \
                            rc_enc_fb_t*: rc_enc_ctrl_msg_fb, \
-                           default:  rc_enc_ctrl_msg_plain) (U)
+                           default: rc_enc_ctrl_msg_plain) (U)
 
 #define rc_enc_ctrl_out(T,U) _Generic ((T), \
                            rc_enc_plain_t*: rc_enc_ctrl_out_plain , \
                            rc_enc_asn_t*: rc_enc_ctrl_out_asn, \
                            rc_enc_fb_t*: rc_enc_ctrl_out_fb, \
-                           default:  rc_enc_ctrl_out_plain) (U)
+                           default: rc_enc_ctrl_out_plain) (U)
 
 #define rc_enc_func_def(T,U) _Generic ((T), \
                            rc_enc_plain_t*: rc_enc_func_def_plain, \

@@ -21,6 +21,7 @@ void free_e2sm_rc_ctrl_msg_frmt_2( e2sm_rc_ctrl_msg_frmt_2_t* src);
 
 bool eq_e2sm_rc_ctrl_msg_frmt_2( e2sm_rc_ctrl_msg_frmt_2_t const* m0,  e2sm_rc_ctrl_msg_frmt_2_t const* m1);
 
+e2sm_rc_ctrl_msg_frmt_2_t cp_e2sm_rc_ctrl_msg_frmt_2(e2sm_rc_ctrl_msg_frmt_2_t const* src);
 
 #endif
 

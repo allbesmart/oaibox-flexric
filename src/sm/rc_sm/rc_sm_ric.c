@@ -45,125 +45,106 @@ typedef struct{
 
 
 static
-sm_subs_data_t on_subscription_rc_sm_ric(sm_ric_t const* sm_ric, const char* cmd)
+sm_subs_data_t on_subscription_rc_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_subs_t  const* subs)
 {
   assert(sm_ric != NULL); 
-  assert(cmd != NULL); 
+  assert(subs != NULL); 
+  assert(subs->type == RAN_CTRL_SUBS_V1_03);
+  rc_sub_data_t const* src= &subs->rc_sub;
   sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
+  sm_subs_data_t dst = {0}; 
  
-/*
-  e2sm_rc_event_trigger_t ev = {0};
+  const byte_array_t ba = rc_enc_event_trigger(&sm->enc, &src->et); 
+  dst.event_trigger = ba.buf;
+  dst.len_et = ba.len;
 
-
-
-  const int max_str_sz = 10;
-  if(strncmp(cmd, "1_ms", max_str_sz) == 0 ){
-    ev.ms = 1;
-  } else if (strncmp(cmd, "2_ms", max_str_sz) == 0 ) {
-    ev.ms = 2;
-  } else if (strncmp(cmd, "5_ms", max_str_sz) == 0 ) {
-    ev.ms = 5;
-  } else if (strncmp(cmd, "10_ms", max_str_sz) == 0 ) {
-    ev.ms = 10;
-  } else {
-    assert(0 != 0 && "Invalid input");
+  if(src->ad != NULL){
+    const byte_array_t ba = rc_enc_action_def(&sm->enc, src->ad); 
+    dst.event_trigger = ba.buf;
+    dst.len_et = ba.len;
   }
-  const byte_array_t ba = rc_enc_event_trigger(&sm->enc, &ev); 
-*/
-  sm_subs_data_t data = {0}; 
-  
-  // Event trigger IE
- // data.event_trigger = ba.buf;
- // data.len_et = ba.len;
 
-  // Action Definition IE
- // data.action_def = NULL;
- // data.len_ad = 0;
-
-  return data;
+  return dst;
 }
 
 static
-sm_ag_if_rd_t on_indication_rc_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t* data)
+sm_ag_if_rd_ind_t on_indication_rc_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t const* src)
 {
   assert(sm_ric != NULL); 
-  assert(data != NULL); 
+  assert(src != NULL); 
   sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
 
-  sm_ag_if_rd_t rd_if = {.type = RC_STATS_V1_03};
+  sm_ag_if_rd_ind_t dst = {.type = RAN_CTRL_STATS_V1_03}; 
 
-  rd_if.rc_ind.hdr = rc_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
-  rd_if.rc_ind.msg = rc_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
-  assert(data->call_process_id == NULL && "Not implemented");
+  dst.rc_ind.hdr = rc_dec_ind_hdr(&sm->enc, src->len_hdr, src->ind_hdr);
+  dst.rc_ind.msg = rc_dec_ind_msg(&sm->enc, src->len_msg, src->ind_msg);
+  assert(src->call_process_id == NULL && "Not implemented");
 
-  return rd_if;
+  return dst;
 }
 
 static
- sm_ctrl_req_data_t ric_on_control_req_rc_sm_ric(sm_ric_t const* sm_ric, const sm_ag_if_wr_t* data)
+sm_ctrl_req_data_t ric_on_control_req_rc_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_ctrl_t const* src)
 {
   assert(sm_ric != NULL); 
-  assert(data != NULL); 
-  assert(data->type == RC_STATS_V1_03);
+  assert(src != NULL); 
+  assert(src->type == RAN_CONTROL_CTRL_V1_03);
+  sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
+
+  rc_ctrl_req_data_t const* req = &src->rc_ctrl;
+  sm_ctrl_req_data_t dst = {0};
+ 
+  // Header
+  byte_array_t ba_hdr = rc_enc_ctrl_hdr(&sm->enc, &req->hdr);
+  dst.ctrl_hdr = ba_hdr.buf;
+  dst.len_hdr = ba_hdr.len;
+
+  // Message
+  byte_array_t ba_msg = rc_enc_ctrl_msg(&sm->enc, &req->msg);
+  dst.ctrl_msg = ba_msg.buf;
+  dst.len_msg = ba_msg.len;
+
+  return dst;
+}
+
+static
+sm_ag_if_ans_ctrl_t ric_on_control_out_rc_sm_ric(sm_ric_t const* sm_ric, const sm_ctrl_out_data_t * src)
+{
+  assert(sm_ric != NULL); 
+  assert(src != NULL);
+  sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
+
+  sm_ag_if_ans_ctrl_t dst = {.type = RAN_CTRL_V1_3_AGENT_IF_CTRL_ANS_V0}; 
+  dst.rc = rc_dec_ctrl_out(&sm->enc, src->len_out, src->ctrl_out);
+
+  return dst;
+}
+
+static
+sm_ag_if_rd_e2setup_t ric_on_e2_setup_rc_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_data_t const* src)
+{
+  assert(sm_ric != NULL); 
+  assert(src != NULL); 
+  sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
+
+  sm_ag_if_rd_e2setup_t dst = {.type = RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0};  
+
+  dst.rc.func_def = rc_dec_func_def(&sm->enc, src->len_rfd, src->ran_fun_def);
+
+  return dst;
+}
+
+static
+sm_ag_if_rd_rsu_t on_ric_service_update_rc_sm_ric(sm_ric_t const* sm_ric, sm_ric_service_update_data_t const* src)
+{
+  assert(sm_ric != NULL); 
+  assert(src != NULL); 
+  sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
 
   assert(0!=0 && "Not implemented");
 
-
-  rc_ctrl_req_data_t const* req = &data->rc_ctrl;
-  assert(0!=0 && "Fix control header");
-//  assert(req->hdr.dummy == 0);
-//  assert(req->msg.action == 42);
-
-  sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
-
-//  byte_array_t ba = rc_enc_ctrl_hdr(&sm->enc, &req->hdr);
-  
-  sm_ctrl_req_data_t ret_data = {0};  
-/*
-  ret_data.ctrl_hdr = ba.buf;
-  ret_data.len_hdr = ba.len;
-
-  ba = rc_enc_ctrl_msg(&sm->enc, &req->msg);
-  ret_data.ctrl_msg = ba.buf;
-  ret_data.len_msg = ba.len;
-*/
-  return ret_data;
-}
-
-static
-sm_ag_if_ans_t ric_on_control_out_rc_sm_ric(sm_ric_t const* sm_ric,const sm_ctrl_out_data_t * out)
-{
-  assert(sm_ric != NULL); 
-  assert(out != NULL);
-
-  sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
-
-  sm_ag_if_ans_t ag_if = {.type =  RC_AGENT_IF_CTRL_ANS_V1_3};  
-
-  //ag_if.rc = rc_dec_ctrl_out(&sm->enc, out->len_out, out->ctrl_out);
-  //assert(ag_if.rc.ans ==  RC_CTRL_OUT_OK);
-
-  return ag_if;
-}
-
-static
-void ric_on_e2_setup_rc_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* setup)
-{
-  assert(sm_ric != NULL); 
-  assert(setup == NULL); 
-//  sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
-
-  assert(0!=0 && "Not implemented");
-}
-
-static
-sm_ric_service_update_t on_ric_service_update_rc_sm_ric(sm_ric_t const* sm_ric, const char* data)
-{
-  assert(sm_ric != NULL); 
-  assert(data != NULL); 
-//  sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
-
-  assert(0!=0 && "Not implemented");
+  sm_ag_if_rd_rsu_t dst = {0}; 
+  return dst;
 }
 
 static
@@ -254,9 +235,8 @@ sm_ric_t* make_rc_sm_ric(void /* sm_io_ric_t io */)
   sm->base.proc.on_ric_service_update = on_ric_service_update_rc_sm_ric; 
   sm->base.handle = NULL;
 
-  assert(strlen(SM_RC_STR) < sizeof( sm->base.ran_func_name) );
-  memcpy(sm->base.ran_func_name, SM_RC_STR, strlen(SM_RC_STR)); 
-
+  assert(strlen(SM_RAN_CTRL_SHORT_NAME) < sizeof( sm->base.ran_func_name) );
+  memcpy(sm->base.ran_func_name,SM_RAN_CTRL_SHORT_NAME, strlen( SM_RAN_CTRL_SHORT_NAME)); 
 
   return &sm->base;
 }

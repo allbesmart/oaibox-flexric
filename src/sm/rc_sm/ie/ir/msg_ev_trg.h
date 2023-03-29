@@ -19,9 +19,7 @@ typedef enum{
 
 
 typedef enum{
-
   NETWORK_INTERFACE_MSG_TYPE_EV_TRG,
-
   RRC_MSG_MSG_TYPE_EV_TRG,
 
   END_MSG_MSG_TYPE_EV_TRG,
@@ -61,18 +59,13 @@ typedef struct{
   // 9.3.25
   logical_or_e* log_or;
 
-
 } msg_ev_trg_t;
-
 
 void free_msg_ev_trg(msg_ev_trg_t* src);
 
 bool eq_msg_ev_trg(msg_ev_trg_t const* m0, msg_ev_trg_t const* m1);
 
-//{
-//  assert(src != NULL);
-//}
-
+msg_ev_trg_t cp_msg_ev_trg( msg_ev_trg_t const* src);
 
 #endif
 

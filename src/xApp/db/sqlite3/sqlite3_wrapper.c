@@ -1230,24 +1230,27 @@ void close_db_sqlite3(sqlite3* db)
   assert(rc == SQLITE_OK && "Error while closing the DB");
 }
 
-void write_db_sqlite3(sqlite3* db, global_e2_node_id_t const* id, sm_ag_if_rd_t const* rd)
+void write_db_sqlite3(sqlite3* db, global_e2_node_id_t const* id, sm_ag_if_rd_t const* ag_rd)
 {
   assert(db != NULL);
-  assert(rd != NULL);
+  assert(ag_rd != NULL);
+  assert(ag_rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+
+  sm_ag_if_rd_ind_t const* rd = &ag_rd->ind; 
   assert(rd->type == MAC_STATS_V0 || rd->type == RLC_STATS_V0|| rd->type == PDCP_STATS_V0 || rd->type == SLICE_STATS_V0 ||rd->type ==KPM_STATS_V0 ||rd->type == GTP_STATS_V0);
 
   if(rd->type == MAC_STATS_V0){
-    write_mac_stats(db, id, &rd->mac_stats);
+    write_mac_stats(db, id, &rd->mac_ind);
   } else if(rd->type == RLC_STATS_V0 ){
-    write_rlc_stats(db, id, &rd->rlc_stats);
+    write_rlc_stats(db, id, &rd->rlc_ind);
   } else if( rd->type == PDCP_STATS_V0) {
-    write_pdcp_stats(db, id, &rd->pdcp_stats);
+    write_pdcp_stats(db, id, &rd->pdcp_ind);
   } else if (rd->type == SLICE_STATS_V0) {
-    write_slice_stats(db, id, &rd->slice_stats);
+    write_slice_stats(db, id, &rd->slice_ind);
   } else if (rd->type == GTP_STATS_V0) {
-    write_gtp_stats(db, id, &rd->gtp_stats);
+    write_gtp_stats(db, id, &rd->gtp_ind);
   } else if (rd->type == KPM_STATS_V0) {
-    write_kpm_stats(db, id, &rd->kpm_stats);
+    write_kpm_stats(db, id, &rd->kpm_ind);
   } else {
     assert(0!=0 && "Unknown statistics type received ");
   }

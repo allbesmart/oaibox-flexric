@@ -143,16 +143,20 @@ e2ap_msg_t e2ap_handle_subscription_request_agent(e2_agent_t* ag, const e2ap_msg
   uint16_t const ran_func_id = sr->ric_id.ran_func_id; 
   sm_agent_t* sm = sm_plugin_ag(&ag->plugin, ran_func_id);
   subscribe_timer_t t = sm->proc.on_subscription(sm, &data);
-  int fd_timer = create_timer_ms_asio_agent(&ag->io, t.ms, t.ms); 
-  //printf("fd_timer for subscription value created == %d\n", fd_timer);
+  assert(t.ms > -2 && "Bug?"); 
 
-  // Register the indication event
-  ind_event_t ev;
-  ev.action_id = sr->action[0].id;
-  ev.ric_id = sr->ric_id;
-  ev.sm = sm;
-  bi_map_insert(&ag->ind_event, &fd_timer, sizeof(fd_timer), &ev, sizeof(ev));
+  if(t.ms > 0){
+    assert(t.ms < 10001 && "Subscription for granularity larger than 10 seconds requested? ");
+    int fd_timer = create_timer_ms_asio_agent(&ag->io, t.ms, t.ms); 
+    //printf("fd_timer for subscription value created == %d\n", fd_timer);
 
+    // Register the indication event
+    ind_event_t ev;
+    ev.action_id = sr->action[0].id;
+    ev.ric_id = sr->ric_id;
+    ev.sm = sm;
+    bi_map_insert(&ag->ind_event, &fd_timer, sizeof(fd_timer), &ev, sizeof(ev));
+  }
   uint8_t const ric_act_id = sr->action[0].id;
   e2ap_msg_t ans = {.type = RIC_SUBSCRIPTION_RESPONSE, 
                     .u_msgs.ric_sub_resp = generate_subscription_response(&sr->ric_id, ric_act_id) };

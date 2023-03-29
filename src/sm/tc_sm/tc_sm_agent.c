@@ -32,7 +32,7 @@ typedef struct{
 // E2 Setup and RIC Service Update. 
 //
 static
-subscribe_timer_t  on_subscription_tc_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
+subscribe_timer_t on_subscription_tc_sm_ag(sm_agent_t const* sm_agent, const sm_subs_data_t* data)
 {
   assert(sm_agent != NULL);
   assert(data != NULL);
@@ -43,18 +43,11 @@ subscribe_timer_t  on_subscription_tc_sm_ag(sm_agent_t* sm_agent, const sm_subs_
 
   subscribe_timer_t timer = {.ms = ev.ms };
   return timer;
-//  const sm_wr_if_t wr = {.type = SUBSCRIBE_TIMER, .sub_timer = timer };
-
-//  sm->base.io.write(&wr);
-
-//  printf("on_subscription called with event trigger = %u \n", ev.ms);
 }
 
 static
-sm_ind_data_t on_indication_tc_sm_ag(sm_agent_t* sm_agent)
+sm_ind_data_t on_indication_tc_sm_ag(sm_agent_t const* sm_agent)
 {
-//  printf("on_indication SLICE called \n");
-
   assert(sm_agent != NULL);
   sm_tc_agent_t* sm = (sm_tc_agent_t*)sm_agent;
 
@@ -67,17 +60,17 @@ sm_ind_data_t on_indication_tc_sm_ag(sm_agent_t* sm_agent)
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message 
-  sm_ag_if_rd_t rd_if = {0};
-  rd_if.type = TC_STATS_V0;
+  sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
+  rd_if.ind.type = TC_STATS_V0;
   sm->base.io.read(&rd_if);
 
 // Liberate the memory if previously allocated by the RAN. It sucks
-  tc_ind_data_t* ind = &rd_if.tc_stats;
+  tc_ind_data_t* ind = &rd_if.ind.tc_ind;
   defer({ free_tc_ind_hdr(&ind->hdr) ;});
   defer({ free_tc_ind_msg(&ind->msg) ;});
   defer({ free_tc_call_proc_id(ind->proc_id);});
 
-  byte_array_t ba = tc_enc_ind_msg(&sm->enc, &rd_if.tc_stats.msg);
+  byte_array_t ba = tc_enc_ind_msg(&sm->enc, &rd_if.ind.tc_ind.msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 
@@ -89,25 +82,28 @@ sm_ind_data_t on_indication_tc_sm_ag(sm_agent_t* sm_agent)
 }
 
 static
-sm_ctrl_out_data_t on_control_tc_sm_ag(sm_agent_t* sm_agent, sm_ctrl_req_data_t const* data)
+sm_ctrl_out_data_t on_control_tc_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_req_data_t const* data)
 {
   assert(sm_agent != NULL);
   assert(data != NULL);
   sm_tc_agent_t* sm = (sm_tc_agent_t*) sm_agent;
 
+  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+  wr.ctrl.type = TC_CTRL_REQ_V0;
 
-  sm_ag_if_wr_t wr = {.type = TC_CTRL_REQ_V0 };
-  wr.tc_req_ctrl.hdr = tc_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
-  defer({ free_tc_ctrl_hdr(&wr.tc_req_ctrl.hdr ); });
+  wr.ctrl.tc_req_ctrl.hdr = tc_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
+  defer({ free_tc_ctrl_hdr(&wr.ctrl.tc_req_ctrl.hdr ); });
 
-  wr.tc_req_ctrl.msg = tc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
-  defer({ free_tc_ctrl_msg(&wr.tc_req_ctrl.msg); });
+  wr.ctrl.tc_req_ctrl.msg = tc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
+  defer({ free_tc_ctrl_msg(&wr.ctrl.tc_req_ctrl.msg); });
    
   sm_ag_if_ans_t ans = sm->base.io.write(&wr);
-  assert(ans.type == TC_AGENT_IF_CTRL_ANS_V0);
-  defer({free_tc_ctrl_out(&ans.tc); });
+  defer({free_tc_ctrl_out(&ans.ctrl_out.tc); });
 
-  byte_array_t ba = tc_enc_ctrl_out(&sm->enc, &ans.tc);
+  assert(ans.type == CTRL_OUTCOME_SM_AG_IF_ANS_V0);
+  assert(ans.ctrl_out.type == TC_AGENT_IF_CTRL_ANS_V0);
+
+  byte_array_t ba = tc_enc_ctrl_out(&sm->enc, &ans.ctrl_out.tc);
 
   sm_ctrl_out_data_t ret = {0};
   ret.len_out = ba.len;
@@ -117,13 +113,15 @@ sm_ctrl_out_data_t on_control_tc_sm_ag(sm_agent_t* sm_agent, sm_ctrl_req_data_t 
 }
 
 static
-sm_e2_setup_t on_e2_setup_tc_sm_ag(sm_agent_t* sm_agent)
+sm_e2_setup_data_t on_e2_setup_tc_sm_ag(sm_agent_t const* sm_agent)
 {
   assert(sm_agent != NULL);
 //  printf("on_e2_setup called \n");
   sm_tc_agent_t* sm = (sm_tc_agent_t*)sm_agent;
 
-  sm_e2_setup_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
+  sm_e2_setup_data_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
+
+  // ToDo: RAN Function should be filled from the RAN
 
   setup.len_rfd = strlen(sm->base.ran_func_name);
   setup.ran_fun_def = calloc(1, strlen(sm->base.ran_func_name));
@@ -134,13 +132,15 @@ sm_e2_setup_t on_e2_setup_tc_sm_ag(sm_agent_t* sm_agent)
 }
 
 static
-void on_ric_service_update_tc_sm_ag(sm_agent_t* sm_agent, sm_ric_service_update_t const* data)
+sm_ric_service_update_data_t on_ric_service_update_tc_sm_ag(sm_agent_t const* sm_agent)
 {
   assert(sm_agent != NULL);
-  assert(data != NULL);
 
+  assert(0!=0 && "Not implemented");
 
   printf("on_ric_service_update called \n");
+  sm_ric_service_update_data_t dst = {0};
+  return dst;
 }
 
 static

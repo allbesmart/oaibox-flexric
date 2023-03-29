@@ -38,13 +38,14 @@ static
 void sm_cb_slice(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == SLICE_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == SLICE_STATS_V0);
 
   int64_t now = time_now_us();
 
-  printf("SLICE ind_msg latency = %ld \n", now - rd->slice_stats.msg.tstamp);
-  if (rd->slice_stats.msg.ue_slice_conf.len_ue_slice > 0)
-    assoc_rnti = rd->slice_stats.msg.ue_slice_conf.ues->rnti; // TODO: assign the rnti after get the indication msg
+  printf("SLICE ind_msg latency = %ld \n", now - rd->ind.slice_ind.msg.tstamp);
+  if (rd->ind.slice_ind.msg.ue_slice_conf.len_ue_slice > 0)
+    assoc_rnti = rd->ind.slice_ind.msg.ue_slice_conf.ues->rnti; // TODO: assign the rnti after get the indication msg
 }
 
 static
@@ -204,24 +205,24 @@ sm_ag_if_wr_t fill_slice_sm_ctrl_req(uint16_t ran_func_id, slice_ctrl_msg_e type
 {
   assert(ran_func_id == 145);
 
-  sm_ag_if_wr_t wr = {0};
-  wr.type = SM_AGENT_IF_WRITE_V0_END;
+  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+
   if (ran_func_id == 145) {
-    wr.type = SLICE_CTRL_REQ_V0;
-    wr.slice_req_ctrl.hdr.dummy = 0;
+    wr.ctrl.type = SLICE_CTRL_REQ_V0;
+    wr.ctrl.slice_req_ctrl.hdr.dummy = 0;
 
     if (type == SLICE_CTRL_SM_V0_ADD) {
       /// ADD MOD ///
-      wr.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_ADD;
-      fill_add_mod_slice(&wr.slice_req_ctrl.msg.u.add_mod_slice);
+      wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_ADD;
+      fill_add_mod_slice(&wr.ctrl.slice_req_ctrl.msg.u.add_mod_slice);
     } else if (type == SLICE_CTRL_SM_V0_DEL) {
       /// DEL ///
-      wr.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_DEL;
-      fill_del_slice(&wr.slice_req_ctrl.msg.u.del_slice);
+      wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_DEL;
+      fill_del_slice(&wr.ctrl.slice_req_ctrl.msg.u.del_slice);
     } else if (type == SLICE_CTRL_SM_V0_UE_SLICE_ASSOC) {
       /// ASSOC SLICE ///
-      wr.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_UE_SLICE_ASSOC;
-      fill_assoc_ue_slice(&wr.slice_req_ctrl.msg.u.ue_slice);
+      wr.ctrl.slice_req_ctrl.msg.type = SLICE_CTRL_SM_V0_UE_SLICE_ASSOC;
+      fill_assoc_ue_slice(&wr.ctrl.slice_req_ctrl.msg.u.ue_slice);
     } else {
       assert(0 != 0 && "Unknown slice ctrl type");
     }
@@ -266,21 +267,21 @@ int main(int argc, char *argv[])
     // Control ADD slice
     sm_ag_if_wr_t ctrl_msg_add = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_ADD);
     control_sm_xapp_api(&nodes.n[i].id, SM_SLICE_ID, &ctrl_msg_add);
-    free_slice_ctrl_msg(&ctrl_msg_add.slice_req_ctrl.msg);
+    free_slice_ctrl_msg(&ctrl_msg_add.ctrl.slice_req_ctrl.msg);
 
     sleep(10);
 
     // Control DEL slice
     sm_ag_if_wr_t ctrl_msg_del = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_DEL);
     control_sm_xapp_api(&nodes.n[i].id, SM_SLICE_ID, &ctrl_msg_del);
-    free_slice_ctrl_msg(&ctrl_msg_del.slice_req_ctrl.msg);
+    free_slice_ctrl_msg(&ctrl_msg_del.ctrl.slice_req_ctrl.msg);
 
     sleep(20);
 
     // Control ASSOC slice
     sm_ag_if_wr_t ctrl_msg_assoc = fill_slice_sm_ctrl_req(SM_SLICE_ID, SLICE_CTRL_SM_V0_UE_SLICE_ASSOC);
     control_sm_xapp_api(&nodes.n[i].id, SM_SLICE_ID, &ctrl_msg_assoc);
-    free_slice_ctrl_msg(&ctrl_msg_assoc.slice_req_ctrl.msg);
+    free_slice_ctrl_msg(&ctrl_msg_assoc.ctrl.slice_req_ctrl.msg);
 
     sleep(20);
   }

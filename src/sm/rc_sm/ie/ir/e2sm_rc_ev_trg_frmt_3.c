@@ -4,7 +4,7 @@
 
 
 
-void free_e2sm_rc_ev_trg_frmt_3(e2sm_rc_ev_trg_frmt_3_t const* src)
+void free_e2sm_rc_ev_trg_frmt_3(e2sm_rc_ev_trg_frmt_3_t* src)
 {
   assert(src != NULL);
 
@@ -44,5 +44,26 @@ bool eq_e2sm_rc_ev_trg_frmt_3(e2sm_rc_ev_trg_frmt_3_t const* m0, e2sm_rc_ev_trg_
   }
 
   return true;
+}
+
+e2sm_rc_ev_trg_frmt_3_t cp_e2sm_rc_ev_trg_frmt_3(e2sm_rc_ev_trg_frmt_3_t const* src)
+{
+  assert(src != NULL);
+  e2sm_rc_ev_trg_frmt_3_t dst = {0};
+
+  // Sequence of E2 Node
+  // Information Change
+  // [1 - 65535]
+  assert(src->sz_e2_node_info_chng > 0 && src->sz_e2_node_info_chng <  65536);
+  dst.sz_e2_node_info_chng = src->sz_e2_node_info_chng;
+
+  dst.e2_node_info_chng = calloc(dst.sz_e2_node_info_chng, sizeof(e2_node_info_chng_t) );
+  assert(dst.e2_node_info_chng != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < src->sz_e2_node_info_chng; ++i){
+    dst.e2_node_info_chng[i] = cp_e2_node_info_chng(&src->e2_node_info_chng[i]);
+  }
+
+  return dst;
 }
 

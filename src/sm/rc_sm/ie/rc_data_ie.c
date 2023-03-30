@@ -618,7 +618,10 @@ void free_e2sm_rc_func_def(e2sm_rc_func_def_t* src)
   // RAN Function Definition for EVENT TRIGGER
   // Optional
   // 9.2.2.2
-  assert(src->ev_trig == NULL && "Not implemented");
+  if(src->ev_trig != NULL  ){ 
+    free_ran_func_def_ev_trig(src->ev_trig);
+    free(src->ev_trig);
+  }
 
   // RAN Function Definition for REPORT
   // Optional
@@ -700,8 +703,8 @@ bool eq_e2sm_rc_func_def(e2sm_rc_func_def_t const* m0, e2sm_rc_func_def_t const*
   // RAN Function Definition for EVENT TRIGGER
   // Optional
   // 9.2.2.2
-  assert(m0->ev_trig == NULL && "Not implemented");
-  assert(m1->ev_trig == NULL && "Not implemented");
+  if(eq_ran_func_def_ev_trig(m0->ev_trig, m1->ev_trig) == false)
+    return false;
 
   // RAN Function Definition for REPORT
   // Optional

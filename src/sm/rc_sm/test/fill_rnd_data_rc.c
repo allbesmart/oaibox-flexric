@@ -2301,12 +2301,188 @@ ran_function_name_t fill_rc_ran_func_name(void)
 }
 
 static
+seq_ev_trg_style_t fill_rnd_seq_ev_trg_style(void)
+{
+  seq_ev_trg_style_t dst = {0}; 
+
+  // RIC Event Trigger Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  //  INTEGER
+  dst.style = rand(); 
+
+  // RIC Event Trigger Style Name
+  // Mandatory
+  // 9.3.4
+  // 6.2.2.3
+  //PrintableString(SIZE(1..150,...))
+  const char name[] = "Beatiful"; 
+  dst.name = cp_str_to_ba(name);
+
+  // RIC Event Trigger Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  // INTEGER
+  dst.format = rand();
+
+  return dst;
+}
+
+static
+seq_ran_param_3_t fill_rnd_seq_ran_param_3(void)
+{
+  seq_ran_param_3_t dst = {0};
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  dst.id = rand() % 4294967295 + 1;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  char name[] = "FooBar42";
+  dst.name = cp_str_to_ba(name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  dst.def = NULL;
+
+  return dst;
+}
+
+static
+call_proc_break_t fill_rnd_call_proc_break(void)
+{
+call_proc_break_t dst = {0};
+
+  // Call Process Breakpoint ID
+  // Mandatory
+  // 9.3.49
+  // [1 - 65535]
+  dst.id = rand() + 1;
+
+  // Call Process Breakpoint Name
+  // Mandatory
+  // 9.3.50
+  // [1-150]
+  const char name[] = "Call Process Breakpoint Name"; 
+  dst.name = cp_str_to_ba(name);
+
+  // Sequence of Associated RAN Parameters
+  // [0-65535]
+  dst.sz_param = rand() % 4;// 65536;
+  if(dst.sz_param > 0){
+    dst.param = calloc(dst.sz_param , sizeof(seq_ran_param_3_t));
+    assert(dst.param != NULL && "Memory exhausted");
+  } 
+  for(size_t i = 0; i < dst.sz_param; ++i){
+    dst.param[i] = fill_rnd_seq_ran_param_3();
+  }
+
+  return dst;
+}
+
+
+
+static
+seq_call_proc_type_t fill_rnd_seq_call_proc_type(void)
+{
+seq_call_proc_type_t dst = {0}; 
+
+  // Call Process Type ID
+  // Mandatory
+  // 9.3.15
+  // [1- 65535]
+  dst.id = rand() + 1;
+
+  // Call Process Type Name
+  // Mandatory
+  // 9.3.19
+  // [1-150]
+  const char name[] = "Call Process Type Name";
+  dst.name = cp_str_to_ba(name);
+
+  // Sequence of Call Process Breakpoints
+  // [1-65535]
+  dst.sz_call_proc_break = (rand()%4) + 1 ;//  (rand()%65536) + 1; 
+  if(dst.sz_call_proc_break > 0){
+    dst.call_proc_break = calloc(dst.sz_call_proc_break, sizeof( call_proc_break_t )  ); 
+    assert(dst.call_proc_break != NULL && "Memory exhausted");
+  } 
+  for(size_t i = 0; i < dst.sz_call_proc_break; ++i){
+    dst. call_proc_break[i] = fill_rnd_call_proc_break();
+  }
+
+  return dst;
+}
+
+static
 ran_func_def_ev_trig_t fill_ran_func_def_ev_trig(void)
 {
-ran_func_def_ev_trig_t dst = {0}; 
+  ran_func_def_ev_trig_t dst = {0}; 
 
+  // Sequence of EVENT TRIGGER styles
+  // [1 - 63]
+  dst.sz_seq_ev_trg_style = (rand()% 4) + 1; // (rand()% 63) + 1;
 
-return dst;
+  dst.seq_ev_trg_style = calloc(dst.sz_seq_ev_trg_style, sizeof(seq_ev_trg_style_t) );
+  assert(dst.seq_ev_trg_style != NULL && "memory exhausted");
+
+  for(size_t i = 0; i < dst. sz_seq_ev_trg_style; ++i){
+    dst.seq_ev_trg_style[i] = fill_rnd_seq_ev_trg_style();
+  }
+  
+  // Sequence of RAN Parameters for L2 Variables
+  // [0 - 65535]  
+  dst.sz_seq_ran_param_l2_var = rand() % 4; // % 65536;
+  if(dst.sz_seq_ran_param_l2_var > 0 ){
+    dst.seq_ran_param_l2_var = calloc(dst.sz_seq_ran_param_l2_var, sizeof(seq_ran_param_3_t));
+    assert(dst.seq_ran_param_l2_var != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst.sz_seq_ran_param_l2_var; ++i){
+    dst.seq_ran_param_l2_var[i] = fill_rnd_seq_ran_param_3();
+  }
+
+  //Sequence of Call Process Types
+  // [0-65535]
+  dst.sz_seq_call_proc_type = rand() % 4; // % 65535; 
+  if(dst.sz_seq_call_proc_type > 0){
+    dst.seq_call_proc_type = calloc(dst.sz_seq_call_proc_type, sizeof(seq_call_proc_type_t));
+    assert(dst.seq_call_proc_type != NULL && "Memory exhausted" );
+  }
+  for(size_t i = 0; i < dst.sz_seq_call_proc_type; ++i){
+    dst.seq_call_proc_type[i] = fill_rnd_seq_call_proc_type(); 
+  }
+
+  // Sequence of RAN Parameters for Identifying UEs
+  // 0-65535
+  dst.sz_seq_ran_param_id_ue = rand() % 4; // 
+  if(dst.sz_seq_ran_param_id_ue > 0){
+    dst.seq_ran_param_id_ue = calloc(dst.sz_seq_ran_param_id_ue, sizeof(seq_ran_param_3_t));
+    assert(dst.seq_ran_param_id_ue != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst.sz_seq_ran_param_id_ue; ++i){
+    dst.seq_ran_param_id_ue[i] = fill_rnd_seq_ran_param_3();
+  }
+
+  // Sequence of RAN Parameters for Identifying Cells
+  // 0-65535
+  dst.sz_seq_ran_param_id_cell = rand() % 4; 
+  if(dst.sz_seq_ran_param_id_cell > 0){
+    dst.seq_ran_param_id_cell = calloc(dst.sz_seq_ran_param_id_cell, sizeof(seq_ran_param_3_t) );
+    assert(dst.seq_ran_param_id_cell != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst. sz_seq_ran_param_id_cell; ++i){
+    dst.seq_ran_param_id_cell[i] = fill_rnd_seq_ran_param_3();
+  }
+
+  return dst;
 }
 
 
@@ -2326,9 +2502,7 @@ e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void)
   // 9.2.2.2
   dst.ev_trig = calloc(1, sizeof( ran_func_def_ev_trig_t )); 
   assert(dst.ev_trig != NULL && "Memory exhausted");
-  // dst.ev_trig = fill_ran_func_def_ev_trig();
-
-  // ran_func_def_ev_trig_t* ev_trig;
+  *dst.ev_trig = fill_ran_func_def_ev_trig();
 
   // RAN Function Definition for REPORT
   // Optional

@@ -183,6 +183,13 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
     ../ie/ir/seq_ins_ind_act_2.c
 
 
+    ../ie/ir/ran_func_def_ev_trig.c 
+    ../ie/ir/seq_ran_param_3.c 
+    ../ie/ir/seq_call_proc_type.c 
+    ../ie/ir/seq_ev_trg_style.c 
+    ../ie/ir/call_proc_break.c 
+
+
     ../../../lib/sm/sm_common_ie/ran_function_name.c
 
 
@@ -248,6 +255,7 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
     ../../../lib/sm/3gpp_derived_ie/nr_cgi.h
     ../../../lib/sm/3gpp_derived_ie/plmn_identity.c
     ../../../lib/sm/3gpp_derived_ie/rrc_msg_id.c
+
 
 
 

@@ -32,6 +32,7 @@ set (IR_RC_SRC
   param_report_def.c
   policy_action.c
   policy_cond.c
+  ran_func_def_ev_trig.c 
   ran_param_cond_crit_def.c
   ran_param_elm_key_false.c
   ran_param_elm_key_true.c

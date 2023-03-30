@@ -12,7 +12,7 @@ void free_seq_ev_trg_style(seq_ev_trg_style_t* src)
   // 9.3.3
   // 6.2.2.2.
   //  INTEGER
-  uint32_t style;
+  // uint32_t style;
 
   // RIC Event Trigger Style Name
   // Mandatory

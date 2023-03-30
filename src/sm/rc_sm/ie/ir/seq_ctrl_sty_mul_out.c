@@ -62,8 +62,7 @@ seq_ctrl_sty_mul_out_t cp_seq_ctrl_sty_mul_out( seq_ctrl_sty_mul_out_t const* sr
 {
   assert(src != NULL);
 
-seq_ctrl_sty_mul_out_t dst = {0};
-
+  seq_ctrl_sty_mul_out_t dst = {0};
 
   // Indicated Control Style
   // Mandatory
@@ -75,7 +74,7 @@ seq_ctrl_sty_mul_out_t dst = {0};
   //Actions Outcom
   // [1-63]
   assert(src->sz_seq_ctrl_act_out > 0 && src->sz_seq_ctrl_act_out < 64);
-  
+
   dst.sz_seq_ctrl_act_out = src->sz_seq_ctrl_act_out;
 
   dst.seq_ctrl_act_out = calloc(dst.sz_seq_ctrl_act_out , sizeof(seq_ctrl_act_out_t));
@@ -85,13 +84,7 @@ seq_ctrl_sty_mul_out_t dst = {0};
     dst.seq_ctrl_act_out[i] = cp_seq_ctrl_act_out( &src->seq_ctrl_act_out[i] );
   }
 
-  size_t sz_seq_ctrl_act_out;
-  seq_ctrl_act_out_t* seq_ctrl_act_out;
-
-
-
-
-return dst;
+  return dst;
 
 }
 

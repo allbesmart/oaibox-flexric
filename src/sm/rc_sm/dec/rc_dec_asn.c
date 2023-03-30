@@ -153,6 +153,16 @@
 
 #include "../ie/ir/ran_param_list.h"
 
+
+#include "../ie/asn/RANFunctionDefinition-EventTrigger.h"
+#include "../ie/asn/RANFunctionDefinition-EventTrigger-Style-Item.h"
+#include "../ie/asn/L2Parameters-RANParameter-Item.h"
+#include "../ie/asn/RANFunctionDefinition-EventTrigger-CallProcess-Item.h"
+#include "../ie/asn/RANFunctionDefinition-EventTrigger-Breakpoint-Item.h"
+#include "../ie/asn/CallProcessBreakpoint-RANParameter-Item.h"
+#include "../ie/asn/UEIdentification-RANParameter-Item.h"
+#include "../ie/asn/CellIdentification-RANParameter-Item.h"
+
 #include "../../../lib/sm/dec_asn_sm_common/dec_ue_id.h" 
 #include "../../../lib/sm/dec_asn_sm_common/dec_cell_global_id.h"
 
@@ -2657,6 +2667,282 @@ ran_function_name_t dec_ran_func_name( RANfunction_Name_t	const* src)
   return dst;
 }
 
+static
+seq_ev_trg_style_t dec_seq_ev_trg_style(RANFunctionDefinition_EventTrigger_Style_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ev_trg_style_t dst = {0};
+
+  // RIC Event Trigger Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  //  INTEGER
+  dst.style = src->ric_EventTriggerStyle_Type; 
+
+  // RIC Event Trigger Style Name
+  // Mandatory
+  // 9.3.4
+  // 6.2.2.3
+  //PrintableString(SIZE(1..150,...))
+  assert(src->ric_EventTriggerStyle_Name.size > 0 && src->ric_EventTriggerStyle_Name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ric_EventTriggerStyle_Name);
+
+  // RIC Event Trigger Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  // INTEGER
+  dst.format = src->ric_EventTriggerFormat_Type; 
+
+  return dst;
+}
+
+static
+seq_ran_param_3_t dec_seq_ran_param_l2_var(L2Parameters_RANParameter_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ran_param_3_t dst = {0}; 
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->ranParameter_ID > 0 && src->ranParameter_ID < 4294967296);
+  dst.id = src->ranParameter_ID;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->ranParameter_name.size > 0 && src->ranParameter_name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ranParameter_name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->ranParameter_Definition == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+seq_ran_param_3_t dec_seq_ran_param_3(CallProcessBreakpoint_RANParameter_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ran_param_3_t dst = {0}; 
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->ranParameter_ID > 0 && src->ranParameter_ID < 4294967296);
+  dst.id = src->ranParameter_ID;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->ranParameter_name.size > 0 && src->ranParameter_name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ranParameter_name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->ranParameter_Definition == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+call_proc_break_t dec_call_proc_break(RANFunctionDefinition_EventTrigger_Breakpoint_Item_t const* src)
+{
+  assert(src != NULL);
+  call_proc_break_t dst = {0};
+  // Call Process Breakpoint ID
+  // Mandatory
+  // 9.3.49
+  // [1 - 65535]
+  assert(src->callProcessBreakpoint_ID > 0 && src->callProcessBreakpoint_ID < 65536);
+  dst.id = src->callProcessBreakpoint_ID;
+
+  // Call Process Breakpoint Name
+  // Mandatory
+  // 9.3.50
+  // [1-150]
+  assert(src->callProcessBreakpoint_Name.size > 0 && src->callProcessBreakpoint_Name.size < 151);
+  dst.name = copy_ostring_to_ba(src->callProcessBreakpoint_Name);
+
+  // Sequence of Associated RAN Parameters
+  // [0-65535]
+  if(src->ran_CallProcessBreakpointParameters_List != NULL){
+    dst.sz_param = src->ran_CallProcessBreakpointParameters_List->list.count; 
+    dst.param = calloc( dst.sz_param, sizeof(seq_ran_param_3_t)  );
+    assert(dst.param != NULL && "Memory exhausted");
+    for(size_t i =0; i < dst.sz_param; ++i){
+      dst.param[i] = dec_seq_ran_param_3(src->ran_CallProcessBreakpointParameters_List->list.array[i]);
+    }
+  }
+
+  return dst;
+}
+
+static
+seq_call_proc_type_t dec_seq_call_proc_type(RANFunctionDefinition_EventTrigger_CallProcess_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_call_proc_type_t dst;
+
+  // Call Process Type ID
+  // Mandatory
+  // 9.3.15
+  // [1- 65535]
+  assert(src->callProcessType_ID > 0 && src->callProcessType_ID < 65536);
+  dst.id = src->callProcessType_ID;
+
+  // Call Process Type Name
+  // Mandatory
+  // 9.3.19
+  // [1-150]
+  assert(src->callProcessType_Name.size > 0 && src->callProcessType_Name.size < 151);
+  dst.name = copy_ostring_to_ba(src->callProcessType_Name);
+
+  // Sequence of Call Process Breakpoints
+  // [1-65535]
+  assert(src->callProcessBreakpoints_List.list.count > 0 &&  src->callProcessBreakpoints_List.list.count < 65536);
+  dst.sz_call_proc_break = src->callProcessBreakpoints_List.list.count ;
+ 
+  dst.call_proc_break = calloc(dst.sz_call_proc_break, sizeof(call_proc_break_t));
+  assert(dst.call_proc_break != NULL && "memory exhausted");
+  
+  for(size_t i = 0; i < dst.sz_call_proc_break; ++i){
+    dst.call_proc_break[i] = dec_call_proc_break(src->callProcessBreakpoints_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+static
+seq_ran_param_3_t dec_seq_ran_param_id_ue(UEIdentification_RANParameter_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ran_param_3_t dst = {0};
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->ranParameter_ID > 0 && src->ranParameter_ID < 4294967296);
+  dst.id = src->ranParameter_ID;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->ranParameter_name.size > 0 && src->ranParameter_name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ranParameter_name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->ranParameter_Definition == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+seq_ran_param_3_t dec_seq_ran_param_id_cell(CellIdentification_RANParameter_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ran_param_3_t dst = {0};
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->ranParameter_ID > 0 && src->ranParameter_ID < 4294967296);
+  dst.id = src->ranParameter_ID;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->ranParameter_name.size > 0 && src->ranParameter_name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ranParameter_name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->ranParameter_Definition == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+ran_func_def_ev_trig_t dec_ran_fun_def_ev_trg(RANFunctionDefinition_EventTrigger_t const* src)
+{
+  assert(src != NULL);
+  ran_func_def_ev_trig_t dst = {0}; 
+
+  // Sequence of EVENT TRIGGER styles
+  // [1 - 63]
+  assert(src->ric_EventTriggerStyle_List.list.count > 0 && src->ric_EventTriggerStyle_List.list.count < 64);
+  dst.sz_seq_ev_trg_style = src->ric_EventTriggerStyle_List.list.count; 
+
+  dst.seq_ev_trg_style = calloc(dst.sz_seq_ev_trg_style, sizeof(seq_ev_trg_style_t)); 
+  assert(dst.seq_ev_trg_style != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ev_trg_style; ++i){
+   dst.seq_ev_trg_style[i] = dec_seq_ev_trg_style( src->ric_EventTriggerStyle_List.list.array[i]);
+  }
+
+  // Sequence of RAN Parameters for L2 Variables
+  // [0 - 65535]  
+  if(src->ran_L2Parameters_List != NULL){
+    dst.sz_seq_ran_param_l2_var = src->ran_L2Parameters_List->list.count;
+    dst.seq_ran_param_l2_var = calloc(dst.sz_seq_ran_param_l2_var, sizeof(seq_ran_param_3_t));  
+    assert(dst.seq_ran_param_l2_var != NULL && "memory exhausted");
+   
+    for(size_t i = 0; i < dst.sz_seq_ran_param_l2_var; ++i) {
+     dst.seq_ran_param_l2_var[i] = dec_seq_ran_param_l2_var(src->ran_L2Parameters_List->list.array[i]); 
+    }
+  } 
+
+  //Sequence of Call Process Types
+  // [0-65535]
+  if(src->ran_CallProcessTypes_List != NULL){
+    dst.sz_seq_call_proc_type = src->ran_CallProcessTypes_List->list.count;
+    dst.seq_call_proc_type = calloc(dst.sz_seq_call_proc_type , sizeof(seq_call_proc_type_t ) );
+    assert(dst.seq_call_proc_type != NULL && "Memory exhausted");
+    
+    for(size_t i = 0; i < dst.sz_seq_call_proc_type; ++i){
+      dst.seq_call_proc_type[i] = dec_seq_call_proc_type(src->ran_CallProcessTypes_List->list.array[i]);
+    }
+  } 
+
+  // Sequence of RAN Parameters for Identifying UEs
+  // 0-65535
+  if(src->ran_UEIdentificationParameters_List != NULL){
+    dst.sz_seq_ran_param_id_ue = src->ran_UEIdentificationParameters_List->list.count;
+    dst.seq_ran_param_id_ue = calloc(dst.sz_seq_ran_param_id_ue, sizeof(seq_ran_param_3_t ));
+    assert(dst.seq_ran_param_id_ue != NULL && "Memory exhausted");
+
+    for(size_t i =0; i < dst.sz_seq_ran_param_id_ue; ++i){
+      dst.seq_ran_param_id_ue[i] = dec_seq_ran_param_id_ue(src->ran_UEIdentificationParameters_List->list.array[i]); 
+    }
+  }
+
+  // Sequence of RAN Parameters for Identifying Cells
+  // 0-65535
+  if(src->ran_CellIdentificationParameters_List != NULL){
+    dst.sz_seq_ran_param_id_cell = src->ran_CellIdentificationParameters_List->list.count; 
+    dst.seq_ran_param_id_cell = calloc(dst. sz_seq_ran_param_id_cell, sizeof(seq_ran_param_3_t ) );
+    assert(dst.seq_ran_param_id_cell != NULL && "Memory exhausted");
+
+    for(size_t i = 0; i < dst.sz_seq_ran_param_id_cell; ++i){
+      dst.seq_ran_param_id_cell[i] = dec_seq_ran_param_id_cell(src->ran_CellIdentificationParameters_List->list.array[i]); 
+    }
+  }
+ 
+  return dst;
+}
 
 e2sm_rc_func_def_t rc_dec_func_def_asn(size_t len, uint8_t const func_def[len])
 {
@@ -2684,7 +2970,11 @@ e2sm_rc_func_def_t rc_dec_func_def_asn(size_t len, uint8_t const func_def[len])
   // RAN Function Definition for EVENT TRIGGER
   // Optional
   // 9.2.2.2
-  assert(src.ranFunctionDefinition_EventTrigger == NULL && "not implemented");
+  if(src.ranFunctionDefinition_EventTrigger != NULL){
+    dst.ev_trig = calloc(1, sizeof(ran_func_def_ev_trig_t));
+    assert(dst.ev_trig != NULL && "Memory exhausted");
+    *dst.ev_trig = dec_ran_fun_def_ev_trg(src.ranFunctionDefinition_EventTrigger);
+  }
 
   // RAN Function Definition for REPORT
   // Optional

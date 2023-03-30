@@ -3,6 +3,8 @@
 #include "../../../src/sm/rc_sm/rc_sm_agent.h"
 #include "../../../src/sm/rc_sm/rc_sm_ric.h"
 #include "../../../src/sm/rc_sm/ie/rc_data_ie.h"
+#include "../../../src/sm/rc_sm/rc_sm_id.h"
+
 
 #include <assert.h>
 #include <stdlib.h>
@@ -148,8 +150,9 @@ void read_RAN(sm_ag_if_rd_t* read)
     assert(read->e2ap.type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
 
     read->e2ap.rc.func_def = fill_rc_ran_func_def();
-
-    cp_e2_setup = cp_rc_e2_setup(&read->e2ap.rc);
+    
+    assert(0!=0 && " cp_rc_e2_setup Not implemented");
+    //cp_e2_setup = cp_rc_e2_setup(&read->e2ap.rc);
   } else {
     assert(0!=0 && "Unknown type");
   }

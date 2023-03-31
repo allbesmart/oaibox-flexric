@@ -116,6 +116,8 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
     ../ie/ir/rrc_state.c 
     ../ie/ir/rrc_state_lst.c 
 
+    ../ie/ir/ran_func_def_insert.c 
+
     ../ie/ir/ran_param_list.c 
     ../ie/ir/ran_param_ins_ind.c 
 
@@ -188,6 +190,11 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
     ../ie/ir/seq_call_proc_type.c 
     ../ie/ir/seq_ev_trg_style.c 
     ../ie/ir/call_proc_break.c 
+
+    ../ie/ir/seq_ins_ind.c 
+
+    ../ie/ir/ran_func_def_report.c 
+    ../ie/ir/seq_report_sty.c 
 
 
     ../../../lib/sm/sm_common_ie/ran_function_name.c

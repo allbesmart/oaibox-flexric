@@ -626,7 +626,10 @@ void free_e2sm_rc_func_def(e2sm_rc_func_def_t* src)
   // RAN Function Definition for REPORT
   // Optional
   // 9.2.2.3
-  assert(src->report == NULL && "Not implemented");
+  if(src->report != NULL){
+    free_ran_func_def_report(src->report);
+    free(src->report);
+  } 
 
   // RAN Function Definition for INSERT
   // Optional
@@ -660,6 +663,12 @@ e2sm_rc_func_def_t cp_e2sm_rc_func_def(e2sm_rc_func_def_t const* src)
   // RAN Function Definition for EVENT TRIGGER
   // Optional
   // 9.2.2.2
+  if(src->ev_trig != NULL){
+    dst.ev_trig = calloc(1, sizeof(ran_func_def_ev_trig_t));
+    assert(dst.ev_trig != NULL && "Memory exhausted");
+    *dst.ev_trig = cp_ran_func_def_ev_trig(src->ev_trig);
+  }
+
   assert(src->ev_trig == NULL && "not implemented"); 
 
   // RAN Function Definition for REPORT
@@ -709,8 +718,8 @@ bool eq_e2sm_rc_func_def(e2sm_rc_func_def_t const* m0, e2sm_rc_func_def_t const*
   // RAN Function Definition for REPORT
   // Optional
   // 9.2.2.3
-  assert(m0->report == NULL && "Not implemented");
-  assert(m1->report == NULL && "Not implemented");
+  if(eq_ran_func_def_report(m0->report, m1->report ) == false)
+    return false;
 
   // RAN Function Definition for INSERT
   // Optional

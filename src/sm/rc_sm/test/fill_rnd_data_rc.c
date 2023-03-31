@@ -2485,7 +2485,86 @@ ran_func_def_ev_trig_t fill_ran_func_def_ev_trig(void)
   return dst;
 }
 
+static
+seq_report_sty_t fill_rnd_seq_report_sty(void)
+{
+  seq_report_sty_t dst = {0};
 
+  // RIC Report Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst.report_type = rand();
+
+  // RIC Report Style Name
+  // Mandatory
+  // 9.3.4
+  // 6.2.2.3.
+  // PrintableString(SIZE(1..150,...)) 
+  const char name[] = "Claude Shannon"; 
+  dst.name = cp_str_to_ba(name); 
+
+  // Supported RIC Event Trigger Style Type 
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst.ev_trig_type = rand();
+
+  // RIC Report Action Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  // INTEGER
+  dst.act_frmt_type = rand();
+
+  // RIC Indication Header Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  // INTEGER
+  dst.ind_hdr_type = rand();
+
+  // RIC Indication Message Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  // INTEGER
+  dst.ind_msg_type = rand();
+
+  // Sequence of RAN Parameters Supported
+  // [0 - 65535]
+  dst.sz_seq_ran_param = rand()%8;
+ 
+  if(dst.sz_seq_ran_param > 0){
+    dst.ran_param = calloc(dst.sz_seq_ran_param, sizeof(seq_ran_param_3_t));
+    assert(dst.ran_param != NULL && "Memory exhausted");
+    for(size_t i = 0; i < dst.sz_seq_ran_param; ++i){
+      dst.ran_param[i] = fill_rnd_seq_ran_param_3();
+    }
+  }
+
+  return dst;
+}
+
+static
+ran_func_def_report_t fill_ran_func_def_report(void)
+{
+  ran_func_def_report_t dst = {0};
+
+  // Sequence of REPORT styles
+  // [1 - 63]
+  dst.sz_seq_report_sty = (rand()%4) + 1;
+  dst.seq_report_sty = calloc(dst.sz_seq_report_sty, sizeof(seq_report_sty_t)); 
+  assert(dst.seq_report_sty != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_report_sty; ++i){
+    dst.seq_report_sty[i] = fill_rnd_seq_report_sty();
+  }
+
+  return dst;
+}
 
 e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void)
 {
@@ -2500,13 +2579,16 @@ e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void)
   // RAN Function Definition for EVENT TRIGGER
   // Optional
   // 9.2.2.2
-  dst.ev_trig = calloc(1, sizeof( ran_func_def_ev_trig_t )); 
+  dst.ev_trig = calloc(1, sizeof(ran_func_def_ev_trig_t)); 
   assert(dst.ev_trig != NULL && "Memory exhausted");
   *dst.ev_trig = fill_ran_func_def_ev_trig();
 
   // RAN Function Definition for REPORT
   // Optional
   // 9.2.2.3
+  dst.report = calloc(1, sizeof( ran_func_def_report_t ));
+  assert(dst.report != NULL && "Memory exhausted");
+  *dst.report = fill_ran_func_def_report();
   // ran_func_def_report_t* report;
 
   // RAN Function Definition for INSERT

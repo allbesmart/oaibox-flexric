@@ -150,6 +150,10 @@
 #include "../ie/asn/UEIdentification-RANParameter-Item.h"
 #include "../ie/asn/CellIdentification-RANParameter-Item.h"
 
+#include "../ie/asn/RANFunctionDefinition-Report.h"
+#include "../ie/asn/RANFunctionDefinition-Report-Item.h"
+#include "../ie/asn/Report-RANParameter-Item.h"
+
 #include "../../../lib/sm/enc_asn_sm_common/enc_cell_global_id.h"
 
 
@@ -2764,6 +2768,122 @@ RANFunctionDefinition_EventTrigger_t enc_ran_func_def_ev_trg(ran_func_def_ev_tri
   return dst;
 }
 
+static
+Report_RANParameter_Item_t* enc_seq_report_ran_param_it(seq_ran_param_3_t const* src)
+{
+  assert(src != NULL);
+
+Report_RANParameter_Item_t* dst = calloc(1, sizeof(Report_RANParameter_Item_t));
+assert(dst != NULL && "Memory exhausted");
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->id > 0); 
+  dst->ranParameter_ID = src->id;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->name.len > 0 && src->name.len < 151);
+  dst->ranParameter_name = copy_ba_to_ostring(src->name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->def == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+RANFunctionDefinition_Report_Item_t* enc_seq_report_sty(seq_report_sty_t const* src)
+{
+  assert(src != NULL);
+  RANFunctionDefinition_Report_Item_t* dst = calloc(1, sizeof(RANFunctionDefinition_Report_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // RIC Report Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst->ric_ReportStyle_Type = src->report_type;
+
+  // RIC Report Style Name
+  // Mandatory
+  // 9.3.4
+  // 6.2.2.3.
+  // PrintableString(SIZE(1..150,...)) 
+  assert(src->name.len > 0 && src->name.len < 151);
+  dst->ric_ReportStyle_Name = copy_ba_to_ostring(src->name);
+
+  // Supported RIC Event Trigger Style Type 
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst->ric_SupportedEventTriggerStyle_Type = src->ev_trig_type;
+
+  // RIC Report Action Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  // INTEGER
+  dst->ric_ReportActionFormat_Type = src->act_frmt_type;
+
+  // RIC Indication Header Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  // INTEGER
+  dst->ric_IndicationHeaderFormat_Type = src->ind_hdr_type;
+
+  // RIC Indication Message Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  // INTEGER
+  dst->ric_IndicationMessageFormat_Type = src->ind_msg_type;
+
+  // Sequence of RAN Parameters Supported
+  // [0 - 65535]
+  assert(src->sz_seq_ran_param < 65536);
+
+  if(src->sz_seq_ran_param > 0){
+    dst->ran_ReportParameters_List = calloc(1, sizeof(struct RANFunctionDefinition_Report_Item__ran_ReportParameters_List));
+    assert(dst->ran_ReportParameters_List != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < src-> sz_seq_ran_param; ++i){
+     Report_RANParameter_Item_t* ie = enc_seq_report_ran_param_it(&src->ran_param[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ran_ReportParameters_List->list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+RANFunctionDefinition_Report_t enc_ran_func_def_report(ran_func_def_report_t const* src)
+{
+  assert(src != NULL);
+  RANFunctionDefinition_Report_t dst = {0}; 
+
+  // Sequence of REPORT styles
+  // [1 - 63]
+  assert(src->sz_seq_report_sty > 0 && src->sz_seq_report_sty < 64);
+
+  for(size_t i = 0; i < src->sz_seq_report_sty; ++i){
+    RANFunctionDefinition_Report_Item_t* ie = enc_seq_report_sty(&src->seq_report_sty[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst.ric_ReportStyle_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
 
 byte_array_t rc_enc_func_def_asn(e2sm_rc_func_def_t const* src)
 {
@@ -2790,7 +2910,11 @@ byte_array_t rc_enc_func_def_asn(e2sm_rc_func_def_t const* src)
   // RAN Function Definition for REPORT
   // Optional
   // 9.2.2.3
-  assert(src->report == NULL&& "Not implemented");
+  if(src->report != NULL){
+    dst.ranFunctionDefinition_Report = calloc(1, sizeof(RANFunctionDefinition_Report_t));
+    assert(dst.ranFunctionDefinition_Report != NULL && "Memory exhausted");
+    *dst.ranFunctionDefinition_Report = enc_ran_func_def_report(src->report);  
+  } 
 
   // RAN Function Definition for INSERT
   // Optional

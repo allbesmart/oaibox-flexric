@@ -148,11 +148,8 @@ void read_RAN(sm_ag_if_rd_t* read)
 
   } else if(read->type == E2_SETUP_AGENT_IF_ANS_V0 ){
     assert(read->e2ap.type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
-
     read->e2ap.rc.func_def = fill_rc_ran_func_def();
-    
-    assert(0!=0 && " cp_rc_e2_setup Not implemented");
-    //cp_e2_setup = cp_rc_e2_setup(&read->e2ap.rc);
+    cp_e2_setup.func_def = cp_e2sm_rc_func_def(&read->e2ap.rc.func_def);
   } else {
     assert(0!=0 && "Unknown type");
   }
@@ -298,9 +295,9 @@ void check_e2_setup(sm_agent_t* ag, sm_ric_t* ric)
 
   sm_ag_if_rd_e2setup_t out = ric->proc.on_e2_setup(ric, &data);
   assert(out.type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
-  defer({  free_e2sm_rc_func_def(&out.rc.func_def); });
+  defer({ free_e2sm_rc_func_def(&out.rc.func_def); });
 
-  assert(0!=0 && "Not implemented!");
+  assert(eq_e2sm_rc_func_def(&out.rc.func_def, &cp_e2_setup.func_def) == true);
 }
 
 

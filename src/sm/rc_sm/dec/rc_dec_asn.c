@@ -146,6 +146,10 @@
 #include "../ie/asn/RANFunctionDefinition-Report-Item.h"
 #include "../ie/asn/RANParameter-LIST.h"
 
+#include "../ie/asn/RANFunctionDefinition-Insert.h"
+#include "../ie/asn/InsertIndication-RANParameter-Item.h"
+
+
 #include "../ie/ir/ran_param_list.h"
 
 
@@ -159,6 +163,15 @@
 #include "../ie/asn/CellIdentification-RANParameter-Item.h"
 #include "../ie/asn/Report-RANParameter-Item.h"
 
+#include "../ie/asn/RANFunctionDefinition-Insert-Item.h"
+#include "../ie/asn/RANFunctionDefinition-Insert-Indication-Item.h"
+#include "../ie/asn/RANFunctionDefinition-Control.h"
+#include "../ie/asn/RANFunctionDefinition-Control-Item.h"
+#include "../ie/asn/ControlAction-RANParameter-Item.h"
+#include "../ie/asn/ControlOutcome-RANParameter-Item.h"
+
+
+#include "../ie/asn/RANFunctionDefinition-Control-Action-Item.h"
 
 #include "../../../lib/sm/dec_asn_sm_common/dec_ue_id.h" 
 #include "../../../lib/sm/dec_asn_sm_common/dec_cell_global_id.h"
@@ -3055,6 +3068,332 @@ ran_func_def_report_t dec_ran_func_def_report(RANFunctionDefinition_Report_t con
   return dst;
 }
 
+static
+seq_ran_param_3_t dec_seq_ins_ind_3(InsertIndication_RANParameter_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ran_param_3_t dst = {0}; 
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->ranParameter_ID > 0);
+  dst.id = src->ranParameter_ID;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->ranParameter_name.size > 0 && src->ranParameter_name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ranParameter_name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->ranParameter_Definition == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+seq_ins_ind_t dec_seq_ins_ind(RANFunctionDefinition_Insert_Indication_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ins_ind_t dst = {0};
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1-65535]
+  assert(src->ric_InsertIndication_ID > 0);
+  dst.id = src->ric_InsertIndication_ID;
+
+  // Insert Indication Name
+  // Mandatory
+  // 9.3.17
+  // [1-150]
+  assert(src->ric_InsertIndication_Name.size > 0 && src->ric_InsertIndication_Name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ric_InsertIndication_Name);
+
+  // Sequence of Insert Indications
+  // [0-65535]
+  if(src->ran_InsertIndicationParameters_List != NULL){
+    dst.sz_seq_ins_ind = src->ran_InsertIndicationParameters_List->list.count;
+    dst.seq_ins_ind = calloc(dst.sz_seq_ins_ind, sizeof(seq_ran_param_3_t));
+    assert(dst.seq_ins_ind != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst.sz_seq_ins_ind; ++i){
+    dst.seq_ins_ind[i] = dec_seq_ins_ind_3(src->ran_InsertIndicationParameters_List->list.array[i]);
+  }
+
+  return dst;
+}
+
+static
+seq_ins_sty_t dec_seq_ins_sty(RANFunctionDefinition_Insert_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ins_sty_t dst = {0};
+
+  // RIC Insert Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst.style_type = src->ric_InsertStyle_Type;
+
+  // RIC Insert Style Name
+  // Mandatory
+  // 9.3.4
+  // 6.2.2.3.
+  // [1-150]
+  assert(src->ric_InsertStyle_Name.size > 0 && src->ric_InsertStyle_Name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ric_InsertStyle_Name);
+
+  // Supported RIC Event Trigger Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  dst.ev_trig_style_type = src->ric_SupportedEventTriggerStyle_Type;
+
+  // RIC Action Definition Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  dst.act_def_frmt_type = src->ric_ActionDefinitionFormat_Type;
+
+  // Sequence of Insert Indications
+  // [0-65535]
+  if(src->ric_InsertIndication_List != NULL){
+    assert(src->ric_InsertIndication_List->list.count < 65536);
+    dst.sz_seq_ins_ind = src->ric_InsertIndication_List->list.count; 
+
+    dst.seq_ins_ind = calloc(dst.sz_seq_ins_ind, sizeof(seq_ins_ind_t));
+    assert(dst.seq_ins_ind != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst.sz_seq_ins_ind; ++i){
+    dst.seq_ins_ind[i] = dec_seq_ins_ind(src->ric_InsertIndication_List->list.array[i]); 
+  }
+
+  // RIC Indication Header Format Type
+  // Mandatoyr
+  // 9.3.5
+  // 6.2.2.4.
+  dst.ind_hdr_frmt_type = src->ric_IndicationHeaderFormat_Type;
+
+  // RIC Indication Message Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  dst.ind_msg_frmt_type = src->ric_IndicationMessageFormat_Type;
+
+  // RIC Call Process ID Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  dst.call_proc_id_type = src->ric_CallProcessIDFormat_Type;
+
+  return dst;
+}
+
+
+static
+ran_func_def_insert_t dec_ran_func_def_insert(RANFunctionDefinition_Insert_t const* src)
+{
+  assert(src != NULL);
+  ran_func_def_insert_t dst = {0}; 
+ 
+  // Sequence of INSERT styles
+  // [1-63]
+  assert(src->ric_InsertStyle_List.list.count > 0 && src->ric_InsertStyle_List.list.count < 64);
+  dst.sz_seq_ins_sty = src->ric_InsertStyle_List.list.count;
+  
+  dst.seq_ins_sty = calloc(dst.sz_seq_ins_sty, sizeof(seq_ins_sty_t));
+  assert(dst.seq_ins_sty != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ins_sty ; ++i){
+    dst.seq_ins_sty[i] = dec_seq_ins_sty(src->ric_InsertStyle_List.list.array[i]);
+  }
+
+  return dst;
+}
+
+static
+seq_ran_param_3_t dec_assoc_ran_param(ControlAction_RANParameter_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ran_param_3_t dst = {0}; 
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->ranParameter_ID > 0);
+  dst.id = src->ranParameter_ID;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->ranParameter_name.size > 0 && src->ranParameter_name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ranParameter_name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->ranParameter_Definition == NULL && "Not implemented");
+
+  return dst;
+}
+
+
+static
+seq_ctrl_act_2_t dec_ran_func_ctrl_act(RANFunctionDefinition_Control_Action_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ctrl_act_2_t dst = {0}; 
+
+  // Control Action ID
+  // Mandatory
+  // 9.3.6
+  // [1-65535]
+  assert(src->ric_ControlAction_ID > 0 && src->ric_ControlAction_ID < 65536);
+  dst.id = src->ric_ControlAction_ID;
+
+  // Control Action Name
+  // Mandatory
+  // 9.3.7
+  // [1-150]
+  assert(src->ric_ControlAction_Name.size > 0 && src->ric_ControlAction_Name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ric_ControlAction_Name);
+
+  // Sequence of Associated RAN Parameters
+  // [0-65535]
+  if(src->ran_ControlActionParameters_List != NULL){
+    assert(src->ran_ControlActionParameters_List->list.count < 65536 );
+    dst.sz_seq_assoc_ran_param = src->ran_ControlActionParameters_List->list.count; 
+    dst.assoc_ran_param = calloc(dst.sz_seq_assoc_ran_param, sizeof(seq_ran_param_3_t));
+    assert(dst.assoc_ran_param != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst.sz_seq_assoc_ran_param; ++i){
+    dst.assoc_ran_param[i] = dec_assoc_ran_param(src->ran_ControlActionParameters_List->list.array[i]);
+  }
+
+  return dst;
+}
+
+static
+seq_ran_param_3_t dec_ran_param_ctrl_out(ControlOutcome_RANParameter_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ran_param_3_t dst = {0};
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->ranParameter_ID > 0);
+  dst.id = src->ranParameter_ID;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->ranParameter_name.size > 0 &&  src->ranParameter_name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ranParameter_name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->ranParameter_Definition == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+seq_ctrl_style_t dec_ran_func_ctrl_it(RANFunctionDefinition_Control_Item_t const* src)
+{
+  assert(src != NULL);
+  seq_ctrl_style_t dst = {0};
+  // RIC Control Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  dst.style_type = src->ric_ControlStyle_Type;
+
+  //RIC Control Style Name
+  //Mandatory
+  //9.3.4
+  // [1 -150]
+  assert(src->ric_ControlStyle_Name.size > 0 && src->ric_ControlStyle_Name.size < 151);
+  dst.name = copy_ostring_to_ba(src->ric_ControlStyle_Name);
+
+  // Sequence of Control Actions
+  // [0-65535]
+  if(src->ric_ControlAction_List != NULL){
+    assert(src->ric_ControlAction_List->list.count < 65536);
+    dst.sz_seq_ctrl_act = src->ric_ControlAction_List->list.count ;
+    dst.seq_ctrl_act = calloc(dst.sz_seq_ctrl_act, sizeof(seq_ctrl_act_2_t));
+  }
+  for(size_t i = 0; i < dst.sz_seq_ctrl_act; ++i){
+    dst.seq_ctrl_act[i] = dec_ran_func_ctrl_act(src->ric_ControlAction_List->list.array[i]);
+  }
+
+  // RIC Control Header Format Type
+  // Mandatory
+  // 9.3.5
+  dst.hdr = src->ric_ControlHeaderFormat_Type; 
+
+  // RIC Control Message Format Type
+  // Mandatory
+  // 9.3.5
+  dst.msg = src->ric_ControlMessageFormat_Type;
+
+  // RIC Call Process ID Format Type
+  // Optional
+  assert(src->ric_CallProcessIDFormat_Type == NULL && "Not implemented");
+
+  // RIC Control Outcome Format Type
+  // Mandatory
+  // 9.3.5
+  dst.out_frmt = src->ric_ControlOutcomeFormat_Type;
+
+  // Sequence of Associated RAN 
+  // Parameters for Control Outcome
+  // [0- 255]
+  if(src->ran_ControlOutcomeParameters_List != NULL){
+    assert(src->ran_ControlOutcomeParameters_List->list.count < 256);
+    dst.sz_ran_param_ctrl_out = src->ran_ControlOutcomeParameters_List->list.count; 
+    dst.ran_param_ctrl_out = calloc(dst.sz_ran_param_ctrl_out, sizeof(seq_ran_param_3_t));
+    assert(dst.ran_param_ctrl_out != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst.sz_ran_param_ctrl_out; ++i){
+     dst.ran_param_ctrl_out[i] = dec_ran_param_ctrl_out(src->ran_ControlOutcomeParameters_List->list.array[i]) ;
+  }
+
+  return dst;
+}
+
+static
+ran_func_def_ctrl_t dec_ran_func_def_ctrl(RANFunctionDefinition_Control_t const* src)
+{
+  assert(src != NULL);
+
+  ran_func_def_ctrl_t dst = {0}; 
+  // Sequence of CONTROL styles
+  // [1 - 63]
+  assert(src->ric_ControlStyle_List.list.count > 0 && src->ric_ControlStyle_List.list.count < 64);
+  dst.sz_seq_ctrl_style = src->ric_ControlStyle_List.list.count;
+ 
+  dst.seq_ctrl_style = calloc(dst.sz_seq_ctrl_style, sizeof(seq_ctrl_style_t));
+  assert(dst.seq_ctrl_style != NULL && "Memory exhausted");
+  for(size_t i = 0; i < dst.sz_seq_ctrl_style; ++i){
+    dst.seq_ctrl_style[i] = dec_ran_func_ctrl_it(src->ric_ControlStyle_List.list.array[i]);
+  }
+
+  return dst;
+}
 
 e2sm_rc_func_def_t rc_dec_func_def_asn(size_t len, uint8_t const func_def[len])
 {
@@ -3100,12 +3439,20 @@ e2sm_rc_func_def_t rc_dec_func_def_asn(size_t len, uint8_t const func_def[len])
   // RAN Function Definition for INSERT
   // Optional
   // 9.2.2.4
-  assert(src.ranFunctionDefinition_Insert == NULL && "Not implemented");
+  if(src.ranFunctionDefinition_Insert != NULL){
+    dst.insert = calloc(1, sizeof(ran_func_def_insert_t));
+    assert(dst.insert != NULL && "Memory exhausted");
+    *dst.insert = dec_ran_func_def_insert(src.ranFunctionDefinition_Insert); 
+  }
 
   // RAN Function Definition for CONTROL
   // Optional
   // 9.2.2.5
-  assert(src.ranFunctionDefinition_Control == NULL && "Not implemented");
+  if(src.ranFunctionDefinition_Control != NULL){
+    dst.ctrl = calloc(1, sizeof(ran_func_def_ctrl_t));
+    assert(dst.ctrl != NULL && "Memory exhausted");
+    *dst.ctrl = dec_ran_func_def_ctrl(src.ranFunctionDefinition_Control); 
+  }
 
   // RAN Function Definition for POLICY
   // Optional

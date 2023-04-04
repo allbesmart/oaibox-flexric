@@ -2566,6 +2566,233 @@ ran_func_def_report_t fill_ran_func_def_report(void)
   return dst;
 }
 
+static
+seq_ins_ind_t fill_rnd_seq_ins_ind(void)
+{
+  seq_ins_ind_t dst = {0}; 
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1-65535]
+  dst.id = (rand()% 65535) + 1;
+
+  // Insert Indication Name
+  // Mandatory
+  // 9.3.17
+  // [1-150]
+  const char name[] = "Robert Gallager";
+  dst.name = cp_str_to_ba(name);
+
+  // Sequence of Insert Indications
+  // [0-65535]
+  dst.sz_seq_ins_ind = rand()%4 ; // 65536
+  if(dst.sz_seq_ins_ind > 0){
+    dst.seq_ins_ind = calloc(dst.sz_seq_ins_ind, sizeof(seq_ran_param_3_t) );
+    assert(dst.seq_ins_ind != NULL && "Memory exhausted");
+    for(size_t i = 0; i < dst.sz_seq_ins_ind; ++i){
+      dst.seq_ins_ind[i] = fill_rnd_seq_ran_param_3();
+    }
+  }
+
+  return dst;
+}
+
+static
+seq_ins_sty_t fill_rnd_seq_ins_sty(void)
+{
+  seq_ins_sty_t dst = {0}; 
+
+  // RIC Insert Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst.style_type = rand();
+
+  // RIC Insert Style Name
+  // Mandatory
+  // 9.3.4
+  // 6.2.2.3.
+  // [1-150]
+  const char name[] = "Bob Fanno"; 
+  dst.name = cp_str_to_ba(name);
+
+  // Supported RIC Event Trigger Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  dst.ev_trig_style_type = rand();
+
+  // RIC Action Definition Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  dst.act_def_frmt_type = rand();
+
+  // Sequence of Insert Indications
+  // [0-65535]
+  dst.sz_seq_ins_ind = rand() % 4; //65536
+  if(dst.sz_seq_ins_ind > 0){
+    dst.seq_ins_ind = calloc(dst.sz_seq_ins_ind, sizeof(seq_ins_ind_t));
+    assert(dst.seq_ins_ind != NULL && "Memory exhausted");
+    for(size_t i = 0; i < dst.sz_seq_ins_ind; ++i){
+      dst.seq_ins_ind[i] = fill_rnd_seq_ins_ind();
+    }
+  }                                   
+
+  // RIC Indication Header Format Type
+  // Mandatoyr
+  // 9.3.5
+  // 6.2.2.4.
+  dst.ind_hdr_frmt_type= rand();
+
+  // RIC Indication Message Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  dst.ind_msg_frmt_type = rand();
+
+  // RIC Call Process ID Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  dst.call_proc_id_type = rand();
+
+  return dst;
+}
+
+static
+ran_func_def_insert_t fill_ran_func_def_insert(void)
+{
+  ran_func_def_insert_t dst = {0};
+
+  // Sequence of INSERT styles
+  // [1-63]
+  dst.sz_seq_ins_sty = (rand()% 4) + 1; // (rand()%63) + 1;
+
+  dst.seq_ins_sty = calloc(dst.sz_seq_ins_sty, sizeof(seq_ins_sty_t));
+  assert(dst.seq_ins_sty != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_seq_ins_sty; ++i){
+    dst.seq_ins_sty[i] = fill_rnd_seq_ins_sty();
+  }
+
+  return dst;
+}
+
+static
+seq_ctrl_act_2_t fill_rnd_ctrl_act(void)
+{
+  seq_ctrl_act_2_t dst = {0}; 
+
+  // Control Action ID
+  // Mandatory
+  // 9.3.6
+  // [1-65535]
+  dst.id = (rand()%65535) +1; 
+
+  // Control Action Name
+  // Mandatory
+  // 9.3.7
+  // [1-150]
+  const char name[] = "test string";
+  dst.name = cp_str_to_ba(name);
+
+  // Sequence of Associated RAN Parameters
+  // [0-65535]
+  dst.sz_seq_assoc_ran_param = rand()%4;
+  if(dst.sz_seq_assoc_ran_param > 0){
+    dst.assoc_ran_param = calloc(dst.sz_seq_assoc_ran_param, sizeof(seq_ran_param_3_t) );
+    assert(dst.assoc_ran_param != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst.sz_seq_assoc_ran_param; ++i){
+    dst.assoc_ran_param[i] = fill_rnd_seq_ran_param_3();
+  }
+
+  return dst;
+}
+
+static
+seq_ctrl_style_t fill_rnd_seq_ctrl_style(void)
+{
+  seq_ctrl_style_t dst = {0}; 
+
+  // RIC Control Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  dst.style_type = rand();
+
+  //RIC Control Style Name
+  //Mandatory
+  //9.3.4
+  // [1 -150]
+  const char name[] = "Bjarne Stroustroup"; 
+  dst.name = cp_str_to_ba(name);
+
+  // Sequence of Control Actions
+  // [0-65535]
+  dst.sz_seq_ctrl_act = rand() % 4;
+  if(dst.sz_seq_ctrl_act > 0){
+    dst.seq_ctrl_act = calloc(dst.sz_seq_ctrl_act, sizeof(seq_ctrl_act_2_t ) ); 
+    assert(dst.seq_ctrl_act != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst.sz_seq_ctrl_act; ++i){
+    dst.seq_ctrl_act[i] = fill_rnd_ctrl_act( ); 
+  }
+
+  // RIC Control Header Format Type
+  // Mandatory
+  // 9.3.5
+  dst.hdr = rand();
+
+  // RIC Control Message Format Type
+  // Mandatory
+  // 9.3.5
+  dst.msg = rand();
+
+  // RIC Call Process ID Format Type
+  // Optional
+
+  // RIC Control Outcome Format Type
+  // Mandatory
+  // 9.3.5
+  dst.out_frmt = rand();
+
+  // Sequence of Associated RAN 
+  // Parameters for Control Outcome
+  // [0- 255]
+  dst.sz_ran_param_ctrl_out = rand()%4;
+  if(dst.sz_ran_param_ctrl_out > 0){
+    dst.ran_param_ctrl_out = calloc(dst.sz_ran_param_ctrl_out, sizeof(seq_ran_param_3_t) );
+    assert(dst.ran_param_ctrl_out != NULL && "Memory exhausted");
+  } 
+  for(size_t i = 0; i < dst.sz_ran_param_ctrl_out; ++i){
+    dst.ran_param_ctrl_out[i] = fill_rnd_seq_ran_param_3();  
+  }
+
+  return dst;
+}
+
+static
+ran_func_def_ctrl_t fill_ran_func_def_ctrl(void)
+{
+  ran_func_def_ctrl_t dst = {0};
+
+  // Sequence of CONTROL styles
+  // [1 - 63]
+  dst.sz_seq_ctrl_style = (rand()%4) + 1;
+  dst.seq_ctrl_style = calloc(dst.sz_seq_ctrl_style, sizeof(seq_ctrl_style_t) );
+  assert(dst.seq_ctrl_style != NULL && "Memory exhausted");
+  for(size_t i = 0; i < dst.sz_seq_ctrl_style; ++i){
+    dst.seq_ctrl_style[i] = fill_rnd_seq_ctrl_style();
+  }
+
+  return dst;
+}
+
+
 e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void)
 {
   e2sm_rc_func_def_t dst = {0}; 
@@ -2589,16 +2816,20 @@ e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void)
   dst.report = calloc(1, sizeof( ran_func_def_report_t ));
   assert(dst.report != NULL && "Memory exhausted");
   *dst.report = fill_ran_func_def_report();
-  // ran_func_def_report_t* report;
 
   // RAN Function Definition for INSERT
   // Optional
   // 9.2.2.4
-  // ran_func_def_insert_t* insert;
+  dst.insert = calloc(1, sizeof(ran_func_def_insert_t)); 
+  assert(dst.insert != NULL && "Memory exhausted");
+  *dst.insert = fill_ran_func_def_insert();
 
   // RAN Function Definition for CONTROL
   // Optional
   // 9.2.2.5
+  dst.ctrl = calloc(1, sizeof( ran_func_def_ctrl_t)); 
+  assert(dst.ctrl != NULL && "Memory exhausted");
+  *dst.ctrl = fill_ran_func_def_ctrl();
   // ran_func_def_ctrl_t* ctrl;
 
   // RAN Function Definition for POLICY

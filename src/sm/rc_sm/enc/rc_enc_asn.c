@@ -154,6 +154,18 @@
 #include "../ie/asn/RANFunctionDefinition-Report-Item.h"
 #include "../ie/asn/Report-RANParameter-Item.h"
 
+#include "../ie/asn/RANFunctionDefinition-Insert.h"
+#include "../ie/asn/RANFunctionDefinition-Insert-Item.h"
+#include "../ie/asn/RANFunctionDefinition-Insert-Indication-Item.h"
+#include "../ie/asn/InsertIndication-RANParameter-Item.h"
+
+#include "../ie/asn/RANFunctionDefinition-Control.h"
+#include "../ie/asn/RANFunctionDefinition-Control-Item.h"
+#include "../ie/asn/RANFunctionDefinition-Control-Action-Item.h"
+#include "../ie/asn/ControlAction-RANParameter-Item.h"
+#include "../ie/asn/ControlOutcome-RANParameter-Item.h"
+
+
 #include "../../../lib/sm/enc_asn_sm_common/enc_cell_global_id.h"
 
 
@@ -2884,6 +2896,343 @@ RANFunctionDefinition_Report_t enc_ran_func_def_report(ran_func_def_report_t con
   return dst;
 }
 
+static
+InsertIndication_RANParameter_Item_t* enc_seq_ins_ind_3(seq_ran_param_3_t const* src) 
+{
+  assert(src != NULL);
+
+  InsertIndication_RANParameter_Item_t* dst = calloc(1, sizeof(InsertIndication_RANParameter_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->id > 0);
+  dst->ranParameter_ID = src->id;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  dst->ranParameter_name = copy_ba_to_ostring(src->name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->def == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+RANFunctionDefinition_Insert_Indication_Item_t* enc_seq_ins_ind(seq_ins_ind_t const* src)
+{
+  assert(src != NULL);
+RANFunctionDefinition_Insert_Indication_Item_t* dst = calloc(1, sizeof(RANFunctionDefinition_Insert_Indication_Item_t));
+assert(dst != NULL && "Memory exhausted");
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1-65535]
+  assert(src->id > 0);
+  dst->ric_InsertIndication_ID = src->id;
+
+  // Insert Indication Name
+  // Mandatory
+  // 9.3.17
+  // [1-150]
+  assert(src->name.len > 0 && src->name.len < 151); 
+  dst->ric_InsertIndication_Name = copy_ba_to_ostring(src->name); 
+
+  // Sequence of Insert Indications
+  // [0-65535]
+  assert(src->sz_seq_ins_ind < 65536);
+  if(src->sz_seq_ins_ind > 0){
+    dst->ran_InsertIndicationParameters_List = calloc(1, sizeof(struct RANFunctionDefinition_Insert_Indication_Item__ran_InsertIndicationParameters_List));
+    assert(dst->ran_InsertIndicationParameters_List != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < src->sz_seq_ins_ind; ++i){
+    InsertIndication_RANParameter_Item_t* ie = enc_seq_ins_ind_3(&src->seq_ins_ind[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ran_InsertIndicationParameters_List->list, ie);
+    assert(rc == 0);
+  }
+
+return dst;
+}
+
+
+static
+RANFunctionDefinition_Insert_Item_t* enc_seq_ins_sty(seq_ins_sty_t const* src)
+{
+  assert(src != NULL);
+
+  RANFunctionDefinition_Insert_Item_t* dst = calloc(1, sizeof(RANFunctionDefinition_Insert_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+
+
+  // RIC Insert Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  // INTEGER
+  dst->ric_InsertStyle_Type = src->style_type;
+
+  // RIC Insert Style Name
+  // Mandatory
+  // 9.3.4
+  // 6.2.2.3.
+  // [1-150]
+  assert(src->name.len > 0 && src->name.len < 151); 
+  dst->ric_InsertStyle_Name = copy_ba_to_ostring(src->name);
+
+  // Supported RIC Event Trigger Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  dst->ric_SupportedEventTriggerStyle_Type = src->ev_trig_style_type; 
+
+  // RIC Action Definition Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  dst->ric_ActionDefinitionFormat_Type = src->act_def_frmt_type;
+
+  // Sequence of Insert Indications
+  // [0-65535]
+  if(src->sz_seq_ins_ind > 0){
+    dst->ric_InsertIndication_List = calloc(1, sizeof(struct RANFunctionDefinition_Insert_Item__ric_InsertIndication_List));
+    assert(dst->ric_InsertIndication_List != NULL && "M<emory exhausted");
+  }
+  for(size_t i = 0; i < src->sz_seq_ins_ind; ++i){
+    RANFunctionDefinition_Insert_Indication_Item_t* ie = enc_seq_ins_ind(&src->seq_ins_ind[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ric_InsertIndication_List->list, ie);
+    assert(rc == 0);
+  }
+
+  // RIC Indication Header Format Type
+  // Mandatoyr
+  // 9.3.5
+  // 6.2.2.4.
+  dst->ric_IndicationHeaderFormat_Type = src->ind_hdr_frmt_type;
+
+  // RIC Indication Message Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  dst->ric_IndicationMessageFormat_Type = src->ind_msg_frmt_type;
+
+  // RIC Call Process ID Format Type
+  // Mandatory
+  // 9.3.5
+  // 6.2.2.4.
+  dst->ric_CallProcessIDFormat_Type = src->call_proc_id_type; 
+
+  return dst;
+}
+
+static
+RANFunctionDefinition_Insert_t enc_ran_func_def_insert(ran_func_def_insert_t const* src)
+{
+  assert(src != NULL);
+  RANFunctionDefinition_Insert_t dst = {0};
+
+  // Sequence of INSERT styles
+  // [1-63]
+  assert(src->sz_seq_ins_sty > 0 && src->sz_seq_ins_sty < 64);  
+
+  for(size_t i = 0; i < src->sz_seq_ins_sty; ++i){
+    RANFunctionDefinition_Insert_Item_t* ie = enc_seq_ins_sty(&src->seq_ins_sty[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst.ric_InsertStyle_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+ControlAction_RANParameter_Item_t* enc_ctrl_act_ran_param_it(seq_ran_param_3_t const* src)
+{
+  assert(src != NULL);
+
+  ControlAction_RANParameter_Item_t* dst = calloc(1, sizeof(ControlAction_RANParameter_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->id > 0);
+  dst->ranParameter_ID = src->id;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->name.len > 0 && src->name.len < 151);
+  dst->ranParameter_name = copy_ba_to_ostring(src->name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->def == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+RANFunctionDefinition_Control_Action_Item_t* enc_ran_func_def_ctrl_act_it(seq_ctrl_act_2_t const* src)
+{
+  assert(src != NULL);
+  RANFunctionDefinition_Control_Action_Item_t* dst = calloc(1, sizeof(RANFunctionDefinition_Control_Action_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+  // Control Action ID
+  // Mandatory
+  // 9.3.6
+  // [1-65535]
+  assert(src->id > 0);
+  dst->ric_ControlAction_ID = src->id; 
+
+  // Control Action Name
+  // Mandatory
+  // 9.3.7
+  // [1-150]
+  assert(src->name.len > 0 && src->name.len < 151);
+  dst->ric_ControlAction_Name = copy_ba_to_ostring(src->name);
+
+  // Sequence of Associated RAN Parameters
+  // [0-65535]
+  assert(src->sz_seq_assoc_ran_param < 65536);
+  if(src->sz_seq_assoc_ran_param > 0){
+    dst->ran_ControlActionParameters_List = calloc(1, sizeof(struct RANFunctionDefinition_Control_Action_Item__ran_ControlActionParameters_List));
+    assert( dst->ran_ControlActionParameters_List != NULL && "Memory exhausted");
+  } 
+  for(size_t i =0; i < src->sz_seq_assoc_ran_param; ++i){
+    ControlAction_RANParameter_Item_t* ie = enc_ctrl_act_ran_param_it(&src->assoc_ran_param[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ran_ControlActionParameters_List->list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+ControlOutcome_RANParameter_Item_t* enc_ran_func_def_ctrl_param_it(seq_ran_param_3_t const* src)
+{
+  assert(src != NULL);
+  ControlOutcome_RANParameter_Item_t*dst = calloc(1, sizeof(ControlOutcome_RANParameter_Item_t));
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->id > 0);
+  dst->ranParameter_ID = src->id;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->name.len > 0 && src->name.len < 151);
+  dst->ranParameter_name = copy_ba_to_ostring(src->name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->def == NULL && "Not implemented"); 
+
+  return dst;
+}
+
+static
+RANFunctionDefinition_Control_Item_t* enc_ran_func_def_ctrl_it(seq_ctrl_style_t const* src)
+{
+  assert(src != NULL);
+  RANFunctionDefinition_Control_Item_t* dst = calloc(1, sizeof(RANFunctionDefinition_Control_Item_t)); 
+  assert(dst != NULL && "Memory exhausted");
+
+  // RIC Control Style Type
+  // Mandatory
+  // 9.3.3
+  // 6.2.2.2.
+  dst->ric_ControlStyle_Type = src->style_type;
+
+  //RIC Control Style Name
+  //Mandatory
+  //9.3.4
+  // [1 -150]
+  assert(src->name.len > 0 && src->name.len < 151);
+  dst->ric_ControlStyle_Name = copy_ba_to_ostring(src->name);
+
+  // Sequence of Control Actions
+  // [0-65535]
+  assert(src->sz_seq_ctrl_act < 65536); 
+  if(src->sz_seq_ctrl_act > 0){
+    dst->ric_ControlAction_List = calloc(1, sizeof(struct RANFunctionDefinition_Control_Item__ric_ControlAction_List));
+    assert(dst->ric_ControlAction_List != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < src-> sz_seq_ctrl_act; ++i){
+    RANFunctionDefinition_Control_Action_Item_t* ie = enc_ran_func_def_ctrl_act_it(&src->seq_ctrl_act[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ric_ControlAction_List->list, ie);
+    assert(rc == 0);
+  }
+
+  // RIC Control Header Format Type
+  // Mandatory
+  // 9.3.5
+  dst->ric_ControlHeaderFormat_Type = src->hdr;
+
+  // RIC Control Message Format Type
+  // Mandatory
+  // 9.3.5
+  dst->ric_ControlMessageFormat_Type = src->msg;
+
+  // RIC Call Process ID Format Type
+  // Optional
+  assert(src->call_proc_id_type == NULL && "Not implemented");
+
+  // RIC Control Outcome Format Type
+  // Mandatory
+  // 9.3.5
+  dst->ric_ControlOutcomeFormat_Type = src->out_frmt;
+
+  // Sequence of Associated RAN 
+  // Parameters for Control Outcome
+  // [0- 255]
+  assert(src->sz_ran_param_ctrl_out < 65536); 
+  if(src->sz_ran_param_ctrl_out  > 0){
+    dst->ran_ControlOutcomeParameters_List = calloc(1, sizeof(struct RANFunctionDefinition_Control_Item__ran_ControlOutcomeParameters_List));
+    assert(dst->ran_ControlOutcomeParameters_List != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < src->sz_ran_param_ctrl_out; ++i){
+    ControlOutcome_RANParameter_Item_t* ie = enc_ran_func_def_ctrl_param_it(&src->ran_param_ctrl_out[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ran_ControlOutcomeParameters_List->list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+RANFunctionDefinition_Control_t enc_ran_func_def_ctrl(ran_func_def_ctrl_t const* src)
+{
+  assert(src != NULL);
+  
+  RANFunctionDefinition_Control_t dst = {0};
+
+  // Sequence of CONTROL styles
+  // [1 - 63]
+  assert(src->sz_seq_ctrl_style > 0 && src->sz_seq_ctrl_style < 64);
+
+  for(size_t i = 0; i < src->sz_seq_ctrl_style; ++i){
+    RANFunctionDefinition_Control_Item_t* ie = enc_ran_func_def_ctrl_it(&src->seq_ctrl_style[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst.ric_ControlStyle_List.list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
 
 byte_array_t rc_enc_func_def_asn(e2sm_rc_func_def_t const* src)
 {
@@ -2919,12 +3268,20 @@ byte_array_t rc_enc_func_def_asn(e2sm_rc_func_def_t const* src)
   // RAN Function Definition for INSERT
   // Optional
   // 9.2.2.4
-  assert(src->insert == NULL&& "Not implemented");
+  if(src->insert != NULL){
+    dst.ranFunctionDefinition_Insert = calloc(1, sizeof(RANFunctionDefinition_Insert_t));
+    assert(dst.ranFunctionDefinition_Insert != NULL && "Memory exhausted");
+    *dst.ranFunctionDefinition_Insert = enc_ran_func_def_insert(src->insert);  
+  }
 
   // RAN Function Definition for CONTROL
   // Optional
   // 9.2.2.5
-  assert(src->ctrl == NULL && "Not implemeneted");
+  if(src->ctrl != NULL){
+    dst.ranFunctionDefinition_Control = calloc(1, sizeof(RANFunctionDefinition_Control_t));
+    assert(dst.ranFunctionDefinition_Control != NULL && "Memory exhausted");
+    *dst.ranFunctionDefinition_Control = enc_ran_func_def_ctrl(src->ctrl);  
+  }
 
   // RAN Function Definition for POLICY
   // Optional

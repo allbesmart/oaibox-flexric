@@ -32,6 +32,7 @@ set (IR_RC_SRC
   param_report_def.c
   policy_action.c
   policy_cond.c
+  ran_func_def_ctrl.c 
   ran_func_def_ev_trig.c 
   ran_func_def_insert.c
   ran_func_def_report.c
@@ -55,13 +56,16 @@ set (IR_RC_SRC
   seq_cell_info_2.c
   seq_cell_info.c
   seq_ctrl_act.c
+  seq_ctrl_act_2.c
   seq_ctrl_act_out.c
   seq_ctrl_sma.c
+  seq_ctrl_style.c
   seq_ctrl_sty_mul_out.c
   seq_ev_trg_style.c 
   seq_ins_ind.c 
   seq_ins_ind_act_2.c
   seq_ins_ind_act_def.c
+  seq_ins_sty.c
   seq_ins_style_2.c
   seq_ins_style_multiple_action.c
   seq_ran_param_3.c

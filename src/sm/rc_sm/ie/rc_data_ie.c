@@ -634,12 +634,18 @@ void free_e2sm_rc_func_def(e2sm_rc_func_def_t* src)
   // RAN Function Definition for INSERT
   // Optional
   // 9.2.2.4
-  assert(src->insert == NULL && "Not implemented");
+  if(src->insert != NULL){
+    free_ran_func_def_insert(src->insert);
+    free(src->insert);
+  }
 
   // RAN Function Definition for CONTROL
   // Optional
   // 9.2.2.5
-  assert(src->ctrl == NULL && "Not implemented");
+  if(src->ctrl != NULL){
+    free_ran_func_def_ctrl(src->ctrl);
+    free(src->ctrl);
+  } 
 
   // RAN Function Definition for POLICY
   // Optional
@@ -724,14 +730,14 @@ bool eq_e2sm_rc_func_def(e2sm_rc_func_def_t const* m0, e2sm_rc_func_def_t const*
   // RAN Function Definition for INSERT
   // Optional
   // 9.2.2.4
-  assert(m0->insert == NULL && "Not implemented");
-  assert(m1->insert == NULL && "Not implemented");
+  if(eq_ran_func_def_insert(m0->insert, m1->insert) == false)
+    return false;
 
   // RAN Function Definition for CONTROL
   // Optional
   // 9.2.2.5
-  assert(m0->ctrl == NULL && "Not implemented");
-  assert(m1->ctrl == NULL && "Not implemented");
+  if(eq_ran_func_def_ctrl(m0->ctrl, m1->ctrl) == false)
+    return false;
 
   // RAN Function Definition for POLICY
   // Optional

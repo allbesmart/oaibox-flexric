@@ -2763,7 +2763,7 @@ seq_ctrl_style_t fill_rnd_seq_ctrl_style(void)
   // Sequence of Associated RAN 
   // Parameters for Control Outcome
   // [0- 255]
-  dst.sz_ran_param_ctrl_out = rand()%4;
+  dst.sz_ran_param_ctrl_out = 1; // rand()%4;
   if(dst.sz_ran_param_ctrl_out > 0){
     dst.ran_param_ctrl_out = calloc(dst.sz_ran_param_ctrl_out, sizeof(seq_ran_param_3_t) );
     assert(dst.ran_param_ctrl_out != NULL && "Memory exhausted");
@@ -2792,6 +2792,104 @@ ran_func_def_ctrl_t fill_ran_func_def_ctrl(void)
   return dst;
 }
 
+static
+seq_pol_action_t fill_rnd_seq_pol_action(void)
+{
+  seq_pol_action_t dst = {0};
+  // Policy Action ID
+  // Mandatory
+  // 9.3.6
+  dst.action_id = rand(); 
+
+  // Policy Action Name
+  // Mandatory
+  // 9.3.7
+  // [1-150]
+  const char name[] = "Andrei Alexandrescu";
+  dst.name = cp_str_to_ba(name);
+
+  // RIC Action Definition Format Type
+  // Mandatoyr
+  // 9.3.5
+  dst.frmt_type = rand();
+
+  // Sequence of Associated RAN Parameters for Policy Action
+  // [0- 65535]
+  dst.sz_seq_assoc_rp_action = rand()%4;
+  if(dst.sz_seq_assoc_rp_action > 0){
+    dst.seq_assoc_rp_action = calloc(dst.sz_seq_assoc_rp_action, sizeof(seq_ran_param_3_t));
+    assert(dst.seq_assoc_rp_action != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst.sz_seq_assoc_rp_action; ++i){
+    dst.seq_assoc_rp_action[i] = fill_rnd_seq_ran_param_3(); 
+  }
+
+  // Sequence of Associated RAN Parameters for Policy Condition
+  // [0- 65535]
+  dst.sz_seq_assoc_rp_policy = rand()%4;
+  if(dst.sz_seq_assoc_rp_policy > 0){
+    dst.seq_assoc_rp_policy = calloc(dst.sz_seq_assoc_rp_policy, sizeof(seq_ran_param_3_t));
+    assert(dst.seq_assoc_rp_policy != NULL && "Memory exhausted");
+  } 
+  for(size_t i = 0; i < dst.sz_seq_assoc_rp_policy; ++i){
+    dst.seq_assoc_rp_policy[i] = fill_rnd_seq_ran_param_3(); 
+  }
+
+  return dst;
+}
+
+static
+seq_policy_sty_t fill_rnd_seq_policy_sty(void)
+{
+  seq_policy_sty_t dst = {0}; 
+  // RIC Policy Style Type
+  // Mandatory
+  // 9.3.3
+  dst.style_type = rand();
+
+  // RIC Policy Style Name
+  // Mandatory
+  // 9.3.4
+  const char name[] = "Sean Parent";
+  dst.name = cp_str_to_ba(name);
+
+  // Supported RIC Event Trigger Style Type
+  // Mandatory
+  // 9.3.3
+  dst.ev_trg_style_type = rand();
+
+  // Sequence of Policy Actions
+  // [0-65535]
+  dst.sz_seq_pol_action = rand() % 4;
+  if(dst.sz_seq_pol_action > 0){
+    dst.seq_pol_action = calloc(dst.sz_seq_pol_action, sizeof(seq_pol_action_t));
+    assert(dst.seq_pol_action != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst.sz_seq_pol_action; ++i){
+    dst.seq_pol_action[i] = fill_rnd_seq_pol_action();
+  }
+
+  return dst;
+}
+
+
+static
+ran_func_def_policy_t fill_ran_func_def_policy(void)
+{
+  ran_func_def_policy_t dst = {0}; 
+
+  // Sequence of POLICY styles
+  // [1-63]
+  dst.sz_policy_styles = (rand() % 4) + 1;
+  dst.seq_policy_sty = calloc(dst.sz_policy_styles, sizeof(seq_policy_sty_t ) );
+  assert(dst.seq_policy_sty != NULL && "Memory exhasuted");
+
+  for(size_t i = 0; i < dst.sz_policy_styles; ++i){
+    dst.seq_policy_sty[i] = fill_rnd_seq_policy_sty();
+  }
+
+  return dst;
+}
 
 e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void)
 {
@@ -2830,22 +2928,20 @@ e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void)
   dst.ctrl = calloc(1, sizeof( ran_func_def_ctrl_t)); 
   assert(dst.ctrl != NULL && "Memory exhausted");
   *dst.ctrl = fill_ran_func_def_ctrl();
-  // ran_func_def_ctrl_t* ctrl;
 
   // RAN Function Definition for POLICY
   // Optional
   // 9.2.2.6
-  // ran_func_def_policy_t* policy;
+  dst.policy = calloc(1, sizeof(ran_func_def_policy_t)); 
+  assert(dst.policy != NULL && "Memory exhausted");
+  *dst.policy = fill_ran_func_def_policy();
 
   return dst;
 }
-
-
 
 /////////////////////////////
 /////////////////////////////
 ////////// End of RAN Function Definition 
 /////////////////////////////
 /////////////////////////////
-
 

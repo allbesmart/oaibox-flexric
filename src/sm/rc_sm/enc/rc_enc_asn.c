@@ -165,6 +165,13 @@
 #include "../ie/asn/ControlAction-RANParameter-Item.h"
 #include "../ie/asn/ControlOutcome-RANParameter-Item.h"
 
+#include "../ie/asn/RANFunctionDefinition-Policy.h"
+#include "../ie/asn/RANFunctionDefinition-Policy-Item.h"
+#include "../ie/asn/RANFunctionDefinition-Policy-Action-Item.h"
+#include "../ie/asn/PolicyCondition-RANParameter-Item.h"
+
+
+#include "../ie/asn/PolicyAction-RANParameter-Item.h"
 
 #include "../../../lib/sm/enc_asn_sm_common/enc_cell_global_id.h"
 
@@ -3234,6 +3241,175 @@ RANFunctionDefinition_Control_t enc_ran_func_def_ctrl(ran_func_def_ctrl_t const*
   return dst;
 }
 
+static
+PolicyAction_RANParameter_Item_t* enc_ran_func_def_pol_act_it(seq_ran_param_3_t const* src) 
+{
+  assert(src != NULL);
+  PolicyAction_RANParameter_Item_t* dst = calloc(1, sizeof(PolicyAction_RANParameter_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->id > 0);
+  dst->ranParameter_ID = src->id;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->name.len > 0 && src->name.len < 151);
+  dst->ranParameter_name = copy_ba_to_ostring(src->name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->def == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+PolicyCondition_RANParameter_Item_t* enc_ran_func_def_pol_cnd_it(seq_ran_param_3_t const* src)
+{
+  assert(src != NULL);
+  PolicyCondition_RANParameter_Item_t* dst = calloc(1, sizeof(PolicyCondition_RANParameter_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1- 4294967295]
+  assert(src->id > 0);
+  dst->ranParameter_ID = src->id;
+
+  // RAN Parameter Name
+  // Mandatory
+  // 9.3.9
+  // [1-150] 
+  assert(src->name.len > 0 && src->name.len < 151);
+  dst->ranParameter_name = copy_ba_to_ostring(src->name);
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->def == NULL && "Not implemented");
+
+  return dst;
+}
+
+static
+RANFunctionDefinition_Policy_Action_Item_t* enc_ran_func_def_pol_act(seq_pol_action_t const* src)
+{
+  assert(src != NULL);
+
+RANFunctionDefinition_Policy_Action_Item_t* dst = calloc(1, sizeof(RANFunctionDefinition_Policy_Action_Item_t));
+assert(dst != NULL && "Memory exhausted");
+  // Policy Action ID
+  // Mandatory
+  // 9.3.6
+  dst->ric_PolicyAction_ID = src->action_id;
+
+  // Policy Action Name
+  // Mandatory
+  // 9.3.7
+  // [1-150]
+  assert(src->name.len > 0 && src->name.len < 151);
+  dst->ric_PolicyAction_Name = copy_ba_to_ostring(src->name);
+
+  // RIC Action Definition Format Type
+  // Mandatoyr
+  // 9.3.5
+  dst->ric_ActionDefinitionFormat_Type = src->frmt_type;
+
+  // Sequence of Associated RAN Parameters for Policy Action
+  // [0- 65535]
+  assert(src->sz_seq_assoc_rp_action < 65536);
+  if(src->sz_seq_assoc_rp_action > 0){
+    dst->ran_PolicyActionParameters_List = calloc(1, sizeof(struct RANFunctionDefinition_Policy_Action_Item__ran_PolicyActionParameters_List));
+    assert(dst->ran_PolicyActionParameters_List != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < src-> sz_seq_assoc_rp_action; ++i){
+    PolicyAction_RANParameter_Item_t* ie = enc_ran_func_def_pol_act_it(&src->seq_assoc_rp_action[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ran_PolicyActionParameters_List->list, ie);
+    assert(rc == 0);
+  }
+
+  // Sequence of Associated RAN Parameters for Policy Condition
+  // [0- 65535]
+  assert(src->sz_seq_assoc_rp_policy < 65536); 
+  if(src->sz_seq_assoc_rp_policy > 0){
+    dst->ran_PolicyConditionParameters_List = calloc(1, sizeof(struct RANFunctionDefinition_Policy_Action_Item__ran_PolicyConditionParameters_List));
+    assert(dst->ran_PolicyConditionParameters_List != NULL && "Memory exhausted"); 
+  } 
+  for(size_t i = 0; i < src-> sz_seq_assoc_rp_policy; ++i){
+    PolicyCondition_RANParameter_Item_t* ie = enc_ran_func_def_pol_cnd_it(&src->seq_assoc_rp_policy[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ran_PolicyConditionParameters_List->list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+RANFunctionDefinition_Policy_Item_t* enc_ran_func_def_pol_it(seq_policy_sty_t const* src)
+{
+  assert(src != NULL);
+
+  RANFunctionDefinition_Policy_Item_t* dst = calloc(1, sizeof(RANFunctionDefinition_Policy_Item_t));
+  assert(dst != NULL && "Memory exhausted");
+
+  // RIC Policy Style Type
+  // Mandatory
+  // 9.3.3
+  dst->ric_PolicyStyle_Type = src->style_type;
+
+  // RIC Policy Style Name
+  // Mandatory
+  // 9.3.4
+  assert(src->name.len > 0 && src->name.len < 151);
+  dst->ric_PolicyStyle_Name = copy_ba_to_ostring(src->name);
+
+  // Supported RIC Event Trigger Style Type
+  // Mandatory
+  // 9.3.3
+  dst->ric_SupportedEventTriggerStyle_Type = src->ev_trg_style_type;
+
+  // Sequence of Policy Actions
+  // [0-65535]
+  assert(src->sz_seq_pol_action < 65536);
+  if(src->sz_seq_pol_action > 0){
+    dst->ric_PolicyAction_List = calloc(1, sizeof(struct RANFunctionDefinition_Policy_Item__ric_PolicyAction_List));
+    assert(dst->ric_PolicyAction_List != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < src-> sz_seq_pol_action; ++i){
+    RANFunctionDefinition_Policy_Action_Item_t * ie = enc_ran_func_def_pol_act(&src->seq_pol_action[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst->ric_PolicyAction_List->list, ie);
+    assert(rc == 0);
+  }
+
+  return dst;
+}
+
+static
+RANFunctionDefinition_Policy_t enc_ran_func_def_policy(ran_func_def_policy_t const* src)
+{
+  assert(src != NULL);
+  RANFunctionDefinition_Policy_t dst = {0}; 
+
+  // Sequence of POLICY styles
+  // [1-63]
+  assert(src-> sz_policy_styles > 0 && src-> sz_policy_styles < 64);
+
+ for(size_t i = 0; i < src->sz_policy_styles; ++i){
+    RANFunctionDefinition_Policy_Item_t* ie = enc_ran_func_def_pol_it(&src->seq_policy_sty[i]);
+    int rc = ASN_SEQUENCE_ADD(&dst.ric_PolicyStyle_List.list, ie);
+    assert(rc == 0);
+  }
+
+ return dst;
+}
+
 byte_array_t rc_enc_func_def_asn(e2sm_rc_func_def_t const* src)
 {
   assert(src != NULL);
@@ -3286,7 +3462,11 @@ byte_array_t rc_enc_func_def_asn(e2sm_rc_func_def_t const* src)
   // RAN Function Definition for POLICY
   // Optional
   // 9.2.2.6
-  assert(src->policy == NULL && "Not implemented");
+   if(src->policy != NULL){
+    dst.ranFunctionDefinition_Policy = calloc(1, sizeof(RANFunctionDefinition_Policy_t));
+    assert(dst.ranFunctionDefinition_Policy != NULL && "Memory exhausted");
+    *dst.ranFunctionDefinition_Policy = enc_ran_func_def_policy(src->policy);  
+  }
 
   xer_fprint(stdout, &asn_DEF_E2SM_RC_RANFunctionDefinition, &dst);
   fflush(stdout);

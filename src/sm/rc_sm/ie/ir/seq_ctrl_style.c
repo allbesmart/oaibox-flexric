@@ -61,7 +61,7 @@ void free_seq_ctrl_style(seq_ctrl_style_t* src)
 }
 
 
-bool eq_seq_ctrl_style( seq_ctrl_style_t const* m0, seq_ctrl_style_t const* m1)
+bool eq_seq_ctrl_style(seq_ctrl_style_t const* m0, seq_ctrl_style_t const* m1)
 {
   if(m0 == m1)
     return true;
@@ -122,12 +122,12 @@ bool eq_seq_ctrl_style( seq_ctrl_style_t const* m0, seq_ctrl_style_t const* m1)
   // Sequence of Associated RAN 
   // Parameters for Control Outcome
   // [0- 255]
-  assert(m0->sz_seq_ctrl_act < 256);
-  assert(m1->sz_seq_ctrl_act < 256);
-  if(m0->sz_seq_ctrl_act != m1->sz_seq_ctrl_act) 
+  assert(m0->sz_ran_param_ctrl_out < 256);
+  assert(m1->sz_ran_param_ctrl_out < 256);
+  if(m0->sz_ran_param_ctrl_out  != m1->sz_ran_param_ctrl_out) 
     return false;
 
-  for(size_t i = 0; i < m0->sz_seq_ctrl_act; ++i){
+  for(size_t i = 0; i < m0->sz_ran_param_ctrl_out; ++i){
     if(eq_seq_ran_param_3(&m0->ran_param_ctrl_out[i], &m1->ran_param_ctrl_out[i]) == false)
       return false;
   }

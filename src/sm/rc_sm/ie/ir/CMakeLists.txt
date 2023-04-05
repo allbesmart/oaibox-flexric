@@ -35,6 +35,7 @@ set (IR_RC_SRC
   ran_func_def_ctrl.c 
   ran_func_def_ev_trig.c 
   ran_func_def_insert.c
+  ran_func_def_policy.c
   ran_func_def_report.c
   ran_param_cond_crit_def.c
   ran_param_elm_key_false.c
@@ -68,6 +69,8 @@ set (IR_RC_SRC
   seq_ins_sty.c
   seq_ins_style_2.c
   seq_ins_style_multiple_action.c
+  seq_pol_action.c 
+  seq_policy_sty.c 
   seq_ran_param_3.c
   seq_ran_param_2.c
   seq_ran_param.c

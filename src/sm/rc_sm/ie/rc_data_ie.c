@@ -650,7 +650,11 @@ void free_e2sm_rc_func_def(e2sm_rc_func_def_t* src)
   // RAN Function Definition for POLICY
   // Optional
   // 9.2.2.6
-  assert(src->policy == NULL && "Not implemented");
+  
+  if(src->policy != NULL){
+    free_ran_func_def_policy(src->policy);
+    free(src->policy);
+  } 
 
 }
 
@@ -742,8 +746,8 @@ bool eq_e2sm_rc_func_def(e2sm_rc_func_def_t const* m0, e2sm_rc_func_def_t const*
   // RAN Function Definition for POLICY
   // Optional
   // 9.2.2.6
-  assert(m0->policy == NULL && "Not implemented");
-  assert(m1->policy == NULL && "Not implemented");
+  if(eq_ran_func_def_policy(m0->policy, m1->policy) == false) 
+    return false;
 
   return true;
 }

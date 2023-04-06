@@ -22,13 +22,13 @@
 #include "../../../../src/xApp/e42_xapp_api.h"
 #include "../../../../src/util/alg_ds/alg/defer.h"
 #include "../../../../src/util/time_now_us.h"
-#include "../../../../src/sm/kpm_sm_v2.02/kpm_sm_id.h"
+#include "../../../../src/sm/kpm_sm_v03.00/kpm_sm_id.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
-
+#include <signal.h>
 
 static
 void sm_cb_kpm(sm_ag_if_rd_t const* rd)
@@ -37,14 +37,46 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
   assert(rd->type ==INDICATION_MSG_AGENT_IF_ANS_V0);
   assert(rd->ind.type == KPM_STATS_V0);
 
-  int64_t now = time_now_us();
-      
-  // KPM has 1 second resolution in its indication header, while 'now' is in microseconds
-  int64_t diff = now/1000000 - (int64_t)rd->ind.kpm_stats.hdr.collectStartTime;
-  if (diff > 1)
-    printf("KPM ind_msg latency = %lu seconds\n", diff);
-  else
-    printf("KPM ind_msg latency < 1 seconds\n");
+  const kpm_ind_hdr_t* hdr = &rd->kpm_stats.hdr;
+  printf("received KPM indication at %d (sender '%s', type '%s', vendor '%s')\n",
+         hdr->collectStartTime, (char *)(hdr->sender_name.buf), (char *)(hdr->sender_type.buf), (char *)(hdr->vendor_name.buf));
+
+  const kpm_ind_msg_t* msg = &rd->kpm_stats.msg;
+  assert(msg->MeasInfo_len == msg->MeasData_len);
+  for (size_t i = 0; i < msg->MeasInfo_len; ++i) {
+    MeasInfo_t* mi = &msg->MeasInfo[i];
+    assert(mi->meas_type == KPM_V2_MEASUREMENT_TYPE_NAME);
+    printf("%s ", (char *)(mi->meas_name.buf));
+
+    if (msg->MeasData[i].measRecord_len == 2) {
+      const MeasRecord_t* mdi = msg->MeasData[i].measRecord;
+      const long ctx = mdi[0].int_val;
+      const long crx = mdi[1].int_val;
+      if (i % 2 == 0){
+        static long tx[10] = {0};
+        static long rx[10] = {0};
+        const float thrtx = (float) (ctx - tx[i]) * 8 / 1e6;
+        tx[i] = ctx;
+        const float thrrx = (float) (crx - rx[i]) * 8 / 1e6;
+        rx[i] = crx;
+        printf(" TX %7.3f RX %7.3f (Mbps)\n                         ", thrtx, thrrx);
+      }
+      printf(" TX %7ld RX %7ld", ctx, crx);
+    } else {
+      for (size_t j = 0; j < msg->MeasData[i].measRecord_len; ++j) {
+        const MeasRecord_t* mdi = &msg->MeasData[i].measRecord[j];
+        printf(" [%ld] %7ld", j, mdi->int_val);
+      }
+    }
+
+    assert(mi->labelInfo_len == 1);
+    if (mi->labelInfo[0].plmn_id != NULL) {
+      const plmn_t* plmn = mi->labelInfo[0].plmn_id;
+      printf(" (PLMN %03d.%0*d)",
+             plmn->mcc, plmn->mnc_digit_len, plmn->mnc);
+    }
+    printf("\n");
+  }
 }
 
 int main(int argc, char *argv[])
@@ -63,7 +95,7 @@ int main(int argc, char *argv[])
   printf("Connected E2 nodes = %d\n", nodes.len);
 
   // KPM indication
-  inter_xapp_e i_0 = ms_5;
+  inter_xapp_e i_0 = ms_1000;
   sm_ans_xapp_t* kpm_handle = NULL;
 
   if(nodes.len > 0){
@@ -80,7 +112,15 @@ int main(int argc, char *argv[])
     assert(kpm_handle[i].success == true);
   }
 
-  sleep(10);
+  static bool run_xapp = true;
+  void handle_sig(int signum) {
+    if (signum != SIGINT && signum != SIGTERM)
+      fprintf(stderr, "WARNING: received signal %d, stopping\n", signum);
+    run_xapp = false;
+  }
+  signal(SIGINT, handle_sig);
+  signal(SIGTERM, handle_sig);
+  while(run_xapp) usleep(100000);
 
 
   for(int i = 0; i < nodes.len; ++i){

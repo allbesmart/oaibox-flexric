@@ -32,8 +32,8 @@
 #include "../../slice_sm/ie/slice_data_ie.h"
 #include "../../tc_sm/ie/tc_data_ie.h"
 #include "../../gtp_sm/ie/gtp_data_ie.h"
-#include "../../kpm_sm_v2.02/ie/kpm_data_ie.h"
 #include "../../rc_sm/ie/rc_data_ie.h"
+#include "../../kpm_sm_v03.00/ie/kpm_data_ie.h"
 
 ////////////////////
 // Indication Message 
@@ -62,7 +62,7 @@ typedef struct{
     slice_ind_data_t slice_ind;
     tc_ind_data_t tc_ind;
     gtp_ind_data_t gtp_ind;
-    kpm_ind_data_t kpm_ind;
+    kpm_ric_indication_t kpm_stats;
     rc_ind_data_t rc_ind;
   };
 } sm_ag_if_rd_ind_t;

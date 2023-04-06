@@ -50,6 +50,7 @@ subscribe_timer_t on_subscription_slice_sm_ag(sm_agent_t const* sm_agent, const 
 //  printf("on_subscription called with event trigger = %u \n", ev.ms);
 }
 
+
 static
 sm_ind_data_t on_indication_slice_sm_ag(sm_agent_t const* sm_agent)
 {

@@ -3,9 +3,10 @@
 #############################
 
 add_executable(test_near_ric 
-              test_near_ric.c 
-                ../../src/sm/rc_sm/test/fill_rnd_data_rc.c
-              ../sm/common/fill_ind_data.c)
+  test_near_ric.c 
+  ../../src/sm/rc_sm/test/fill_rnd_data_rc.c
+  ../sm/common/fill_ind_data.c
+  ../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.c)
 
 target_link_libraries(test_near_ric
                       PUBLIC 

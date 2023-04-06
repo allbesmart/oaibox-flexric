@@ -67,7 +67,7 @@ void init_agent_api(int mcc,
 
   char* server_ip_str = get_near_ric_ip(args);
 
-  const plmn_t plmn = {.mcc = mcc, .mnc = mnc, .mnc_digit_len = mnc_digit_len};
+  const e2ap_plmn_t plmn = {.mcc = mcc, .mnc = mnc, .mnc_digit_len = mnc_digit_len};
   global_e2_node_id_t ge2ni = {.type = ran_type, .plmn = plmn, .nb_id = nb_id, .cu_du_id = NULL};
   const int e2ap_server_port = 36421;
 

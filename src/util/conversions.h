@@ -121,6 +121,12 @@ do {                            \
         ((buf)[3]);             \
 } while(0)
 
+
+OCTET_STRING_t int_64_to_octet_string(uint64_t x);
+
+uint64_t octet_string_to_int_64(OCTET_STRING_t asn);
+
+
 /* Convert an integer on 32 bits to an octet string from aSN1c tool */
 #define INT32_TO_OCTET_STRING(x, aSN)           \
 do {                                            \
@@ -459,7 +465,6 @@ do {                                                                    \
             ((bITsTRING)->buf[7]);                                      \
 } while (0)
 
-
 /* Global gNB ID
    TS 38.413, clause 9.3.1.6
 */
@@ -472,12 +477,12 @@ do {                                                    \
     (bITsTRING)->buf[2] = (mACRO) >> 4;                 \
     (bITsTRING)->buf[3] = ((mACRO) & 0x0f) << 4;        \
     (bITsTRING)->size = 4;                              \
-    (bITsTRING)->bits_unused = 4;                       \
+    (bITsTRING)->bits_unused = 0;                       \
 } while(0)
 
 #define BIT_STRING_TO_MACRO_GNB_ID(aSN, vALUE)            \
 do {                                                      \
-    assert((aSN)->bits_unused == 4);                      \
+    assert((aSN)->bits_unused == 0);                      \
     vALUE = ((aSN)->buf[0] << 20) | ((aSN)->buf[1] << 12) \
           | ((aSN)->buf[2] << 4) | ((aSN)->buf[3] >> 4);  \
 } while(0)
@@ -516,6 +521,92 @@ do {                                                      \
     vALUE = ((aSN)->buf[0] << 12) | ((aSN)->buf[1] << 4) \
           | ((aSN)->buf[2] >> 4);  \
 } while(0)
+
+// MACRO eNB - 20 bits
+BIT_STRING_t cp_macro_enb_id_to_bit_string(uint32_t val);
+
+uint32_t cp_macro_enb_id_to_u32(BIT_STRING_t src);
+
+BIT_STRING_t cp_macro_gnb_id_to_bit_string(uint32_t val);
+
+uint32_t cp_macro_gnb_id_to_u32(BIT_STRING_t src);
+
+
+/* NR CGI
+   TS 38.413 section 9.3.1.7
+*/
+BIT_STRING_t cp_nr_cell_id_to_bit_string(uint64_t val);
+
+uint64_t cp_nr_cell_id_to_u64(BIT_STRING_t src);
+
+
+/* Global eNB ID
+  This IE is used to globally identify an eNB.
+  Derived from TS 36.413 [10] clause 9.2.1.37.
+*/
+// Macro eNB for e2ap
+#define MACRO_ENB_ID_TO_BIT_STRING(mACRO, bITsTRING)    \
+do {                                                    \
+    (bITsTRING)->buf = calloc(3, sizeof(uint8_t));      \
+    (bITsTRING)->buf[0] = (mACRO) >> 12;               \
+    (bITsTRING)->buf[1] = (mACRO) >> 4;                 \
+    (bITsTRING)->buf[2] = ((mACRO) & 0x0f) << 4;        \
+    (bITsTRING)->size = 3;                              \
+    (bITsTRING)->bits_unused = 4;                       \
+} while(0)
+
+#define BIT_STRING_TO_MACRO_ENB_ID(aSN, vALUE)            \
+do {                                                      \
+    assert((aSN)->bits_unused == 4);                      \
+    vALUE = ((aSN)->buf[0] << 12) | ((aSN)->buf[1] << 4) \
+          | ((aSN)->buf[2] >> 4);  \
+} while(0)
+
+// Home eNB - 28 bits
+BIT_STRING_t cp_home_enb_id_to_bit_string(uint32_t val);
+
+uint32_t cp_home_enb_id_to_u32(BIT_STRING_t src);
+
+// Short Macro eNB
+BIT_STRING_t cp_short_macro_enb_id_to_bit_string(uint32_t val);
+
+uint32_t cp_short_macro_enb_id_to_u32(BIT_STRING_t src);
+
+// Long Macro eNB
+BIT_STRING_t cp_long_macro_enb_id_to_bit_string(uint32_t val);
+
+uint32_t cp_long_macro_enb_id_to_u32(BIT_STRING_t src);
+
+
+/* E-UTRAN CGI
+  TS 36.413 v10.9.0 section 9.2.1.38
+ */
+
+BIT_STRING_t cp_eutra_cell_id_to_bit_string(uint32_t val);
+
+uint32_t cp_eutra_cell_id_to_u32(BIT_STRING_t src);
+
+
+
+/* Global ng-eNB ID
+  This IE is used to globally identify an ng-eNB.
+  Derived from TS 38.413 [6] clause 9.3.1.8.
+*/
+
+// Macro NG eNB ID
+BIT_STRING_t cp_macro_ng_enb_id_to_bit_string(uint32_t val);
+
+uint32_t cp_macro_ng_enb_id_to_u32(BIT_STRING_t src);
+
+// Short Macro NG eNB ID
+BIT_STRING_t cp_short_macro_ng_enb_id_to_bit_string(uint32_t val);
+
+uint32_t cp_short_macro_ng_enb_id_to_u32(BIT_STRING_t src);
+
+// Long Macro NG eNB ID
+BIT_STRING_t cp_long_macro_ng_enb_id_to_bit_string(uint32_t val);
+
+uint32_t cp_long_macro_ng_enb_id_to_u32(BIT_STRING_t src);
 
 // MACRO eNB - 20 bits
 BIT_STRING_t cp_macro_enb_id_to_bit_string(uint32_t val);

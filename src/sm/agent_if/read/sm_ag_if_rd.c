@@ -27,7 +27,7 @@
 #include "../../slice_sm/ie/slice_data_ie.h"
 #include "../../tc_sm/ie/tc_data_ie.h"
 #include "../../gtp_sm/ie/gtp_data_ie.h"
-#include "../../kpm_sm_v2.02/ie/kpm_data_ie.h"
+#include "../../kpm_sm_v03.00/ie/kpm_data_ie.h"
 
 #include <assert.h>
 #include <stdlib.h>

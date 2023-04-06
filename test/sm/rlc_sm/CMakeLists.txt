@@ -17,6 +17,7 @@ if(SM_ENCODING_RLC  STREQUAL "PLAIN")
                       ../../../src/sm/rlc_sm/ie/rlc_data_ie.c
                       ../common/fill_ind_data.c
                       ../../../src/sm/rc_sm/test/fill_rnd_data_rc.c
+                      ../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.c
               )
 elseif(SM_ENCODING_RLC STREQUAL "ASN")
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}../ie/asn/ )
@@ -36,6 +37,7 @@ elseif(SM_ENCODING_RLC STREQUAL "ASN")
                       ../../if_sm/read/sm_rd_if.c
                       ${asn_sources} 
                       ../../../../test/common/fill_ind_data.c
+                      ../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.c
               )
 elseif(SM_ENCODING_RLC STREQUAL "FLATBUFFERS")
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}../ie/fb/ )
@@ -51,6 +53,7 @@ elseif(SM_ENCODING_RLC STREQUAL "FLATBUFFERS")
                       ../ie/rlc_data_ie.c
                       ../../if_sm/read/sm_rd_if.c
                       ../../../../test/common/fill_ind_data.c
+                      ../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.c
               )
 endif()
 

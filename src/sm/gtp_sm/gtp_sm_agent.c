@@ -67,6 +67,7 @@ subscribe_timer_t on_subscription_gtp_sm_ag(sm_agent_t const* sm_agent, const sm
   return timer;
 }
 
+
 static
 sm_ind_data_t on_indication_gtp_sm_ag(sm_agent_t const* sm_agent)
 {

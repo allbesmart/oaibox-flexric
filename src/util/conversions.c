@@ -397,3 +397,23 @@ uint32_t cp_long_macro_ng_enb_id_to_u32(BIT_STRING_t src)
 
     return dst;
 }
+
+OCTET_STRING_t int_64_to_octet_string(uint64_t x)
+{
+    OCTET_STRING_t asn = {0};
+
+    asn.buf = calloc(sizeof(x) + 1, sizeof(char));
+    memcpy(asn.buf,&x,sizeof(x));
+    asn.size = sizeof(x);
+
+    return asn;
+}
+
+uint64_t octet_string_to_int_64(OCTET_STRING_t asn)
+{
+    uint64_t x = {0};
+
+    memcpy(&x, asn.buf, asn.size);
+
+    return x;
+}

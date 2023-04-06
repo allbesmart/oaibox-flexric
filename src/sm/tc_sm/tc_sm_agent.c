@@ -45,6 +45,7 @@ subscribe_timer_t on_subscription_tc_sm_ag(sm_agent_t const* sm_agent, const sm_
   return timer;
 }
 
+
 static
 sm_ind_data_t on_indication_tc_sm_ag(sm_agent_t const* sm_agent)
 {

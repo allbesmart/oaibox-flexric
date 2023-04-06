@@ -24,7 +24,7 @@
 #include "../../src/xApp/e42_xapp_api.h"
 #include "../../src/sm/slice_sm/slice_sm_id.h"
 #include "../../src/sm/gtp_sm/gtp_sm_id.h"
-#include "../../src/sm/kpm_sm_v2.02/kpm_sm_id.h"
+#include "../../src/sm/kpm_sm_v03.00/kpm_sm_id.h"
 #include "../../src/util/alg_ds/alg/defer.h"
 #include "../../src/util/time_now_us.h"
 #include "../sm/common/fill_ind_data.h"
@@ -108,21 +108,6 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* ag_wr)
   return ans;
 }
 
-/*
-static
-void sm_cb_kpm(sm_ag_if_rd_t const* rd)
-{
-  assert(rd != NULL);
-  assert(rd->type == KPM_STATS_V0); 
-
-  int64_t now = time_now_us();
-  
-  // Note that KPM has 1 second resolution in its indication header, while `now` is in microseconds. 
-  // Only reasonable latency value to print is a rounded one to seconds.
-  printf("KPM ind_msg latency > %ld s\n", now/1000000 - (int64_t)rd->kpm_stats.hdr.collectStartTime);
-}
-*/
-
 static
 void sm_cb_mac(sm_ag_if_rd_t const* rd)
 {
@@ -203,9 +188,37 @@ sm_ag_if_wr_t create_assoc_slice(void)
     assoc->dl_id = 42;
     assoc->ul_id = 42;
     assoc->rnti = 121;
+    switch (read_kpm_ind.kpm_ind_hdr.type)
+    {
+      case FORMAT_1_INDICATION_HEADER:
+        printf("received KPM indication at %d (sender '%s', type '%s', vendor '%s')\n",
+            read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.collectStartTime, (char *)(read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.sender_name->buf), (char *)(read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.sender_type->buf), (char *)(read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.vendor_name->buf));
+        break;
+
+      default:
+        assert(false && "Unknown Indication Header Type");
+    }
+
+    // Indication Message
+
+    switch (read_kpm_ind.kpm_ind_msg.type)
+    {
+      case FORMAT_1_INDICATION_MESSAGE:
+        sm_cb_kpm_ind_msg_frm_1(&read_kpm_ind.kpm_ind_msg.frm_1);
+        break;
+
+        // case FORMAT_2_INDICATION_MESSAGE:
+        //   sm_cb_kpm_ind_msg_frm_2(&read_kpm_ind->kpm_ind_msg.frm_2);
+        //   break;
+
+        // case FORMAT_3_INDICATION_MESSAGE:
+        //   sm_cb_kpm_ind_msg_frm_3(&read_kpm_ind->kpm_ind_msg.frm_3);
+        //   break;
+
+      default:
+        assert(false && "Unknown Indication Message Type");
+    }
   }
-  return ctrl_msg;
-}
 
 int main(int argc, char *argv[])
 {
@@ -280,18 +293,15 @@ int main(int argc, char *argv[])
   free(ctrl_msg_assoc.ctrl.slice_req_ctrl.msg.u.ue_slice.ues); 
 
   sleep(1);
+  
+  inter_xapp_e i = ms_1000;
+  // returns a handle for KPM
+  sm_ans_xapp_t h = report_sm_xapp_api(&nodes.n[0].id, SM_KPM_ID, i, sm_cb_kpm);
+  assert(h.success == true);
+  sleep(20);
 
   // Remove the handle previously returned
   //rm_report_sm_xapp_api(h.u.handle);
-
-  // Remove the handle previously returned
-  rm_report_sm_xapp_api(h_1.u.handle);
-
-  // Remove the handle previously returned
-  rm_report_sm_xapp_api(h_2.u.handle);
-
-  // Remove the handle previously returned
-  rm_report_sm_xapp_api(h_3.u.handle);
 
   sleep(1);
 

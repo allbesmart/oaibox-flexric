@@ -64,7 +64,120 @@ void init_udp_socket()
 
 }
 
-void notify_influx_listener(sm_ag_if_rd_ind_t const* data)
+void notify_kpm_ind_msg_frm_1(const kpm_ind_msg_format_1_t message, uint32_t truncated_ts)
+{
+
+  char stats[1024] = {0};
+  int max = 1024;
+
+  for(size_t i = 0; i < message.meas_data_lst_len; i++){
+      meas_data_lst_t* curMeasData = &message.meas_data_lst[i];
+      
+      if (i == 0 && message.gran_period_ms){
+        int rc = snprintf(stats, max,  "kpm_stats: "
+                        "tstamp=%u"
+                        ",granulPeriod=%u"
+                        ",kpm_MeasData"
+                        ",kpm->MeasData_len=%zu"
+                        , truncated_ts
+                        , *(message.gran_period_ms)
+                        , message.meas_data_lst_len
+                        );
+        assert(rc < (int)max && "Not enough space in the char array to write all the data");
+        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
+        assert(rc != -1);
+      }else if(i == 0 && message.gran_period_ms == NULL){
+        int rc = snprintf(stats, max,  "kpm_stats: "
+                        "tstamp=%u"
+                        ",granulPeriod="
+                        ",kpm_MeasData"
+                        ",kpm->MeasData_len=%zu"
+                        , truncated_ts
+                        , message.meas_data_lst_len
+                        );
+        assert(rc < (int)max && "Not enough space in the char array to write all the data");
+        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
+        assert(rc != -1);
+      }
+
+      memset(stats, 0, sizeof(stats));
+      int rc = snprintf(stats, max,
+                        ",kpm_measData[%zu]"
+                        ",MeasData->incompleteFlag=%p"
+                        ",MeasData->measRecord_len=%zu"
+                        , i
+                        , (void *)curMeasData->incomplete_flag
+                        , curMeasData->meas_record_len
+                        );
+      assert(rc < (int)max && "Not enough space in the char array to write all the data");
+      rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
+      assert(rc != -1);
+
+      for(size_t j = 0; j < curMeasData->meas_record_len; j++){
+        meas_record_lst_t* curMeasRecord = &(curMeasData->meas_record_lst[j]);
+        memset(stats, 0, sizeof(stats));
+        to_string_kpm_measRecord(curMeasRecord, j, stats, max);
+        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
+        assert(rc != -1);
+      }
+    }
+
+    for(size_t i = 0; i < message.meas_info_lst_len; i++){
+      meas_info_format_1_lst_t* curMeasInfo = &message.meas_info_lst[i];
+      if (i == 0){
+        memset(stats, 0, sizeof(stats));
+        int rc = snprintf(stats, max,
+                        ",kpm_MeasInfo"
+                        ",kpm->MeasInfo_len=%zu",
+                        i
+                        );
+        assert(rc < (int)max && "Not enough space in the char array to write all the data");
+        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
+        assert(rc != -1);
+      }
+
+      if (curMeasInfo->meas_type.type == ID_MEAS_TYPE){
+        memset(stats, 0, sizeof(stats));
+        int rc = snprintf(stats, max,
+                          ",MeasInfo[%zu]"
+                          ",measType=%d"
+                          ",measID=%d"
+                          , i
+                          , curMeasInfo->meas_type.type
+                          , curMeasInfo->meas_type.id
+                          );
+        assert(rc < (int)max && "Not enough space in the char array to write all the data");
+        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
+        assert(rc != -1);
+      } else if (curMeasInfo->meas_type.type == NAME_MEAS_TYPE){
+        memset(stats, 0, sizeof(stats));
+        int rc = snprintf(stats, max,
+                          ",MeasInfo[%zu]"
+                          ",measType=%d"
+                          ",measName=%s"
+                          , i
+                          , curMeasInfo->meas_type.type
+                          , (char *)(curMeasInfo->meas_type.name.buf)
+                          );
+        assert(rc < (int)max && "Not enough space in the char array to write all the data");
+        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
+        assert(rc != -1);
+      }
+
+      for(size_t j = 0; j < curMeasInfo->label_info_lst_len; ++j){
+        label_info_lst_t* curLabelInfo = &curMeasInfo->label_info_lst[j];
+        memset(stats, 0, sizeof(stats));
+        to_string_kpm_labelInfo(curLabelInfo, j, stats, max);
+        int rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
+        assert(rc != -1);
+      }
+    }
+
+
+}
+
+
+void notify_influx_listener(sm_ag_if_rd_t const* data)
 {
   assert(data != NULL);
 
@@ -124,114 +237,35 @@ void notify_influx_listener(sm_ag_if_rd_ind_t const* data)
       assert(rc != -1);
     }
   } else if(data->type == KPM_STATS_V0){
-    kpm_ind_data_t const* kpm = &data->kpm_ind;
-    char stats[1024] = {0};
-    int max = 1024;
+    kpm_ric_indication_t const* kpm = &data->kpm_stats;
 
-    for(size_t i = 0; i < kpm->msg.MeasData_len; i++){
-      adapter_MeasDataItem_t* curMeasData = &kpm->msg.MeasData[i];
-      
-      if (i == 0 && kpm->msg.granulPeriod){
-        int rc = snprintf(stats, max,  "kpm_stats: "
-                        "tstamp=%u"
-                        ",granulPeriod=%lu"
-                        ",kpm_MeasData"
-                        ",kpm->MeasData_len=%zu"
-                        , kpm->hdr.collectStartTime
-                        , *(kpm->msg.granulPeriod)
-                        , kpm->msg.MeasData_len
-                        );
-        assert(rc < (int)max && "Not enough space in the char array to write all the data");
-        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
-        assert(rc != -1);
-      }else if(i == 0 && kpm->msg.granulPeriod == NULL){
-        int rc = snprintf(stats, max,  "kpm_stats: "
-                        "tstamp=%u"
-                        ",granulPeriod="
-                        ",kpm_MeasData"
-                        ",kpm->MeasData_len=%zu"
-                        , kpm->hdr.collectStartTime
-                        , kpm->msg.MeasData_len
-                        );
-        assert(rc < (int)max && "Not enough space in the char array to write all the data");
-        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
-        assert(rc != -1);
-      }
+    // From Indication Header : Collect Start Time
+    // To be defined better, switch/case for specific format
+    uint64_t truncated_ts = (uint64_t)kpm->kpm_ind_hdr.kpm_ric_ind_hdr_format_1.collectStartTime;
 
-      memset(stats, 0, sizeof(stats));
-      int rc = snprintf(stats, max,
-                        ",kpm_measData[%zu]"
-                        ",MeasData->incompleteFlag=%ld"
-                        ",MeasData->measRecord_len=%zu"
-                        , i
-                        , curMeasData->incompleteFlag
-                        , curMeasData->measRecord_len
-                        );
-      assert(rc < (int)max && "Not enough space in the char array to write all the data");
-      rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
-      assert(rc != -1);
+    switch (kpm->kpm_ind_msg.type)
+    {
+    case FORMAT_1_INDICATION_MESSAGE:
+      notify_kpm_ind_msg_frm_1(kpm->kpm_ind_msg.frm_1, truncated_ts);
+      break;
 
-      for(size_t j = 0; j < curMeasData->measRecord_len; j++){
-        adapter_MeasRecord_t* curMeasRecord = &(curMeasData->measRecord[j]);
-        memset(stats, 0, sizeof(stats));
-        to_string_kpm_measRecord(curMeasRecord, j, stats, max);
-        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
-        assert(rc != -1);
-      }
+    // case FORMAT_2_INDICATION_MESSAGE:
+    //   kpm_ind_msg_format_2_t * message = calloc(1, sizeof(kpm_ind_msg_format_2_t));
+    //   message = &kpm->kpm_ind_msg.frm_2;
+    //   print_kpm_ind_msg_frm_2(&message);
+    //   break;
+
+    // case FORMAT_3_INDICATION_MESSAGE:
+    //   kpm_ind_msg_format_3_t * message = calloc(1, sizeof(kpm_ind_msg_format_3_t));
+    //   message = &kpm->kpm_ind_msg.frm_3;
+    //   print_kpm_ind_msg_frm_3(&message);
+    //   break;
+
+    default:
+      assert(false && "Unknown Indication Message Type");
     }
 
-    for(size_t i = 0; i < kpm->msg.MeasInfo_len; i++){
-      MeasInfo_t* curMeasInfo = &kpm->msg.MeasInfo[i];
-      if (i == 0){
-        memset(stats, 0, sizeof(stats));
-        int rc = snprintf(stats, max,
-                        ",kpm_MeasInfo"
-                        ",kpm->MeasInfo_len=%zu",
-                        i
-                        );
-        assert(rc < (int)max && "Not enough space in the char array to write all the data");
-        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
-        assert(rc != -1);
-      }
-
-      if (curMeasInfo->meas_type == KPM_V2_MEASUREMENT_TYPE_ID){
-        memset(stats, 0, sizeof(stats));
-        int rc = snprintf(stats, max,
-                          ",MeasInfo[%zu]"
-                          ",measType=%d"
-                          ",measID=%ld"
-                          , i
-                          , curMeasInfo->meas_type
-                          , curMeasInfo->measID
-                          );
-        assert(rc < (int)max && "Not enough space in the char array to write all the data");
-        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
-        assert(rc != -1);
-      } else if (curMeasInfo->meas_type == KPM_V2_MEASUREMENT_TYPE_NAME){
-        memset(stats, 0, sizeof(stats));
-        int rc = snprintf(stats, max,
-                          ",MeasInfo[%zu]"
-                          ",measType=%d"
-                          ",measName->len=%zu"
-                          ",measName->buf=%s"
-                          , i
-                          , curMeasInfo->meas_type
-                          , curMeasInfo->measName.len
-                          , curMeasInfo->measName.buf
-                          );
-        assert(rc < (int)max && "Not enough space in the char array to write all the data");
-        rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
-        assert(rc != -1);
-      }
-
-      for(size_t j = 0; j < curMeasInfo->labelInfo_len; ++j){
-        adapter_LabelInfoItem_t* curLabelInfo = &curMeasInfo->labelInfo[j];
-        memset(stats, 0, sizeof(stats));
-        to_string_kpm_labelInfo(curLabelInfo, j, stats, max);
-        int rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
-        assert(rc != -1);
-      }
-    }
+    
   } else {
     assert(0 != 0 || "invalid data type ");
   }

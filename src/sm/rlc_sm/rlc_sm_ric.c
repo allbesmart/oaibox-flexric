@@ -154,6 +154,7 @@ sm_ag_if_rd_e2setup_t ric_on_e2_setup_rlc_sm_ric(sm_ric_t const* sm_ric, sm_e2_s
   assert(0!=0 && "Not implemented");
 }
 
+
 static
 sm_ag_if_rd_rsu_t on_ric_service_update_rlc_sm_ric(sm_ric_t const* sm_ric, sm_ric_service_update_data_t const* data )
 {

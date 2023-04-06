@@ -131,6 +131,7 @@ sm_ag_if_rd_e2setup_t ric_on_e2_setup_slice_sm_ric(sm_ric_t const* sm_ric, sm_e2
   return dst;
 }
 
+
 static
 sm_ag_if_rd_rsu_t on_ric_service_update_slice_sm_ric(sm_ric_t const* sm_ric, const  sm_ric_service_update_data_t* data)
 {

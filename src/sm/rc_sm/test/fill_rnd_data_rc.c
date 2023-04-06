@@ -3,9 +3,7 @@
 #include "../ie/ir/ran_param_struct.h"
 #include "../ie/ir/ran_param_list.h"
 
-
 #include <assert.h>
-
 
 static
 byte_array_t cp_str_to_ba(const char* str)
@@ -2253,7 +2251,6 @@ e2sm_rc_ctrl_out_t fill_rnd_rc_ctrl_out(void)
 /////////////////////////////
 /////////////////////////////
 
-static
 ran_function_name_t fill_rc_ran_func_name(void)
 {
   ran_function_name_t dst = {0}; 
@@ -2422,7 +2419,6 @@ seq_call_proc_type_t dst = {0};
   return dst;
 }
 
-static
 ran_func_def_ev_trig_t fill_ran_func_def_ev_trig(void)
 {
   ran_func_def_ev_trig_t dst = {0}; 
@@ -2548,7 +2544,6 @@ seq_report_sty_t fill_rnd_seq_report_sty(void)
   return dst;
 }
 
-static
 ran_func_def_report_t fill_ran_func_def_report(void)
 {
   ran_func_def_report_t dst = {0};
@@ -2662,7 +2657,6 @@ seq_ins_sty_t fill_rnd_seq_ins_sty(void)
   return dst;
 }
 
-static
 ran_func_def_insert_t fill_ran_func_def_insert(void)
 {
   ran_func_def_insert_t dst = {0};
@@ -2775,7 +2769,6 @@ seq_ctrl_style_t fill_rnd_seq_ctrl_style(void)
   return dst;
 }
 
-static
 ran_func_def_ctrl_t fill_ran_func_def_ctrl(void)
 {
   ran_func_def_ctrl_t dst = {0};
@@ -2872,8 +2865,6 @@ seq_policy_sty_t fill_rnd_seq_policy_sty(void)
   return dst;
 }
 
-
-static
 ran_func_def_policy_t fill_ran_func_def_policy(void)
 {
   ran_func_def_policy_t dst = {0}; 
@@ -2911,30 +2902,30 @@ e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void)
   // RAN Function Definition for REPORT
   // Optional
   // 9.2.2.3
-  dst.report = calloc(1, sizeof( ran_func_def_report_t ));
-  assert(dst.report != NULL && "Memory exhausted");
-  *dst.report = fill_ran_func_def_report();
+//  dst.report = calloc(1, sizeof( ran_func_def_report_t ));
+//  assert(dst.report != NULL && "Memory exhausted");
+//  *dst.report = fill_ran_func_def_report();
 
   // RAN Function Definition for INSERT
   // Optional
   // 9.2.2.4
-  dst.insert = calloc(1, sizeof(ran_func_def_insert_t)); 
-  assert(dst.insert != NULL && "Memory exhausted");
-  *dst.insert = fill_ran_func_def_insert();
+//  dst.insert = calloc(1, sizeof(ran_func_def_insert_t)); 
+//  assert(dst.insert != NULL && "Memory exhausted");
+//  *dst.insert = fill_ran_func_def_insert();
 
   // RAN Function Definition for CONTROL
   // Optional
   // 9.2.2.5
-  dst.ctrl = calloc(1, sizeof( ran_func_def_ctrl_t)); 
-  assert(dst.ctrl != NULL && "Memory exhausted");
-  *dst.ctrl = fill_ran_func_def_ctrl();
+//  dst.ctrl = calloc(1, sizeof( ran_func_def_ctrl_t)); 
+//  assert(dst.ctrl != NULL && "Memory exhausted");
+//  *dst.ctrl = fill_ran_func_def_ctrl();
 
   // RAN Function Definition for POLICY
   // Optional
   // 9.2.2.6
-  dst.policy = calloc(1, sizeof(ran_func_def_policy_t)); 
-  assert(dst.policy != NULL && "Memory exhausted");
-  *dst.policy = fill_ran_func_def_policy();
+//  dst.policy = calloc(1, sizeof(ran_func_def_policy_t)); 
+//  assert(dst.policy != NULL && "Memory exhausted");
+//  *dst.policy = fill_ran_func_def_policy();
 
   return dst;
 }

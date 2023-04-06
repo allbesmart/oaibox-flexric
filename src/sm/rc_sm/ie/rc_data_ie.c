@@ -679,27 +679,41 @@ e2sm_rc_func_def_t cp_e2sm_rc_func_def(e2sm_rc_func_def_t const* src)
     *dst.ev_trig = cp_ran_func_def_ev_trig(src->ev_trig);
   }
 
-  assert(src->ev_trig == NULL && "not implemented"); 
-
   // RAN Function Definition for REPORT
   // Optional
   // 9.2.2.3
-  assert(src->report == NULL && "not implemented"); 
+  if(src->report != NULL){
+    dst.report = calloc(1, sizeof(ran_func_def_report_t));
+    assert(dst.report != NULL && "Memory exhausted");
+    *dst.report = cp_ran_func_def_report(src->report);
+  }
 
   // RAN Function Definition for INSERT
   // Optional
   // 9.2.2.4
-  assert(src->insert == NULL && "not implemented"); 
+   if(src->insert != NULL){
+    dst.insert = calloc(1, sizeof(ran_func_def_insert_t));
+    assert(dst.insert != NULL && "Memory exhausted");
+    *dst.insert = cp_ran_func_def_insert(src->insert);
+  }
 
   // RAN Function Definition for CONTROL
   // Optional
   // 9.2.2.5
-  assert(src->ctrl == NULL && "not implemented"); 
+  if(src->ctrl!= NULL){
+    dst.ctrl= calloc(1, sizeof(ran_func_def_ctrl_t));
+    assert(dst.ctrl!= NULL && "Memory exhausted");
+    *dst.ctrl= cp_ran_func_def_ctrl(src->ctrl);
+  }
 
   // RAN Function Definition for POLICY
   // Optional
   // 9.2.2.6
-  assert(src->policy == NULL && "not implemented"); 
+  if(src->policy != NULL){
+    dst.policy = calloc(1, sizeof(ran_func_def_policy_t));
+    assert(dst.policy != NULL && "Memory exhausted");
+    *dst.policy = cp_ran_func_def_policy(src->policy);
+  }
 
   return dst;
 }

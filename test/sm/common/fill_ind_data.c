@@ -1231,3 +1231,9 @@ rc_ctrl_req_data_t dst = {0};
   return dst;
 }
 
+e2sm_rc_func_def_t fill_rc_ran_func_def(void)
+{
+  return fill_rnd_rc_ran_func_def();
+}
+
+

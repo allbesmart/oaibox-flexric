@@ -17,113 +17,8 @@
 ////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////
 
-//static
-//tc_ctrl_req_data_t cp_ctrl;
-
 //
 // Functions 
-static
-byte_array_t cp_str_to_ba(const char* str)
-{
-  assert(str != NULL);
-  
-  const size_t sz = strlen(str);
-
-  byte_array_t dst = {.len = sz};
-
-  dst.buf = calloc(sz,sizeof(uint8_t));
-  assert(dst.buf != NULL && "Memory exhausted");
-
-  memcpy(dst.buf, str, sz);
-
-  return dst;
-}
-
-static
-ran_function_name_t fill_rc_ran_func_name(void)
-{
-  ran_function_name_t dst = {0}; 
-
-    // RAN Function Short Name
-    // Mandatory
-    // PrintableString [1-150]
-    dst.name = cp_str_to_ba(SM_RAN_CTRL_SHORT_NAME);
-
-    // RAN Function Service Model OID
-    // Mandatory
-    // PrintableString [1-1000]
-    
-    //iso(1) identified-organization(3)
-    //dod(6) internet(1) private(4)
-    //enterprise(1) 53148 e2(1)
-    // version1 (1) e2sm(2) e2sm-RC-
-    // IEs (3)
-    dst.oid = cp_str_to_ba(SM_RAN_CTRL_OID);
-
-    // RAN Function Description
-    // Mandatory
-    // PrintableString [1- 150]
-    //RAN function RC “RAN Control” performs the following
-    //functionalities:
-    //- Exposure of RAN control and UE context related
-    //information.
-    //- Modification and initiation of RAN control related call
-    //processes and messages
-    //- Execution of policies that may result in change of
-    //RAN control behavior 
-
-    dst.description = cp_str_to_ba( SM_RAN_CTRL_DESCRIPTION);
-
-    // RAN Function Instance
-    // Optional
-    // INTEGER
-//    long* instance;	/* OPTIONAL: it is suggested to be used when E2 Node declares
-//                                multiple RAN Function ID supporting the same  E2SM specification   ask Mikel */
-
-  return dst;
-}
-
-static
-e2sm_rc_func_def_t fill_rc_ran_func_def(void)
-{
-  e2sm_rc_func_def_t dst = {0}; 
-
-  //  RAN Function Name
-  //  Mandatory
-  //  9.3.2
-  //  6.2.2.1.
-  dst.name = fill_rc_ran_func_name();  
-
-  // RAN Function Definition for EVENT TRIGGER
-  // Optional
-  // 9.2.2.2
-  // ran_func_def_ev_trig_t* ev_trig;
-
-  // RAN Function Definition for REPORT
-  // Optional
-  // 9.2.2.3
-  // ran_func_def_report_t* report;
-
-  // RAN Function Definition for INSERT
-  // Optional
-  // 9.2.2.4
-  // ran_func_def_insert_t* insert;
-
-  // RAN Function Definition for CONTROL
-  // Optional
-  // 9.2.2.5
-  // ran_func_def_ctrl_t* ctrl;
-
-  // RAN Function Definition for POLICY
-  // Optional
-  // 9.2.2.6
-  // ran_func_def_policy_t* policy;
-
-  return dst;
-}
-
-
-
 
 /////
 // AGENT
@@ -150,6 +45,8 @@ void read_RAN(sm_ag_if_rd_t* read)
     assert(read->e2ap.type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
     read->e2ap.rc.func_def = fill_rc_ran_func_def();
     cp_e2_setup.func_def = cp_e2sm_rc_func_def(&read->e2ap.rc.func_def);
+    assert(eq_e2sm_rc_func_def(&cp_e2_setup.func_def, & read->e2ap.rc.func_def) == true);
+
   } else {
     assert(0!=0 && "Unknown type");
   }
@@ -300,7 +197,6 @@ void check_e2_setup(sm_agent_t* ag, sm_ric_t* ric)
   assert(eq_e2sm_rc_func_def(&out.rc.func_def, &cp_e2_setup.func_def) == true);
 }
 
-
 int main()
 {
   srand(time(0)); 
@@ -313,11 +209,11 @@ int main()
 //  for(int i =0 ; i < 256*4096; ++i){
  //   check_eq_ran_function(sm_ag, sm_ric);
  //
-    //check_indication(sm_ag, sm_ric);
-    //check_subscription(sm_ag, sm_ric);
-    // check_ctrl(sm_ag, sm_ric);
+    check_indication(sm_ag, sm_ric);
+    check_subscription(sm_ag, sm_ric);
+    check_ctrl(sm_ag, sm_ric);
     check_e2_setup(sm_ag, sm_ric);
-//    check_ric_service_update(sm_ag, sm_ric);
+    // check_ric_service_update(sm_ag, sm_ric);
 
 //  }
 

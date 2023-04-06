@@ -47,6 +47,7 @@ typedef struct{
 
 } sm_rc_agent_t;
 
+/*
 static
 byte_array_t cp_str_to_ba(const char* str)
 {
@@ -63,7 +64,6 @@ byte_array_t cp_str_to_ba(const char* str)
 
   return dst;
 }
-
 static
 ran_function_name_t fill_rc_ran_func_name(void)
 {
@@ -102,8 +102,8 @@ ran_function_name_t fill_rc_ran_func_name(void)
     // RAN Function Instance
     // Optional
     // INTEGER
-//    long* instance;	/* OPTIONAL: it is suggested to be used when E2 Node declares
-//                                multiple RAN Function ID supporting the same  E2SM specification   ask Mikel */
+//    long* instance;	// OPTIONAL: it is suggested to be used when E2 Node declares
+//                                multiple RAN Function ID supporting the same  E2SM specification
 
   return dst;
 }
@@ -113,46 +113,14 @@ e2sm_rc_func_def_t fill_rc_ran_func_def(sm_rc_agent_t const* sm)
 {
   assert(sm != NULL);
 
-  e2sm_rc_func_def_t dst = {0}; 
-
-  //  RAN Function Name
-  //  Mandatory
-  //  9.3.2
-  //  6.2.2.1.
-  dst.name = fill_rc_ran_func_name();  
-
-  // ToDO: Call the RAN and fill the data  
+  // Call the RAN and fill the data  
   sm_ag_if_rd_t rd = {.type = E2_SETUP_AGENT_IF_ANS_V0};
   rd.e2ap.type = RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0;
   sm->base.io.read(&rd);
 
-  // RAN Function Definition for EVENT TRIGGER
-  // Optional
-  // 9.2.2.2
-  // ran_func_def_ev_trig_t* ev_trig;
-
-  // RAN Function Definition for REPORT
-  // Optional
-  // 9.2.2.3
-  // ran_func_def_report_t* report;
-
-  // RAN Function Definition for INSERT
-  // Optional
-  // 9.2.2.4
-  // ran_func_def_insert_t* insert;
-
-  // RAN Function Definition for CONTROL
-  // Optional
-  // 9.2.2.5
-  // ran_func_def_ctrl_t* ctrl;
-
-  // RAN Function Definition for POLICY
-  // Optional
-  // 9.2.2.6
-  // ran_func_def_policy_t* policy;
-
-  return dst;
+  return rd.e2ap.rc.func_def;
 }
+*/
 
 // Function pointers provided by the RAN for the 
 // 5 procedures, 
@@ -248,13 +216,17 @@ sm_e2_setup_data_t on_e2_setup_rc_sm_ag(sm_agent_t const* sm_agent)
   //printf("on_e2_setup called \n");
   sm_rc_agent_t* sm = (sm_rc_agent_t*)sm_agent;
 
-  e2sm_rc_func_def_t ran_func = fill_rc_ran_func_def(sm);
-  defer({ free_e2sm_rc_func_def(&ran_func); });
+  // Call the RAN and fill the data  
+  sm_ag_if_rd_t rd = {.type = E2_SETUP_AGENT_IF_ANS_V0};
+  rd.e2ap.type = RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0;
+  sm->base.io.read(&rd);
+
+  e2sm_rc_func_def_t* ran_func = &rd.e2ap.rc.func_def; 
+  defer({ free_e2sm_rc_func_def(ran_func); });
+
+  byte_array_t ba = rc_enc_func_def(&sm->enc, ran_func);
 
   sm_e2_setup_data_t setup = {0}; 
-  
-  byte_array_t ba = rc_enc_func_def(&sm->enc, &ran_func);
-
   setup.len_rfd = ba.len;
   setup.ran_fun_def = ba.buf;
 

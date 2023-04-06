@@ -54,10 +54,11 @@ rc_ind_data_t fill_rnd_rc_ind_data(void);
 
 rc_sub_data_t fill_rnd_rc_subscription(void); 
 
-e2sm_rc_ctrl_out_t fill_rc_ctrl_out(void);
-
 rc_ctrl_req_data_t fill_rc_ctrl(void);
 
+e2sm_rc_ctrl_out_t fill_rc_ctrl_out(void);
+
+e2sm_rc_func_def_t fill_rc_ran_func_def(void);
 
 #endif
 

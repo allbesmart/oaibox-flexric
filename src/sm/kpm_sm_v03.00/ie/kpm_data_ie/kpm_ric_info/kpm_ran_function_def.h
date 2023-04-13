@@ -5,12 +5,11 @@
 extern "C" {
 #endif
 
+#include "../../../../../lib/sm/sm_common_ie/ran_function_name.h"
 #include "kpm_ric_event_trigger_def.h"
 #include "kpm_ric_action_def.h"
 #include "kpm_ric_ind_hdr.h"
 #include "kpm_ric_ind_msg.h"
-
-#include "../../../../../lib/e2sm_common_ie/sm_common_ie/ran_function_name.h"
 
 typedef struct {
     style_ric_event_trigger_e style_type; // 8.3.3
@@ -51,12 +50,12 @@ typedef struct {
 /* 8.2.2.1  RAN Function Definition IE */
 
 typedef struct {
-    ran_function_name_t ran_function_Name;  // 8.3.2
+    ran_function_name_t name;  // 8.3.2
 
-    size_t ric_event_trigger_style_list_len;  // [0, 63]
+    size_t sz_ric_event_trigger_style_list;  // [0, 63]
     ric_event_trigger_style_item_t *ric_event_trigger_style_list;
 
-    size_t ric_report_style_list_len;  // [0, 63]
+    size_t sz_ric_report_style_list;  // [0, 63]
     ric_report_style_item_t *ric_report_style_list;
 
 } kpm_ran_function_def_t;

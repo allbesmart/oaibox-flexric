@@ -30,5 +30,7 @@ void free_seq_ins_style(seq_ins_style_t* src);
 
 bool eq_seq_ins_style(seq_ins_style_t const* m0, seq_ins_style_t const* m1);
 
+seq_ins_style_t cp_seq_ins_style(seq_ins_style_t const* src);
+
 #endif
 

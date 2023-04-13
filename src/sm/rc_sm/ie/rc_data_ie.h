@@ -414,6 +414,8 @@ bool eq_e2sm_rc_func_def(e2sm_rc_func_def_t const* m0, e2sm_rc_func_def_t const*
 
 typedef struct{
   e2sm_rc_event_trigger_t et; 
+  // [1-16]
+  size_t sz_ad;
   e2sm_rc_action_def_t* ad;
 } rc_sub_data_t;
 

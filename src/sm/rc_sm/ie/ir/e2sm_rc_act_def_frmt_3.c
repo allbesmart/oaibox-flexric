@@ -68,3 +68,38 @@ bool eq_e2sm_rc_act_def_frmt_3(e2sm_rc_act_def_frmt_3_t const* m0, e2sm_rc_act_d
   return true;
 }
 
+e2sm_rc_act_def_frmt_3_t cp_e2sm_rc_act_def_frmt_3(e2sm_rc_act_def_frmt_3_t const* src)
+{
+  assert(src != NULL);
+  e2sm_rc_act_def_frmt_3_t dst = {0}; 
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1 - 65535] 
+  assert(src->id > 0);
+  dst.id = src->id;
+
+  // List of RAN parameters for Insert
+  // Indication
+  // [1 - 65535]
+  assert(src->sz_ran_param_ins > 0 && src->sz_ran_param_ins < 65536);
+  dst.sz_ran_param_ins = src->sz_ran_param_ins;
+  dst.ran_param = calloc(dst.sz_ran_param_ins, sizeof( ran_param_ins_t) );
+  assert(dst.ran_param != NULL && "Memory exhausted");
+
+  for(size_t i =0; i < dst.sz_ran_param_ins; ++i){
+    dst.ran_param[i] = cp_ran_param_ins(&src->ran_param[i]);
+  }
+
+  //  UE ID
+  //  Optional
+  //  9.3.10
+  if(src->ue_id != NULL){
+    dst.ue_id = calloc(1, sizeof( ue_id_e2sm_t));
+    assert(dst.ue_id != NULL && "Memory exhausted");
+    *dst.ue_id = cp_ue_id_e2sm(src->ue_id);
+  }
+
+  return dst;
+}
+

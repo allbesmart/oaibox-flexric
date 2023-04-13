@@ -45,3 +45,22 @@ bool eq_param_report_def(param_report_def_t const* m0, param_report_def_t const*
   return true;
 }
 
+param_report_def_t cp_param_report_def(param_report_def_t const* src)
+{
+  assert(src != NULL);
+  param_report_def_t dst = {0};
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1 - 4294967295]
+  assert(src->ran_param_id > 0);
+  dst.ran_param_id = src->ran_param_id;
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->ran_param_def == NULL && "Not implemented");
+
+  return dst;
+}
+

@@ -29,6 +29,7 @@ void free_seq_ins_ind_act_def(seq_ins_ind_act_def_t* src);
 
 bool eq_seq_ins_ind_act_def( seq_ins_ind_act_def_t const* m0, seq_ins_ind_act_def_t const* m1);
 
+seq_ins_ind_act_def_t cp_seq_ins_ind_act_def(seq_ins_ind_act_def_t const* src);
 
 #endif
 

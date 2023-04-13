@@ -55,8 +55,8 @@ void read_RAN(sm_ag_if_rd_t* read)
   assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
   assert(read->ind.type == SLICE_STATS_V0);
 
-  fill_slice_ind_data(&read->ind.slice_ind);
-  cp.msg = cp_slice_ind_msg(&read->ind.slice_ind.msg);
+  fill_slice_ind_data(&read->ind.slice);
+  cp.msg = cp_slice_ind_msg(&read->ind.slice.msg);
 }
 
 
@@ -126,7 +126,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
 
   sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
 
-  slice_ind_data_t* data = &msg.slice_ind;
+  slice_ind_data_t* data = &msg.slice;
   assert(msg.type == SLICE_STATS_V0);
 
   assert(eq_slice_ind_msg(&cp.msg, &data->msg) == true);

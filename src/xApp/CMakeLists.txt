@@ -25,7 +25,6 @@ set(XAPP_SRC
   msg_dispatcher_xapp.c
   ../sm/agent_if/read/sm_ag_if_rd.c
  
-
   $<TARGET_OBJECTS:e2ap_ep_obj> 
   $<TARGET_OBJECTS:e2ap_ap_obj>
   $<TARGET_OBJECTS:msg_hand_obj>
@@ -39,6 +38,18 @@ set(XAPP_SRC
   $<TARGET_OBJECTS:pending_events_obj>
   $<TARGET_OBJECTS:e42_xapp_db_obj>
 
+  # KPM SM
+  ../sm/kpm_sm_v03.00/ie/kpm_data_ie.c
+  #$<TARGET_OBJECTS:e2sm_kpm_asn1_obj>
+  $<TARGET_OBJECTS:kpm_ric_info_common_obj>
+  $<TARGET_OBJECTS:kpm_ric_info_obj>
+
+  #$<TARGET_OBJECTS:kpm_dec_common_asn_obj>
+  #$<TARGET_OBJECTS:kpm_dec_ie_asn_obj>
+
+  #$<TARGET_OBJECTS:kpm_enc_common_asn_obj>
+  #$<TARGET_OBJECTS:kpm_enc_ie_asn_obj>
+
   # RAN Control SM
   ../sm/rc_sm/ie/rc_data_ie.c
   $<TARGET_OBJECTS:e2sm_rc_ir_obj>
@@ -51,6 +62,8 @@ set(XAPP_SRC
   $<TARGET_OBJECTS:sm_common_enc_asn_obj>
   $<TARGET_OBJECTS:sm_common_ie_obj>
 
+
+
   ../util/ngran_type.c
   ../sm/mac_sm/ie/mac_data_ie.c
   ../sm/rlc_sm/ie/rlc_data_ie.c
@@ -58,12 +71,12 @@ set(XAPP_SRC
   ../sm/slice_sm/ie/slice_data_ie.c
   ../sm/tc_sm/ie/tc_data_ie.c
   ../sm/gtp_sm/ie/gtp_data_ie.c
-  ../sm/kpm_sm_v2.02/ie/kpm_data_ie.c
 
   )
 
 if(E2AP_ENCODING STREQUAL "ASN")
-  add_library(e42_xapp ${XAPP_BLD_LIB}# STATIC or SHARED
+  add_library(e42_xapp 
+            ${XAPP_BLD_LIB} # STATIC or SHARED
             ${XAPP_SRC}
             $<TARGET_OBJECTS:e2ap_asn1_obj>
             )

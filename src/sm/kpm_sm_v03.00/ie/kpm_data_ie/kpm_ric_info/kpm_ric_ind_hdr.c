@@ -5,17 +5,17 @@
 
 void free_kpm_ind_hdr(kpm_ind_hdr_t * src)
 {
-    assert(src != NULL);
+  assert(src != NULL);
 
-    switch (src->type)
-    {
+  switch (src->type)
+  {
     case FORMAT_1_INDICATION_HEADER:
-        free_kpm_ind_hdr_frm_1(&src->kpm_ric_ind_hdr_format_1);
-        break;
-    
+      free_kpm_ind_hdr_frm_1(&src->kpm_ric_ind_hdr_format_1);
+      break;
+
     default:
-        assert(false && "Unknown Indication Header Type");
-    }
+      assert(false && "Unknown Indication Header Type");
+  }
 }
 
 bool eq_kpm_ind_hdr(kpm_ind_hdr_t const * m0, kpm_ind_hdr_t const * m1)

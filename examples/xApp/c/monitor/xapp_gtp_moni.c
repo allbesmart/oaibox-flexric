@@ -39,7 +39,7 @@ void sm_cb_gtp(sm_ag_if_rd_t const* rd)
 
   int64_t now = time_now_us();
 
-  printf("GTP ind_msg latency = %ld \n", now - rd->ind.gtp_ind.msg.tstamp);
+  printf("GTP ind_msg latency = %ld \n", now - rd->ind.gtp.msg.tstamp);
 }
 
 int main(int argc, char *argv[])
@@ -93,6 +93,4 @@ int main(int argc, char *argv[])
 
   printf("Test xApp run SUCCESSFULLY\n");
 }
-
-
 

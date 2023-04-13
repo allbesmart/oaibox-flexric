@@ -91,8 +91,8 @@ sm_ag_if_rd_ind_t on_indication_rlc_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t
 
  sm_ag_if_rd_ind_t rd_if = {.type = RLC_STATS_V0};
 
-  rd_if.rlc_ind.msg = rlc_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
-  rd_if.rlc_ind.hdr = rlc_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
+  rd_if.rlc.msg = rlc_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+  rd_if.rlc.hdr = rlc_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
 
   // ToDO: fill the structure properly
 //  assert(sizeof(rlc_ind_msg_t) == sizeof(rlc_rd_stats_t) && "memcpy not allowed if the structs are different");
@@ -222,9 +222,7 @@ void free_ric_service_update_rlc_sm_ric(void* msg)
   assert(0!=0 && "Not implemented");
 }
 
-
-
-sm_ric_t* make_rlc_sm_ric(void /* sm_io_ric_t io */)
+sm_ric_t* make_rlc_sm_ric(void)
 {
   sm_rlc_ric_t* sm = calloc(1,sizeof(sm_rlc_ric_t));
   assert(sm != NULL && "Memory exhausted");
@@ -256,10 +254,8 @@ sm_ric_t* make_rlc_sm_ric(void /* sm_io_ric_t io */)
   assert(strlen(SM_RLC_STR) < sizeof( sm->base.ran_func_name) );
   memcpy(sm->base.ran_func_name, SM_RLC_STR, strlen(SM_RLC_STR)); 
 
-
   return &sm->base;
 }
-
 
 uint16_t id_sm_rlc_ric(sm_ric_t const* sm_ric)
 {

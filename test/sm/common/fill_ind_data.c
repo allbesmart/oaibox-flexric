@@ -109,12 +109,12 @@ void fill_mac_ind_data(mac_ind_data_t* ind)
   }
 }
 
-void fill_kpm_ind_data(kpm_ric_indication_t* ind)
+void fill_kpm_ind_data(kpm_ind_data_t* ind)
 {
   assert(ind != NULL);
 
-  ind->kpm_ind_hdr = fill_kpm_ind_hdr();
-  ind->kpm_ind_msg = fill_kpm_ind_msg();
+ // ind->hdr = fill_kpm_ind_hdr();
+ // ind->msg = fill_kpm_ind_msg();
   assert(0!=0 && "Not implemented");
 }
 
@@ -1138,6 +1138,12 @@ rc_sub_data_t fill_rnd_rc_subscription(void)
   dst.et = fill_rnd_rc_event_trigger();
 
   // Action Definition
+  dst.sz_ad = 1;
+  dst.ad = calloc( dst.sz_ad, sizeof(e2sm_rc_action_def_t));
+  assert(dst.ad != NULL && "Memory exhausted");
+  for(size_t i = 0; i < dst.sz_ad; i++){
+    dst.ad[i] = fill_rnd_rc_action_def();
+  }
 
   return dst;
 }

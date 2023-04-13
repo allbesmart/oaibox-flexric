@@ -24,5 +24,7 @@ void free_policy_cond(policy_cond_t* src);
 
 bool eq_policy_cond(policy_cond_t const* m0, policy_cond_t const* m1);
 
+policy_cond_t cp_policy_cond(policy_cond_t const* src);
+
 #endif
 

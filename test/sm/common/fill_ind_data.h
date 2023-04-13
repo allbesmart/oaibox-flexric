@@ -34,8 +34,6 @@
 
 void fill_mac_ind_data(mac_ind_data_t* ind);
 
-void fill_kpm_ind_data(kpm_ric_indication_t* ind);
-
 void fill_rlc_ind_data(rlc_ind_data_t* ind);
 
 void fill_pdcp_ind_data(pdcp_ind_data_t* ind);

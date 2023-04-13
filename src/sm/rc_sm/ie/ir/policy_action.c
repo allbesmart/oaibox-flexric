@@ -72,3 +72,34 @@ bool eq_policy_action(policy_action_t const* m0, policy_action_t const* m1)
   return true;
 }
 
+policy_action_t cp_policy_action(policy_action_t const* src)
+{
+  assert(src != NULL);
+  policy_action_t dst = {0};  
+  //  Policy Action ID
+  //  Mandatory
+  //  9.3.6
+  //  [1 - 65535]
+  assert(src->policy_act_id > 0);;
+  dst.policy_act_id = src->policy_act_id;
+
+  // Sequence of RAN Parameters
+  // [0- 65535]
+  assert(src->sz_seq_ran_param <  65536);
+  if(src->sz_seq_ran_param > 0){
+    dst.sz_seq_ran_param = src->sz_seq_ran_param;
+    dst.seq_ran_param = calloc(dst.sz_seq_ran_param, sizeof(seq_ran_param_t) );
+    assert(dst.seq_ran_param != NULL && "Memory exhausted");
+  }
+  for(size_t i = 0; i < dst.sz_seq_ran_param; ++i){
+    dst.seq_ran_param[i] = cp_seq_ran_param(&src->seq_ran_param[i]);
+  }
+
+  // RIC Policy decision
+  // Optional
+  assert(src->pol_dec == NULL && "Not implemented"); 
+
+  return dst;
+}
+
+

@@ -234,39 +234,35 @@ kpm_ran_function_def_t kpm_dec_func_def_asn(size_t len, uint8_t const func_def[l
   
 
   //  RAN Function Name
-  ret.ran_function_Name.description.len = pdu->ranFunction_Name.ranFunction_Description.size;
-  ret.ran_function_Name.description.buf = malloc(ret.ran_function_Name.description.len);
-  memcpy(ret.ran_function_Name.description.buf, pdu->ranFunction_Name.ranFunction_Description.buf, ret.ran_function_Name.description.len);
+  ret.name.description.len = pdu->ranFunction_Name.ranFunction_Description.size;
+  ret.name.description.buf = malloc(ret.name.description.len);
+  memcpy(ret.name.description.buf, pdu->ranFunction_Name.ranFunction_Description.buf, ret.name.description.len);
 
-  ret.ran_function_Name.E2SM_OID.len = pdu->ranFunction_Name.ranFunction_E2SM_OID.size;
-  ret.ran_function_Name.E2SM_OID.buf = malloc(ret.ran_function_Name.E2SM_OID.len);
-  memcpy(ret.ran_function_Name.E2SM_OID.buf, pdu->ranFunction_Name.ranFunction_E2SM_OID.buf, ret.ran_function_Name.E2SM_OID.len);
+  ret.name.oid.len = pdu->ranFunction_Name.ranFunction_E2SM_OID.size;
+  ret.name.oid.buf = malloc(ret.name.oid.len);
+  memcpy(ret.name.oid.buf, pdu->ranFunction_Name.ranFunction_E2SM_OID.buf, ret.name.oid.len);
   
-  ret.ran_function_Name.short_name.len = pdu->ranFunction_Name.ranFunction_ShortName.size;
-  ret.ran_function_Name.short_name.buf = malloc(ret.ran_function_Name.short_name.len);
-  memcpy(ret.ran_function_Name.short_name.buf, pdu->ranFunction_Name.ranFunction_ShortName.buf, ret.ran_function_Name.short_name.len);
+  ret.name.name.len = pdu->ranFunction_Name.ranFunction_ShortName.size;
+  ret.name.name.buf = malloc(ret.name.name.len);
+  memcpy(ret.name.name.buf, pdu->ranFunction_Name.ranFunction_ShortName.buf, ret.name.name.len);
   
   if (pdu->ranFunction_Name.ranFunction_Instance != NULL)
   {
-    ret.ran_function_Name.instance = malloc(sizeof(*ret.ran_function_Name.instance));
-    ret.ran_function_Name.instance = pdu->ranFunction_Name.ranFunction_Instance;
+    ret.name.instance = malloc(sizeof(*ret.name.instance));
+    assert(ret.name.instance != NULL && "Memory exhausted");
+    ret.name.instance = pdu->ranFunction_Name.ranFunction_Instance;
   }
-  else
-  {
-    ret.ran_function_Name.instance = NULL;
-  }
-
 
   //  RIC Event Trigger Style Item
   if (pdu->ric_EventTriggerStyle_List != NULL)
   {
     assert(pdu->ric_EventTriggerStyle_List->list.count >=1 && pdu->ric_EventTriggerStyle_List->list.count <= maxnoofRICStyles);
-    ret.ric_event_trigger_style_list_len = pdu->ric_EventTriggerStyle_List->list.count;
+    ret.sz_ric_event_trigger_style_list = pdu->ric_EventTriggerStyle_List->list.count;
 
-    ret.ric_event_trigger_style_list = calloc(ret.ric_event_trigger_style_list_len, sizeof(ric_event_trigger_style_item_t));
+    ret.ric_event_trigger_style_list = calloc(ret.sz_ric_event_trigger_style_list, sizeof(ric_event_trigger_style_item_t));
     assert(ret.ric_event_trigger_style_list != NULL && "Memory exhausted");
 
-    for (size_t i = 0; i<ret.ric_event_trigger_style_list_len; i++)
+    for (size_t i = 0; i<ret.sz_ric_event_trigger_style_list; i++)
     {
       RIC_EventTriggerStyle_Item_t * event_item = pdu->ric_EventTriggerStyle_List->list.array[i];
 
@@ -291,25 +287,19 @@ kpm_ran_function_def_t kpm_dec_func_def_asn(size_t len, uint8_t const func_def[l
       }
     }
   }
-  else
-  {
-    ret.ric_event_trigger_style_list_len = 0;
-    ret.ric_event_trigger_style_list = NULL;
-  }
-
 
   // RIC Report Style Item
   if (pdu->ric_ReportStyle_List != NULL)
   {
     assert(pdu->ric_ReportStyle_List->list.count >=1 && pdu->ric_ReportStyle_List->list.count <= maxnoofRICStyles);
-    ret.ric_report_style_list_len = pdu->ric_ReportStyle_List->list.count;
+    ret.sz_ric_report_style_list = pdu->ric_ReportStyle_List->list.count;
 
-    ret.ric_report_style_list = calloc(ret.ric_report_style_list_len, sizeof(ric_report_style_item_t));
+    ret.ric_report_style_list = calloc(ret.sz_ric_report_style_list, sizeof(ric_report_style_item_t));
     assert(ret.ric_report_style_list != NULL && "Memory exhausted");
 
-    for (size_t i = 0; i<ret.ric_report_style_list_len; i++)
+    for (size_t i = 0; i<ret.sz_ric_report_style_list; i++)
     {
-      RIC_ReportStyle_Item_t * report_item = pdu->ric_ReportStyle_List->list.array[i];
+      RIC_ReportStyle_Item_t const* report_item = pdu->ric_ReportStyle_List->list.array[i];
 
       switch (report_item->ric_ReportStyle_Type)
       {
@@ -404,11 +394,6 @@ kpm_ran_function_def_t kpm_dec_func_def_asn(size_t len, uint8_t const func_def[l
 
       }
     }
-  }
-  else
-  {
-    ret.ric_report_style_list_len = 0;
-    ret.ric_report_style_list = NULL;
   }
 
   ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_E2SM_KPM_RANfunction_Description, pdu);

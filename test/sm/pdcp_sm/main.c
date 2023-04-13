@@ -48,7 +48,7 @@ void read_RAN(sm_ag_if_rd_t* read)
   assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
   assert(read->ind.type == PDCP_STATS_V0);
 
-  pdcp_ind_data_t* ind = &read->ind.pdcp_ind;
+  pdcp_ind_data_t* ind = &read->ind.pdcp;
 
   fill_pdcp_ind_data(ind);
   cp.hdr = cp_pdcp_ind_hdr(&ind->hdr);
@@ -123,7 +123,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
 
   assert(msg.type == PDCP_STATS_V0);
-  pdcp_ind_data_t* data = &msg.pdcp_ind;
+  pdcp_ind_data_t* data = &msg.pdcp;
   defer({ ric->alloc.free_ind_data(data); });
 
   assert(eq_pdcp_ind_hdr(&data->hdr, &cp.hdr) == true);

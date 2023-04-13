@@ -43,13 +43,13 @@ void read_RAN(sm_ag_if_rd_t* ag_rd)
   assert(data->type == MAC_STATS_V0 || data->type == RLC_STATS_V0 ||  data->type == PDCP_STATS_V0 || data->type == SLICE_STATS_V0);
 
   if(data->type == MAC_STATS_V0 ){
-      fill_mac_ind_data(&data->mac_ind);
+      fill_mac_ind_data(&data->mac);
   } else if(data->type == RLC_STATS_V0) {
-      fill_rlc_ind_data(&data->rlc_ind);
+      fill_rlc_ind_data(&data->rlc);
   } else if (data->type == PDCP_STATS_V0 ){
-      fill_pdcp_ind_data(&data->pdcp_ind);
+      fill_pdcp_ind_data(&data->pdcp);
   } else if(data->type == SLICE_STATS_V0 ){
-    fill_slice_ind_data(&data->slice_ind);
+    fill_slice_ind_data(&data->slice);
   } else {
     assert("Invalid data type");
   }

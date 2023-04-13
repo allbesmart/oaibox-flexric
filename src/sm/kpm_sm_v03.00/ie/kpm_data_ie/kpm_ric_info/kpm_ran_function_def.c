@@ -7,21 +7,21 @@ void free_kpm_ran_function_def(kpm_ran_function_def_t* src)
   assert(src != NULL);
   
   // RAN Function Name
-  free_kpm_ran_function_name(&src->ran_function_Name);
+  free_ran_function_name(&src->name);
 
   // RIC Event Trigger Style List
-  if (src->ric_event_trigger_style_list != NULL || src->ric_event_trigger_style_list_len != 0)
+  if (src->ric_event_trigger_style_list != NULL || src->sz_ric_event_trigger_style_list != 0)
   {
-    for (size_t i = 0; i<src->ric_event_trigger_style_list_len; i++)
+    for (size_t i = 0; i<src->sz_ric_event_trigger_style_list; i++)
       free_byte_array(src->ric_event_trigger_style_list[i].style_name);
 
     free(src->ric_event_trigger_style_list);
   }
 
   // RIC Report Style List
-  if (src->ric_report_style_list != NULL || src->ric_report_style_list_len != 0)
+  if (src->ric_report_style_list != NULL || src->sz_ric_report_style_list != 0)
   {
-    for (size_t i = 0; i<src->ric_report_style_list_len; i++)
+    for (size_t i = 0; i<src->sz_ric_report_style_list; i++)
     {
       free_byte_array(src->ric_report_style_list[i].report_style_name);
 
@@ -48,16 +48,16 @@ bool eq_kpm_ran_function_def(kpm_ran_function_def_t const * m0, kpm_ran_function
   assert(m1 != NULL);
 
   // RAN Function Name
-  if (eq_kpm_ran_function_name(&m0->ran_function_Name, &m1->ran_function_Name) != true)
+  if (eq_ran_function_name(&m0->name, &m1->name) != true)
     return false;
 
   // RIC Event Trigger Style List
   if (m0->ric_event_trigger_style_list != NULL || m1->ric_event_trigger_style_list != NULL)
   {
-    if (m0->ric_event_trigger_style_list_len != m1->ric_event_trigger_style_list_len)
+    if (m0->sz_ric_event_trigger_style_list != m1->sz_ric_event_trigger_style_list)
       return false;
 
-    for (size_t i = 0; i<m0->ric_event_trigger_style_list_len; i++)
+    for (size_t i = 0; i<m0->sz_ric_event_trigger_style_list; i++)
     {
       // RIC Event Trigger Style
       if (m0->ric_event_trigger_style_list[i].style_type != m1->ric_event_trigger_style_list[i].style_type)
@@ -88,10 +88,10 @@ bool eq_kpm_ran_function_def(kpm_ran_function_def_t const * m0, kpm_ran_function
   // RIC Report Style List
   if (m0->ric_report_style_list != NULL || m1->ric_report_style_list != NULL)
   {
-    if (m0->ric_report_style_list_len != m1->ric_report_style_list_len)
+    if (m0->sz_ric_report_style_list != m1->sz_ric_report_style_list)
       return false;
 
-    for (size_t i = 0; i<m0->ric_report_style_list_len; i++)
+    for (size_t i = 0; i<m0->sz_ric_report_style_list; i++)
     {
       // RIC Report Styles
       if (m0->ric_report_style_list[i].report_style_type != m1->ric_report_style_list[i].report_style_type)

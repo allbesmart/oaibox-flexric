@@ -2,33 +2,37 @@
 
 #include "kpm_data_ie.h"
 
-void free_kpm_ind_data(kpm_ric_indication_t* ind) 
+void free_kpm_ind_data(kpm_ind_data_t* ind) 
 {
   assert(ind != NULL);
   
-  free_kpm_ind_hdr(&ind->kpm_ind_hdr);
+  // Indication Header
+  free_kpm_ind_hdr(&ind->hdr);
 
-  
-  free_kpm_ind_msg(&ind->kpm_ind_msg);
+  // Indication Message
+  free_kpm_ind_msg(&ind->msg);
 
-  
+  // 
+  assert(ind->proc_id == NULL && "Not implemented");
 }
 
-kpm_ric_indication_t cp_kpm_ind_data(kpm_ric_indication_t const* src) 
+kpm_ind_data_t cp_kpm_ind_data(kpm_ind_data_t const* src) 
 {
-
   assert(src != NULL);
-  kpm_ric_indication_t ret = {0};
+  kpm_ind_data_t ret = {0};
   
-  ret.kpm_ind_hdr = cp_kpm_ind_hdr(&src->kpm_ind_hdr);
+  // Indication Header
+  ret.hdr = cp_kpm_ind_hdr(&src->hdr);
 
-  ret.kpm_ind_msg = cp_kpm_ind_msg(&src->kpm_ind_msg);
+  // Indication Message
+  ret.msg = cp_kpm_ind_msg(&src->msg);
+
+  assert(src->proc_id == NULL && "Not implemented");
 
   return ret;
 }
 
-
-bool eq_kpm_ind_data(kpm_ric_indication_t const* ind0, kpm_ric_indication_t const* ind1)
+bool eq_kpm_ind_data(kpm_ind_data_t const* ind0, kpm_ind_data_t const* ind1)
 {
   assert(ind0 != NULL);
   assert(ind1 != NULL);
@@ -39,29 +43,29 @@ bool eq_kpm_ind_data(kpm_ric_indication_t const* ind0, kpm_ric_indication_t cons
     return false;
 
   // Indication Header
-  if (eq_kpm_ind_hdr(&ind0->kpm_ind_hdr, &ind1->kpm_ind_hdr) != true)
+  if (eq_kpm_ind_hdr(&ind0->hdr, &ind1->hdr) != true)
     return false;
-
 
   // Indication Message
-  if (eq_kpm_ind_msg(&ind0->kpm_ind_msg, &ind1->kpm_ind_msg) != true)
+  if (eq_kpm_ind_msg(&ind0->msg, &ind1->msg) != true)
     return false;
 
+  assert(ind0->proc_id == NULL && "Not implemented");
+  assert(ind1->proc_id == NULL && "Not implemented");
 
   return true;
 }
 
-
-
-void free_kpm_subscription_data(kpm_ric_subscription_t* subscription)
+void free_kpm_sub_data(kpm_sub_data_t* src)
 {
-    assert(subscription != NULL);
+  assert(src != NULL);
 
-    
-    // Event Trigger - nothing to free
-    free_kpm_event_trigger_def(&subscription->kpm_event_trigger_def);
+  //kpm_event_trigger_t et; 
 
-    // Action Definition
-    free_kpm_action_def(&subscription->kpm_act_def);
-
+  //action definition
+  for(size_t i = 0; i < src->sz_ad; ++i){
+    free_kpm_action_def(&src->ad[i]);
+  }
+  free(src->ad);
 }
+

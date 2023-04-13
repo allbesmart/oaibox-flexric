@@ -178,7 +178,7 @@ int main()
 
   // Test off all the functions
   printf("\nRC SM enc/dec test launched\n");
-/*
+
   // Event Trigger
   test_ric_event_trigger_rc();
   printf("\nRC Event Trigger test succeeded\n");
@@ -210,7 +210,7 @@ int main()
   // Control Outcome 
   test_rc_ctrl_out();
   printf("\nRC Control Outcome\n");
-*/
+
   // RAN Function Definition
   test_rc_ran_func_def();
   printf("\nRC RAN Function Definition\n");

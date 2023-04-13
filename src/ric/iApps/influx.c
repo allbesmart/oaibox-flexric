@@ -31,9 +31,11 @@
 #include <string.h>                                      // for strlen, memset
 #include <stdio.h>
 #include <sys/socket.h>                                  // for sendto, MSG_...
-#include "ric/iApps/../../sm/mac_sm/ie/mac_data_ie.h"    // for mac_ind_msg_t
-#include "ric/iApps/../../sm/pdcp_sm/ie/pdcp_data_ie.h"  // for pdcp_ind_msg_t
-#include "ric/iApps/../../sm/rlc_sm/ie/rlc_data_ie.h"    // for rlc_ind_msg_t
+
+#include "../../sm/mac_sm/ie/mac_data_ie.h"    // for mac_ind_msg_t
+#include "../../sm/pdcp_sm/ie/pdcp_data_ie.h"  // for pdcp_ind_msg_t
+#include "../../sm/rlc_sm/ie/rlc_data_ie.h"    // for rlc_ind_msg_t
+#include "../../sm/agent_if/read/sm_ag_if_rd.h"
 #include "string_parser.h"                               // for to_string_ma...
 
 static
@@ -173,20 +175,19 @@ void notify_kpm_ind_msg_frm_1(const kpm_ind_msg_format_1_t message, uint32_t tru
       }
     }
 
-
 }
 
-
-void notify_influx_listener(sm_ag_if_rd_t const* data)
+void notify_influx_listener(sm_ag_if_rd_ind_t const* data)
 {
   assert(data != NULL);
 
-  assert(data->type == MAC_STATS_V0 || data->type == RLC_STATS_V0 || data->type == PDCP_STATS_V0 || data->type == SLICE_STATS_V0 || data->type == KPM_STATS_V0 || data->type == GTP_STATS_V0);
+  assert(data->type == MAC_STATS_V0 || data->type == RLC_STATS_V0 || data->type == PDCP_STATS_V0 
+      || data->type == SLICE_STATS_V0 || data->type == KPM_STATS_V3_0 || data->type == GTP_STATS_V0);
   pthread_once(&init_socket, init_udp_socket);
 
 //  printf("Influx db data called!!!\n");
   if(data->type == MAC_STATS_V0){
-    mac_ind_msg_t const* ind =  &data->mac_ind.msg;
+    mac_ind_msg_t const* ind =  &data->mac.msg;
 
     for(uint32_t i = 0; i < ind->len_ue_stats; ++i){
       char stats[1024] = {0};
@@ -195,7 +196,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
       assert(rc != -1);
     }
   } else if (data->type == RLC_STATS_V0){
-    rlc_ind_msg_t const* rlc = &data->rlc_ind.msg;
+    rlc_ind_msg_t const* rlc = &data->rlc.msg;
 
     for(uint32_t i = 0; i < rlc->len; ++i){
 
@@ -207,7 +208,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
     }
 
   } else if (data->type == PDCP_STATS_V0){
-    pdcp_ind_msg_t const* pdcp = &data->pdcp_ind.msg;
+    pdcp_ind_msg_t const* pdcp = &data->pdcp.msg;
 
     for(uint32_t i = 0; i < pdcp->len; ++i){
       char stats[512] = {0};
@@ -218,7 +219,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
       assert(rc != -1);
     } 
   } else if(data->type == SLICE_STATS_V0){
-    slice_ind_msg_t const* slice = &data->slice_ind.msg;
+    slice_ind_msg_t const* slice = &data->slice.msg;
 
     char stats[2048] = {0};
 
@@ -226,7 +227,7 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
     int const rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
     assert(rc != -1);
   } else if (data->type == GTP_STATS_V0){
-    gtp_ind_msg_t const* gtp = &data->gtp_ind.msg;
+    gtp_ind_msg_t const* gtp = &data->gtp.msg;
 
     for(uint32_t i = 0; i < gtp->len; ++i){
       char stats[512] = {0};
@@ -236,17 +237,17 @@ void notify_influx_listener(sm_ag_if_rd_t const* data)
       int const rc = sendto(sockfd, stats, strlen(stats),  MSG_CONFIRM, (const struct sockaddr *) &servaddr, sizeof(servaddr));
       assert(rc != -1);
     }
-  } else if(data->type == KPM_STATS_V0){
-    kpm_ric_indication_t const* kpm = &data->kpm_stats;
+  } else if(data->type == KPM_STATS_V3_0){
+    kpm_ind_data_t const* kpm = &data->kpm;
 
     // From Indication Header : Collect Start Time
     // To be defined better, switch/case for specific format
-    uint64_t truncated_ts = (uint64_t)kpm->kpm_ind_hdr.kpm_ric_ind_hdr_format_1.collectStartTime;
+    uint64_t truncated_ts = (uint64_t)kpm->hdr.kpm_ric_ind_hdr_format_1.collectStartTime;
 
-    switch (kpm->kpm_ind_msg.type)
+    switch (kpm->msg.type)
     {
     case FORMAT_1_INDICATION_MESSAGE:
-      notify_kpm_ind_msg_frm_1(kpm->kpm_ind_msg.frm_1, truncated_ts);
+      notify_kpm_ind_msg_frm_1(kpm->msg.frm_1, truncated_ts);
       break;
 
     // case FORMAT_2_INDICATION_MESSAGE:

@@ -38,5 +38,7 @@ void free_policy_action(policy_action_t* src);
 
 bool eq_policy_action(policy_action_t const* m0, policy_action_t const* m1);
 
+policy_action_t cp_policy_action(policy_action_t const* src);
+
 #endif
 

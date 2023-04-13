@@ -208,6 +208,8 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
 
     ../ie/ir/seq_ctrl_act_2.c 
 
+    ../../kpm_sm_v03.00/ie/kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr.c
+
     ../../../lib/sm/sm_common_ie/ran_function_name.c
 
 
@@ -289,7 +291,7 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
     ../../pdcp_sm/ie/pdcp_data_ie.c
     ../../slice_sm/ie/slice_data_ie.c
     ../../gtp_sm/ie/gtp_data_ie.c
-    ../../kpm_sm_v2.02/ie/kpm_data_ie.c
+    ../../kpm_sm_v03.00/ie/kpm_data_ie.c
     ../../tc_sm/ie/tc_data_ie.c
 
 

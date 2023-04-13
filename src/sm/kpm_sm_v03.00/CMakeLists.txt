@@ -25,6 +25,7 @@ set(SM_ENCODING_KPM_SRC
                       )
 
 if(SM_ENCODING_KPM STREQUAL "PLAIN")
+  message(FATAL_ERROR "KPM SM PLAIN not implemented")
   add_library(kpm_sm SHARED
                       ${SM_ENCODING_KPM_SRC}
                       enc/kpm_enc_plain.c 
@@ -37,6 +38,8 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
                       ${SM_ENCODING_KPM_SRC}
                       enc/kpm_enc_asn.c 
                       dec/kpm_dec_asn.c 
+                      ie/kpm_data_ie.c
+
                       $<TARGET_OBJECTS:e2sm_kpm_asn1_obj>
                       $<TARGET_OBJECTS:kpm_ric_info_common_obj>
                       $<TARGET_OBJECTS:kpm_ric_info_obj>
@@ -53,11 +56,8 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
                       $<TARGET_OBJECTS:sm_common_ie_obj>
                       $<TARGET_OBJECTS:sm_common_dec_asn_obj>
                       $<TARGET_OBJECTS:sm_common_enc_asn_obj>
-                      # $<TARGET_OBJECTS:e2sm_common_asn1_obj>   # to be included when KPM ie/asn folder doesn't contain both KPM and E2SM asn1 types
 
                       ../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.c
-                      ie/kpm_data_ie.c
-
                       )
 
 

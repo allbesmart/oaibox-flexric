@@ -1,5 +1,3 @@
-
-<<<<<<< HEAD
 add_executable(xapp_hw
   hw.c
   ../../../../src/util/alg_ds/alg/defer.c

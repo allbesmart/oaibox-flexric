@@ -18,9 +18,6 @@ void free_policy_cond(policy_cond_t* src)
 
 }
 
-
-
-
 bool eq_policy_cond(policy_cond_t const* m0, policy_cond_t const* m1)
 {
   if(m0 == m1)
@@ -43,4 +40,24 @@ bool eq_policy_cond(policy_cond_t const* m0, policy_cond_t const* m1)
 
   return true;
 }
+
+policy_cond_t cp_policy_cond(policy_cond_t const* src)
+{
+  assert(src != NULL);
+
+  policy_cond_t dst = {0};
+
+  // Policy Action Definition
+  // Mandatory
+  // 9.3.20
+  dst.pol_act = cp_policy_action(&src->pol_act); 
+
+  // Policy Condition Definition
+  // Optional
+  // 9.3.29
+  assert(src->pol == NULL && "Not implemented");
+
+  return dst;
+}
+
 

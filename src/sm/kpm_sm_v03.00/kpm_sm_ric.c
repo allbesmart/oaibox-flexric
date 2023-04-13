@@ -52,13 +52,16 @@ typedef struct{
  * @param cmd Set trigger value in milliseconds. Range of permitted values are {"1_ms, "2_ms", "5_ms"} are defined in xApp that 
  *            specifies the E42 interface. See 'src/xApp/e42_xapp.c' for further information.
  */
-static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const char* cmd)
+static 
+sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const sm_ag_if_wr_subs_t* subs)
 {
   assert(sm_ric != NULL); 
-  assert(cmd != NULL); 
+  assert(subs != NULL); 
   sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;  
- 
+  (void)sm; 
 
+  assert(0!=0 && "Not implemented");
+/*
   kpm_ric_subscription_t *subscription = calloc(1, sizeof(kpm_ric_subscription_t));
   assert(subscription != NULL && "Memory exhausted");
 
@@ -66,7 +69,6 @@ static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const c
   subscription->kpm_act_def = fill_kpm_action_def();
 
   const byte_array_t ba = kpm_enc_event_trigger(&sm->enc, &subscription->kpm_event_trigger_def); 
-
   const byte_array_t ba_ad = kpm_enc_action_def(&sm->enc, &subscription->kpm_act_def);
   
   sm_subs_data_t data = {0}; 
@@ -76,7 +78,8 @@ static sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const c
 
   data.action_def = ba_ad.buf;
   data.len_ad = ba_ad.len;
-
+*/
+ sm_subs_data_t data ;
   return data;
 }
 
@@ -92,18 +95,17 @@ void free_subs_data_kpm_sm_ric(void* msg)
 }
 
 static
-sm_ag_if_rd_t on_indication_kpm_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t* data)
+sm_ag_if_rd_ind_t on_indication_kpm_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t const* data)
 {
   assert(sm_ric != NULL); 
   assert(data != NULL); 
   sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;  
 
-  sm_ag_if_rd_t rd_if = {.type = KPM_STATS_V0};
+  sm_ag_if_rd_ind_t ind = {.type = KPM_STATS_V3_0}; 
 
-  rd_if.kpm_stats.kpm_ind_msg = kpm_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
-  rd_if.kpm_stats.kpm_ind_hdr = kpm_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
-
-  return rd_if;
+  ind.kpm.msg = kpm_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+  ind.kpm.hdr = kpm_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
+  return ind;
 }
 
 
@@ -111,35 +113,35 @@ void free_ind_data_kpm_sm_ric(void* msg)
 {
   assert(msg != NULL);
 
-  kpm_ric_indication_t* ind  = (kpm_ric_indication_t*)msg;
+  kpm_ind_data_t* ind  = (kpm_ind_data_t*)msg;
 
   free_kpm_ind_data(ind);
 }
 
 static
-void ric_on_e2_setup_kpm_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_t const* data)
+sm_ag_if_rd_e2setup_t on_e2_setup_kpm_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup_data_t const* data)
 {
   assert(sm_ric != NULL); 
   assert(data != NULL); 
 
   sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;
- 
-  kpm_ran_function_def_t fdef = kpm_dec_func_def(&sm->enc, data->len_rfd, data->ran_fun_def);
-  // we do nothing with function definition for the moment, so we can free here with defer()
-  free_kpm_ran_function_def(&fdef);
-  
+
+  sm_ag_if_rd_e2setup_t dst = {.type = KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0};
+  dst.kpm.ran_func_def = kpm_dec_func_def(&sm->enc, data->len_rfd, data->ran_fun_def);
+
+  return dst;
 }
 
 static
-sm_ric_service_update_t on_ric_service_update_kpm_sm_ric(sm_ric_t const* sm_ric, const char* data)
+sm_ag_if_rd_rsu_t on_ric_service_update_kpm_sm_ric(sm_ric_t const* sm_ric, sm_ric_service_update_data_t const* data)
 {
   assert(sm_ric != NULL); 
   assert(data != NULL); 
 
   assert(0!=0 && "Not implemented: here you have to decode ran function definition IE.");
+  sm_ag_if_rd_rsu_t ret; 
+  return ret;
 }
-
-
 
 void free_kpm_sm_ric(sm_ric_t* sm_ric)
 {
@@ -174,7 +176,7 @@ sm_ric_t* make_kpm_sm_ric(void /* sm_io_ric_t io */)
   sm->base.proc.on_control_req = NULL; 
   sm->base.proc.on_control_out = NULL; 
 
-  sm->base.proc.on_e2_setup = ric_on_e2_setup_kpm_sm_ric;
+  sm->base.proc.on_e2_setup = on_e2_setup_kpm_sm_ric;
   sm->base.proc.on_ric_service_update = on_ric_service_update_kpm_sm_ric; 
 
   assert(strlen(SM_KPM_STR) < sizeof( sm->base.ran_func_name) );

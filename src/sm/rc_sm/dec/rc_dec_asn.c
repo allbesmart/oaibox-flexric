@@ -568,6 +568,7 @@ rrc_state_t dec_rrc_state(TriggerType_Choice_RRCstate_Item_t const * src)
   return dst;
 }
 
+/*
 static
 rrc_state_lst_t dec_rrc_state_lst(TriggerType_Choice_RRCstate_t const* src)
 {
@@ -590,6 +591,7 @@ rrc_state_lst_t dec_rrc_state_lst(TriggerType_Choice_RRCstate_t const* src)
   assert(dst.sz_rrc_state > 0 && dst.sz_rrc_state < 9);
   return dst; 
 }
+*/
 
 static
 ran_param_test_t dec_ran_param_test(RANParameter_Testing_Item_t const* src);

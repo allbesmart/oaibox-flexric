@@ -899,7 +899,7 @@ seq_ins_style_t fill_rnd_seq_ins_style(void)
   // Sequence of Insert Indication
   // Action Definition
   // [1-63]
-  dst.sz_seq_ins_ind_act_def = (rand()% 64) + 1;
+  dst.sz_seq_ins_ind_act_def = (rand()% 63) + 1;
 
   dst.seq_ins_ind_act_def = calloc(dst.sz_seq_ins_ind_act_def, sizeof( seq_ins_ind_act_def_t));
   assert(dst.seq_ins_ind_act_def != NULL && "Memory exhausted");
@@ -2902,30 +2902,30 @@ e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void)
   // RAN Function Definition for REPORT
   // Optional
   // 9.2.2.3
-//  dst.report = calloc(1, sizeof( ran_func_def_report_t ));
-//  assert(dst.report != NULL && "Memory exhausted");
-//  *dst.report = fill_ran_func_def_report();
+  dst.report = calloc(1, sizeof( ran_func_def_report_t ));
+  assert(dst.report != NULL && "Memory exhausted");
+  *dst.report = fill_ran_func_def_report();
 
   // RAN Function Definition for INSERT
   // Optional
   // 9.2.2.4
-//  dst.insert = calloc(1, sizeof(ran_func_def_insert_t)); 
-//  assert(dst.insert != NULL && "Memory exhausted");
-//  *dst.insert = fill_ran_func_def_insert();
+  dst.insert = calloc(1, sizeof(ran_func_def_insert_t)); 
+  assert(dst.insert != NULL && "Memory exhausted");
+  *dst.insert = fill_ran_func_def_insert();
 
   // RAN Function Definition for CONTROL
   // Optional
   // 9.2.2.5
-//  dst.ctrl = calloc(1, sizeof( ran_func_def_ctrl_t)); 
-//  assert(dst.ctrl != NULL && "Memory exhausted");
-//  *dst.ctrl = fill_ran_func_def_ctrl();
+  dst.ctrl = calloc(1, sizeof( ran_func_def_ctrl_t)); 
+  assert(dst.ctrl != NULL && "Memory exhausted");
+  *dst.ctrl = fill_ran_func_def_ctrl();
 
   // RAN Function Definition for POLICY
   // Optional
   // 9.2.2.6
-//  dst.policy = calloc(1, sizeof(ran_func_def_policy_t)); 
-//  assert(dst.policy != NULL && "Memory exhausted");
-//  *dst.policy = fill_ran_func_def_policy();
+  dst.policy = calloc(1, sizeof(ran_func_def_policy_t)); 
+  assert(dst.policy != NULL && "Memory exhausted");
+  *dst.policy = fill_ran_func_def_policy();
 
   return dst;
 }

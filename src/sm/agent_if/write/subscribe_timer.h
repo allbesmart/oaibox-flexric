@@ -19,15 +19,25 @@
  *      contact@openairinterface.org
  */
 
-
-
 #ifndef SUBSCRIBE_TIMER_EUR_H
 #define SUBSCRIBE_TIMER_EUR_H
 
+#include "../../kpm_sm_v03.00/ie/kpm_data_ie.h"
 #include <stdint.h>
+
+typedef enum{
+  KPM_V3_0_SUB_DATA_ENUM,
+  NONE_SUB_DATA_ENUM,
+
+  END_SUB_DATA_ENUM,
+} sub_data_e;
 
 typedef struct{
   int64_t ms;
+  sub_data_e type;
+  union{
+   kpm_act_def_t* ad; 
+  };
 } subscribe_timer_t;
 
 #endif

@@ -188,7 +188,7 @@ seq_ctrl_style_t cp_seq_ctrl_style(seq_ctrl_style_t const* src)
   // Parameters for Control Outcome
   // [0- 255]
   assert(src->sz_ran_param_ctrl_out < 256);
-  if(src->sz_seq_ctrl_act > 0){
+  if(src->sz_ran_param_ctrl_out > 0){
     dst.sz_ran_param_ctrl_out = src->sz_ran_param_ctrl_out;
     dst.ran_param_ctrl_out = calloc(dst.sz_ran_param_ctrl_out, sizeof(seq_ran_param_3_t));
     assert(dst.ran_param_ctrl_out != NULL && "Memory exhausted");

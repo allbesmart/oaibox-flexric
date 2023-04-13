@@ -39,7 +39,6 @@
 // Indication Message 
 ////////////////////
 
-
 typedef enum{
   MAC_STATS_V0,
   RLC_STATS_V0,
@@ -47,7 +46,7 @@ typedef enum{
   SLICE_STATS_V0,
   TC_STATS_V0,
   GTP_STATS_V0, 
-  KPM_STATS_V0, 
+  KPM_STATS_V3_0, 
   RAN_CTRL_STATS_V1_03,
 
   SM_AGENT_IF_READ_V0_END,
@@ -56,35 +55,33 @@ typedef enum{
 typedef struct{
   sm_ag_if_rd_ind_e type;
   union {
-    mac_ind_data_t mac_ind;
-    rlc_ind_data_t rlc_ind;
-    pdcp_ind_data_t pdcp_ind;
-    slice_ind_data_t slice_ind;
-    tc_ind_data_t tc_ind;
-    gtp_ind_data_t gtp_ind;
-    kpm_ric_indication_t kpm_stats;
-    rc_ind_data_t rc_ind;
+    mac_ind_data_t mac;
+    rlc_ind_data_t rlc;
+    pdcp_ind_data_t pdcp;
+    slice_ind_data_t slice;
+    tc_ind_data_t tc;
+    gtp_ind_data_t gtp;
+    kpm_ind_data_t kpm;
+    rc_ind_data_t rc;
   };
 } sm_ag_if_rd_ind_t;
-
 
 void free_sm_ag_if_rd_ind(sm_ag_if_rd_ind_t* d);
 
 sm_ag_if_rd_ind_t cp_sm_ag_if_rd_ind(sm_ag_if_rd_ind_t const* d);
-
 
 ////////////////////
 // E2 Setup 
 ////////////////////
 
 typedef enum{
- 
   MAC_AGENT_IF_E2_SETUP_ANS_V0,
   RLC_AGENT_IF_E2_SETUP_ANS_V0,
   PDCP_AGENT_IF_E2_SETUP_ANS_V0,
   SLICE_AGENT_IF_E2_SETUP_ANS_V0,
   TC_AGENT_IF_E2_SETUP_ANS_V0,
   GTP_AGENT_IF_E2_SETUP_ANS_V0,
+  KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0,
   RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0,
 
   SM_AGENT_IF_E2_SETUP_ANS_V0_END,
@@ -99,6 +96,7 @@ typedef struct{
     slice_e2_setup_data_t slice;
     tc_e2_setup_data_t tc;
     gtp_e2_setup_data_t gtp;
+    kpm_e2_setup_t kpm;
     rc_e2_setup_t rc;
   };
 } sm_ag_if_rd_e2setup_t;
@@ -114,6 +112,7 @@ typedef enum{
   SLICE_AGENT_IF_RIC_SERV_UPDATE_CTRL_ANS_V0,
   TC_AGENT_IF_RIC_SERV_UPDATE_CTRL_ANS_V0,
   GTP_AGENT_IF_RIC_SERV_UPDATE_CTRL_ANS_V0,
+  KPM_V3_0_AGENT_IF_RIC_SERV_UPDATE_CTRL_ANS_V0,
   RAN_CTRL_V1_3_AGENT_IF_RIC_SERV_UPDATE_CTRL_ANS_V0,
 
   SM_AGENT_IF_RIC_SERV_UPDATE_CTRL_ANS_V0_END,
@@ -128,6 +127,7 @@ typedef struct{
     slice_ric_service_update_t slice;
     tc_ric_service_update_t tc;
     gtp_ric_service_update_t gtp;
+    kpm_ric_service_update_t kpm;
     rc_ric_service_update_t rc;
   };
 } sm_ag_if_rd_rsu_t;

@@ -55,3 +55,34 @@ bool eq_seq_ins_ind_act_def( seq_ins_ind_act_def_t const* m0, seq_ins_ind_act_de
   return true;
 }
 
+seq_ins_ind_act_def_t cp_seq_ins_ind_act_def(seq_ins_ind_act_def_t const* src)
+{
+  assert(src != NULL);
+  seq_ins_ind_act_def_t dst = {0};
+
+  // Insert Indication ID
+  // Mandatory
+  // 9.3.16
+  // [1 - 65535]
+  assert(src->ind_id > 0);
+  dst.ind_id = src->ind_id;
+
+  // List of RAN parameters for
+  // Insert Indication
+  // [1-65535] 9.2.1.2.4
+  // [0-65535] 9.2.1.4.6
+  assert(src->sz_ran_param_ins_ind < 65536); 
+  if(src->sz_ran_param_ins_ind > 0){
+    dst.sz_ran_param_ins_ind = src->sz_ran_param_ins_ind;
+    dst.ran_param_ins_ind = calloc(dst.sz_ran_param_ins_ind, sizeof( ran_param_ins_ind_t) );
+    assert(dst.ran_param_ins_ind != NULL && "Not implemented");
+  }
+
+  for(size_t i = 0; i < dst.sz_ran_param_ins_ind; ++i){
+    dst.ran_param_ins_ind[i] = cp_ran_param_ins_ind(&src->ran_param_ins_ind[i]);
+  }
+
+  return dst;
+}
+
+

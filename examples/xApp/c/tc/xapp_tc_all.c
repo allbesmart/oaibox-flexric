@@ -58,7 +58,7 @@ void sm_cb_rlc(sm_ag_if_rd_t const* rd)
 //  printf("RLC ind_msg latency = %ld \n", now - rd->rlc_stats.msg.tstamp);
 
 
-  rlc_ind_msg_t const* msg = &rd->ind.rlc_ind.msg;
+  rlc_ind_msg_t const* msg = &rd->ind.rlc.msg;
 
   for(size_t i =0; i < msg->len; ++i){
     rlc_radio_bearer_stats_t const* rb  = &msg->rb[i]; 

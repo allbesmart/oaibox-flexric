@@ -8,8 +8,8 @@ extern "C" {
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "../../../../../lib/sm/sm_common_ie/cell_global_id.h"
 #include "../data/meas_info_frm_3_lst.h"
-#include "../../../../../lib/e2sm_common_ie/sm_common_ie/cell_global_id.h"
 
 //  8.2.1.2.3  E2SM-KPM Action Definition Format 3
 

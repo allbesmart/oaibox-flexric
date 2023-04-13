@@ -22,9 +22,9 @@
 
 
 #include "stdout.h"
-#include "ric/iApps/../../sm/mac_sm/ie/mac_data_ie.h"    // for mac_ind_msg_t
-#include "ric/iApps/../../sm/pdcp_sm/ie/pdcp_data_ie.h"  // for pdcp_ind_msg_t
-#include "ric/iApps/../../sm/rlc_sm/ie/rlc_data_ie.h"    // for rlc_ind_msg_t
+#include "../../sm/mac_sm/ie/mac_data_ie.h"    // for mac_ind_msg_t
+#include "../../sm/pdcp_sm/ie/pdcp_data_ie.h"  // for pdcp_ind_msg_t
+#include "../../sm/rlc_sm/ie/rlc_data_ie.h"    // for rlc_ind_msg_t
 #include "string_parser.h"                               // for to_string_ma..
 
 #include "../../util/time_now_us.h"
@@ -286,7 +286,7 @@ void print_kpm_ind_msg_frm_1(const kpm_ind_msg_format_1_t message, uint32_t trun
   fputs("\n", fp);
 }
 
-void print_kpm_stats(kpm_ric_indication_t const* kpm)
+void print_kpm_stats(kpm_ind_data_t const* kpm)
 {
   assert(kpm != NULL);
   pthread_once(&init_fp_once, init_fp);
@@ -296,14 +296,14 @@ void print_kpm_stats(kpm_ric_indication_t const* kpm)
 
   // From Indication Header : Collect Start Time
   // To be defined better, switch/case for specific format
-  uint64_t truncated_ts = (uint64_t)kpm->kpm_ind_hdr.kpm_ric_ind_hdr_format_1.collectStartTime;
+  uint64_t truncated_ts = (uint64_t)kpm->hdr.kpm_ric_ind_hdr_format_1.collectStartTime;
 
 
 
-  switch (kpm->kpm_ind_msg.type)
+  switch (kpm->msg.type)
   {
   case FORMAT_1_INDICATION_MESSAGE: 
-    print_kpm_ind_msg_frm_1(kpm->kpm_ind_msg.frm_1, truncated_ts);
+    print_kpm_ind_msg_frm_1(kpm->msg.frm_1, truncated_ts);
     break;
 
   // case FORMAT_2_INDICATION_MESSAGE:
@@ -324,21 +324,23 @@ void print_kpm_stats(kpm_ric_indication_t const* kpm)
 
 }
 
-void notify_stdout_listener(sm_ag_if_rd_t const* data)
+void notify_stdout_listener(sm_ag_if_rd_ind_t const* data)
 {
   assert(data != NULL);
   if(data->type == MAC_STATS_V0)  
-    print_mac_stats(&data->mac_ind.msg);
+    print_mac_stats(&data->mac.msg);
   else if (data->type == RLC_STATS_V0)
-    print_rlc_stats(&data->rlc_ind.msg);
+    print_rlc_stats(&data->rlc.msg);
   else if (data->type == PDCP_STATS_V0)
-    print_pdcp_stats(&data->pdcp_ind.msg);
+    print_pdcp_stats(&data->pdcp.msg);
   else if (data->type == SLICE_STATS_V0)
-    print_slice_stats(&data->slice_ind.msg);
+    print_slice_stats(&data->slice.msg);
   else if (data->type == GTP_STATS_V0)
-    print_gtp_stats(&data->gtp_ind.msg);
-  else if (data->type == KPM_STATS_V0)
-    print_kpm_stats(&data->kpm_ind);
+    print_gtp_stats(&data->gtp.msg);
+  else if (data->type == KPM_STATS_V3_0){
+    assert(0!=0 && "Not implemented");
+//    print_kpm_stats(&data->kpm_ind);
+  }
   else
     assert(0!= 0);
 }

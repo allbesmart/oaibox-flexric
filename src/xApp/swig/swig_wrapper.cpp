@@ -86,7 +86,7 @@ void sm_cb_mac(sm_ag_if_rd_t const* rd)
   assert(rd->ind.type == MAC_STATS_V0);
   assert(hndlr_mac_cb != NULL);
 
-  mac_ind_data_t const* data = &rd->ind.mac_ind; 
+  mac_ind_data_t const* data = &rd->ind.mac; 
 
   swig_mac_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -171,7 +171,7 @@ void sm_cb_rlc(sm_ag_if_rd_t const* rd)
   assert(rd->ind.type == RLC_STATS_V0);
   assert(hndlr_rlc_cb != NULL);
 
-  rlc_ind_data_t const* data = &rd->ind.rlc_ind; 
+  rlc_ind_data_t const* data = &rd->ind.rlc; 
 
   swig_rlc_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -253,7 +253,7 @@ void sm_cb_pdcp(sm_ag_if_rd_t const* rd)
   assert(rd->ind.type == PDCP_STATS_V0);
   assert(hndlr_pdcp_cb != NULL);
 
-  pdcp_ind_data_t const* data = &rd->ind.pdcp_ind; 
+  pdcp_ind_data_t const* data = &rd->ind.pdcp; 
 
   swig_pdcp_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -332,7 +332,7 @@ void sm_cb_slice(sm_ag_if_rd_t const* rd)
   assert(rd->ind.type == SLICE_STATS_V0);
   assert(hndlr_slice_cb != NULL);
 
-  slice_ind_data_t const* data = &rd->ind.slice_ind;
+  slice_ind_data_t const* data = &rd->ind.slice;
 
   swig_slice_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -495,7 +495,7 @@ void sm_cb_gtp(sm_ag_if_rd_t const* rd)
   assert(rd->ind.type == GTP_STATS_V0);
   assert(hndlr_gtp_cb != NULL);
 
-  gtp_ind_data_t const* data = &rd->ind.gtp_ind; 
+  gtp_ind_data_t const* data = &rd->ind.gtp; 
 
   swig_gtp_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;

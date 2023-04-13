@@ -2,6 +2,7 @@
 add_executable(xapp_tc_all 
                 xapp_tc_all.c
                 ../../../../src/util/alg_ds/alg/defer.c
+                ../../../../src/util/time_now_us.c
                 )
 
 target_link_libraries(xapp_tc_all
@@ -16,6 +17,7 @@ target_link_libraries(xapp_tc_all
 add_executable(xapp_tc_codel 
                 xapp_tc_codel.c
                 ../../../../src/util/alg_ds/alg/defer.c
+                ../../../../src/util/time_now_us.c
                 )
 
 target_link_libraries(xapp_tc_codel
@@ -29,6 +31,7 @@ target_link_libraries(xapp_tc_codel
 add_executable(xapp_tc_partition 
                xapp_tc_partition.c
                 ../../../../src/util/alg_ds/alg/defer.c
+                ../../../../src/util/time_now_us.c
                 )
 
 target_link_libraries(xapp_tc_partition
@@ -43,6 +46,7 @@ target_link_libraries(xapp_tc_partition
 add_executable(xapp_tc_ecn
                 xapp_tc_ecn.c
                 ../../../../src/util/alg_ds/alg/defer.c
+                ../../../../src/util/time_now_us.c
                 )
 
 target_link_libraries(xapp_tc_ecn
@@ -56,5 +60,15 @@ target_link_libraries(xapp_tc_ecn
 add_executable(xapp_tc_osi_codel
                xapp_tc_osi_codel.c
                 ../../../../src/util/alg_ds/alg/defer.c
+                ../../../../src/util/time_now_us.c
                 )
+
+target_link_libraries(xapp_tc_osi_codel
+                      PUBLIC
+                      e42_xapp
+                      -pthread
+                      -lsctp
+                      -ldl
+                      )
+
 

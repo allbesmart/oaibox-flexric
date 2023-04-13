@@ -94,8 +94,8 @@ sm_ind_data_t on_indication_mac_sm_ag(sm_agent_t const* sm_agent)
   // This may allocate memory by the RAN
   sm->base.io.read(&rd_if);
   // Liberate the memory if previously allocated by the RAN. It sucks. Profoundly
-//  defer({ free_sm_rd_if(&rd_if); }; );
-    mac_ind_data_t* ind = &rd_if.ind.mac_ind;
+  //  defer({ free_sm_rd_if(&rd_if); }; );
+  mac_ind_data_t* ind = &rd_if.ind.mac;
   defer({ free_mac_ind_hdr(&ind->hdr) ;});
   defer({ free_mac_ind_msg(&ind->msg) ;});
   defer({ free_mac_call_proc_id(ind->proc_id);});

@@ -253,24 +253,25 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
 
   //  RAN Function Name
   int ret = OCTET_STRING_fromBuf(&pdu->ranFunction_Name.ranFunction_Description, 
-                              (char *)func_def->ran_function_Name.description.buf, 
-                              func_def->ran_function_Name.description.len);
+                              (char *)func_def->name.description.buf, 
+                              func_def->name.description.len);
   assert(ret == 0);
   
   ret = OCTET_STRING_fromBuf(&pdu->ranFunction_Name.ranFunction_E2SM_OID, 
-                              (char *)func_def->ran_function_Name.E2SM_OID.buf, 
-                              func_def->ran_function_Name.E2SM_OID.len);
+                              (char *)func_def->name.oid.buf, 
+                              func_def->name.oid.len);
   assert(ret == 0);
   
   ret = OCTET_STRING_fromBuf(&pdu->ranFunction_Name.ranFunction_ShortName, 
-                              (char *)func_def->ran_function_Name.short_name.buf, 
-                              func_def->ran_function_Name.short_name.len);
+                              (char *)func_def->name.name.buf, 
+                              func_def->name.name.len);
   assert(ret == 0);
   
-  if (func_def->ran_function_Name.instance != NULL)
+  if (func_def->name.instance != NULL)
   {
     pdu->ranFunction_Name.ranFunction_Instance = malloc(sizeof(*pdu->ranFunction_Name.ranFunction_Instance));
-    pdu->ranFunction_Name.ranFunction_Instance = func_def->ran_function_Name.instance;
+    assert(pdu->ranFunction_Name.ranFunction_Instance != NULL && "Memory exhausted");
+    pdu->ranFunction_Name.ranFunction_Instance = func_def->name.instance;
   }
   else
   {
@@ -280,14 +281,14 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
 
 
   //  RIC Event Trigger Style Item
-  if (func_def->ric_event_trigger_style_list != NULL || func_def->ric_event_trigger_style_list_len != 0)
+  if (func_def->ric_event_trigger_style_list != NULL || func_def->sz_ric_event_trigger_style_list != 0)
   {
-    assert(func_def->ric_event_trigger_style_list_len >= 1 && func_def->ric_event_trigger_style_list_len <= maxnoofRICStyles);
+    assert(func_def->sz_ric_event_trigger_style_list >= 1 && func_def->sz_ric_event_trigger_style_list <= maxnoofRICStyles);
 
-    pdu->ric_EventTriggerStyle_List = calloc(func_def->ric_event_trigger_style_list_len, sizeof(*pdu->ric_EventTriggerStyle_List));
+    pdu->ric_EventTriggerStyle_List = calloc(func_def->sz_ric_event_trigger_style_list, sizeof(*pdu->ric_EventTriggerStyle_List));
     assert(pdu->ric_EventTriggerStyle_List != NULL && "Memory exhausted");
 
-    for (size_t i = 0; i<func_def->ric_event_trigger_style_list_len; i++)
+    for (size_t i = 0; i<func_def->sz_ric_event_trigger_style_list; i++)
     {
       RIC_EventTriggerStyle_Item_t * event_item = calloc(1, sizeof(RIC_EventTriggerStyle_Item_t));
       assert(event_item != NULL && "Memory exhausted");
@@ -323,14 +324,14 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
 
 
   // RIC Report Style Item
-  if (func_def->ric_report_style_list != NULL || func_def->ric_report_style_list_len != 0)
+  if (func_def->ric_report_style_list != NULL || func_def->sz_ric_report_style_list != 0)
   {
-    assert(func_def->ric_report_style_list_len >= 1 && func_def->ric_report_style_list_len <= maxnoofRICStyles);
+    assert(func_def->sz_ric_report_style_list >= 1 && func_def->sz_ric_report_style_list <= maxnoofRICStyles);
 
-    pdu->ric_ReportStyle_List = calloc(func_def->ric_report_style_list_len, sizeof(*pdu->ric_ReportStyle_List));
+    pdu->ric_ReportStyle_List = calloc(func_def->sz_ric_report_style_list, sizeof(*pdu->ric_ReportStyle_List));
     assert(pdu->ric_ReportStyle_List != NULL && "Memory exhausted");
 
-    for (size_t i = 0; i<func_def->ric_report_style_list_len; i++)
+    for (size_t i = 0; i<func_def->sz_ric_report_style_list; i++)
     {
       RIC_ReportStyle_Item_t * report_item = calloc(1, sizeof(RIC_ReportStyle_Item_t));
       assert(report_item != NULL && "Memory exhausted");
@@ -442,11 +443,11 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
   fflush(stdout);
 
   byte_array_t  ba = {.buf = malloc(2048), .len = 2048};
+  assert(ba.buf != NULL && "Memory exhausted");
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
   asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_KPM_RANfunction_Description, pdu, ba.buf, ba.len);
   assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
   ba.len = er.encoded;
-
 
   ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_RANfunction_Description, pdu);
 

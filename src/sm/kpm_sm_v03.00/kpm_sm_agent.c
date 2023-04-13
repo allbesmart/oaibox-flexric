@@ -25,6 +25,7 @@
  */
 #include "kpm_sm_agent.h"
 #include "kpm_sm_id.h"
+#include "ie/kpm_data_ie.h"
 #include "enc/kpm_enc_generic.h"
 #include "dec/kpm_dec_generic.h"
 #include "../../util/alg_ds/alg/defer.h"
@@ -40,7 +41,6 @@
 typedef struct{
 
   sm_agent_t base;
-//  kpm_enc_asn_t enc;
 
   #ifdef ASN
     kpm_enc_asn_t enc;
@@ -55,30 +55,31 @@ typedef struct{
 } sm_kpm_agent_t;
 
 static
-subscribe_timer_t on_subscription_kpm_sm_ag(sm_agent_t* sm_agent, const sm_subs_data_t* data)
+subscribe_timer_t on_subscription_kpm_sm_ag(sm_agent_t const* sm_agent, const sm_subs_data_t* data)
 { 
   assert(sm_agent != NULL);
   assert(data != NULL);
 
   sm_kpm_agent_t* sm = (sm_kpm_agent_t*)sm_agent;
  
-  kpm_ric_subscription_t subscription = {0};
+  kpm_sub_data_t sub_data = {0};
 
-  subscription.kpm_event_trigger_def = kpm_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  sub_data.ev_trg_def= kpm_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  assert(sub_data.ev_trg_def.kpm_ric_event_trigger_format_1.report_period_ms > 0);
 
-  subscribe_timer_t timer = {.ms = subscription.kpm_event_trigger_def.kpm_ric_event_trigger_format_1.report_period_ms};
-
-// XXX: Leaving 'acd' doing nothing for the moment. We need to fix the logic upper layer and change 
-// the signature of this function
+  subscribe_timer_t timer = { .type = KPM_V3_0_SUB_DATA_ENUM ,
+                              .ms = sub_data.ev_trg_def.kpm_ric_event_trigger_format_1.report_period_ms};
   if (data->len_ad != 0){
-    subscription.kpm_act_def = kpm_dec_action_def(&sm->enc, data->len_ad, data->action_def);
-    free_kpm_subscription_data(&subscription);
+    timer.ad = calloc(1,sizeof(kpm_act_def_t));
+    assert(timer.ad != NULL && "Memory exhausted");
+    *timer.ad = kpm_dec_action_def(&sm->enc, data->len_ad, data->action_def);
   }
-  
+  free_kpm_sub_data(&sub_data); 
   return timer;
 }
 
-static sm_ind_data_t on_indication_kpm_sm_ag(sm_agent_t* sm_agent)
+static 
+sm_ind_data_t on_indication_kpm_sm_ag(sm_agent_t const* sm_agent)
 {
   assert(sm_agent != NULL);
   sm_kpm_agent_t* sm = (sm_kpm_agent_t*)sm_agent;
@@ -87,15 +88,16 @@ static sm_ind_data_t on_indication_kpm_sm_ag(sm_agent_t* sm_agent)
 
   // Fill Indication Message  and Header
   sm_ag_if_rd_t rd_if = {0};
-  rd_if.type = KPM_STATS_V0;
+  rd_if.type = INDICATION_MSG_AGENT_IF_ANS_V0; 
+  rd_if.ind.type = KPM_STATS_V3_0;
   sm->base.io.read(&rd_if); 
 
 
-  byte_array_t ba_hdr = kpm_enc_ind_hdr(&sm->enc, &rd_if.kpm_stats.kpm_ind_hdr);
+  byte_array_t ba_hdr = kpm_enc_ind_hdr(&sm->enc, &rd_if.ind.kpm.hdr);
   ret.ind_hdr = ba_hdr.buf;
   ret.len_hdr = ba_hdr.len;
 
-  byte_array_t ba = kpm_enc_ind_msg(&sm->enc, &rd_if.kpm_stats.kpm_ind_msg);
+  byte_array_t ba = kpm_enc_ind_msg(&sm->enc, &rd_if.ind.kpm.msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 
@@ -107,12 +109,15 @@ static sm_ind_data_t on_indication_kpm_sm_ag(sm_agent_t* sm_agent)
 }
 
 static
-sm_e2_setup_t on_e2_setup_kpm_sm_ag(sm_agent_t* sm_agent)
+sm_e2_setup_data_t on_e2_setup_kpm_sm_ag(sm_agent_t const* sm_agent)
 {
   assert(sm_agent != NULL);
 
   sm_kpm_agent_t* sm = (sm_kpm_agent_t*)sm_agent;
+  (void)sm;
 
+  assert(0!=0 && "Not implemented");
+  /*
   sm_e2_setup_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
 
   kpm_e2_setup_t e2_setup_msg = {0};
@@ -122,7 +127,9 @@ sm_e2_setup_t on_e2_setup_kpm_sm_ag(sm_agent_t* sm_agent)
   byte_array_t ba = kpm_enc_func_def(&sm->enc, &e2_setup_msg.kpm_ran_function_def);
   setup.ran_fun_def = ba.buf;
   setup.len_rfd = ba.len;
-  
+ */ 
+
+sm_e2_setup_data_t setup; 
   return setup;
 }
 
@@ -131,18 +138,22 @@ void free_e2_setup_kpm_sm_ag (void *msg)
 {
   assert(msg != NULL);
 
-  sm_e2_setup_t * func_def  = (sm_e2_setup_t *)msg;
+  sm_e2_setup_data_t * func_def  = (sm_e2_setup_data_t *)msg;
 
   free(func_def->ran_fun_def);
 }
 
 static
-void on_ric_service_update_kpm_sm_ag(sm_agent_t* sm_agent, sm_ric_service_update_t const* data)
+sm_ric_service_update_data_t on_ric_service_update_kpm_sm_ag(sm_agent_t const* sm_agent)
 {
   assert(sm_agent != NULL);
-  assert(data != NULL);
+
+  assert(0!=0 && "Not implemented");
 
   printf("on_ric_service_update called \n");
+
+ sm_ric_service_update_data_t  ret; 
+  return ret;
 }
 
 

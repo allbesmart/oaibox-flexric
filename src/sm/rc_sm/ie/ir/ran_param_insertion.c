@@ -46,3 +46,22 @@ bool eq_ran_param_ins(ran_param_ins_t const* m0, ran_param_ins_t const* m1)
   return true;
 }
 
+ran_param_ins_t cp_ran_param_ins(ran_param_ins_t const* src)
+{
+  assert(src != NULL);
+  ran_param_ins_t dst = {0}; 
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  // [1 - 4294967295]
+  assert(src->ran_id > 0);
+  dst.ran_id = src->ran_id;
+
+  // RAN Parameter Definition
+  // Optional
+  // 9.3.51
+  assert(src->def == NULL && "Not implemented"); 
+
+  return dst;
+}
+

@@ -92,8 +92,8 @@ sm_ag_if_rd_ind_t on_indication_gtp_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t
 
  sm_ag_if_rd_ind_t rd_if = {.type = GTP_STATS_V0};
 
-  rd_if.gtp_ind.msg = gtp_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
-  rd_if.gtp_ind.hdr = gtp_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
+  rd_if.gtp.msg = gtp_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+  rd_if.gtp.hdr = gtp_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
 
   // ToDO: fill the structure properly
 //  assert(sizeof(gtp_ind_msg_t) == sizeof(gtp_rd_stats_t) && "memcpy not allowed if the structs are different");

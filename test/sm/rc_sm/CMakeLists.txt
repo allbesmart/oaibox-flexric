@@ -50,7 +50,7 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
   target_compile_definitions(test_rc_sm  PRIVATE ${SM_ENCODING_RC})
 
 elseif(SM_ENCODING_RC STREQUAL "FLATBUFFERS")
-  message(FATAL_ERROR "Not implemented PLAIN encoding")
+  message(FATAL_ERROR "Not implemented FLATBUFFERS encoding")
 
 endif()
 

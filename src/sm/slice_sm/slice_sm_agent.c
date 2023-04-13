@@ -73,12 +73,12 @@ sm_ind_data_t on_indication_slice_sm_ag(sm_agent_t const* sm_agent)
   sm->base.io.read(&rd_if);
 
 // Liberate the memory if previously allocated by the RAN. It sucks
-  slice_ind_data_t* ind = &rd_if.ind.slice_ind;
+  slice_ind_data_t* ind = &rd_if.ind.slice;
   defer({ free_slice_ind_hdr(&ind->hdr) ;});
   defer({ free_slice_ind_msg(&ind->msg) ;});
   defer({ free_slice_call_proc_id(ind->proc_id);});
 
-  byte_array_t ba = slice_enc_ind_msg(&sm->enc, &rd_if.ind.slice_ind.msg);
+  byte_array_t ba = slice_enc_ind_msg(&sm->enc, &rd_if.ind.slice.msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 

@@ -1237,19 +1237,19 @@ void write_db_sqlite3(sqlite3* db, global_e2_node_id_t const* id, sm_ag_if_rd_t 
   assert(ag_rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
 
   sm_ag_if_rd_ind_t const* rd = &ag_rd->ind; 
-  assert(rd->type == MAC_STATS_V0 || rd->type == RLC_STATS_V0|| rd->type == PDCP_STATS_V0 || rd->type == SLICE_STATS_V0 ||rd->type ==KPM_STATS_V0 ||rd->type == GTP_STATS_V0);
+  assert(rd->type == MAC_STATS_V0 || rd->type == RLC_STATS_V0|| rd->type == PDCP_STATS_V0 || rd->type == SLICE_STATS_V0 ||rd->type == KPM_STATS_V3_0 ||rd->type == GTP_STATS_V0);
 
   if(rd->type == MAC_STATS_V0){
-    write_mac_stats(db, id, &rd->mac_ind);
+    write_mac_stats(db, id, &rd->mac);
   } else if(rd->type == RLC_STATS_V0 ){
-    write_rlc_stats(db, id, &rd->rlc_ind);
+    write_rlc_stats(db, id, &rd->rlc);
   } else if( rd->type == PDCP_STATS_V0) {
-    write_pdcp_stats(db, id, &rd->pdcp_ind);
+    write_pdcp_stats(db, id, &rd->pdcp);
   } else if (rd->type == SLICE_STATS_V0) {
-    write_slice_stats(db, id, &rd->slice_ind);
+    write_slice_stats(db, id, &rd->slice);
   } else if (rd->type == GTP_STATS_V0) {
-    write_gtp_stats(db, id, &rd->gtp_ind);
-  } else if (rd->type == KPM_STATS_V0) {
+    write_gtp_stats(db, id, &rd->gtp);
+  } else if (rd->type == KPM_STATS_V3_0) {
     assert(0!=0 && "Not implemented");
   } else {
     assert(0!=0 && "Unknown statistics type received ");

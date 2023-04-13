@@ -25,5 +25,7 @@ void free_ran_param_ins_ind(ran_param_ins_ind_t const* src);
 
 bool eq_ran_param_ins_ind(ran_param_ins_ind_t const* m0, ran_param_ins_ind_t const* m1);
 
+ran_param_ins_ind_t cp_ran_param_ins_ind(ran_param_ins_ind_t const* src);
+
 #endif
 

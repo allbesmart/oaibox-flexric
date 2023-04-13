@@ -45,7 +45,7 @@ void read_RAN(sm_ag_if_rd_t* read)
   assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
   assert(read->ind.type == MAC_STATS_V0);
 
-  mac_ind_data_t* ind = &read->ind.mac_ind;
+  mac_ind_data_t* ind = &read->ind.mac;
 
   fill_mac_ind_data(ind);
   cp.hdr = cp_mac_ind_hdr(&ind->hdr);
@@ -102,7 +102,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
 
   assert(msg.type == MAC_STATS_V0);
-  mac_ind_data_t* data = &msg.mac_ind;
+  mac_ind_data_t* data = &msg.mac;
 
   assert(eq_mac_ind_hdr(&data->hdr, &cp.hdr) == true);
   assert(eq_mac_ind_msg(&data->msg, &cp.msg) == true);

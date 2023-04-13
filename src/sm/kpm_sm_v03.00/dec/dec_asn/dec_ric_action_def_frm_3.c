@@ -1,15 +1,13 @@
 #include <assert.h>
 
+#include "../../../../lib/sm/dec_asn_sm_common/dec_cell_global_id.h"
 #include "../../ie/asn/asn_constant.h"
-#include "dec_ric_action_def_frm_3.h"
 #include "../dec_asn_kpm_common/dec_meas_info_frm_3.h"
-#include "../../../../lib/e2sm_common_ie/dec_asn_sm_common/dec_cell_global_id.h"
-
+#include "dec_ric_action_def_frm_3.h"
 
 kpm_act_def_format_3_t kpm_dec_action_def_frm_3_asn(const E2SM_KPM_ActionDefinition_Format3_t * act_def_asn)
 {
     kpm_act_def_format_3_t act_def={0};
-
 
     // 1. Measurement Information List Format 3 : [1, 65535]
     
@@ -26,9 +24,11 @@ kpm_act_def_format_3_t kpm_dec_action_def_frm_3_asn(const E2SM_KPM_ActionDefinit
      
 
     // 3. Cell Global ID - OPTIONAL
-    if (act_def_asn->cellGlobalID != NULL)
-      act_def.cell_global_id = dec_cell_global_id_asn(act_def_asn->cellGlobalID);
-
+    if (act_def_asn->cellGlobalID != NULL){
+      act_def.cell_global_id = calloc(1, sizeof(cell_global_id_t));
+      assert(act_def.cell_global_id != NULL && "Memory exhausted");
+      *act_def.cell_global_id = dec_cell_global_id_asn(act_def_asn->cellGlobalID);
+    }
 
     return act_def;
 }

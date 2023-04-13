@@ -47,21 +47,22 @@ void read_RAN(sm_ag_if_rd_t* ag_if)
         data->type == RLC_STATS_V0 ||  
         data->type == PDCP_STATS_V0 || 
         data->type == SLICE_STATS_V0 || 
-        data->type == KPM_STATS_V0 ||
+        data->type == KPM_STATS_V3_0 ||
         data->type == GTP_STATS_V0);
 
   if(data->type == MAC_STATS_V0 ){
-    fill_mac_ind_data(&data->mac_ind);
+    fill_mac_ind_data(&data->mac);
   } else if(data->type == RLC_STATS_V0) {
-    fill_rlc_ind_data(&data->rlc_ind);
-  } else if (data->type == PDCP_STATS_V0 ){
-    fill_pdcp_ind_data(&data->pdcp_ind);
-  } else if(data->type == SLICE_STATS_V0 ){
-    fill_slice_ind_data(&data->slice_ind);
-  } else if(data->type == GTP_STATS_V0 ){
-    fill_gtp_ind_data(&data->gtp_ind);
-  } else if(data->type == KPM_STATS_V0 ){
-    fill_kpm_ind_data(&data->kpm_ind);
+    fill_rlc_ind_data(&data->rlc);
+  } else if (data->type == PDCP_STATS_V0){
+    fill_pdcp_ind_data(&data->pdcp);
+  } else if(data->type == SLICE_STATS_V0){
+    fill_slice_ind_data(&data->slice);
+  } else if(data->type == GTP_STATS_V0){
+    fill_gtp_ind_data(&data->gtp);
+  } else if(data->type == KPM_STATS_V3_0){
+    assert(0!=0 && "Not implemented");
+//    fill_kpm_ind_data(&data->kpm);
   } else {
     assert("Invalid data type");
   }
@@ -116,7 +117,7 @@ void sm_cb_mac(sm_ag_if_rd_t const* rd)
   assert(rd->ind.type == MAC_STATS_V0); 
 
   int64_t now = time_now_us();
-  printf("MAC ind_msg latency = %ld μs\n", now - rd->ind.mac_ind.msg.tstamp);
+  printf("MAC ind_msg latency = %ld μs\n", now - rd->ind.mac.msg.tstamp);
 }
 
 static
@@ -128,7 +129,7 @@ void sm_cb_rlc(sm_ag_if_rd_t const* rd)
 
   int64_t now = time_now_us();
 
-  printf("RLC ind_msg latency = %ld μs\n", now - rd->ind.rlc_ind.msg.tstamp);
+  printf("RLC ind_msg latency = %ld μs\n", now - rd->ind.rlc.msg.tstamp);
 }
 
 static
@@ -139,7 +140,7 @@ void sm_cb_gtp(sm_ag_if_rd_t const* rd)
   assert(rd->ind.type == GTP_STATS_V0); 
 
   int64_t now = time_now_us();
-  printf("GTP ind_msg latency = %ld μs\n", now - rd->ind.gtp_ind.msg.tstamp);
+  printf("GTP ind_msg latency = %ld μs\n", now - rd->ind.gtp.msg.tstamp);
 }
 
 static
@@ -172,6 +173,8 @@ sm_ag_if_wr_t create_add_slice(void)
 static
 sm_ag_if_wr_t create_assoc_slice(void)
 {
+  assert(0!=0 && "Unknown type");
+
   sm_ag_if_wr_t ctrl_msg = {.type =CONTROL_SM_AG_IF_WR };
   ctrl_msg.ctrl.type = SLICE_CTRL_REQ_V0;
   ctrl_msg.ctrl.slice_req_ctrl.hdr.dummy = 2;
@@ -188,37 +191,8 @@ sm_ag_if_wr_t create_assoc_slice(void)
     assoc->dl_id = 42;
     assoc->ul_id = 42;
     assoc->rnti = 121;
-    switch (read_kpm_ind.kpm_ind_hdr.type)
-    {
-      case FORMAT_1_INDICATION_HEADER:
-        printf("received KPM indication at %d (sender '%s', type '%s', vendor '%s')\n",
-            read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.collectStartTime, (char *)(read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.sender_name->buf), (char *)(read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.sender_type->buf), (char *)(read_kpm_ind.kpm_ind_hdr.kpm_ric_ind_hdr_format_1.vendor_name->buf));
-        break;
-
-      default:
-        assert(false && "Unknown Indication Header Type");
-    }
-
-    // Indication Message
-
-    switch (read_kpm_ind.kpm_ind_msg.type)
-    {
-      case FORMAT_1_INDICATION_MESSAGE:
-        sm_cb_kpm_ind_msg_frm_1(&read_kpm_ind.kpm_ind_msg.frm_1);
-        break;
-
-        // case FORMAT_2_INDICATION_MESSAGE:
-        //   sm_cb_kpm_ind_msg_frm_2(&read_kpm_ind->kpm_ind_msg.frm_2);
-        //   break;
-
-        // case FORMAT_3_INDICATION_MESSAGE:
-        //   sm_cb_kpm_ind_msg_frm_3(&read_kpm_ind->kpm_ind_msg.frm_3);
-        //   break;
-
-      default:
-        assert(false && "Unknown Indication Message Type");
-    }
   }
+}
 
 int main(int argc, char *argv[])
 {
@@ -294,10 +268,10 @@ int main(int argc, char *argv[])
 
   sleep(1);
   
-  inter_xapp_e i = ms_1000;
+//  inter_xapp_e i = ms_1000;
   // returns a handle for KPM
-  sm_ans_xapp_t h = report_sm_xapp_api(&nodes.n[0].id, SM_KPM_ID, i, sm_cb_kpm);
-  assert(h.success == true);
+//  sm_ans_xapp_t h = report_sm_xapp_api(&nodes.n[0].id, SM_KPM_ID, i, sm_cb_kpm);
+//  assert(h.success == true);
   sleep(20);
 
   // Remove the handle previously returned

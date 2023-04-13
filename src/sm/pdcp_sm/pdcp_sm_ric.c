@@ -94,8 +94,8 @@ sm_ag_if_rd_ind_t on_indication_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_
   sm_ag_if_rd_ind_t rd_if = {0};
   rd_if.type = PDCP_STATS_V0;
 
-  rd_if.pdcp_ind.hdr = pdcp_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
-  rd_if.pdcp_ind.msg = pdcp_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+  rd_if.pdcp.hdr = pdcp_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
+  rd_if.pdcp.msg = pdcp_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
 
   return rd_if;
 }

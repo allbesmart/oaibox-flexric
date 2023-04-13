@@ -177,9 +177,27 @@ e2sm_rc_action_def_t cp_e2sm_rc_action_def(e2sm_rc_action_def_t* src)
 {
   assert(src != NULL);
 
-  assert(0!=0 && "Not implemented" ); 
-  e2sm_rc_action_def_t ad = {0};
-  return ad;
+  e2sm_rc_action_def_t dst = {0};
+  //  RIC Style Type
+  //  Mandatory
+  //  9.3.3
+  // Defined in common 6.2.2.2.
+  dst.ric_style_type = src->ric_style_type; 
+
+  dst.format = src->format;
+  if(dst.format == FORMAT_1_E2SM_RC_ACT_DEF){
+    dst.frmt_1 = cp_e2sm_rc_act_def_frmt_1(&src->frmt_1); 
+  }else if(dst.format == FORMAT_2_E2SM_RC_ACT_DEF){
+    dst.frmt_2 = cp_e2sm_rc_act_def_frmt_2(&src->frmt_2); 
+  }else if(dst.format == FORMAT_3_E2SM_RC_ACT_DEF){
+    dst.frmt_3 = cp_e2sm_rc_act_def_frmt_3(&src->frmt_3); 
+  }else if(dst.format == FORMAT_4_E2SM_RC_ACT_DEF){
+    dst.frmt_4 = cp_e2sm_rc_act_def_frmt_4(&src->frmt_4); 
+  } else {
+    assert(0!=0 && "Unknown format");
+  }
+
+  return dst;
 }
 
 
@@ -775,10 +793,13 @@ void free_rc_sub_data(rc_sub_data_t* src)
   assert(src != NULL);
 
   free_e2sm_rc_event_trigger(&src->et);
-  if(src->ad != NULL){
-    free_e2sm_rc_action_def(src->ad);
-    free(src->ad);
+
+  // [1-16]
+  assert(src->sz_ad > 0 && src->sz_ad < 17);
+  for(size_t i = 0; i < src->sz_ad; ++i){
+    free_e2sm_rc_action_def(&src->ad[i]);
   }
+  free(src->ad);
 }
 
 bool eq_rc_sub_data(rc_sub_data_t const* m0, rc_sub_data_t const* m1)
@@ -792,8 +813,15 @@ bool eq_rc_sub_data(rc_sub_data_t const* m0, rc_sub_data_t const* m1)
   if(eq_e2sm_rc_event_trigger(&m0->et, &m1->et) == false)
     return false;
 
-  if(eq_e2sm_rc_action_def(m0->ad, m1->ad) == false)
+  assert(m0->sz_ad > 0 && m0->sz_ad < 17);
+  assert(m1->sz_ad > 0 && m1->sz_ad < 17);
+  if(m0->sz_ad != m1->sz_ad)
     return false;
+
+  for(size_t i = 0; i < m0->sz_ad; ++i){
+    if(eq_e2sm_rc_action_def(&m0->ad[i], &m1->ad[i]) == false)
+      return false;
+  }
 
   return true;
 }
@@ -804,10 +832,16 @@ rc_sub_data_t cp_rc_sub_data(rc_sub_data_t const* src)
   rc_sub_data_t dst = {0}; 
 
   dst.et = cp_e2sm_rc_event_trigger(&src->et);
-  if(src->ad != NULL){
-    dst.ad = calloc(1, sizeof(e2sm_rc_action_def_t));
-    assert(dst.ad != NULL && "Memory exhausted");
-    *dst.ad = cp_e2sm_rc_action_def(src->ad); 
+
+  assert(src->sz_ad > 0 && src->sz_ad < 17);
+  assert(src->sz_ad == 1 && "Only one supported");
+  dst.sz_ad = src->sz_ad;
+
+  dst.ad = calloc(dst.sz_ad, sizeof(e2sm_rc_action_def_t));
+  assert(dst.ad != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < dst.sz_ad; ++i){
+    dst.ad[i] = cp_e2sm_rc_action_def(src->ad); 
   }
 
   return dst;

@@ -7,7 +7,6 @@
 #include "ran_param_def.h"
  
 typedef struct{
-
   // RAN Parameter ID
   // Mandatory
   // 9.3.8
@@ -24,6 +23,8 @@ typedef struct{
 void free_param_report_def(param_report_def_t* src);
 
 bool eq_param_report_def(param_report_def_t const* m0, param_report_def_t const* m1);
+
+param_report_def_t cp_param_report_def(param_report_def_t const* src);
 
 #endif
 

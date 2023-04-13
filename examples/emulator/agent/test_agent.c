@@ -37,21 +37,20 @@ void read_RAN(sm_ag_if_rd_t* ag_rd)
 {
   assert(ag_rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
   sm_ag_if_rd_ind_t* data = &ag_rd->ind;
-  assert(data->type == MAC_STATS_V0 || data->type == RLC_STATS_V0 ||  data->type == PDCP_STATS_V0 || data->type == SLICE_STATS_V0 || data->type == KPM_STATS_V0 || data->type == GTP_STATS_V0);
+  assert(data->type == MAC_STATS_V0 || data->type == RLC_STATS_V0 ||  data->type == PDCP_STATS_V0 || data->type == SLICE_STATS_V0 || data->type == KPM_STATS_V3_0 || data->type == GTP_STATS_V0);
 
-
-  if(data->type == MAC_STATS_V0 ){
-    fill_mac_ind_data(&data->mac_ind);
-  } else if(data->type == RLC_STATS_V0) {
-    fill_rlc_ind_data(&data->rlc_ind);
-  } else if (data->type == PDCP_STATS_V0 ){
-    fill_pdcp_ind_data(&data->pdcp_ind);
-  } else if(data->type == SLICE_STATS_V0 ){
-    fill_slice_ind_data(&data->slice_ind);
-  } else if(data->type == GTP_STATS_V0 ){
-    fill_gtp_ind_data(&data->gtp_ind);
-  } else if(data->type == KPM_STATS_V0 ){
-    fill_kpm_ind_data(&data->kpm_ind);
+  if(data->type == MAC_STATS_V0){
+    fill_mac_ind_data(&data->mac);
+  } else if(data->type == RLC_STATS_V0){
+    fill_rlc_ind_data(&data->rlc);
+  } else if (data->type == PDCP_STATS_V0){
+    fill_pdcp_ind_data(&data->pdcp);
+  } else if(data->type == SLICE_STATS_V0){
+    fill_slice_ind_data(&data->slice);
+  } else if(data->type == GTP_STATS_V0){
+    fill_gtp_ind_data(&data->gtp);
+  } else if(data->type == KPM_STATS_V3_0){
+    fill_kpm_ind_data(&data->kpm);
   } else {
     assert("Invalid data type");
   }

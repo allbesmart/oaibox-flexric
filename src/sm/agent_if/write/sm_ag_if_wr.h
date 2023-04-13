@@ -79,6 +79,7 @@ typedef enum{
   SLICE_SUBS_V0, 
   TC_SUBS_V0, 
   GTP_SUBS_V0, 
+  KPM_SUBS_V3_0, 
   RAN_CTRL_SUBS_V1_03, 
 
   SM_AGENT_IF_WRITE_SUBS_V0_END,
@@ -93,7 +94,8 @@ typedef struct{
     slice_sub_data_t slice;
     tc_sub_data_t tc;
     gtp_sub_data_t gtp;
-    rc_sub_data_t rc_sub;
+    kpm_sub_data_t kpm;
+    rc_sub_data_t rc;
   };
 } sm_ag_if_wr_subs_t;
 

@@ -37,21 +37,21 @@ void free_sm_ag_if_rd_ind(sm_ag_if_rd_ind_t* d)
   assert(d != NULL);
   
   if(d->type == MAC_STATS_V0){
-    free_mac_ind_data(&d->mac_ind);
+    free_mac_ind_data(&d->mac);
   } else if(d->type == RLC_STATS_V0){
-    free_rlc_ind_data(&d->rlc_ind);
+    free_rlc_ind_data(&d->rlc);
   } else if(d->type == PDCP_STATS_V0){
-    free_pdcp_ind_data(&d->pdcp_ind);
+    free_pdcp_ind_data(&d->pdcp);
   } else if(d->type == SLICE_STATS_V0){
-    free_slice_ind_data(&d->slice_ind);
+    free_slice_ind_data(&d->slice);
   } else if(d->type == TC_STATS_V0){
-    free_tc_ind_data(&d->tc_ind);
+    free_tc_ind_data(&d->tc);
   } else if(d->type == GTP_STATS_V0){
-    free_gtp_ind_data(&d->gtp_ind);
-  } else if(d->type == KPM_STATS_V0){
-    free_kpm_ind_data(&d->kpm_ind);
+    free_gtp_ind_data(&d->gtp);
+  } else if(d->type == KPM_STATS_V3_0){
+    free_kpm_ind_data(&d->kpm);
   } else if(d->type == RAN_CTRL_STATS_V1_03 ){
-    free_rc_ind_data(&d->rc_ind);
+    free_rc_ind_data(&d->rc);
   } else {
     assert(0!=0 && "Unforeseen case");
   }
@@ -65,21 +65,21 @@ sm_ag_if_rd_ind_t cp_sm_ag_if_rd_ind(sm_ag_if_rd_ind_t const* d)
   sm_ag_if_rd_ind_t ans = {.type = d->type};
 
   if(ans.type == MAC_STATS_V0){
-    ans.mac_ind = cp_mac_ind_data(&d->mac_ind);
+    ans.mac = cp_mac_ind_data(&d->mac);
   } else if(ans.type == RLC_STATS_V0 ){
-    ans.rlc_ind = cp_rlc_ind_data(&d->rlc_ind);
+    ans.rlc = cp_rlc_ind_data(&d->rlc);
   } else if(ans.type == PDCP_STATS_V0) {
-    ans.pdcp_ind = cp_pdcp_ind_data(&d->pdcp_ind);
+    ans.pdcp = cp_pdcp_ind_data(&d->pdcp);
   } else if(ans.type == SLICE_STATS_V0) {
-    ans.slice_ind = cp_slice_ind_data(&d->slice_ind);
+    ans.slice = cp_slice_ind_data(&d->slice);
   } else if(ans.type == TC_STATS_V0) {
-    ans.tc_ind = cp_tc_ind_data(&d->tc_ind);
+    ans.tc = cp_tc_ind_data(&d->tc);
   } else if(ans.type == GTP_STATS_V0) {
-    ans.gtp_ind = cp_gtp_ind_data(&d->gtp_ind);
-  } else if(ans.type == KPM_STATS_V0) {
-    ans.kpm_ind = cp_kpm_ind_data(&d->kpm_ind);
+    ans.gtp = cp_gtp_ind_data(&d->gtp);
+  } else if(ans.type == KPM_STATS_V3_0) {
+    ans.kpm = cp_kpm_ind_data(&d->kpm);
   } else if(ans.type == RAN_CTRL_STATS_V1_03) {
-    ans.rc_ind = cp_rc_ind_data(&d->rc_ind);
+    ans.rc = cp_rc_ind_data(&d->rc);
   }  else {
     assert("Unknown type or not implemented");
   }

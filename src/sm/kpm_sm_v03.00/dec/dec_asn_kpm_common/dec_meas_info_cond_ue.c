@@ -2,6 +2,7 @@
 #include "../../ie/asn/asn_constant.h"
 
 #include "dec_meas_info_cond_ue.h"
+#include "../../../../lib/sm/dec_asn_sm_common/dec_ue_id.h"
 #include "../../ie/asn/MeasurementCondUEidItem.h"
 #include "../../ie/asn/MatchingUEidList.h"
 #include "../../ie/asn/MatchingUEidItem.h"
@@ -9,11 +10,9 @@
 #include "../../ie/asn/MatchingUEidPerGP-Item.h"
 #include "../../ie/asn/MatchingUEidItem-PerGP.h"
 #include "../../ie/asn/MatchingUEidList-PerGP.h"
-
 #include "../dec_asn_kpm_common/dec_matching_cond_frm_3.h"
-#include "../../../../lib/e2sm_common_ie/dec_asn_sm_common/dec_ue_id.h"
 
-meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEidList_t meas_cond_ue_asn, const size_t meas_cond_ue_len)
+meas_info_cond_ue_lst_t* kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEidList_t meas_cond_ue_asn, const size_t meas_cond_ue_len)
 {
     meas_info_cond_ue_lst_t * meas_cond_ue = calloc(meas_cond_ue_len, sizeof(meas_info_cond_ue_lst_t));
     assert(meas_cond_ue != NULL && "Memory exhausted");
@@ -113,8 +112,10 @@ meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEi
                   }
                   break;
                 
-                default:
+                default:{
+                          assert(0!=0 && "Unknown case");
                     break;
+                        }
                 }
             }
 
@@ -125,7 +126,6 @@ meas_info_cond_ue_lst_t * kpm_dec_meas_info_cond_ue_asn(const MeasurementCondUEi
         }
 
     }
-
 
     return meas_cond_ue;
 }

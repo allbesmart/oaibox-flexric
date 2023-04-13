@@ -5,10 +5,10 @@
 extern "C" {
 #endif
 
-#include <stdlib.h>
-
+#include "../../../../../lib/sm/sm_common_ie/ue_id.h"
 #include "enum_value.h"
-#include "../../../../../lib/e2sm_common_ie/sm_common_ie/ue_id.h"
+
+#include <stdlib.h>
 
 typedef enum {
     NONE_MATCHED_UE,
@@ -33,7 +33,6 @@ typedef struct {
         enum_value_e no_matched_ue;
         ue_lst_t matched_ue_lst;
     };
-    
 
 } ue_id_gran_period_lst_t;
 

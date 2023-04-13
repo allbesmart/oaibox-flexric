@@ -99,7 +99,7 @@ sm_ag_if_rd_ind_t on_indication_mac_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t
   assert(data->ind_hdr == NULL && "Not implemented");
 
   // Message
-  rd_if.mac_ind.msg = mac_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+  rd_if.mac.msg = mac_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
 
   //  call_process_id
   assert(data-> call_process_id == NULL && "not implemented"); 

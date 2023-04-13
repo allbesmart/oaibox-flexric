@@ -137,9 +137,14 @@ subscribe_timer_t on_subscription_rc_sm_ag(sm_agent_t const* sm_agent, const sm_
   sm_ag_if_wr_t wr = {.type = SUBSCRIPTION_SM_AG_IF_WR};
 
   wr.subs.type = RAN_CTRL_SUBS_V1_03;
-  wr.subs.rc_sub.et = rc_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
-  defer({ free_e2sm_rc_event_trigger(&wr.subs.rc_sub.et); });
-  // wr.subs.rc_subs.ad = ;
+  wr.subs.rc.et = rc_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  defer({ free_e2sm_rc_event_trigger(&wr.subs.rc.et); });
+
+  wr.subs.rc.sz_ad = 1;
+  wr.subs.rc.ad = calloc(wr.subs.rc.sz_ad, sizeof(e2sm_rc_action_def_t) );
+  assert(wr.subs.rc.ad != NULL && "Memory exhausted");
+
+  wr.subs.rc.ad[0] = rc_dec_action_def(&sm->enc, data->len_ad, data->action_def);
 
   sm->base.io.write(&wr);
 
@@ -164,16 +169,16 @@ sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t const* sm_agent)
   sm->base.io.read(&rd_if);
 
   // Liberate the memory if previously allocated by the RAN. It sucks
-  rc_ind_data_t* ind = &rd_if.ind.rc_ind;
+  rc_ind_data_t* ind = &rd_if.ind.rc;
   defer({ free_rc_ind_data(ind); });
 
   // Fill Indication Header
-  byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &rd_if.ind.rc_ind.hdr);
+  byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &rd_if.ind.rc.hdr);
   ret.ind_hdr = ba_hdr.buf;
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message
-  byte_array_t ba_msg = rc_enc_ind_msg(&sm->enc, &rd_if.ind.rc_ind.msg);
+  byte_array_t ba_msg = rc_enc_ind_msg(&sm->enc, &rd_if.ind.rc.msg);
   ret.ind_msg = ba_msg.buf;
   ret.len_msg = ba_msg.len;
 

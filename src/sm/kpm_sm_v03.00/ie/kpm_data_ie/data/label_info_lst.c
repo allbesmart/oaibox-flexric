@@ -100,7 +100,7 @@ bool eq_label_info(const label_info_lst_t *l1, const label_info_lst_t *l2)
   if (l1->noLabel != NULL && l2->noLabel != NULL && l1->noLabel != l2->noLabel)
     return false;    
   
-  if (eq_plmn(l1->plmn_id, l2->plmn_id) != true)
+  if (eq_e2sm_plmn(l1->plmn_id, l2->plmn_id) != true)
     return false;
 
   // the rest of optional parameters not yet implemented

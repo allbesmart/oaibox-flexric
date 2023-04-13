@@ -90,7 +90,7 @@ sm_ind_data_t on_indication_rlc_sm_ag(sm_agent_t const* sm_agent)
   sm->base.io.read(&rd_if);
 
   // Liberate the memory if previously allocated by the RAN. It sucks
-  rlc_ind_data_t* ind = &rd_if.ind.rlc_ind;
+  rlc_ind_data_t* ind = &rd_if.ind.rlc;
   defer({ free_rlc_ind_hdr(&ind->hdr) ;});
   defer({ free_rlc_ind_msg(&ind->msg) ;});
   defer({ free_rlc_call_proc_id(ind->proc_id);});

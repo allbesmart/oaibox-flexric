@@ -43,9 +43,9 @@ void sm_cb_slice(sm_ag_if_rd_t const* rd)
 
   int64_t now = time_now_us();
 
-  printf("SLICE ind_msg latency = %ld \n", now - rd->ind.slice_ind.msg.tstamp);
-  if (rd->ind.slice_ind.msg.ue_slice_conf.len_ue_slice > 0)
-    assoc_rnti = rd->ind.slice_ind.msg.ue_slice_conf.ues->rnti; // TODO: assign the rnti after get the indication msg
+  printf("SLICE ind_msg latency = %ld \n", now - rd->ind.slice.msg.tstamp);
+  if (rd->ind.slice.msg.ue_slice_conf.len_ue_slice > 0)
+    assoc_rnti = rd->ind.slice.msg.ue_slice_conf.ues->rnti; // TODO: assign the rnti after get the indication msg
 }
 
 static

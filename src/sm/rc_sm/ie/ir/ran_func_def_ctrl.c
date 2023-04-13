@@ -41,7 +41,7 @@ ran_func_def_ctrl_t cp_ran_func_def_ctrl(ran_func_def_ctrl_t const* src)
 {
   assert(src != NULL);
 
-ran_func_def_ctrl_t dst = {0}; 
+  ran_func_def_ctrl_t dst = {0}; 
 
   assert(src->sz_seq_ctrl_style > 0 && src->sz_seq_ctrl_style < 64);
   dst.sz_seq_ctrl_style = src->sz_seq_ctrl_style;

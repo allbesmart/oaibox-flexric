@@ -1,4 +1,4 @@
-file(GLOB KPM_RIC_INFO_COMMON_SRCS *.c)
+#file(GLOB KPM_RIC_INFO_COMMON_SRCS *.c)
 
 set(KPM_RIC_INFO_COMMON_SRCS 
   label_info_lst.c

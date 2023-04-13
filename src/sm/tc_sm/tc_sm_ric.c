@@ -72,7 +72,7 @@ sm_ag_if_rd_ind_t on_indication_tc_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t 
   sm_ag_if_rd_ind_t rd_if = {.type =  TC_STATS_V0};
 
 //  rd_if.tc_stats.hdr = tc_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
-  rd_if.tc_ind.msg = tc_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+  rd_if.tc.msg = tc_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
 
   return rd_if;
 }

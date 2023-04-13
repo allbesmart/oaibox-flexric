@@ -24,7 +24,7 @@
 #ifndef E2_AGENT_API_MOSAIC_H
 #define E2_AGENT_API_MOSAIC_H
 
-#include "sm/sm_io.h"
+#include "../sm/sm_io.h"
 #include "../util/conf_file.h"
 #include "../util/ngran_types.h"
 /*

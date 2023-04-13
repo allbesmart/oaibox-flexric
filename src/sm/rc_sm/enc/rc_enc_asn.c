@@ -1250,11 +1250,8 @@ E2SM_RC_ActionDefinition_Format3_t* cp_act_def_frmt_3(e2sm_rc_act_def_frmt_3_t c
   return dst;
 }
 
-
-
-
 static
-E2SM_RC_ActionDefinition_Format4_RANP_Item_t* cp_ran_param_ins_ind(ran_param_ins_ind_t const* src)
+E2SM_RC_ActionDefinition_Format4_RANP_Item_t* enc_ran_param_ins_ind(ran_param_ins_ind_t const* src)
 {
   assert(src != NULL);
   
@@ -1277,7 +1274,7 @@ E2SM_RC_ActionDefinition_Format4_RANP_Item_t* cp_ran_param_ins_ind(ran_param_ins
 }
 
 static
-E2SM_RC_ActionDefinition_Format4_Indication_Item_t* cp_seq_ins_ind_act_def(seq_ins_ind_act_def_t const* src)
+E2SM_RC_ActionDefinition_Format4_Indication_Item_t* enc_seq_ins_ind_act_def(seq_ins_ind_act_def_t const* src)
 {
   assert(src != NULL);
 
@@ -1297,7 +1294,7 @@ E2SM_RC_ActionDefinition_Format4_Indication_Item_t* cp_seq_ins_ind_act_def(seq_i
   assert(src->sz_ran_param_ins_ind > 0 && src->sz_ran_param_ins_ind < 65535+1);
 
   for(size_t i = 0; i < src->sz_ran_param_ins_ind; ++i){
-    E2SM_RC_ActionDefinition_Format4_RANP_Item_t* ie = cp_ran_param_ins_ind(&src->ran_param_ins_ind[i]);
+    E2SM_RC_ActionDefinition_Format4_RANP_Item_t* ie = enc_ran_param_ins_ind(&src->ran_param_ins_ind[i]);
     int rc = ASN_SEQUENCE_ADD(&dst->ranP_InsertIndication_List.list, ie);
     assert(rc == 0);
   }
@@ -1325,7 +1322,7 @@ E2SM_RC_ActionDefinition_Format4_Style_Item_t* cp_seq_ins_styles(seq_ins_style_t
   assert(src->sz_seq_ins_ind_act_def > 0 && src->sz_seq_ins_ind_act_def < 64);
 
   for(size_t i = 0; i < src->sz_seq_ins_ind_act_def; ++i){
-    E2SM_RC_ActionDefinition_Format4_Indication_Item_t* ie = cp_seq_ins_ind_act_def(&src->seq_ins_ind_act_def[i]); 
+    E2SM_RC_ActionDefinition_Format4_Indication_Item_t* ie = enc_seq_ins_ind_act_def(&src->seq_ins_ind_act_def[i]); 
     int rc = ASN_SEQUENCE_ADD(&dst->ric_InsertIndication_List.list, ie);
     assert(rc == 0);
   }
@@ -1360,7 +1357,6 @@ E2SM_RC_ActionDefinition_Format4_t* cp_act_def_frmt_4(e2sm_rc_act_def_frmt_4_t c
 
   return dst;
 }
-
 
 
 byte_array_t rc_enc_action_def_asn(e2sm_rc_action_def_t const* src)

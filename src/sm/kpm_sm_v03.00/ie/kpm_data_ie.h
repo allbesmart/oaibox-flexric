@@ -1,53 +1,54 @@
-#ifndef KPM_V2_03_INFORMATION_ELEMENTS_H
-#define KPM_V2_03_INFORMATION_ELEMENTS_H
+#ifndef KPM_V3_00_INFORMATION_ELEMENTS_H
+#define KPM_V3_00_INFORMATION_ELEMENTS_H
 
 #include "kpm_data_ie/kpm_ric_info/kpm_ran_function_def.h"
 #include "kpm_data_ie/kpm_ric_info/kpm_ric_event_trigger_def.h"
 #include "kpm_data_ie/kpm_ric_info/kpm_ric_action_def.h"
 #include "kpm_data_ie/kpm_ric_info/kpm_ric_ind_hdr.h"
 #include "kpm_data_ie/kpm_ric_info/kpm_ric_ind_msg.h"
+#include "kpm_data_ie/kpm_ric_info/kpm_call_proc_id.h"
+
+
+
+/*
+ * O-RAN defined 5 Procedures: RIC Subscription, RIC Indication, RIC Control, E2 Setup and RIC Service Update 
+ * */
 
 
 // RIC INDICATION
 typedef struct {
+  kpm_ind_hdr_t hdr;
+  kpm_ind_msg_t msg;
+  kpm_call_proc_id_t* proc_id;
+} kpm_ind_data_t;
 
-    kpm_ind_hdr_t kpm_ind_hdr;
-    kpm_ind_msg_t kpm_ind_msg;
+void free_kpm_ind_data(kpm_ind_data_t* ind);
 
-} kpm_ric_indication_t;
+kpm_ind_data_t cp_kpm_ind_data(kpm_ind_data_t const* src);
 
-void free_kpm_ind_data(kpm_ric_indication_t* ind);
+bool eq_kpm_ind_data(kpm_ind_data_t const* ind0, kpm_ind_data_t const* ind1);
 
-kpm_ric_indication_t cp_kpm_ind_data(kpm_ric_indication_t const* src);
+///////////////
+/// RIC Subscription
+///////////////
 
-bool eq_kpm_ind_data(kpm_ric_indication_t const* ind0, kpm_ric_indication_t const* ind1);
-
-
-// RIC SUBSCRIPTION
 typedef struct {
+  kpm_event_trigger_def_t ev_trg_def;
+  // [1-16]
+  size_t sz_ad;
+  kpm_act_def_t* ad;
+} kpm_sub_data_t;
 
-    kpm_event_trigger_def_t kpm_event_trigger_def;
-    kpm_act_def_t kpm_act_def;
-
-} kpm_ric_subscription_t;
-
-void free_kpm_subscription_data(kpm_ric_subscription_t* subscription);
-
+void free_kpm_sub_data(kpm_sub_data_t* sub);
 
 // RIC SERVICE UPDATE
 typedef struct {
-
     kpm_ran_function_def_t kpm_ran_function_def;
-
 } kpm_ric_service_update_t;
-
 
 // E2 SETUP
 typedef struct {
-
-    kpm_ran_function_def_t kpm_ran_function_def;
-
+    kpm_ran_function_def_t ran_func_def;
 } kpm_e2_setup_t;
-
 
 #endif

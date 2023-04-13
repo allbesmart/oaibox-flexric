@@ -23,7 +23,8 @@ label_info_lst_t kpm_dec_label_info_asn(const MeasurementLabel_t * meas_label_as
 
 
     if (meas_label_asn->plmnID != NULL) {
-        label_info.plmn_id = calloc(1, sizeof( plmn_t ));  
+        label_info.plmn_id = calloc(1, sizeof( e2sm_plmn_t ));  
+        assert(label_info.plmn_id != NULL && "Memory exhausted" );
         PLMNID_TO_MCC_MNC(meas_label_asn->plmnID, label_info.plmn_id->mcc, label_info.plmn_id->mnc, label_info.plmn_id->mnc_digit_len);
     }
 

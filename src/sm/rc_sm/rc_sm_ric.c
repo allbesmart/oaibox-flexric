@@ -50,7 +50,7 @@ sm_subs_data_t on_subscription_rc_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_sub
   assert(sm_ric != NULL); 
   assert(subs != NULL); 
   assert(subs->type == RAN_CTRL_SUBS_V1_03);
-  rc_sub_data_t const* src= &subs->rc_sub;
+  rc_sub_data_t const* src= &subs->rc;
   sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
   sm_subs_data_t dst = {0}; 
  
@@ -58,11 +58,12 @@ sm_subs_data_t on_subscription_rc_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_sub
   dst.event_trigger = ba.buf;
   dst.len_et = ba.len;
 
-  if(src->ad != NULL){
-    const byte_array_t ba = rc_enc_action_def(&sm->enc, src->ad); 
-    dst.event_trigger = ba.buf;
-    dst.len_et = ba.len;
-  }
+  assert(src->sz_ad > 0 && src->sz_ad == 1 && "Only one action definition supported");
+  assert(src->ad != NULL); 
+
+  const byte_array_t ba_ad = rc_enc_action_def(&sm->enc, src->ad); 
+  dst.action_def= ba_ad.buf;
+  dst.len_ad = ba_ad.len;
 
   return dst;
 }
@@ -76,8 +77,8 @@ sm_ag_if_rd_ind_t on_indication_rc_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t 
 
   sm_ag_if_rd_ind_t dst = {.type = RAN_CTRL_STATS_V1_03}; 
 
-  dst.rc_ind.hdr = rc_dec_ind_hdr(&sm->enc, src->len_hdr, src->ind_hdr);
-  dst.rc_ind.msg = rc_dec_ind_msg(&sm->enc, src->len_msg, src->ind_msg);
+  dst.rc.hdr = rc_dec_ind_hdr(&sm->enc, src->len_hdr, src->ind_hdr);
+  dst.rc.msg = rc_dec_ind_msg(&sm->enc, src->len_msg, src->ind_msg);
   assert(src->call_process_id == NULL && "Not implemented");
 
   return dst;
@@ -140,7 +141,7 @@ sm_ag_if_rd_rsu_t on_ric_service_update_rc_sm_ric(sm_ric_t const* sm_ric, sm_ric
   assert(sm_ric != NULL); 
   assert(src != NULL); 
   sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
-
+  (void)sm;
   assert(0!=0 && "Not implemented");
 
   sm_ag_if_rd_rsu_t dst = {0}; 
@@ -240,7 +241,6 @@ sm_ric_t* make_rc_sm_ric(void /* sm_io_ric_t io */)
 
   return &sm->base;
 }
-
 
 uint16_t id_sm_rc_ric(sm_ric_t const* sm_ric)
 {

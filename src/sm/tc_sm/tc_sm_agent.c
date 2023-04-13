@@ -66,12 +66,12 @@ sm_ind_data_t on_indication_tc_sm_ag(sm_agent_t const* sm_agent)
   sm->base.io.read(&rd_if);
 
 // Liberate the memory if previously allocated by the RAN. It sucks
-  tc_ind_data_t* ind = &rd_if.ind.tc_ind;
+  tc_ind_data_t* ind = &rd_if.ind.tc;
   defer({ free_tc_ind_hdr(&ind->hdr) ;});
   defer({ free_tc_ind_msg(&ind->msg) ;});
   defer({ free_tc_call_proc_id(ind->proc_id);});
 
-  byte_array_t ba = tc_enc_ind_msg(&sm->enc, &rd_if.ind.tc_ind.msg);
+  byte_array_t ba = tc_enc_ind_msg(&sm->enc, &rd_if.ind.tc.msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 

@@ -31,7 +31,7 @@ enb_e2sm_t dec_eNB_UE_asn(const UEID_ENB_t * enb_asn)
     {
         enb.enb_ue_x2ap_id = calloc(1, sizeof(*enb.enb_ue_x2ap_id));
         memcpy(enb.enb_ue_x2ap_id, enb_asn->m_eNB_UE_X2AP_ID, 2);
-        assert(*enb.enb_ue_x2ap_id > min_val_ENB_UE_X2AP_ID && *enb.enb_ue_x2ap_id < max_val_ENB_UE_X2AP_ID);
+        assert(*enb.enb_ue_x2ap_id < max_val_ENB_UE_X2AP_ID + 1);
     }
 
 
@@ -41,7 +41,7 @@ enb_e2sm_t dec_eNB_UE_asn(const UEID_ENB_t * enb_asn)
     {
         enb.enb_ue_x2ap_id_extension = calloc(1, sizeof(*enb.enb_ue_x2ap_id_extension));
         memcpy(enb.enb_ue_x2ap_id_extension, enb_asn->m_eNB_UE_X2AP_ID_Extension, 2);
-        assert(*enb.enb_ue_x2ap_id_extension > min_val_ENB_UE_X2AP_ID && *enb.enb_ue_x2ap_id_extension < max_val_ENB_UE_X2AP_ID);
+        assert(*enb.enb_ue_x2ap_id_extension < max_val_ENB_UE_X2AP_ID + 1);
     }
 
 

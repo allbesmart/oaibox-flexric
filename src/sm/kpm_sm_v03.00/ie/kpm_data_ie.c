@@ -69,3 +69,29 @@ void free_kpm_sub_data(kpm_sub_data_t* src)
   free(src->ad);
 }
 
+bool eq_kpm_sub_data(kpm_sub_data_t const* m0, kpm_sub_data_t const* m1)
+{
+  if(m0 == m1)
+    return true;
+
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  if(eq_kpm_event_trigger_def(&m0->ev_trg_def, &m1->ev_trg_def) == false)
+    return false;
+
+  // [1-16]
+  assert(m0->sz_ad > 0 && m0->sz_ad < 17); 
+  assert(m1->sz_ad > 0 && m1->sz_ad < 17); 
+
+  if(m0->sz_ad != m1->sz_ad)
+    return false;
+
+  for(size_t i = 0; i < m0->sz_ad; ++i){
+    if(eq_kpm_action_def(&m0->ad[i], &m1->ad[i]) == false)
+      return false;
+  }
+
+  return true;
+}
+

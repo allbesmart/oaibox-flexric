@@ -57,30 +57,24 @@ sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const sm_ag_if
 {
   assert(sm_ric != NULL); 
   assert(subs != NULL); 
-  sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;  
-  (void)sm; 
-
-  assert(0!=0 && "Not implemented");
-/*
-  kpm_ric_subscription_t *subscription = calloc(1, sizeof(kpm_ric_subscription_t));
-  assert(subscription != NULL && "Memory exhausted");
-
-  subscription->kpm_event_trigger_def = fill_kpm_event_trigger_def();
-  subscription->kpm_act_def = fill_kpm_action_def();
-
-  const byte_array_t ba = kpm_enc_event_trigger(&sm->enc, &subscription->kpm_event_trigger_def); 
-  const byte_array_t ba_ad = kpm_enc_action_def(&sm->enc, &subscription->kpm_act_def);
+  assert(subs->type ==  KPM_SUBS_V3_0);
+  assert(subs->kpm.sz_ad == 1 && "Only 1 Action Definition Supported");
   
-  sm_subs_data_t data = {0}; 
+  sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;  
+  kpm_sub_data_t const* src = &subs->kpm; 
 
-  data.event_trigger = ba.buf;
-  data.len_et = ba.len;
+  const byte_array_t ba = kpm_enc_event_trigger(&sm->enc, &src->ev_trg_def); 
+  const byte_array_t ba_ad = kpm_enc_action_def(&sm->enc, &src->ad[0]);
+  
+  sm_subs_data_t dst = {0}; 
 
-  data.action_def = ba_ad.buf;
-  data.len_ad = ba_ad.len;
-*/
- sm_subs_data_t data ;
-  return data;
+  dst.event_trigger = ba.buf;
+  dst.len_et = ba.len;
+
+  dst.action_def = ba_ad.buf;
+  dst.len_ad = ba_ad.len;
+  
+  return dst;
 }
 
 static 

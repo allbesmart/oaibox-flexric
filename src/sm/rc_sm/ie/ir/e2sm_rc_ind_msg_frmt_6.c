@@ -37,8 +37,10 @@ bool eq_e2sm_rc_ind_msg_frmt_6( e2sm_rc_ind_msg_frmt_6_t const* m0, e2sm_rc_ind_
     return false;
 
   for(size_t i = 0; i < m0->sz_seq_ins_style_ind_msg; ++i){
-    if(eq_seq_ins_style_2(&m0->seq_ins_style[i], &m1->seq_ins_style[i]) == false)
+    if(eq_seq_ins_style_2(&m0->seq_ins_style[i], &m1->seq_ins_style[i]) == false){
+      assert(0!=0 && "Debug");
       return false;
+    }
   }
 
   return true;

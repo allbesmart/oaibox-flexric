@@ -16,7 +16,7 @@ UEID_EN_GNB_t* enc_en_gNB_UE_asn(const en_gnb_e2sm_t * en_gnb)
     // Mandatory
     // MeNB UE X2AP ID
     memcpy(&en_gnb_asn->m_eNB_UE_X2AP_ID, &en_gnb->enb_ue_x2ap_id, 2);
-    assert(en_gnb_asn->m_eNB_UE_X2AP_ID > min_val_ENB_UE_X2AP_ID && en_gnb_asn->m_eNB_UE_X2AP_ID < max_val_ENB_UE_X2AP_ID);
+    assert(en_gnb_asn->m_eNB_UE_X2AP_ID < max_val_ENB_UE_X2AP_ID + 1);
 
 
     // OPTIONAL
@@ -25,7 +25,7 @@ UEID_EN_GNB_t* enc_en_gNB_UE_asn(const en_gnb_e2sm_t * en_gnb)
     {
         en_gnb_asn->m_eNB_UE_X2AP_ID_Extension = calloc(1, sizeof(*en_gnb_asn->m_eNB_UE_X2AP_ID_Extension));
         memcpy(en_gnb_asn->m_eNB_UE_X2AP_ID_Extension, en_gnb->enb_ue_x2ap_id_extension, 2);
-        assert(*en_gnb_asn->m_eNB_UE_X2AP_ID_Extension > min_val_ENB_UE_X2AP_ID && *en_gnb_asn->m_eNB_UE_X2AP_ID_Extension < max_val_ENB_UE_X2AP_ID);
+        assert(*en_gnb_asn->m_eNB_UE_X2AP_ID_Extension < max_val_ENB_UE_X2AP_ID + 1);
     }
 
 

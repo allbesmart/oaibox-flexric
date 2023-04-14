@@ -36,7 +36,7 @@ typedef struct{
   int64_t ms;
   sub_data_e type;
   union{
-   kpm_act_def_t* ad; 
+   kpm_act_def_t* kpm_ad; 
   };
 } subscribe_timer_t;
 

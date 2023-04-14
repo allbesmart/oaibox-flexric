@@ -870,14 +870,20 @@ bool eq_rc_ind_data(rc_ind_data_t const* m0, rc_ind_data_t const* m1)
   if(m0 == NULL || m1 == NULL)
     return false;
 
-  if(eq_e2sm_rc_ind_hdr(&m0->hdr, &m1->hdr) == false)
+  if(eq_e2sm_rc_ind_hdr(&m0->hdr, &m1->hdr) == false){
+    assert(0!=0 && "Debug");
     return false;
+  }
 
-  if(eq_e2sm_rc_ind_msg(&m0->msg, &m1->msg) == false)
+  if(eq_e2sm_rc_ind_msg(&m0->msg, &m1->msg) == false){
+    assert(0!=0 && "Debug");
     return false;
+  }
 
-  if(eq_e2sm_rc_cpid(m0->proc_id, m1->proc_id) == false)
+  if(eq_e2sm_rc_cpid(m0->proc_id, m1->proc_id) == false){
+    assert(0!=0 && "Debug");
     return false;
+  }
 
   return true;
 }

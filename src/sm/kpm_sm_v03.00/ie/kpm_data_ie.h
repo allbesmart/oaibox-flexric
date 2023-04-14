@@ -41,6 +41,10 @@ typedef struct {
 
 void free_kpm_sub_data(kpm_sub_data_t* sub);
 
+bool eq_kpm_sub_data(kpm_sub_data_t const* m0, kpm_sub_data_t const* m1);
+
+
+
 // RIC SERVICE UPDATE
 typedef struct {
     kpm_ran_function_def_t kpm_ran_function_def;

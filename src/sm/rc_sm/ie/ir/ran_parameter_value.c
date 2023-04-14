@@ -1,6 +1,7 @@
 #include "ran_parameter_value.h"
 
 #include <assert.h>
+#include <math.h>
 
 void free_ran_parameter_value(ran_parameter_value_t* src)
 {
@@ -45,6 +46,9 @@ bool eq_ran_parameter_value(ran_parameter_value_t const* m0, ran_parameter_value
       return false;
 
   }else if(m0->type == REAL_RAN_PARAMETER_VALUE){
+    assert(!isnan(m0->real_ran)); // && !isinf(m0->real_ran));
+    assert(!isnan(m1->real_ran)); // && !isinf(m1->real_ran));
+
     if(m0->real_ran != m1->real_ran) // equality here is right, since we are just transporting bits. 
       return false;
 

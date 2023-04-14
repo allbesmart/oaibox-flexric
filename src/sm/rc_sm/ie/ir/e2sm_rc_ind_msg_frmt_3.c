@@ -32,8 +32,10 @@ bool eq_e2sm_rc_ind_msg_frmt_3(e2sm_rc_ind_msg_frmt_3_t const* m0, e2sm_rc_ind_m
     return false;
 
   for(size_t i = 0; i < m0->sz_seq_cell_info; ++i){
-    if(eq_seq_cell_info(&m0->seq_cell_info[i], &m1->seq_cell_info[i]) == false)
+    if(eq_seq_cell_info(&m0->seq_cell_info[i], &m1->seq_cell_info[i]) == false){
+      assert(0!=0 && "Debug");
       return false;
+    }
   }
 
   return true;

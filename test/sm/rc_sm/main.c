@@ -41,6 +41,8 @@ void read_RAN(sm_ag_if_rd_t* read)
   read->ind.rc = fill_rnd_rc_ind_data();
   cp_ind = cp_rc_ind_data(&read->ind.rc);
 
+  assert(eq_rc_ind_data(&read->ind.rc, &cp_ind) == true);
+
   } else if(read->type == E2_SETUP_AGENT_IF_ANS_V0 ){
     assert(read->e2ap.type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
     read->e2ap.rc.func_def = fill_rc_ran_func_def();
@@ -201,10 +203,9 @@ int main()
 
   sm_io_ag_t io_ag = {.read = read_RAN, .write = write_RAN};  
   sm_agent_t* sm_ag = make_rc_sm_agent(io_ag);
-
   sm_ric_t* sm_ric = make_rc_sm_ric();
 
-//  for(int i =0 ; i < 256*4096; ++i){
+  for(int i =0 ; i < 256*4096; ++i){
  //   check_eq_ran_function(sm_ag, sm_ric);
  //
     check_indication(sm_ag, sm_ric);
@@ -213,7 +214,7 @@ int main()
     check_e2_setup(sm_ag, sm_ric);
     // check_ric_service_update(sm_ag, sm_ric);
 
-//  }
+  }
 
   sm_ag->free_sm(sm_ag);
   sm_ric->free_sm(sm_ric);

@@ -63,18 +63,18 @@ subscribe_timer_t on_subscription_kpm_sm_ag(sm_agent_t const* sm_agent, const sm
   sm_kpm_agent_t* sm = (sm_kpm_agent_t*)sm_agent;
  
   kpm_sub_data_t sub_data = {0};
+  defer({free_kpm_sub_data(&sub_data);}); 
 
-  sub_data.ev_trg_def= kpm_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+
+  sub_data.ev_trg_def = kpm_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
   assert(sub_data.ev_trg_def.kpm_ric_event_trigger_format_1.report_period_ms > 0);
 
   subscribe_timer_t timer = { .type = KPM_V3_0_SUB_DATA_ENUM ,
                               .ms = sub_data.ev_trg_def.kpm_ric_event_trigger_format_1.report_period_ms};
-  if (data->len_ad != 0){
-    timer.ad = calloc(1,sizeof(kpm_act_def_t));
-    assert(timer.ad != NULL && "Memory exhausted");
-    *timer.ad = kpm_dec_action_def(&sm->enc, data->len_ad, data->action_def);
-  }
-  free_kpm_sub_data(&sub_data); 
+  timer.kpm_ad = calloc(1, sizeof(kpm_act_def_t));
+  assert(timer.kpm_ad != NULL && "Memory exhausted");
+  timer.kpm_ad[0] = kpm_dec_action_def(&sm->enc, data->len_ad, data->action_def);
+  
   return timer;
 }
 
@@ -114,22 +114,21 @@ sm_e2_setup_data_t on_e2_setup_kpm_sm_ag(sm_agent_t const* sm_agent)
   assert(sm_agent != NULL);
 
   sm_kpm_agent_t* sm = (sm_kpm_agent_t*)sm_agent;
-  (void)sm;
 
-  assert(0!=0 && "Not implemented");
-  /*
-  sm_e2_setup_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
+  // Call the RAN and fill the data  
+  sm_ag_if_rd_t rd = {.type = E2_SETUP_AGENT_IF_ANS_V0};
+  rd.e2ap.type = KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0;
+  sm->base.io.read(&rd);
 
-  kpm_e2_setup_t e2_setup_msg = {0};
-  
-  e2_setup_msg.kpm_ran_function_def = fill_kpm_ran_function();
+  kpm_ran_function_def_t* ran_func = &rd.e2ap.kpm.ran_func_def; 
+  defer({ free_kpm_ran_function_def(ran_func); });
 
-  byte_array_t ba = kpm_enc_func_def(&sm->enc, &e2_setup_msg.kpm_ran_function_def);
-  setup.ran_fun_def = ba.buf;
+  byte_array_t ba = kpm_enc_func_def(&sm->enc, ran_func);
+
+  sm_e2_setup_data_t setup = {0}; 
   setup.len_rfd = ba.len;
- */ 
+  setup.ran_fun_def = ba.buf;
 
-sm_e2_setup_data_t setup; 
   return setup;
 }
 

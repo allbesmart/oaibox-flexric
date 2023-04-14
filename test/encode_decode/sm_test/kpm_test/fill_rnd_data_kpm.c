@@ -440,14 +440,14 @@ static en_gnb_e2sm_t fill_en_gnb_data(void)
   // 6.2.3.23
   // Mandatory
   // MeNB UE X2AP ID
-  en_gnb.enb_ue_x2ap_id = (rand() % 4095) + 1;
+  en_gnb.enb_ue_x2ap_id = rand() % 4096;
 
   // 6.2.3.24
   // OPTIONAL
   // MeNB UE X2AP ID Extension
   en_gnb.enb_ue_x2ap_id_extension = calloc(1, sizeof(uint16_t));
   assert(en_gnb.enb_ue_x2ap_id_extension != NULL && "Memory exhausted");
-  *en_gnb.enb_ue_x2ap_id_extension = (rand() % 4095) + 1;
+  *en_gnb.enb_ue_x2ap_id_extension = rand() % 4096;
 
   // 6.2.3.9
   // Mandatory
@@ -526,14 +526,14 @@ static enb_e2sm_t fill_enb_data(void)
   // MeNB UE X2AP ID
   enb.enb_ue_x2ap_id = calloc(1, sizeof(uint16_t));
   assert(enb.enb_ue_x2ap_id != NULL && "Memory exhausted");
-  *enb.enb_ue_x2ap_id = (rand() % 4095) + 1;
+  *enb.enb_ue_x2ap_id = rand() % 4096;
 
   // 6.2.3.24
   // C-ifDCSetup
   // MeNB UE X2AP ID Extension
   enb.enb_ue_x2ap_id_extension = calloc(1, sizeof(uint16_t));
   assert(enb.enb_ue_x2ap_id_extension != NULL && "Memory exhausted");
-  *enb.enb_ue_x2ap_id_extension = (rand() % 4095) + 1;
+  *enb.enb_ue_x2ap_id_extension = rand() % 4096;
 
   // 6.2.3.9
   // C-ifDCSetup
@@ -1355,141 +1355,140 @@ kpm_ran_function_def_t fill_kpm_ran_function(void)
 
 
   // // RIC Event Trigger Style List
-  // ran_function.ric_event_trigger_style_list_len = 3;  // (rand() % 63) + 0;
-  // ran_function.ric_event_trigger_style_list = calloc(ran_function.ric_event_trigger_style_list_len, sizeof(ric_event_trigger_style_item_t));
-  // assert(ran_function.ric_event_trigger_style_list != NULL && "Memory exhausted");
+   ran_function.sz_ric_event_trigger_style_list = 3;  // (rand() % 63) + 0;
+   ran_function.ric_event_trigger_style_list = calloc(ran_function.sz_ric_event_trigger_style_list, sizeof(ric_event_trigger_style_item_t));
+   assert(ran_function.ric_event_trigger_style_list != NULL && "Memory exhausted");
 
-  // for (size_t i = 0; i<ran_function.ric_event_trigger_style_list_len; i++)
-  // {
-  //   // RIC Event Trigger Style
-  //   ran_function.ric_event_trigger_style_list[i].style_type = rand()%END_STYLE_RIC_EVENT_TRIGGER;
+   for (size_t i = 0; i<ran_function.sz_ric_event_trigger_style_list; i++)
+   {
+     // RIC Event Trigger Style
+     ran_function.ric_event_trigger_style_list[i].style_type = rand()%END_STYLE_RIC_EVENT_TRIGGER;
 
-  //   switch (ran_function.ric_event_trigger_style_list[i].style_type)
-  //   {
-  //   case STYLE_1_RIC_EVENT_TRIGGER:
-  //   {
-  //     // RIC Event Trigger Style Name
-  //     ran_function.ric_event_trigger_style_list[i].style_name.buf = calloc(strlen("RIC-Event-Trigger-Style-Type-1") + 1, sizeof(char));
-  //     memcpy(ran_function.ric_event_trigger_style_list[i].style_name.buf, "RIC-Event-Trigger-Style-Type-1", strlen("RIC-Event-Trigger-Style-Type-1"));
-  //     ran_function.ric_event_trigger_style_list[i].style_name.len = strlen("RIC-Event-Trigger-Style-Type-1");
+     switch (ran_function.ric_event_trigger_style_list[i].style_type)
+     {
+     case STYLE_1_RIC_EVENT_TRIGGER:
+     {
+       // RIC Event Trigger Style Name
+       ran_function.ric_event_trigger_style_list[i].style_name.buf = calloc(strlen("RIC-Event-Trigger-Style-Type-1") + 1, sizeof(char));
+       memcpy(ran_function.ric_event_trigger_style_list[i].style_name.buf, "RIC-Event-Trigger-Style-Type-1", strlen("RIC-Event-Trigger-Style-Type-1"));
+       ran_function.ric_event_trigger_style_list[i].style_name.len = strlen("RIC-Event-Trigger-Style-Type-1");
 
-  //     // RIC Event Trigger Format
-  //     ran_function.ric_event_trigger_style_list[i].format_type = FORMAT_1_RIC_EVENT_TRIGGER;
+       // RIC Event Trigger Format
+       ran_function.ric_event_trigger_style_list[i].format_type = FORMAT_1_RIC_EVENT_TRIGGER;
 
-  //     break;
-  //   }
+       break;
+     }
     
-  //   default:
-  //     assert(false && "Unknown RIC Event Trigger Style Type");
-  //   }
-  // }
+     default:
+       assert(false && "Unknown RIC Event Trigger Style Type");
+     }
+   }
 
+   // RIC Report Style List
+   ran_function.sz_ric_report_style_list = 3;  // (rand() % 63) + 0;
+   ran_function.ric_report_style_list = calloc(ran_function.sz_ric_report_style_list, sizeof(ric_report_style_item_t));
+   assert(ran_function.ric_report_style_list != NULL && "Memory exhausted");
 
-  // // RIC Report Style List
-  // ran_function.ric_report_style_list_len = 3;  // (rand() % 63) + 0;
-  // ran_function.ric_report_style_list = calloc(ran_function.ric_report_style_list_len, sizeof(ric_report_style_item_t));
-  // assert(ran_function.ric_report_style_list != NULL && "Memory exhausted");
+   for (size_t i = 0; i<ran_function.sz_ric_report_style_list; i++)
+   {
 
-  // for (size_t i = 0; i<ran_function.ric_report_style_list_len; i++)
-  // {
+     // RIC Report Styles
+     ran_function.ric_report_style_list[i].report_style_type = rand()%END_RIC_SERVICE_REPORT;
 
-  //   // RIC Report Styles
-  //   ran_function.ric_report_style_list[i].report_style_type = rand()%END_RIC_SERVICE_REPORT;
+     switch (ran_function.ric_report_style_list[i].report_style_type)
+     {
+     case STYLE_1_RIC_SERVICE_REPORT:
+     {
+       ran_function.ric_report_style_list[i].act_def_format_type = FORMAT_1_ACTION_DEFINITION;
+       ran_function.ric_report_style_list[i].ind_hdr_format_type = FORMAT_1_INDICATION_HEADER;
+       ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_1_INDICATION_MESSAGE;
 
-  //   switch (ran_function.ric_report_style_list[i].report_style_type)
-  //   {
-  //   case STYLE_1_RIC_SERVICE_REPORT:
-  //   {
-  //     ran_function.ric_report_style_list[i].act_def_format_type = FORMAT_1_ACTION_DEFINITION;
-  //     ran_function.ric_report_style_list[i].ind_hdr_format_type = FORMAT_1_INDICATION_HEADER;
-  //     ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_1_INDICATION_MESSAGE;
+       // RIC REPORT Style Name
+       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-1") + 1, sizeof(char));
+       memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-1", strlen("RIC-Report-Style-Type-1"));
+       ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-1");
+       break;
+     }
 
-  //     // RIC REPORT Style Name
-  //     ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-1") + 1, sizeof(char));
-  //     memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-1", strlen("RIC-Report-Style-Type-1"));
-  //     ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-1");
-  //     break;
-  //   }
+     case STYLE_2_RIC_SERVICE_REPORT:
+     {
+       ran_function.ric_report_style_list[i].act_def_format_type = FORMAT_2_ACTION_DEFINITION;
+       ran_function.ric_report_style_list[i].ind_hdr_format_type = FORMAT_1_INDICATION_HEADER;
+       ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_1_INDICATION_MESSAGE;
 
-  //   case STYLE_2_RIC_SERVICE_REPORT:
-  //   {
-  //     ran_function.ric_report_style_list[i].act_def_format_type = FORMAT_2_ACTION_DEFINITION;
-  //     ran_function.ric_report_style_list[i].ind_hdr_format_type = FORMAT_1_INDICATION_HEADER;
-  //     ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_1_INDICATION_MESSAGE;
+       // RIC REPORT Style Name
+       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-2") + 1, sizeof(char));
+       memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-2", strlen("RIC-Report-Style-Type-2"));
+       ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-2");
+       break;
+     }
 
-  //     // RIC REPORT Style Name
-  //     ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-2") + 1, sizeof(char));
-  //     memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-2", strlen("RIC-Report-Style-Type-2"));
-  //     ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-2");
-  //     break;
-  //   }
-
-  //   case STYLE_3_RIC_SERVICE_REPORT:
-  //   {
-  //     ran_function.ric_report_style_list[i].act_def_format_type = FORMAT_3_ACTION_DEFINITION;
-  //     ran_function.ric_report_style_list[i].ind_hdr_format_type = FORMAT_1_INDICATION_HEADER;
-  //     ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_2_INDICATION_MESSAGE;
-
-  //     // RIC REPORT Style Name
-  //     ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-3") + 1, sizeof(char));
-  //     memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-3", strlen("RIC-Report-Style-Type-3"));
-  //     ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-3");
-  //     break;
-  //   }
-
-  //   case STYLE_4_RIC_SERVICE_REPORT:
-  //   {
-  //     ran_function.ric_report_style_list[i].act_def_format_type = FORMAT_4_ACTION_DEFINITION;
-  //     ran_function.ric_report_style_list[i].ind_hdr_format_type = FORMAT_1_INDICATION_HEADER;
-  //     ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_3_INDICATION_MESSAGE;
+     case STYLE_3_RIC_SERVICE_REPORT:
+     {
+       ran_function.ric_report_style_list[i].act_def_format_type = FORMAT_3_ACTION_DEFINITION;
+       ran_function.ric_report_style_list[i].ind_hdr_format_type = FORMAT_1_INDICATION_HEADER;
+       ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_2_INDICATION_MESSAGE;
 
   //     // RIC REPORT Style Name
-  //     ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-4") + 1, sizeof(char));
-  //     memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-4", strlen("RIC-Report-Style-Type-4"));
-  //     ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-4");
-  //     break;
-  //   }
+       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-3") + 1, sizeof(char));
+       memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-3", strlen("RIC-Report-Style-Type-3"));
+       ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-3");
+       break;
+     }
 
-  //   case STYLE_5_RIC_SERVICE_REPORT:
-  //   {
-  //     ran_function.ric_report_style_list[i].act_def_format_type = FORMAT_5_ACTION_DEFINITION;
-  //     ran_function.ric_report_style_list[i].ind_hdr_format_type = FORMAT_1_INDICATION_HEADER;
-  //     ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_3_INDICATION_MESSAGE;
+     case STYLE_4_RIC_SERVICE_REPORT:
+     {
+       ran_function.ric_report_style_list[i].act_def_format_type = FORMAT_4_ACTION_DEFINITION;
+       ran_function.ric_report_style_list[i].ind_hdr_format_type = FORMAT_1_INDICATION_HEADER;
+       ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_3_INDICATION_MESSAGE;
 
-  //     // RIC REPORT Style Name
-  //     ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-5") + 1, sizeof(char));
-  //     memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-5", strlen("RIC-Report-Style-Type-5"));
-  //     ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-5");
-  //     break;
-  //   }
+       // RIC REPORT Style Name
+       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-4") + 1, sizeof(char));
+       memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-4", strlen("RIC-Report-Style-Type-4"));
+       ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-4");
+       break;
+     }
+
+     case STYLE_5_RIC_SERVICE_REPORT:
+     {
+       ran_function.ric_report_style_list[i].act_def_format_type = FORMAT_5_ACTION_DEFINITION;
+       ran_function.ric_report_style_list[i].ind_hdr_format_type = FORMAT_1_INDICATION_HEADER;
+       ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_3_INDICATION_MESSAGE;
+
+       // RIC REPORT Style Name
+       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-5") + 1, sizeof(char));
+       memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-5", strlen("RIC-Report-Style-Type-5"));
+       ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-5");
+       break;
+     }
     
-  //   default:
-  //     assert(false && "Unknown RIC REPORT Style Type");
-  //   }
+     default:
+       assert(false && "Unknown RIC REPORT Style Type");
+     }
 
 
-  //   // Measurement Information for Action
-  //   ran_function.ric_report_style_list[i].meas_info_for_action_lst_len = 3;  // (rand() % 65535) + 0;
-  //   ran_function.ric_report_style_list[i].meas_info_for_action_lst = calloc(ran_function.ric_report_style_list[i].meas_info_for_action_lst_len, sizeof(meas_info_for_action_lst_t));
-  //   assert(ran_function.ric_report_style_list[i].meas_info_for_action_lst != NULL && "Memory exhausted");
+     // Measurement Information for Action
+     ran_function.ric_report_style_list[i].meas_info_for_action_lst_len = 3;  // (rand() % 65535) + 0;
+     ran_function.ric_report_style_list[i].meas_info_for_action_lst = calloc(ran_function.ric_report_style_list[i].meas_info_for_action_lst_len, sizeof(meas_info_for_action_lst_t));
+     assert(ran_function.ric_report_style_list[i].meas_info_for_action_lst != NULL && "Memory exhausted");
 
-  //   for (size_t j = 0; j<ran_function.ric_report_style_list[i].meas_info_for_action_lst_len; j++)
-  //   {
-  //     // Measurement Type Name
-  //     ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].name.buf = calloc(strlen("Name_for_action") + 1, sizeof(char));
-  //     memcpy(ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].name.buf, "Name_for_action", strlen("Name_for_action"));
-  //     ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].name.len = strlen("Name_for_action");
+     for (size_t j = 0; j<ran_function.ric_report_style_list[i].meas_info_for_action_lst_len; j++)
+     {
+       // Measurement Type Name
+       ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].name.buf = calloc(strlen("Name_for_action") + 1, sizeof(char));
+       memcpy(ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].name.buf, "Name_for_action", strlen("Name_for_action"));
+       ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].name.len = strlen("Name_for_action");
 
-  //     // Measurement Type ID
-  //     ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].id = calloc(1, sizeof(uint16_t));
-  //     assert(ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].id != NULL && "Memory exhausted");
-  //     *ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].id = (rand() % 65536) + 0;
+       // Measurement Type ID. Optional
+       //ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].id = calloc(1, sizeof(uint16_t));
+       //assert(ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].id != NULL && "Memory exhausted");
+       //*ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].id = (rand() % 65536) + 0;
 
-  //     // Bin Range Definition
-  //     // not yet implemented in ASN.1
-  //     ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].bin_range_def = NULL;
-  //   }
-  // }
+       // Bin Range Definition
+       // not yet implemented in ASN.1
+       ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].bin_range_def = NULL;
+     }
+   }
 
   return ran_function;
 }

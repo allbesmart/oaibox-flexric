@@ -34,12 +34,16 @@ bool eq_e2sm_rc_ctrl_out_frmt_2(e2sm_rc_ctrl_out_frmt_2_t const* m0, e2sm_rc_ctr
   assert(m0->sz_seq_ctrl_sty_mul_out > 0 && m0->sz_seq_ctrl_sty_mul_out < 64); 
   assert(m1->sz_seq_ctrl_sty_mul_out > 0 && m1->sz_seq_ctrl_sty_mul_out < 64); 
 
-  if(m0->sz_seq_ctrl_sty_mul_out != m1->sz_seq_ctrl_sty_mul_out)
+  if(m0->sz_seq_ctrl_sty_mul_out != m1->sz_seq_ctrl_sty_mul_out){
+    assert(0!=0 && "Debug");
     return false;
+  }
 
   for(size_t i = 0; i < m0->sz_seq_ctrl_sty_mul_out; ++i){
-    if(eq_seq_ctrl_sty_mul_out(&m0->seq_ctrl_sty_mul_out[i], &m1->seq_ctrl_sty_mul_out[i]) == false)
+    if(eq_seq_ctrl_sty_mul_out(&m0->seq_ctrl_sty_mul_out[i], &m1->seq_ctrl_sty_mul_out[i]) == false){
+      assert(0!=0 && "Debug");
       return false;
+    }
   }
 
   return true;

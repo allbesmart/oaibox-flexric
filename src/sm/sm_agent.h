@@ -19,8 +19,6 @@
  *      contact@openairinterface.org
  */
 
-
-
 #ifndef MIR_SM_AGENT_H
 #define MIR_SM_AGENT_H
 

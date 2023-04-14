@@ -4,6 +4,8 @@
 #include "../ie/ir/ran_param_list.h"
 
 #include <assert.h>
+#include <math.h>
+#include <limits.h>
 
 static
 byte_array_t cp_str_to_ba(const char* str)
@@ -21,7 +23,7 @@ byte_array_t cp_str_to_ba(const char* str)
 
   return dst;
 }
-
+/*
 static
 double rand_double()
 {
@@ -35,6 +37,12 @@ double rand_double()
   }
 
   return tmp.a;
+}
+*/
+static
+float rand_float(float ceil)
+{
+  return (float)rand()/(float)((float)RAND_MAX/ceil);
 }
 
 
@@ -323,7 +331,7 @@ ran_parameter_value_t fill_rnd_ran_param_val(void)
   } else if(dst.type == INTEGER_RAN_PARAMETER_VALUE) {
     dst.int_ran = rand()%4098;
   } else if(dst.type == REAL_RAN_PARAMETER_VALUE) {
-    dst.real_ran = (float)rand_double(); 
+    dst.real_ran = rand_float(1024); 
   } else if(dst.type == BIT_STRING_RAN_PARAMETER_VALUE ) {
     dst.bit_str_ran = cp_str_to_ba("Bit string copy ");
   } else if(dst.type == OCTET_STRING_RAN_PARAMETER_VALUE){

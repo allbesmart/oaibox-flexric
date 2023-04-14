@@ -50,8 +50,10 @@ bool eq_e2sm_rc_ind_msg_frmt_4( e2sm_rc_ind_msg_frmt_4_t const* m0,  e2sm_rc_ind
     return false;
 
   for(size_t i = 0; i < m0->sz_seq_ue_info; ++i){
-    if(eq_seq_ue_info(&m0->seq_ue_info[i], &m1->seq_ue_info[i]) == false)
+    if(eq_seq_ue_info(&m0->seq_ue_info[i], &m1->seq_ue_info[i]) == false){
+      assert(0!=0 && "Debug");
       return false;
+    }
   }
 
   // Sequence of Cell Information
@@ -60,8 +62,10 @@ bool eq_e2sm_rc_ind_msg_frmt_4( e2sm_rc_ind_msg_frmt_4_t const* m0,  e2sm_rc_ind
   assert(m1->sz_seq_cell_info_2 < 65535+1);
 
   for(size_t i = 0; i < m0->sz_seq_cell_info_2; ++i){
-    if(eq_seq_cell_info_2(&m0->seq_cell_info_2[i], &m1->seq_cell_info_2[i] ) == false)
+    if(eq_seq_cell_info_2(&m0->seq_cell_info_2[i], &m1->seq_cell_info_2[i] ) == false){
+      assert(0!=0 && "Debug");
       return false;
+    }
   }
 
   return true;

@@ -34,8 +34,10 @@ bool eq_e2sm_rc_ind_msg_frmt_5(e2sm_rc_ind_msg_frmt_5_t const* m0, e2sm_rc_ind_m
     return false;
 
   for(size_t i = 0; i < m0->sz_seq_ran_param; ++i){
-    if(eq_seq_ran_param(&m0->seq_ran_param[i], &m1->seq_ran_param[i]) == false)
+    if(eq_seq_ran_param(&m0->seq_ran_param[i], &m1->seq_ran_param[i]) == false){
+      assert(0!=0 && "Debug");
       return false;
+    }
   }
 
   return true;

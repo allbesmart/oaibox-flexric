@@ -15,7 +15,6 @@ typedef struct {
     style_ric_event_trigger_e style_type; // 8.3.3
     byte_array_t style_name;  // 8.3.4
     format_ric_event_trigger_e format_type;  // 8.3.5
-
 } ric_event_trigger_style_item_t;
 
 
@@ -23,9 +22,7 @@ typedef struct {
 typedef struct {
     byte_array_t name; // 8.3.9
     uint16_t *id; // 8.3.10  -  OPTIONAL
-
     bin_range_def_t *bin_range_def;  // 8.3.26  -  OPTIONAL; not yet implemented in ASN.1
-
 } meas_info_for_action_lst_t;
 
 typedef struct {
@@ -64,6 +61,9 @@ typedef struct {
 void free_kpm_ran_function_def(kpm_ran_function_def_t* src);
 
 bool eq_kpm_ran_function_def(kpm_ran_function_def_t const * m0, kpm_ran_function_def_t const * m1);
+
+kpm_ran_function_def_t cp_kpm_ran_function_def( kpm_ran_function_def_t  const* src);
+
 
 #ifdef __cplusplus
 }

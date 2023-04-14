@@ -20,7 +20,7 @@
  */
 
 
-#include "../common/fill_ind_data.h"
+#include "../../rnd/fill_rnd_data_mac.h"
 #include "../../../src/sm/mac_sm/mac_sm_agent.h"
 #include "../../../src/sm/mac_sm/mac_sm_ric.h"
 

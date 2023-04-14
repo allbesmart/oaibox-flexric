@@ -9,9 +9,19 @@
 
 add_executable(emu_agent_gnb
                   test_agent.c
-                  ../../../test/sm/common/fill_ind_data.c
-                  ../../../src/sm/rc_sm/test/fill_rnd_data_rc.c
-                  ../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.c
+                  ../../../test/rnd/fill_rnd_data_gtp.c                  
+                  ../../../test/rnd/fill_rnd_data_tc.c                  
+                  ../../../test/rnd/fill_rnd_data_mac.c                  
+                  ../../../test/rnd/fill_rnd_data_rlc.c                  
+                  ../../../test/rnd/fill_rnd_data_pdcp.c                  
+                  ../../../test/rnd/fill_rnd_data_kpm.c                  
+                  ../../../test/rnd/fill_rnd_data_rc.c                  
+                  ../../../test/rnd/fill_rnd_data_slice.c                  
+                  ../../../src/util/time_now_us.c
+
+                  #../../../test/sm/common/fill_ind_data.c
+                  #../../../src/sm/rc_sm/test/fill_rnd_data_rc.c
+                  #../../../test/encode_decode/sm/kpm/fill_rnd_data_kpm.c
                   )
 
                   target_link_libraries(emu_agent_gnb
@@ -30,9 +40,19 @@ target_compile_definitions(emu_agent_gnb PRIVATE TEST_AGENT_GNB)
 
 add_executable(emu_agent_gnb_cu
                 test_agent.c
-                ../../../test/sm/common/fill_ind_data.c
-                ../../../src/sm/rc_sm/test/fill_rnd_data_rc.c
-                ../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.c
+               ../../../test/rnd/fill_rnd_data_gtp.c                  
+                  ../../../test/rnd/fill_rnd_data_tc.c                  
+                  ../../../test/rnd/fill_rnd_data_mac.c                  
+                  ../../../test/rnd/fill_rnd_data_rlc.c                  
+                  ../../../test/rnd/fill_rnd_data_pdcp.c                  
+                  ../../../test/rnd/fill_rnd_data_kpm.c                  
+                  ../../../test/rnd/fill_rnd_data_rc.c                  
+                  ../../../test/rnd/fill_rnd_data_slice.c                  
+                  ../../../src/util/time_now_us.c
+
+                  # ../../../test/sm/common/fill_ind_data.c
+                  # ../../../src/sm/rc_sm/test/fill_rnd_data_rc.c
+                  # ../../../test/encode_decode/sm/kpm/fill_rnd_data_kpm.c
                 )
 
 target_link_libraries(emu_agent_gnb_cu
@@ -51,9 +71,19 @@ target_compile_definitions(emu_agent_gnb_cu PRIVATE TEST_AGENT_GNB_CU)
 
 add_executable(emu_agent_gnb_du
                 test_agent.c
-                ../../../src/sm/rc_sm/test/fill_rnd_data_rc.c
-                ../../../test/sm/common/fill_ind_data.c
-                ../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.c
+               ../../../test/rnd/fill_rnd_data_gtp.c                  
+                  ../../../test/rnd/fill_rnd_data_tc.c                  
+                  ../../../test/rnd/fill_rnd_data_mac.c                  
+                  ../../../test/rnd/fill_rnd_data_rlc.c                  
+                  ../../../test/rnd/fill_rnd_data_pdcp.c                  
+                  ../../../test/rnd/fill_rnd_data_kpm.c                  
+                  ../../../test/rnd/fill_rnd_data_rc.c                  
+                  ../../../test/rnd/fill_rnd_data_slice.c                  
+                  ../../../src/util/time_now_us.c
+
+                  #../../../src/sm/rc_sm/test/fill_rnd_data_rc.c
+                  #../../../test/sm/common/fill_ind_data.c
+                  #../../../test/encode_decode/sm/kpm/fill_rnd_data_kpm.c
                 )
 
 target_link_libraries(emu_agent_gnb_du
@@ -72,9 +102,19 @@ target_compile_definitions(emu_agent_gnb_du PRIVATE TEST_AGENT_GNB_DU)
 
 add_executable(emu_agent_enb
                 test_agent.c
-                ../../../src/sm/rc_sm/test/fill_rnd_data_rc.c
-                ../../../test/sm/common/fill_ind_data.c
-                ../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.c
+                  ../../../test/rnd/fill_rnd_data_gtp.c                  
+                  ../../../test/rnd/fill_rnd_data_tc.c                  
+                  ../../../test/rnd/fill_rnd_data_mac.c                  
+                  ../../../test/rnd/fill_rnd_data_rlc.c                  
+                  ../../../test/rnd/fill_rnd_data_pdcp.c                  
+                  ../../../test/rnd/fill_rnd_data_kpm.c                  
+                  ../../../test/rnd/fill_rnd_data_rc.c                  
+                  ../../../test/rnd/fill_rnd_data_slice.c                  
+                  ../../../src/util/time_now_us.c
+
+                  #../../../src/sm/rc_sm/test/fill_rnd_data_rc.c
+                  #../../../test/sm/common/fill_ind_data.c
+                  #../../../test/encode_decode/sm/kpm/fill_rnd_data_kpm.c
                 )
 
 target_link_libraries(emu_agent_enb

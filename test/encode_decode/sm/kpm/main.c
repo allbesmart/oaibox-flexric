@@ -1,14 +1,14 @@
-#include <assert.h>
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "../../../../src/util/alg_ds/alg/defer.h"
 #include "../../../../src/util/byte_array.h"
 #include "../../../../src/sm/kpm_sm_v03.00/enc/kpm_enc_asn.h"
 #include "../../../../src/sm/kpm_sm_v03.00/dec/kpm_dec_asn.h"
 #include "fill_rnd_data_kpm.h"
 
+#include <assert.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
+
 
 
 void test_kpm_ric_event_trigger_def_asn(void)
@@ -87,40 +87,32 @@ int main()
   time_t t;
   srand((unsigned) time(&t));
 
-  for (size_t i = 0; i<10; i++)
-  {
+  for (size_t i = 0; i < 16; i++) {
 
-  // Test off all the functions
+    // Test off all the functions
+    printf("KPM SM enc/dec test launched\n");
 
-  printf("KPM SM enc/dec test launched\n");
+    // Event Trigger
+    test_kpm_ric_event_trigger_def_asn();
+    printf("KPM Event Trigger test succeeded\n");
 
-  // Event Trigger
-  test_kpm_ric_event_trigger_def_asn();
+    // Action Definition
+    test_kpm_act_def();
+    printf("KPM Action Definition test succeeded\n");
 
-  printf("KPM Event Trigger test succeeded\n");
+    // Indication Header
+    test_kpm_ind_hdr();
+    printf("KPM Indication Header test succeeded\n");
 
-  // Action Definition
-  test_kpm_act_def();
+    // Indication Message
+    test_kpm_ind_msg();
+    printf("KPM Indication Message test succeeded\n");
 
-  printf("KPM Action Definition test succeeded\n");
-
-  // Indication Header
-  test_kpm_ind_hdr();
-
-  printf("KPM Indication Header test succeeded\n");
-
-  // Indication Message
-  test_kpm_ind_msg();
-
-  printf("KPM Indication Message test succeeded\n");
-
-  // RAN Function Definition
-  test_kpm_ran_function();
-
-  printf("KPM SM enc/dec test succeeded\n");
-
+    // RAN Function Definition
+    test_kpm_ran_function();
+    printf("KPM SM enc/dec test succeeded\n");
   }
-
 
   return EXIT_SUCCESS;
 }
+

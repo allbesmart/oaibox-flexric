@@ -56,10 +56,8 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
                       $<TARGET_OBJECTS:sm_common_ie_obj>
                       $<TARGET_OBJECTS:sm_common_dec_asn_obj>
                       $<TARGET_OBJECTS:sm_common_enc_asn_obj>
-
-                      ../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.c
+                      #../../../test/encode_decode/sm/kpm/fill_rnd_data_kpm.c
                       )
-
 
   target_link_libraries(kpm_sm PUBLIC -lm)
 

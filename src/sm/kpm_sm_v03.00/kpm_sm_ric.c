@@ -21,16 +21,15 @@
 
 
 #include "kpm_sm_ric.h"
-#include "kpm_sm_id.h"
-
-#include <assert.h>
-#include <stdlib.h>
+#include "../../../test/encode_decode/sm/kpm/fill_rnd_data_kpm.h"
 #include "../../util/alg_ds/alg/defer.h"
 
 #include "enc/kpm_enc_generic.h"
 #include "dec/kpm_dec_generic.h"
+#include "kpm_sm_id.h"
 
-#include "../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.h"
+#include <assert.h>
+#include <stdlib.h>
 
 typedef struct{
   sm_ric_t base;

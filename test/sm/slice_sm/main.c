@@ -1,5 +1,4 @@
-
-#include "../common/fill_ind_data.h"
+#include "../../rnd/fill_rnd_data_slice.h"
 #include "../../../src/sm/slice_sm/slice_sm_agent.h"
 #include "../../../src/sm/slice_sm/slice_sm_ric.h"
 #include "../../../src/util/alg_ds/alg/defer.h"
@@ -18,15 +17,8 @@
 static
 slice_ind_data_t cp;
 
-void free_ag_slice(void)
-{
-
-
-}
-
 static
 slice_ctrl_req_data_t cp_ctrl;
-
 
 static
 void ctrl_slice(slice_ctrl_req_data_t const* ctrl)
@@ -180,7 +172,6 @@ int main()
 {
   sm_io_ag_t io_ag = {.read = read_RAN, .write = write_RAN};  
   sm_agent_t* sm_ag = make_slice_sm_agent(io_ag);
-
   sm_ric_t* sm_ric = make_slice_sm_ric();
 
   for(int i = 0; i < 64*1024; ++i){
@@ -192,8 +183,6 @@ int main()
 
   sm_ag->free_sm(sm_ag);
   sm_ric->free_sm(sm_ric);
-
-  free_ag_slice();
 
   printf("Success\n");
   return EXIT_SUCCESS;

@@ -20,7 +20,7 @@
  */
 
 
-#include "../common/fill_ind_data.h"
+#include "../../rnd/fill_rnd_data_gtp.h"
 #include "../../../src/sm/gtp_sm/gtp_sm_agent.h"
 #include "../../../src/sm/gtp_sm/gtp_sm_ric.h"
 

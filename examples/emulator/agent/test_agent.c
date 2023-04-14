@@ -22,7 +22,12 @@
 
 
 #include "../../../src/agent/e2_agent_api.h"
-#include "../../../test/sm/common/fill_ind_data.h"
+#include "../../../test/rnd/fill_rnd_data_gtp.h"
+#include "../../../test/rnd/fill_rnd_data_mac.h"
+#include "../../../test/rnd/fill_rnd_data_rlc.h"
+#include "../../../test/rnd/fill_rnd_data_pdcp.h"
+#include "../../../test/rnd/fill_rnd_data_slice.h"
+#include "../../../test/rnd/fill_rnd_data_kpm.h"
 
 #include <assert.h>
 #include <signal.h>
@@ -50,7 +55,8 @@ void read_RAN(sm_ag_if_rd_t* ag_rd)
   } else if(data->type == GTP_STATS_V0){
     fill_gtp_ind_data(&data->gtp);
   } else if(data->type == KPM_STATS_V3_0){
-    fill_kpm_ind_data(&data->kpm);
+    data->kpm.hdr = fill_kpm_ind_hdr(); 
+    data->kpm.msg = fill_kpm_ind_msg(); 
   } else {
     assert("Invalid data type");
   }

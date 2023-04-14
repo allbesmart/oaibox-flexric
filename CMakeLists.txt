@@ -52,7 +52,7 @@ message(STATUS "Selected xApp dir : ${XAPP_DB_DIR}")
 ### SANITIZER 
 ########
 
-set(SANITIZER "NONE" CACHE STRING "Sanitizers")
+set(SANITIZER "ADDRESS" CACHE STRING "Sanitizers")
 set_property(CACHE SANITIZER PROPERTY STRINGS "NONE" "ADDRESS" "THREAD")
 message(STATUS "Selected SANITIZER TYPE: ${SANITIZER}")
 
@@ -67,11 +67,12 @@ elseif(${SANITIZER} STREQUAL "STACK")
   add_link_options("-fstack-protector-all")
 endif()
 
-option(CODE_COVERAGE "Code coverage" OFF)
+option(CODE_COVERAGE "Code coverage" ON)
 if(CODE_COVERAGE)
   add_compile_options("-fprofile-arcs;-ftest-coverage")
   add_link_options("-lgcov;-coverage")
   message(STATUS "Code Coverage ON. Example usage: lcov --capture --directory . --output-file coverage.info && genhtml coverage.info --output-directory out && cd out && firefox index.html")
+  message(STATUS "To merge different coverages: lcov --add-tracefile coverage1.info -a coverage2.info ...coverageN -o merged.info")
 
 endif()
 

@@ -23,7 +23,15 @@
 #include "../src/ric/near_ric_api.h"
 #include "../src/agent/e2_agent_api.h"
 
-#include "../sm/common/fill_ind_data.h"
+#include "../rnd/fill_rnd_data_gtp.h"                  
+#include "../rnd/fill_rnd_data_tc.h"                  
+#include "../rnd/fill_rnd_data_mac.h"                  
+#include "../rnd/fill_rnd_data_rlc.h"                  
+#include "../rnd/fill_rnd_data_pdcp.h"                  
+#include "../rnd/fill_rnd_data_rc.h"                  
+#include "../rnd/fill_rnd_data_tc.h"                  
+#include "../rnd/fill_rnd_data_kpm.h"                  
+#include "../rnd/fill_rnd_data_slice.h"                  
 
 #include <assert.h>
 #include <ctype.h>

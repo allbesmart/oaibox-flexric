@@ -1,5 +1,4 @@
-
-#include "../common/fill_ind_data.h"
+#include "../../rnd/fill_rnd_data_tc.h"
 #include "../../../src/sm/tc_sm/tc_sm_agent.h"
 #include "../../../src/sm/tc_sm/tc_sm_ric.h"
 #include "../../../src/util/alg_ds/alg/defer.h"

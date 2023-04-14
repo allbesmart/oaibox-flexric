@@ -19,8 +19,7 @@
  *      contact@openairinterface.org
  */
 
-
-#include "../common/fill_ind_data.h"
+#include "../../rnd/fill_rnd_data_rlc.h"
 #include "../../../src/sm/rlc_sm/rlc_sm_agent.h"
 #include "../../../src/sm/rlc_sm/rlc_sm_ric.h"
 

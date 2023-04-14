@@ -35,9 +35,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../../test/encode_decode/sm_test/kpm_test/fill_rnd_data_kpm.h"
-
-
 typedef struct{
 
   sm_agent_t base;

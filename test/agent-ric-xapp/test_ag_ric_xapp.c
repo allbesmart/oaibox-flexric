@@ -27,7 +27,16 @@
 #include "../../src/sm/kpm_sm_v03.00/kpm_sm_id.h"
 #include "../../src/util/alg_ds/alg/defer.h"
 #include "../../src/util/time_now_us.h"
-#include "../sm/common/fill_ind_data.h"
+
+#include "../rnd/fill_rnd_data_gtp.h"                  
+#include "../rnd/fill_rnd_data_tc.h"                  
+#include "../rnd/fill_rnd_data_mac.h"                  
+#include "../rnd/fill_rnd_data_rlc.h"                  
+#include "../rnd/fill_rnd_data_pdcp.h"                  
+#include "../rnd/fill_rnd_data_rc.h"                  
+#include "../rnd/fill_rnd_data_tc.h"                  
+#include "../rnd/fill_rnd_data_kpm.h"                  
+#include "../rnd/fill_rnd_data_slice.h"                  
 
 #include <stdlib.h>
 #include <stdio.h>

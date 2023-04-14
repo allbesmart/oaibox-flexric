@@ -6,6 +6,7 @@ set(SM_ENCODING_RC_SRC
   rc_sm_agent.c 
   rc_sm_ric.c 
   ../../util/byte_array.c 
+  ../../util/conversions.c
   ../../util/alg_ds/alg/defer.c 
   ../../util/alg_ds/alg/eq_float.c 
   ../../util/alg_ds/ds/seq_container/seq_arr.c 
@@ -28,6 +29,16 @@ elseif(SM_ENCODING_RC STREQUAL "ASN" )
                       dec/rc_dec_asn.c 
                       $<TARGET_OBJECTS:e2sm_rc_asn1_obj>
                       $<TARGET_OBJECTS:e2sm_rc_ir_obj>
+
+                      $<TARGET_OBJECTS:3gpp_derived_ie_obj>
+                      $<TARGET_OBJECTS:3gpp_derived_ie_dec_asn_obj>
+                      $<TARGET_OBJECTS:3gpp_derived_ie_enc_asn_obj>
+                      $<TARGET_OBJECTS:sm_common_ie_obj>
+                      $<TARGET_OBJECTS:sm_common_dec_asn_obj>
+                      $<TARGET_OBJECTS:sm_common_enc_asn_obj>
+
+
+
                       )
   target_include_directories(rc_sm PRIVATE "ie/asn")
   target_compile_options(rc_sm PUBLIC "-DASN_DISABLE_OER_SUPPORT")

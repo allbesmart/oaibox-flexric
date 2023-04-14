@@ -19,7 +19,7 @@
  *      contact@openairinterface.org
  */
 
-#include "../common/fill_ind_data.h"
+#include "../../rnd/fill_rnd_data_pdcp.h"
 #include "../../../src/sm/pdcp_sm/pdcp_sm_agent.h"
 #include "../../../src/sm/pdcp_sm/pdcp_sm_ric.h"
 #include "../../../src/util/alg_ds/alg/defer.h"

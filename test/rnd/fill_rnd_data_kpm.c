@@ -1318,8 +1318,7 @@ kpm_ind_msg_t fill_kpm_ind_msg(void)
   return msg;
 }
 
-
-kpm_ran_function_def_t fill_kpm_ran_function(void)
+kpm_ran_function_def_t fill_kpm_ran_func_def(void)
 {
   kpm_ran_function_def_t ran_function = {0};
 

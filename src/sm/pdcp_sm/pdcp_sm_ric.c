@@ -46,30 +46,27 @@ typedef struct{
 
 
 static
-sm_subs_data_t on_subscription_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_subs_t const* subs)
+sm_subs_data_t on_subscription_pdcp_sm_ric(sm_ric_t const* sm_ric, void* cmd)
 {
   assert(sm_ric != NULL); 
-  assert(subs != NULL); 
   sm_pdcp_ric_t* sm = (sm_pdcp_ric_t*)sm_ric;  
 
-  /*
-  pdcp_event_trigger_t ev = {0};
+  pdcp_sub_data_t pdcp = {0}; 
 
   const int max_str_sz = 10;
   if(strncmp(cmd, "1_ms", max_str_sz) == 0 ){
-    ev.ms = 1;
+  pdcp.et.ms = 1;
   } else if (strncmp(cmd, "2_ms", max_str_sz) == 0 ) {
-    ev.ms = 2;
+   pdcp.et.ms = 2;
   } else if (strncmp(cmd, "5_ms", max_str_sz) == 0 ) {
-    ev.ms = 5;
+    pdcp.et.ms = 5;
   } else if (strncmp(cmd, "10_ms", max_str_sz) == 0 ) {
-    ev.ms = 10;
+    pdcp.et.ms = 10;
   } else {
     assert(0 != 0 && "Invalid input");
   }
-  */
-
-  const byte_array_t ba = pdcp_enc_event_trigger(&sm->enc, &subs->pdcp.et); 
+  
+  const byte_array_t ba = pdcp_enc_event_trigger(&sm->enc, &pdcp.et); 
 
   sm_subs_data_t data = {0}; 
   
@@ -188,8 +185,10 @@ void free_ind_data_pdcp_sm_ric(void* msg)
 {
   assert(msg != NULL);
 
-  pdcp_ind_data_t* ind  = (pdcp_ind_data_t*)msg;
+  sm_ag_if_rd_ind_t* rd_ind  = (sm_ag_if_rd_ind_t*)msg;
+  assert(rd_ind->type == PDCP_STATS_V0);
 
+  pdcp_ind_data_t* ind = &rd_ind->pdcp;
   free_pdcp_ind_hdr(&ind->hdr); 
   free_pdcp_ind_msg(&ind->msg); 
 }

@@ -68,11 +68,12 @@ subscribe_timer_t on_subscription_pdcp_sm_ag(sm_agent_t const* sm_agent, const s
 
 
 static
-sm_ind_data_t on_indication_pdcp_sm_ag(sm_agent_t const* sm_agent)
+sm_ind_data_t on_indication_pdcp_sm_ag(sm_agent_t const* sm_agent, void* act_def)
 {
   //printf("on_indication called \n");
-
   assert(sm_agent != NULL);
+  assert(act_def == NULL && "Subscription data not needed for this SM");
+
   sm_pdcp_agent_t* sm = (sm_pdcp_agent_t*)sm_agent;
 
   sm_ind_data_t ret = {0};
@@ -151,13 +152,22 @@ sm_e2_setup_data_t on_e2_setup_pdcp_sm_ag(sm_agent_t const* sm_agent)
 
   sm_e2_setup_data_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
 
-
   // ToDo: Missing a call to the RAN to fill this data
 
   setup.len_rfd = strlen(sm->base.ran_func_name);
   setup.ran_fun_def = calloc(1, strlen(sm->base.ran_func_name));
   assert(setup.ran_fun_def != NULL);
   memcpy(setup.ran_fun_def, sm->base.ran_func_name, strlen(sm->base.ran_func_name));
+
+  // RAN Function
+  setup.rf.def = cp_str_to_ba(SM_PDCP_SHORT_NAME);
+  setup.rf.id = SM_PDCP_ID;
+  setup.rf.rev = SM_PDCP_REV;
+
+  setup.rf.oid = calloc(1, sizeof(byte_array_t) );
+  assert(setup.rf.oid != NULL && "Memory exhausted");
+
+  *setup.rf.oid = cp_str_to_ba(SM_PDCP_OID);
 
   return setup;
 }
@@ -192,6 +202,7 @@ sm_agent_t* make_pdcp_sm_agent(sm_io_ag_t io)
 
   sm->base.io = io;
   sm->base.free_sm = free_pdcp_sm_ag;
+  sm->base.free_act_def = NULL; //free_act_def_pdcp_sm_ag;
 
   // O-RAN E2SM 5 Procedures
   sm->base.proc.on_subscription = on_subscription_pdcp_sm_ag;

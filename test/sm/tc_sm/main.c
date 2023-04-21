@@ -4,7 +4,6 @@
 #include "../../../src/util/alg_ds/alg/defer.h"
 #include "../../../src/sm/tc_sm/ie/tc_data_ie.h"
 
-
 #include <assert.h>
 #include <math.h>
 #include <stdbool.h>
@@ -114,7 +113,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ind_data_t sm_data = ag->proc.on_indication(ag);
+  sm_ind_data_t sm_data = ag->proc.on_indication(ag, NULL);
   defer({ free_sm_ind_data(&sm_data); }); 
 
 

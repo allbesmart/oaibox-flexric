@@ -9,11 +9,10 @@
 #include "kpm_data_ie/kpm_ric_info/kpm_call_proc_id.h"
 
 
-
 /*
  * O-RAN defined 5 Procedures: RIC Subscription, RIC Indication, RIC Control, E2 Setup and RIC Service Update 
- * */
-
+ * 
+*/
 
 // RIC INDICATION
 typedef struct {
@@ -42,8 +41,6 @@ typedef struct {
 void free_kpm_sub_data(kpm_sub_data_t* sub);
 
 bool eq_kpm_sub_data(kpm_sub_data_t const* m0, kpm_sub_data_t const* m1);
-
-
 
 // RIC SERVICE UPDATE
 typedef struct {

@@ -56,22 +56,16 @@ e2_setup_request_t generate_setup_request(e2_agent_t* ag)
 
   void* it = assoc_front(&ag->plugin.sm_ds);
   for(size_t i = 0; i < len_rf; ++i){
-    sm_agent_t* sm = assoc_value( &ag->plugin.sm_ds, it);
+    sm_agent_t* sm = assoc_value(&ag->plugin.sm_ds, it);
     assert(sm->ran_func_id == *(uint16_t*)assoc_key(&ag->plugin.sm_ds, it) && "RAN function mismatch");
 
-    ran_func[i].id = sm->ran_func_id; 
-    ran_func[i].rev = 1;
-    ran_func[i].oid = calloc(1, sizeof(byte_array_t));
-    assert(ran_func[i].oid != NULL && "Memory exhausted" );
-    assert(i < 1 && "Clean this shit!"); 
-    const char oid[] = "1.3.6.1.4.1.53148.1.1.2.3";
-    ran_func[i].oid->buf = calloc(1, strlen(oid));    
-    memcpy(ran_func[i].oid->buf, oid,strlen(oid) );
-    ran_func[i].oid->len = strlen(oid);
-
     sm_e2_setup_data_t def = sm->proc.on_e2_setup(sm);
-    byte_array_t ba = {.len = def.len_rfd, .buf = def.ran_fun_def};
-    ran_func[i].def = ba; 
+    assert(sm->ran_func_id == def.rf.id);
+
+    if(def.len_rfd > 0)
+      free(def.ran_fun_def);
+
+    ran_func[i] = def.rf;
 
     it = assoc_next(&ag->plugin.sm_ds ,it);
   }
@@ -150,7 +144,7 @@ void init_pending_events(e2_agent_t* ag)
 }
 
 static inline
-void free_ind_event(void* key, void* value)
+void free_ind_event_map(void* key, void* value)
 {
   assert(key != NULL);
   assert(value != NULL);
@@ -158,6 +152,9 @@ void free_ind_event(void* key, void* value)
   (void)key;
 
   ind_event_t* ev = (ind_event_t* )value;
+  if(ev->sm->free_act_def != NULL)
+    ev->sm->free_act_def(ev->sm, ev->act_def); 
+
   free(ev);
 }
 
@@ -181,7 +178,7 @@ void init_indication_event(e2_agent_t* ag)
   size_t key_sz_fd = sizeof(int);
   size_t key_sz_ind = sizeof(ind_event_t);
 
-  bi_map_init(&ag->ind_event, key_sz_fd, key_sz_ind, cmp_fd, cmp_ind_event, free_ind_event, free_key);
+  bi_map_init(&ag->ind_event, key_sz_fd, key_sz_ind, cmp_fd, cmp_ind_event, free_ind_event_map, free_key);
 }
 
 static inline
@@ -278,21 +275,25 @@ async_event_t next_async_event_agent(e2_agent_t* ag)
 
   if(fd == -1){ // no event happened. Just for checking the stop_token condition
     e.type = CHECK_STOP_TOKEN_EVENT;
-  } else if (net_pkt(ag, fd) == true){
 
+  } else if (net_pkt(ag, fd) == true){
     e.msg = e2ap_recv_msg_agent(&ag->ep);
     if(e.msg.type == SCTP_MSG_NOTIFICATION){
       e.type = SCTP_CONNECTION_SHUTDOWN_EVENT;
+
     } else if (e.msg.type == SCTP_MSG_PAYLOAD){
        e.type = SCTP_MSG_ARRIVED_EVENT;
+
     } else { 
       assert(0!=0 && "Unknown type");
     }
 
   } else if (ind_event(ag, fd, &e.i_ev) == true) {
     e.type = INDICATION_EVENT;
+
   } else if (pend_event(ag, fd, &e.p_ev) == true){
     e.type = PENDING_EVENT;
+
   } else {
     assert(0!=0 && "Unknown event happened!");
   }
@@ -330,8 +331,9 @@ void e2_event_loop_agent(e2_agent_t* ag)
         }
       case INDICATION_EVENT:
         {
-          sm_agent_t* sm = e.i_ev->sm;
-          sm_ind_data_t data = sm->proc.on_indication(sm);
+          sm_agent_t const* sm = e.i_ev->sm;
+          void* act_def = e.i_ev->act_def; 
+          sm_ind_data_t data = sm->proc.on_indication(sm, act_def);
 
           ric_indication_t ind = generate_indication(ag, &data, e.i_ev);
           defer({ e2ap_free_indication(&ind); } );
@@ -349,7 +351,7 @@ void e2_event_loop_agent(e2_agent_t* ag)
         {
           assert(*e.p_ev == SETUP_REQUEST_PENDING_EVENT && "Unforeseen pending event happened!" );
 
-          // Resend the subscription request message
+          // Resend the setup request message
           e2_setup_request_t sr = generate_setup_request(ag); 
           defer({ e2ap_free_setup_request(&sr); } );
 

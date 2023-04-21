@@ -45,12 +45,11 @@ typedef struct{
 
 
 static
-sm_subs_data_t on_subscription_rc_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_subs_t  const* subs)
+sm_subs_data_t on_subscription_rc_sm_ric(sm_ric_t const* sm_ric, void* cmd)
 {
   assert(sm_ric != NULL); 
-  assert(subs != NULL); 
-  assert(subs->type == RAN_CTRL_SUBS_V1_03);
-  rc_sub_data_t const* src= &subs->rc;
+  assert(cmd != NULL); 
+  rc_sub_data_t const* src = cmd; //&subs->rc;
   sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
   sm_subs_data_t dst = {0}; 
  
@@ -62,7 +61,7 @@ sm_subs_data_t on_subscription_rc_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_sub
   assert(src->ad != NULL); 
 
   const byte_array_t ba_ad = rc_enc_action_def(&sm->enc, src->ad); 
-  dst.action_def= ba_ad.buf;
+  dst.action_def = ba_ad.buf;
   dst.len_ad = ba_ad.len;
 
   return dst;
@@ -77,8 +76,8 @@ sm_ag_if_rd_ind_t on_indication_rc_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t 
 
   sm_ag_if_rd_ind_t dst = {.type = RAN_CTRL_STATS_V1_03}; 
 
-  dst.rc.hdr = rc_dec_ind_hdr(&sm->enc, src->len_hdr, src->ind_hdr);
-  dst.rc.msg = rc_dec_ind_msg(&sm->enc, src->len_msg, src->ind_msg);
+  dst.rc.ind.hdr = rc_dec_ind_hdr(&sm->enc, src->len_hdr, src->ind_hdr);
+  dst.rc.ind.msg = rc_dec_ind_msg(&sm->enc, src->len_msg, src->ind_msg);
   assert(src->call_process_id == NULL && "Not implemented");
 
   return dst;
@@ -130,7 +129,7 @@ sm_ag_if_rd_e2setup_t ric_on_e2_setup_rc_sm_ric(sm_ric_t const* sm_ric, sm_e2_se
 
   sm_ag_if_rd_e2setup_t dst = {.type = RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0};  
 
-  dst.rc.func_def = rc_dec_func_def(&sm->enc, src->len_rfd, src->ran_fun_def);
+  dst.rc.ran_func_def = rc_dec_func_def(&sm->enc, src->len_rfd, src->ran_fun_def);
 
   return dst;
 }
@@ -171,10 +170,13 @@ static
 void free_ind_data_rc_sm_ric(void* msg)
 {
   assert(msg != NULL);
-  rc_ind_data_t* ind  = (rc_ind_data_t*)msg;
+  
+  sm_ag_if_rd_ind_t* rd_ind = (sm_ag_if_rd_ind_t*)msg;
+  assert(rd_ind->type == RAN_CTRL_STATS_V1_03);
+
+  rc_ind_data_t* ind = &rd_ind->rc.ind;
   free_e2sm_rc_ind_hdr(&ind->hdr); 
   free_e2sm_rc_ind_msg(&ind->msg); 
-
 }
 
 static

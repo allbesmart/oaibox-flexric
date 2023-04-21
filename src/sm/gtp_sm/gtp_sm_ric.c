@@ -43,35 +43,32 @@ typedef struct{
 #endif
 } sm_gtp_ric_t;
 
-
 static
-sm_subs_data_t on_subscription_gtp_sm_ric(sm_ric_t const* sm_ric, const  sm_ag_if_wr_subs_t* subs)
+sm_subs_data_t on_subscription_gtp_sm_ric(sm_ric_t const* sm_ric, void* cmd)
 {
   assert(sm_ric != NULL); 
-  assert(subs != NULL); 
+  assert(cmd != NULL); 
   sm_gtp_ric_t* sm = (sm_gtp_ric_t*)sm_ric;  
 
-  /*
-  gtp_event_trigger_t ev = {0};
+  gtp_sub_data_t gtp = {0}; 
 
   const int max_str_sz = 10;
   if(strncmp(cmd, "1_ms", max_str_sz) == 0 ){
-    ev.ms = 1;
+    gtp.et.ms = 1;
   } else if (strncmp(cmd, "2_ms", max_str_sz) == 0 ) {
-    ev.ms = 2;
+    gtp.et.ms = 2;
   } else if (strncmp(cmd, "5_ms", max_str_sz) == 0 ) {
-    ev.ms = 5;
+    gtp.et.ms = 5;
   } else if (strncmp(cmd, "10_ms", max_str_sz) == 0 ) {
-    ev.ms = 10;
+    gtp.et.ms = 10;
   } else {
     assert(0 != 0 && "Invalid input");
   }
-  */
 
-  const byte_array_t ba = gtp_enc_event_trigger(&sm->enc, &subs->gtp.et); 
+  const byte_array_t ba = gtp_enc_event_trigger(&sm->enc, &gtp.et); 
 
   sm_subs_data_t data = {0}; 
-  
+
   // Event trigger IE
   data.event_trigger = ba.buf;
   data.len_et = ba.len;
@@ -192,10 +189,13 @@ static
 void free_ind_data_gtp_sm_ric(void* msg)
 {
   assert(msg != NULL);
-  gtp_ind_data_t* ind  = (gtp_ind_data_t*)msg;
+
+  sm_ag_if_rd_ind_t* rd_ind = (sm_ag_if_rd_ind_t*)msg;
+  assert(rd_ind->type == GTP_STATS_V0);
+
+  gtp_ind_data_t* ind = &rd_ind->gtp;
   free_gtp_ind_hdr(&ind->hdr); 
   free_gtp_ind_msg(&ind->msg); 
-
 }
 
 static

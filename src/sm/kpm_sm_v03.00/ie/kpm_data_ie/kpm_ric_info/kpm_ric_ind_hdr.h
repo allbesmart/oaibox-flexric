@@ -23,7 +23,6 @@ typedef struct {
   union {
     kpm_ric_ind_hdr_format_1_t kpm_ric_ind_hdr_format_1;
   };
-  
 
 } kpm_ind_hdr_t;
 

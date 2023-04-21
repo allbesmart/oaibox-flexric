@@ -32,9 +32,7 @@ kpm_ind_hdr_t fill_kpm_ind_hdr(void);
 
 kpm_ind_msg_t fill_kpm_ind_msg(void);
 
-kpm_ran_function_def_t fill_kpm_ran_function(void);
-
-
+kpm_ran_function_def_t fill_kpm_ran_func_def(void);
 
 #endif
 

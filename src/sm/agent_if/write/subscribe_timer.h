@@ -35,11 +35,13 @@ typedef enum{
 typedef struct{
   int64_t ms;
   sub_data_e type;
-  union{
-   kpm_act_def_t* kpm_ad; 
-  };
+  // Number of elements.
+  // Just one is supported
+  size_t sz;
+  void* act_def; // e.g., kpm_act_def_t
 } subscribe_timer_t;
 
-#endif
+void free_subscribe_timer(subscribe_timer_t* src);
 
+#endif
 

@@ -66,6 +66,7 @@ void init_udp_socket()
 
 }
 
+static
 void notify_kpm_ind_msg_frm_1(const kpm_ind_msg_format_1_t message, uint32_t truncated_ts)
 {
 
@@ -182,10 +183,21 @@ void notify_influx_listener(sm_ag_if_rd_ind_t const* data)
   assert(data != NULL);
 
   assert(data->type == MAC_STATS_V0 || data->type == RLC_STATS_V0 || data->type == PDCP_STATS_V0 
-      || data->type == SLICE_STATS_V0 || data->type == KPM_STATS_V3_0 || data->type == GTP_STATS_V0);
+      || data->type == SLICE_STATS_V0 || data->type == KPM_STATS_V3_0 || data->type == GTP_STATS_V0
+      || data->type == TC_STATS_V0 || data->type == RAN_CTRL_STATS_V1_03);
+
+  return;
+
+  // Not supported
+
+
   pthread_once(&init_socket, init_udp_socket);
 
 //  printf("Influx db data called!!!\n");
+
+  
+
+
   if(data->type == MAC_STATS_V0){
     mac_ind_msg_t const* ind =  &data->mac.msg;
 

@@ -31,11 +31,18 @@
 typedef struct
 {
   ric_gen_id_t ric_id;
+  // Non-owning ptr
   sm_agent_t* sm;
   uint8_t action_id;
+  // Unknown type for the E2 Agent.
+  // The RAN and the SMs know this type.
+  // They will free it.
+  void* act_def; // i.e., kpm_act_def_t 
 } ind_event_t;
 
 int cmp_ind_event(void const* m0_v, void const* m1_v);
+
+// void free_ind_event(ind_event_t* src);
 
 #endif
 

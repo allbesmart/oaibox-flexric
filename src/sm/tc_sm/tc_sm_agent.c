@@ -45,11 +45,11 @@ subscribe_timer_t on_subscription_tc_sm_ag(sm_agent_t const* sm_agent, const sm_
   return timer;
 }
 
-
 static
-sm_ind_data_t on_indication_tc_sm_ag(sm_agent_t const* sm_agent)
+sm_ind_data_t on_indication_tc_sm_ag(sm_agent_t const* sm_agent, void* act_def)
 {
   assert(sm_agent != NULL);
+  assert(act_def == NULL && "Action definition data not needed for this SM");
   sm_tc_agent_t* sm = (sm_tc_agent_t*)sm_agent;
 
   sm_ind_data_t ret = {0};
@@ -129,6 +129,16 @@ sm_e2_setup_data_t on_e2_setup_tc_sm_ag(sm_agent_t const* sm_agent)
   assert(setup.ran_fun_def != NULL);
   memcpy(setup.ran_fun_def, sm->base.ran_func_name, strlen(sm->base.ran_func_name));
 
+ // RAN Function
+  setup.rf.def = cp_str_to_ba(SM_TC_SHORT_NAME);
+  setup.rf.id = SM_TC_ID;
+  setup.rf.rev = SM_TC_REV;
+
+  setup.rf.oid = calloc(1, sizeof(byte_array_t) );
+  assert(setup.rf.oid != NULL && "Memory exhausted");
+
+  *setup.rf.oid = cp_str_to_ba(SM_TC_OID);
+
   return setup;
 }
 
@@ -161,6 +171,7 @@ sm_agent_t* make_tc_sm_agent(sm_io_ag_t io)
 
   sm->base.io = io;
   sm->base.free_sm = free_tc_sm_ag;
+  sm->base.free_act_def = NULL; //free_act_def_tc_sm_ag;
 
   sm->base.proc.on_subscription = on_subscription_tc_sm_ag;
   sm->base.proc.on_indication = on_indication_tc_sm_ag;

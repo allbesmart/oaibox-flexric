@@ -66,6 +66,7 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
   }
 
   sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0}; 
+  ans.ctrl_out.type = SLICE_AGENT_IF_CTRL_ANS_V0;
  
   const char* str = "THIS IS ANS STRING";
   ans.ctrl_out.slice.len_diag = strlen(str);
@@ -113,7 +114,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ind_data_t sm_data = ag->proc.on_indication(ag);
+  sm_ind_data_t sm_data = ag->proc.on_indication(ag, NULL);
   defer({ free_sm_ind_data(&sm_data); }); 
 
   sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
@@ -137,7 +138,7 @@ void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
   assert(ric != NULL);
 
   sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
-
+  wr.ctrl.type = SLICE_CTRL_REQ_V0 ;
   fill_slice_ctrl(&wr.ctrl.slice_req_ctrl);
 
   cp_ctrl.hdr = cp_slice_ctrl_hdr(&wr.ctrl.slice_req_ctrl.hdr);

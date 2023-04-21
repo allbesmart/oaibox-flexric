@@ -66,16 +66,19 @@ ue_id_gran_period_lst_t cp_kpm_ue_id_gran_period_lst(const ue_id_gran_period_lst
     dst.no_matched_ue = src->no_matched_ue;
     break;
   
-  case ONE_OR_MORE_MATCHED_UE:
+  case ONE_OR_MORE_MATCHED_UE:{
     dst.matched_ue_lst.ue_lst_len = src->matched_ue_lst.ue_lst_len;
+    if(dst.matched_ue_lst.ue_lst_len > 0){
     dst.matched_ue_lst.ue_lst = calloc(dst.matched_ue_lst.ue_lst_len, sizeof(ue_id_e2sm_t));
+    assert(dst.matched_ue_lst.ue_lst != NULL && "Memory exhausted");
+    }
 
     for (size_t i = 0; i<dst.matched_ue_lst.ue_lst_len; i++)
     {
       dst.matched_ue_lst.ue_lst[i] = cp_ue_id_e2sm(&src->matched_ue_lst.ue_lst[i]);
     }
     break;
-
+    }
   default:
     break;
   }

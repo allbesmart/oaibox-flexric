@@ -36,7 +36,7 @@ typedef struct{
   // @return granularity in ms or -1 if no periodic timer needed
   subscribe_timer_t (*on_subscription)(sm_agent_t const* sm, sm_subs_data_t const* data);
 
-  sm_ind_data_t (*on_indication)(sm_agent_t const* sm);
+  sm_ind_data_t (*on_indication)(sm_agent_t const* sm, void* act_def);
 
   sm_ctrl_out_data_t (*on_control)(sm_agent_t const* sm, sm_ctrl_req_data_t const* data);
 
@@ -57,6 +57,8 @@ typedef struct sm_agent_s {
 
   // Free function
   void (*free_sm)(sm_agent_t* sm_agent);
+
+  void (*free_act_def)(sm_agent_t* sm_agent, void* act_def);
 
   // Allocation functions
   sm_alloc_t alloc;

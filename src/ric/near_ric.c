@@ -19,7 +19,6 @@
  *      contact@openairinterface.org
  */
 
-
 #include "near_ric.h"
 #include "e2_node.h"
 #include "iApp/e42_iapp_api.h"
@@ -95,7 +94,6 @@ void free_subscribed(void* key, void* value)
  seq_free(arr, NULL);
  free(arr);
 }
-
 
 static
 void register_listeners_for_ran_func_id(near_ric_t* ric, uint16_t const* ran_func_id, subs_ric_t subs)
@@ -410,7 +408,7 @@ void e2_event_loop_ric(near_ric_t* ric)
           }
 
           e2ap_msg_t ans = e2ap_msg_handle_ric(ric, &msg);
-          defer({ e2ap_msg_free_ric(&ric->ap, &ans);} );
+          defer({ e2ap_msg_free_ric(&ric->ap, &ans); } );
 
           if(ans.type != NONE_E2_MSG_TYPE){
 
@@ -495,7 +493,7 @@ void free_near_ric(near_ric_t* ric)
 }
 
 static
-ric_subscription_request_t generate_subscription_request(near_ric_t* ric, sm_ric_t const* sm, uint16_t ran_func_id, void* cmd)
+ric_subscription_request_t generate_subscription_request(near_ric_t* ric, sm_ric_t const* sm, uint16_t ran_func_id, sm_ag_if_wr_subs_t const* cmd)
 {
   assert(ric != NULL);
   ric_subscription_request_t sr = {0}; 
@@ -555,13 +553,15 @@ seq_arr_t conn_e2_nodes(near_ric_t* ric)
   return arr;
 }
 
-void report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd)
+uint16_t report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void const* cmd)
 {
   assert(ric != NULL);
   assert(ran_func_id != 0 && "Reserved SM ID value");
+  assert(ran_func_id < 150 && "Not still reached upper limit");
   assert(cmd != NULL);
 
   sm_ric_t* sm = sm_plugin_ric(&ric->plugin ,ran_func_id); 
+  
   ric_subscription_request_t sr = generate_subscription_request(ric, sm, ran_func_id, cmd);  
 
   // A pending event is created along with a timer of 3000 ms,
@@ -584,6 +584,7 @@ void report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uin
    
   e2ap_free_subscription_request_ric(&ric->ap, &sr);
   free_byte_array(ba_msg);
+  return sr.ric_id.ric_req_id;
 }
 
 /*
@@ -596,9 +597,7 @@ bool ran_func_id_active(const void* value, const void* it)
   act_req_t* act = (act_req_t*)it;
   return act->id.ran_func_id == *ran_func_id;
 }
-*/
 
-/*
 static inline
 ric_subscription_delete_request_t generate_subscription_delete_request(near_ric_t* ric, act_req_t* act)
 {
@@ -607,35 +606,39 @@ ric_subscription_delete_request_t generate_subscription_delete_request(near_ric_
   ric_subscription_delete_request_t sd = {.ric_id = act->id };
   return sd;
 }
+
 */
 
-void rm_report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd)
+void rm_report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, uint16_t act_id)
 {
   assert(ric != NULL);
-  assert(ran_func_id > 0);
   assert(id != NULL);
-  assert(cmd != NULL);
+  assert(act_id > 0);
 
-  assert(0!=0 && "We never came here");
-/*
+  // The active requests values are stored in the xApp SDK. Therefore, 
+  // there is no data here and we cannot check whether it was before 
+  // subscribed.
+  ric_subscription_delete_request_t sd = {.ric_id.ric_req_id = act_id, 
+                                          .ric_id.ran_func_id = ran_func_id};
+
+  /*
   ric_subscription_delete_request_t sd = {0}; 
   {
-    lock_guard(&ric->act_req_mtx);
-    void* start_it = seq_front(&ric->act_req);
-    void* end_it = seq_end(&ric->act_req);
-    void* it = find_if(&ric->act_req, start_it, end_it, &ran_func_id, ran_func_id_active);
-    assert(it != end_it && "Requested RAN function not actived");
+//    lock_guard(&ric->act_req_mtx);
+//    void* start_it = seq_front(&ric->act_req);
+//    void* end_it = seq_end(&ric->act_req);
+//    void* it = find_if(&ric->act_req, start_it, end_it, &ran_func_id, ran_func_id_active);
+//    assert(it != end_it && "Requested RAN function not actived");
     sd = generate_subscription_delete_request(ric, it);  
   }
+*/
 
-
- // A pending event is created along with a timer of 1000 ms,
+ // A pending event is created along with a timer of 3000 ms,
   // after which an event will be generated
   pending_event_ric_t ev = {.ev = SUBSCRIPTION_DELETE_REQUEST_PENDING_EVENT, .id = sd.ric_id };
 
-  long const wait_ms = 1000;
+  long const wait_ms = 3000;
   int fd_timer = create_timer_ms_asio_ric(&ric->io, wait_ms, wait_ms); 
-  //printf("RIC: fd_timer with value created == %d\n", fd_timer);
 
   {
     lock_guard(&ric->pend_mtx);
@@ -648,7 +651,6 @@ void rm_report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, 
   e2ap_send_bytes_ric(&ric->ep, id, ba_msg);
 
   free_byte_array(ba_msg);
-  */
 }
 
 static

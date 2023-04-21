@@ -96,7 +96,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ind_data_t sm_data = ag->proc.on_indication(ag);
+  sm_ind_data_t sm_data = ag->proc.on_indication(ag, NULL);
   if(sm_data.call_process_id != NULL){
     assert(sm_data.len_cpid != 0);
   }

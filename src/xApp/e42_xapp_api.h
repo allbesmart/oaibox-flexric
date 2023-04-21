@@ -62,12 +62,11 @@ typedef enum{
   ms_100,
   ms_1000,
 
-
   ms_end,
 } inter_xapp_e;
 
-// returns a handle
-sm_ans_xapp_t report_sm_xapp_api (global_e2_node_id_t* id, uint32_t sm_id, inter_xapp_e i, sm_cb handler);
+// Returns a handle
+sm_ans_xapp_t report_sm_xapp_api(global_e2_node_id_t* id, uint32_t sm_id, inter_xapp_e i, sm_cb handler);
 
 // Remove the handle previously returned
 void rm_report_sm_xapp_api(int const handle);
@@ -75,12 +74,9 @@ void rm_report_sm_xapp_api(int const handle);
 // Send control message
 sm_ans_xapp_t control_sm_xapp_api(global_e2_node_id_t* id, uint32_t ran_func_id, sm_ag_if_wr_t const* wr);
 
-
 #ifdef __cplusplus
 }
 #endif
-
-
 
 #endif
 

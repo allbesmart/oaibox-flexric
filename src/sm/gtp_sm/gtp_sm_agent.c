@@ -67,11 +67,12 @@ subscribe_timer_t on_subscription_gtp_sm_ag(sm_agent_t const* sm_agent, const sm
   return timer;
 }
 
-
 static
-sm_ind_data_t on_indication_gtp_sm_ag(sm_agent_t const* sm_agent)
+sm_ind_data_t on_indication_gtp_sm_ag(sm_agent_t const* sm_agent, void* act_def)
 {
   assert(sm_agent != NULL);
+  assert(act_def == NULL && "Action Definition data not needed for this SM");
+
   sm_gtp_agent_t* sm = (sm_gtp_agent_t*)sm_agent;
 
   sm_ind_data_t ret = {0};
@@ -142,13 +143,22 @@ sm_e2_setup_data_t on_e2_setup_gtp_sm_ag(sm_agent_t const* sm_agent)
   sm_gtp_agent_t* sm = (sm_gtp_agent_t*)sm_agent;
 
   // ToDO: Fill RAN Function from the RAN
-
   sm_e2_setup_data_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
 
   setup.len_rfd = strlen(sm->base.ran_func_name);
   setup.ran_fun_def = calloc(1, strlen(sm->base.ran_func_name));
   assert(setup.ran_fun_def != NULL);
   memcpy(setup.ran_fun_def, sm->base.ran_func_name, strlen(sm->base.ran_func_name));
+
+  // RAN Function
+  setup.rf.def = cp_str_to_ba(SM_GTP_SHORT_NAME);
+  setup.rf.id = SM_GTP_ID;
+  setup.rf.rev = SM_GTP_REV;
+
+  setup.rf.oid = calloc(1, sizeof(byte_array_t) );
+  assert(setup.rf.oid != NULL && "Memory exhausted");
+
+  *setup.rf.oid = cp_str_to_ba(SM_GTP_OID);
 
   return setup;
 }
@@ -183,6 +193,7 @@ sm_agent_t* make_gtp_sm_agent(sm_io_ag_t io)
 
   sm->base.io = io;
   sm->base.free_sm = free_gtp_sm_ag;
+  sm->base.free_act_def = NULL; //free_act_def_gtp_sm_ag;
 
   sm->base.proc.on_subscription = on_subscription_gtp_sm_ag;
   sm->base.proc.on_indication = on_indication_gtp_sm_ag;

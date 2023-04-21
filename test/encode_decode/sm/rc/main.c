@@ -24,7 +24,7 @@
 #include "../../../../src/util/alg_ds/alg/defer.h"
 #include "../../../../src/sm/rc_sm/enc/rc_enc_asn.h"
 #include "../../../../src/sm/rc_sm/dec/rc_dec_asn.h"
-#include "fill_rnd_data_rc.h"
+#include "../../../rnd/fill_rnd_data_rc.h"
 
 #include <assert.h>
 #include <stdlib.h>

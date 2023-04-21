@@ -21,9 +21,8 @@
 
 
 #include "kpm_sm_ric.h"
-#include "../../../test/encode_decode/sm/kpm/fill_rnd_data_kpm.h"
-#include "../../util/alg_ds/alg/defer.h"
 
+#include "../../util/alg_ds/alg/defer.h"
 #include "enc/kpm_enc_generic.h"
 #include "dec/kpm_dec_generic.h"
 #include "kpm_sm_id.h"
@@ -33,14 +32,13 @@
 
 typedef struct{
   sm_ric_t base;
-//  kpm_enc_asn_t enc;
-
+  
   #ifdef ASN
     kpm_enc_asn_t enc;
   #elif FLATBUFFERS 
     static_assert(false, "Flatbuffer not implemented");
   #elif PLAIN
-    kpm_enc_plain_t enc;
+    static_assert(false, "PLAIN not implemented");
   #else
     static_assert(false, "No encryption type selected");
   #endif
@@ -52,15 +50,15 @@ typedef struct{
  *            specifies the E42 interface. See 'src/xApp/e42_xapp.c' for further information.
  */
 static 
-sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, const sm_ag_if_wr_subs_t* subs)
+sm_subs_data_t on_subscription_kpm_sm_ric(sm_ric_t const* sm_ric, void* cmd)
 {
   assert(sm_ric != NULL); 
-  assert(subs != NULL); 
-  assert(subs->type ==  KPM_SUBS_V3_0);
-  assert(subs->kpm.sz_ad == 1 && "Only 1 Action Definition Supported");
+  assert(cmd != NULL); 
+
+  const kpm_sub_data_t* src = cmd;
+  assert(src->sz_ad == 1 && "Only 1 Action Definition Supported");
   
   sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;  
-  kpm_sub_data_t const* src = &subs->kpm; 
 
   const byte_array_t ba = kpm_enc_event_trigger(&sm->enc, &src->ev_trg_def); 
   const byte_array_t ba_ad = kpm_enc_action_def(&sm->enc, &src->ad[0]);
@@ -94,20 +92,21 @@ sm_ag_if_rd_ind_t on_indication_kpm_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t
   assert(data != NULL); 
   sm_kpm_ric_t* sm = (sm_kpm_ric_t*)sm_ric;  
 
-  sm_ag_if_rd_ind_t ind = {.type = KPM_STATS_V3_0}; 
+  sm_ag_if_rd_ind_t rd_ind = {.type = KPM_STATS_V3_0}; 
 
-  ind.kpm.msg = kpm_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
-  ind.kpm.hdr = kpm_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
-  return ind;
+  rd_ind.kpm.ind.msg = kpm_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+  rd_ind.kpm.ind.hdr = kpm_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
+  return rd_ind;
 }
-
 
 void free_ind_data_kpm_sm_ric(void* msg) 
 {
   assert(msg != NULL);
 
-  kpm_ind_data_t* ind  = (kpm_ind_data_t*)msg;
+  sm_ag_if_rd_ind_t* rd_ind = (sm_ag_if_rd_ind_t*)msg;
+  assert(rd_ind->type == KPM_STATS_V3_0);
 
+  kpm_ind_data_t* ind = &rd_ind->kpm.ind;
   free_kpm_ind_data(ind);
 }
 
@@ -143,8 +142,6 @@ void free_kpm_sm_ric(sm_ric_t* sm_ric)
   free(sm);
 }
 
-
-
 sm_ric_t* make_kpm_sm_ric(void /* sm_io_ric_t io */)
 {
   sm_kpm_ric_t* sm = calloc(1, sizeof(sm_kpm_ric_t));
@@ -177,3 +174,4 @@ sm_ric_t* make_kpm_sm_ric(void /* sm_io_ric_t io */)
 
   return &sm->base;
 }
+

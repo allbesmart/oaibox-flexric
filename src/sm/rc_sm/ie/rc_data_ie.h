@@ -466,7 +466,7 @@ typedef struct{
 ///////////////
 
 typedef struct{
-  e2sm_rc_func_def_t func_def;
+  e2sm_rc_func_def_t ran_func_def;
 } rc_e2_setup_t;
 
 ///////////////

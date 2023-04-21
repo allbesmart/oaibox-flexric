@@ -54,7 +54,7 @@ kpm_event_trigger_def_t kpm_dec_event_trigger_asn(size_t len, uint8_t const ev_t
   const asn_dec_rval_t rval = asn_decode(NULL, syntax, &asn_DEF_E2SM_KPM_EventTriggerDefinition, (void**)&pdu, ev_tr, len);
   assert(rval.code == RC_OK && "Are you sending data in ATS_ALIGNED_BASIC_PER syntax?");
 
-  xer_fprint(stderr, &asn_DEF_E2SM_KPM_EventTriggerDefinition, pdu);
+//  xer_fprint(stderr, &asn_DEF_E2SM_KPM_EventTriggerDefinition, pdu);
 
 
   kpm_event_trigger_def_t ret = {0};
@@ -94,7 +94,7 @@ kpm_act_def_t kpm_dec_action_def_asn(size_t len, uint8_t const action_def[len])
   assert(rval.code == RC_OK && "Are you sending data in ATS_ALIGNED_BASIC_PER syntax?");
   // note that constraints checking on data extracted is already performed by asn_decode()
 
-  xer_fprint(stderr, &asn_DEF_E2SM_KPM_ActionDefinition, pdu);
+//  xer_fprint(stderr, &asn_DEF_E2SM_KPM_ActionDefinition, pdu);
 
   
   switch (pdu->actionDefinition_formats.present)
@@ -148,7 +148,7 @@ kpm_ind_hdr_t kpm_dec_ind_hdr_asn(size_t len, uint8_t const ind_hdr[len])
   const asn_dec_rval_t rval = asn_decode(NULL, syntax, &asn_DEF_E2SM_KPM_IndicationHeader, (void**)&pdu, ind_hdr, len);
   assert(rval.code == RC_OK && "Are you sending data in ATS_ALIGNED_BASIC_PER syntax?");
 
-  xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationHeader, pdu);
+//  xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationHeader, pdu);
 
 
   switch (pdu->indicationHeader_formats.present)
@@ -185,7 +185,7 @@ kpm_ind_msg_t kpm_dec_ind_msg_asn(size_t len, uint8_t const ind_msg[len])
   const asn_dec_rval_t rval = asn_decode(NULL, syntax, &asn_DEF_E2SM_KPM_IndicationMessage, (void**)&pdu, ind_msg, len);
   assert(rval.code == RC_OK && "Are you sending data in ATS_ALIGNED_BASIC_PER syntax?");
 
-  xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage, pdu);
+//  xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage, pdu);
 
 
   switch (pdu->indicationMessage_formats.present)
@@ -230,7 +230,7 @@ kpm_ran_function_def_t kpm_dec_func_def_asn(size_t len, uint8_t const func_def[l
   const asn_dec_rval_t rval = asn_decode(NULL, syntax, &asn_DEF_E2SM_KPM_RANfunction_Description, (void**)&pdu, func_def, len);
   assert(rval.code == RC_OK && "Are you sending data in ATS_ALIGNED_BASIC_PER syntax?");
 
-  xer_fprint(stderr, &asn_DEF_E2SM_KPM_RANfunction_Description, pdu);
+//  xer_fprint(stderr, &asn_DEF_E2SM_KPM_RANfunction_Description, pdu);
   
 
   //  RAN Function Name

@@ -19,7 +19,6 @@
  *      contact@openairinterface.org
  */
 
-
 #include "rlc_sm_ric.h"
 #include "rlc_sm_id.h"
 
@@ -45,29 +44,28 @@ typedef struct{
 
 
 static
-sm_subs_data_t on_subscription_rlc_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_subs_t const* subs)
+sm_subs_data_t on_subscription_rlc_sm_ric(sm_ric_t const* sm_ric, void* cmd)
 {
   assert(sm_ric != NULL); 
-  assert(subs != NULL); 
+  
   sm_rlc_ric_t* sm = (sm_rlc_ric_t*)sm_ric;  
 
-  /*
-  rlc_event_trigger_t ev = {0};
+  rlc_sub_data_t rlc = {0}; 
+  
   const int max_str_sz = 10;
   if(strncmp(cmd, "1_ms", max_str_sz) == 0 ){
-    ev.ms = 1;
+    rlc.et.ms = 1;
   } else if (strncmp(cmd, "2_ms", max_str_sz) == 0 ) {
-    ev.ms = 2;
+    rlc.et.ms = 2;
   } else if (strncmp(cmd, "5_ms", max_str_sz) == 0 ) {
-    ev.ms = 5;
+    rlc.et.ms = 5;
   } else if (strncmp(cmd, "10_ms", max_str_sz) == 0 ) {
-    ev.ms = 10;
+    rlc.et.ms = 10;
   } else {
     assert(0 != 0 && "Invalid input");
   }
-*/
 
-  const byte_array_t ba = rlc_enc_event_trigger(&sm->enc, &subs->rlc.et); 
+  const byte_array_t ba = rlc_enc_event_trigger(&sm->enc, &rlc.et); 
 
   sm_subs_data_t data = {0}; 
   
@@ -91,15 +89,15 @@ sm_ag_if_rd_ind_t on_indication_rlc_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t
 
  sm_ag_if_rd_ind_t rd_if = {.type = RLC_STATS_V0};
 
+  // Header
   rd_if.rlc.msg = rlc_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
+
+  // Message
   rd_if.rlc.hdr = rlc_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
 
-  // ToDO: fill the structure properly
-//  assert(sizeof(rlc_ind_msg_t) == sizeof(rlc_rd_stats_t) && "memcpy not allowed if the structs are different");
-//  memcpy(&rd_if.rlc_stats, &ind_msg, sizeof(rlc_rd_stats_t));
-
-  //rd_if.rlc_stats.tx_bytes = msg.tx_bytes;
-  //rd_if.rlc_stats.tx_pkts = msg.tx_pkts;
+  //  call_process_id
+  assert(data->call_process_id == NULL && "not implemented"); 
+  rd_if.rlc.proc_id = NULL;
 
   return rd_if;
 }
@@ -188,10 +186,13 @@ static
 void free_ind_data_rlc_sm_ric(void* msg)
 {
   assert(msg != NULL);
-  rlc_ind_data_t* ind  = (rlc_ind_data_t*)msg;
+
+  sm_ag_if_rd_ind_t* rd_ind  = (sm_ag_if_rd_ind_t*)msg;
+  assert(rd_ind->type == RLC_STATS_V0);
+
+  rlc_ind_data_t* ind = &rd_ind->rlc;
   free_rlc_ind_hdr(&ind->hdr); 
   free_rlc_ind_msg(&ind->msg); 
-
 }
 
 static

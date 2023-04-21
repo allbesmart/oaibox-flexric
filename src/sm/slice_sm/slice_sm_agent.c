@@ -52,11 +52,11 @@ subscribe_timer_t on_subscription_slice_sm_ag(sm_agent_t const* sm_agent, const 
 
 
 static
-sm_ind_data_t on_indication_slice_sm_ag(sm_agent_t const* sm_agent)
+sm_ind_data_t on_indication_slice_sm_ag(sm_agent_t const* sm_agent, void* act_def)
 {
 //  printf("on_indication SLICE called \n");
-
   assert(sm_agent != NULL);
+  assert(act_def == NULL && "Subscription data not needed for this SM");
   sm_slice_agent_t* sm = (sm_slice_agent_t*)sm_agent;
 
   sm_ind_data_t ret = {0};
@@ -96,7 +96,7 @@ sm_ctrl_out_data_t on_control_slice_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_re
   assert(data != NULL);
   sm_slice_agent_t* sm = (sm_slice_agent_t*) sm_agent;
 
-  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
   wr.ctrl.type = SLICE_CTRL_REQ_V0; 
 
   wr.ctrl.slice_req_ctrl.hdr = slice_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
@@ -106,7 +106,7 @@ sm_ctrl_out_data_t on_control_slice_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_re
   defer({ free_slice_ctrl_msg(&wr.ctrl.slice_req_ctrl.msg); });
 
   sm_ag_if_ans_t ans = sm->base.io.write(&wr);
-  assert(ans.type ==CTRL_OUTCOME_SM_AG_IF_ANS_V0);
+  assert(ans.type == CTRL_OUTCOME_SM_AG_IF_ANS_V0);
   assert(ans.ctrl_out.type == SLICE_AGENT_IF_CTRL_ANS_V0);
  
 
@@ -138,7 +138,16 @@ sm_e2_setup_data_t on_e2_setup_slice_sm_ag(sm_agent_t const* sm_agent)
   assert(setup.ran_fun_def != NULL);
   memcpy(setup.ran_fun_def, sm->base.ran_func_name, strlen(sm->base.ran_func_name));
 
-//  sm_e2_setup_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
+  // RAN Function
+  setup.rf.def = cp_str_to_ba(SM_SLICE_SHORT_NAME);
+  setup.rf.id = SM_SLICE_ID;
+  setup.rf.rev = SM_SLICE_REV;
+
+  setup.rf.oid = calloc(1, sizeof(byte_array_t) );
+  assert(setup.rf.oid != NULL && "Memory exhausted");
+
+  *setup.rf.oid = cp_str_to_ba(SM_SLICE_OID);
+
   return setup;
 }
 
@@ -172,6 +181,7 @@ sm_agent_t* make_slice_sm_agent(sm_io_ag_t io)
 
   sm->base.io = io;
   sm->base.free_sm = free_slice_sm_ag;
+  sm->base.free_act_def = NULL; //free_act_def_slice_sm_ag;
 
   sm->base.proc.on_subscription = on_subscription_slice_sm_ag;
   sm->base.proc.on_indication = on_indication_slice_sm_ag;

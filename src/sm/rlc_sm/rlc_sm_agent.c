@@ -67,13 +67,12 @@ subscribe_timer_t on_subscription_rlc_sm_ag(sm_agent_t const* sm_agent, const sm
   return timer;
 }
 
-
 static
-sm_ind_data_t on_indication_rlc_sm_ag(sm_agent_t const* sm_agent)
+sm_ind_data_t on_indication_rlc_sm_ag(sm_agent_t const* sm_agent,void* act_def)
 {
 //  printf("on_indication RLC called \n");
-
   assert(sm_agent != NULL);
+  assert(act_def == NULL && "Action Definition data not needed for this SM");
   sm_rlc_agent_t* sm = (sm_rlc_agent_t*)sm_agent;
 
   sm_ind_data_t ret = {0};
@@ -151,6 +150,16 @@ sm_e2_setup_data_t on_e2_setup_rlc_sm_ag(sm_agent_t const* sm_agent)
   setup.ran_fun_def = calloc(1, strlen(sm->base.ran_func_name));
   assert(setup.ran_fun_def != NULL);
   memcpy(setup.ran_fun_def, sm->base.ran_func_name, strlen(sm->base.ran_func_name));
+  
+  // RAN Function
+  setup.rf.def = cp_str_to_ba(SM_RLC_SHORT_NAME);
+  setup.rf.id = SM_RLC_ID;
+  setup.rf.rev = SM_RLC_REV;
+
+  setup.rf.oid = calloc(1, sizeof(byte_array_t) );
+  assert(setup.rf.oid != NULL && "Memory exhausted");
+
+  *setup.rf.oid = cp_str_to_ba(SM_RLC_OID);
 
   return setup;
 }
@@ -186,6 +195,7 @@ sm_agent_t* make_rlc_sm_agent(sm_io_ag_t io)
 
   sm->base.io = io;
   sm->base.free_sm = free_rlc_sm_ag;
+  sm->base.free_act_def = NULL; //free_act_def_rlc_sm_ag;
 
   sm->base.proc.on_subscription = on_subscription_rlc_sm_ag;
   sm->base.proc.on_indication = on_indication_rlc_sm_ag;

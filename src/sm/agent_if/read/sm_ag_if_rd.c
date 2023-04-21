@@ -49,9 +49,9 @@ void free_sm_ag_if_rd_ind(sm_ag_if_rd_ind_t* d)
   } else if(d->type == GTP_STATS_V0){
     free_gtp_ind_data(&d->gtp);
   } else if(d->type == KPM_STATS_V3_0){
-    free_kpm_ind_data(&d->kpm);
+    free_kpm_ind_data(&d->kpm.ind);
   } else if(d->type == RAN_CTRL_STATS_V1_03 ){
-    free_rc_ind_data(&d->rc);
+    free_rc_ind_data(&d->rc.ind);
   } else {
     assert(0!=0 && "Unforeseen case");
   }
@@ -77,10 +77,18 @@ sm_ag_if_rd_ind_t cp_sm_ag_if_rd_ind(sm_ag_if_rd_ind_t const* d)
   } else if(ans.type == GTP_STATS_V0) {
     ans.gtp = cp_gtp_ind_data(&d->gtp);
   } else if(ans.type == KPM_STATS_V3_0) {
-    ans.kpm = cp_kpm_ind_data(&d->kpm);
+    ans.kpm.ind = cp_kpm_ind_data(&d->kpm.ind);
+    //kpm_act_def_t* tmp = calloc(1, sizeof(kpm_act_def_t));
+    //assert(tmp != NULL && "Memory exhausted");
+    //*tmp = cp_kpm_act_def(d->kpm.act_def);
+    ans.kpm.act_def = d->kpm.act_def;
   } else if(ans.type == RAN_CTRL_STATS_V1_03) {
-    ans.rc = cp_rc_ind_data(&d->rc);
-  }  else {
+    ans.rc.ind = cp_rc_ind_data(&d->rc.ind);
+    e2sm_rc_action_def_t* tmp = calloc(1, sizeof(e2sm_rc_action_def_t));
+    assert(tmp != NULL && "Memory exhausted");
+    *tmp = cp_e2sm_rc_action_def(d->rc.act_def);
+    ans.rc.act_def = tmp;
+  } else {
     assert("Unknown type or not implemented");
   }
 

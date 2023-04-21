@@ -24,7 +24,9 @@ elseif(SM_ENCODING_RC STREQUAL "ASN" )
   add_subdirectory(ie/ir)
 
   add_library(rc_sm SHARED
-                     ${SM_ENCODING_RC_SRC}
+                       # This dependency sucks!
+                      ../../lib/ap/e2ap_types/common/e2ap_ran_function.c
+                    ${SM_ENCODING_RC_SRC}
                       enc/rc_enc_asn.c 
                       dec/rc_dec_asn.c 
                       $<TARGET_OBJECTS:e2sm_rc_asn1_obj>

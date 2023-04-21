@@ -142,7 +142,6 @@ e2ap_msg_t e2ap_msg_handle_ric(near_ric_t* ric, const e2ap_msg_t* msg)
   const e2_msg_type_t msg_type = msg->type;
   assert(check_valid_msg_type(msg_type) == true);
 
-
   assert(ric->handle_msg[ msg_type ] != NULL);
   return ric->handle_msg[msg_type](ric, msg);
 }
@@ -178,6 +177,7 @@ e2ap_msg_t e2ap_msg_handle_ric(near_ric_t* ric, const e2ap_msg_t* msg)
 
 #ifndef TEST_AGENT_RIC  
   notify_msg_iapp_api(msg);
+  assert(0!=0 && "Here we are?");
 #endif
 
   e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};
@@ -277,7 +277,10 @@ void publish_ind_msg(near_ric_t* ric,  uint16_t ran_func_id, sm_ag_if_rd_ind_t* 
 
   sm_ag_if_rd_ind_t d = sm->proc.on_indication(sm, &data);
   defer({ sm->alloc.free_ind_data(&d); } );
-  assert(d.type == MAC_STATS_V0 || d.type == RLC_STATS_V0 || d.type == PDCP_STATS_V0 || d.type == SLICE_STATS_V0 || d.type == KPM_STATS_V3_0 || d.type == GTP_STATS_V0);
+  assert(d.type == MAC_STATS_V0 || d.type == RLC_STATS_V0 
+        || d.type == PDCP_STATS_V0 || d.type == SLICE_STATS_V0 
+        || d.type == KPM_STATS_V3_0 || d.type == RAN_CTRL_STATS_V1_03 
+        || d.type == GTP_STATS_V0 || d.type == TC_STATS_V0 );
 
   publish_ind_msg(ric, ran_func_id, &d);
 

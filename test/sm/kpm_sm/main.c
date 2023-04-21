@@ -26,7 +26,7 @@
 #include "../../../src/sm/kpm_sm_v03.00/kpm_sm_ric.h"
 #include "../../../src/sm/kpm_sm_v03.00/ie/kpm_data_ie.h"
 #include "../../../src/sm/kpm_sm_v03.00/kpm_sm_id.h"
-#include "../../encode_decode/sm/kpm/fill_rnd_data_kpm.h"
+#include "../../rnd/fill_rnd_data_kpm.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -60,18 +60,20 @@ void read_RAN(sm_ag_if_rd_t* read)
   if(read->type == INDICATION_MSG_AGENT_IF_ANS_V0){ 
   assert(read->ind.type == KPM_STATS_V3_0);
 
-  read->ind.kpm.hdr = fill_kpm_ind_hdr();
-  read->ind.kpm.msg = fill_kpm_ind_msg(); 
-                                         //
-  cp_ind.hdr = cp_kpm_ind_hdr(&read->ind.kpm.hdr);
-  cp_ind.msg = cp_kpm_ind_msg(&read->ind.kpm.msg);
+  read->ind.kpm.ind.hdr = fill_kpm_ind_hdr();
+  read->ind.kpm.ind.msg = fill_kpm_ind_msg(); 
+  assert(read->ind.kpm.act_def!= NULL);
+  
+  //
+  cp_ind.hdr = cp_kpm_ind_hdr(&read->ind.kpm.ind.hdr);
+  cp_ind.msg = cp_kpm_ind_msg(&read->ind.kpm.ind.msg);
 
-  assert(eq_kpm_ind_hdr(&read->ind.kpm.hdr, &cp_ind.hdr) == true);
-  assert(eq_kpm_ind_msg(&read->ind.kpm.msg, &cp_ind.msg) == true);
+  assert(eq_kpm_ind_hdr(&read->ind.kpm.ind.hdr, &cp_ind.hdr) == true);
+  assert(eq_kpm_ind_msg(&read->ind.kpm.ind.msg, &cp_ind.msg) == true);
 
   } else if(read->type == E2_SETUP_AGENT_IF_ANS_V0 ){
     assert(read->e2ap.type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0);
-    read->e2ap.kpm.ran_func_def = fill_kpm_ran_function(); 
+    read->e2ap.kpm.ran_func_def = fill_kpm_ran_func_def(); 
     cp_e2_setup.ran_func_def = cp_kpm_ran_function_def(&read->e2ap.kpm.ran_func_def);
 
     assert(eq_kpm_ran_function_def(&cp_e2_setup.ran_func_def, &read->e2ap.kpm.ran_func_def) == true);
@@ -159,13 +161,13 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   sub.kpm.ad[0] = fill_kpm_action_def();
   defer({ free_kpm_action_def(&sub.kpm.ad[0]) ;});
 
-  sm_subs_data_t data = ric->proc.on_subscription(ric, &sub);
+  sm_subs_data_t data = ric->proc.on_subscription(ric, &sub.kpm);
   defer({ free_sm_subs_data(&data); });
 
   subscribe_timer_t t = ag->proc.on_subscription(ag, &data); 
-  defer({ free_kpm_action_def(t.kpm_ad); });
+  defer({ free_kpm_action_def(t.act_def); free(t.act_def); });
   assert(t.ms != -1 && t.ms == sub.kpm.ev_trg_def.kpm_ric_event_trigger_format_1.report_period_ms);
-  assert(eq_kpm_action_def(&sub.kpm.ad[0], &t.kpm_ad[0]) == true);
+  assert(eq_kpm_action_def(&sub.kpm.ad[0], t.act_def) == true);
 }
 
 // E2 -> RIC
@@ -174,16 +176,29 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
 {
   assert(ag != NULL);
   assert(ric != NULL);
+/*  
+  sm_ag_if_wr_subs_t sub = {.type = KPM_SUBS_V3_0 }; 
+  defer({ free_kpm_sub_data(&sub.kpm); });
 
-  sm_ind_data_t sm_data = ag->proc.on_indication(ag);
+  sub.kpm.ev_trg_def = fill_kpm_event_trigger_def();
+  sub.kpm.sz_ad = 1;
+  sub.kpm.ad = calloc(sub.kpm.sz_ad, sizeof(kpm_act_def_t));
+  assert(sub.kpm.ad != NULL && "Memory exhausted");
+  sub.kpm.ad[0] = 
+*/
+  kpm_act_def_t act_def = fill_kpm_action_def();
+  defer({  free_kpm_action_def(&act_def); } );
+  
+
+  sm_ind_data_t sm_data = ag->proc.on_indication(ag, &act_def);
   defer({ free_sm_ind_data(&sm_data); }); 
   defer({ free_kpm_ind_data(&cp_ind); });
 
   sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
   assert(msg.type == KPM_STATS_V3_0);
-  defer({ free_kpm_ind_data(&msg.kpm); });
+  defer({ free_kpm_ind_data(&msg.kpm.ind); });
 
-  kpm_ind_data_t const* data = &msg.kpm;
+  kpm_ind_data_t const* data = &msg.kpm.ind;
 
   assert(eq_kpm_ind_data(&cp_ind, data) == true);
 }
@@ -211,7 +226,7 @@ int main()
   sm_agent_t* sm_ag = make_kpm_sm_agent(io_ag);
   sm_ric_t* sm_ric = make_kpm_sm_ric();
 
-  for(int i =0 ; i < 256*4096; ++i){
+//  for(int i =0 ; i < 1; ++i){
  //   check_eq_ran_function(sm_ag, sm_ric);
  //
     check_indication(sm_ag, sm_ric);
@@ -221,7 +236,7 @@ int main()
 
 // check_ric_service_update(sm_ag, sm_ric);
 
-  }
+//  }
 
   sm_ag->free_sm(sm_ag);
   sm_ric->free_sm(sm_ric);

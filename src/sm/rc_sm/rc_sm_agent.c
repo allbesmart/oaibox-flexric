@@ -19,13 +19,12 @@
  *      contact@openairinterface.org
  */
 
-
 #include "rc_sm_agent.h"
+
+#include "../../util/alg_ds/alg/defer.h"
 #include "rc_sm_id.h"
 #include "enc/rc_enc_generic.h"
 #include "dec/rc_dec_generic.h"
-#include "../../util/alg_ds/alg/defer.h"
-
 
 #include <assert.h>
 #include <stdio.h>
@@ -141,8 +140,9 @@ subscribe_timer_t on_subscription_rc_sm_ag(sm_agent_t const* sm_agent, const sm_
   defer({ free_e2sm_rc_event_trigger(&wr.subs.rc.et); });
 
   wr.subs.rc.sz_ad = 1;
-  wr.subs.rc.ad = calloc(wr.subs.rc.sz_ad, sizeof(e2sm_rc_action_def_t) );
+  wr.subs.rc.ad = calloc(wr.subs.rc.sz_ad, sizeof(e2sm_rc_action_def_t));
   assert(wr.subs.rc.ad != NULL && "Memory exhausted");
+  defer({ free_e2sm_rc_action_def( wr.subs.rc.ad); free(wr.subs.rc.ad); });
 
   wr.subs.rc.ad[0] = rc_dec_action_def(&sm->enc, data->len_ad, data->action_def);
 
@@ -154,11 +154,11 @@ subscribe_timer_t on_subscription_rc_sm_ag(sm_agent_t const* sm_agent, const sm_
 }
 
 static
-sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t const* sm_agent)
+sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t const* sm_agent, void* act_def)
 {
 //  printf("on_indication RC called \n");
-
   assert(sm_agent != NULL);
+  assert(act_def == NULL && "Action definition data not needed for this SM");
   sm_rc_agent_t* sm = (sm_rc_agent_t*)sm_agent;
 
   sm_ind_data_t ret = {0};
@@ -166,19 +166,20 @@ sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t const* sm_agent)
   // Fill Indication 
   sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
   rd_if.ind.type = RAN_CTRL_STATS_V1_03;
+  rd_if.ind.rc.act_def = act_def;
   sm->base.io.read(&rd_if);
 
   // Liberate the memory if previously allocated by the RAN. It sucks
-  rc_ind_data_t* ind = &rd_if.ind.rc;
+  rc_ind_data_t* ind = &rd_if.ind.rc.ind;
   defer({ free_rc_ind_data(ind); });
 
   // Fill Indication Header
-  byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &rd_if.ind.rc.hdr);
+  byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &rd_if.ind.rc.ind.hdr);
   ret.ind_hdr = ba_hdr.buf;
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message
-  byte_array_t ba_msg = rc_enc_ind_msg(&sm->enc, &rd_if.ind.rc.msg);
+  byte_array_t ba_msg = rc_enc_ind_msg(&sm->enc, &rd_if.ind.rc.ind.msg);
   ret.ind_msg = ba_msg.buf;
   ret.len_msg = ba_msg.len;
 
@@ -198,8 +199,12 @@ sm_ctrl_out_data_t on_control_rc_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_req_d
   sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
   wr.ctrl.type = RAN_CONTROL_CTRL_V1_03;
 
-  wr.ctrl.rc_ctrl.hdr = rc_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
-  wr.ctrl.rc_ctrl.msg = rc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
+  rc_ctrl_req_data_t* rc_ctrl = &wr.ctrl.rc_ctrl;
+
+  rc_ctrl->hdr = rc_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
+  rc_ctrl->msg = rc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
+  defer({ free_rc_ctrl_req_data(rc_ctrl); });
+
 
   sm_ag_if_ans_t ret = sm->base.io.write(&wr);
   assert(ret.type == CTRL_OUTCOME_SM_AG_IF_ANS_V0);
@@ -226,7 +231,7 @@ sm_e2_setup_data_t on_e2_setup_rc_sm_ag(sm_agent_t const* sm_agent)
   rd.e2ap.type = RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0;
   sm->base.io.read(&rd);
 
-  e2sm_rc_func_def_t* ran_func = &rd.e2ap.rc.func_def; 
+  e2sm_rc_func_def_t* ran_func = &rd.e2ap.rc.ran_func_def; 
   defer({ free_e2sm_rc_func_def(ran_func); });
 
   byte_array_t ba = rc_enc_func_def(&sm->enc, ran_func);
@@ -234,6 +239,16 @@ sm_e2_setup_data_t on_e2_setup_rc_sm_ag(sm_agent_t const* sm_agent)
   sm_e2_setup_data_t setup = {0}; 
   setup.len_rfd = ba.len;
   setup.ran_fun_def = ba.buf;
+
+  // RAN Function
+  setup.rf.def = cp_str_to_ba(SM_RAN_CTRL_SHORT_NAME);
+  setup.rf.id = SM_RC_ID;
+  setup.rf.rev = SM_RC_REV;
+
+  setup.rf.oid = calloc(1, sizeof(byte_array_t) );
+  assert(setup.rf.oid != NULL && "Memory exhausted");
+
+  *setup.rf.oid = cp_str_to_ba(SM_RAN_CTRL_OID);
 
   return setup;
 }
@@ -268,6 +283,7 @@ sm_agent_t* make_rc_sm_agent(sm_io_ag_t io)
 
   sm->base.io = io;
   sm->base.free_sm = free_rc_sm_ag;
+  sm->base.free_act_def = NULL; //free_act_def_rc_sm_ag;
 
   sm->base.proc.on_subscription = on_subscription_rc_sm_ag;
   sm->base.proc.on_indication = on_indication_rc_sm_ag;

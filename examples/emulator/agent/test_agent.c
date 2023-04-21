@@ -55,8 +55,10 @@ void read_RAN(sm_ag_if_rd_t* ag_rd)
   } else if(data->type == GTP_STATS_V0){
     fill_gtp_ind_data(&data->gtp);
   } else if(data->type == KPM_STATS_V3_0){
-    data->kpm.hdr = fill_kpm_ind_hdr(); 
-    data->kpm.msg = fill_kpm_ind_msg(); 
+    assert(data->kpm.act_def!= NULL && "Cannot be NULL");
+    data->kpm.ind.hdr = fill_kpm_ind_hdr(); 
+    data->kpm.ind.msg = fill_kpm_ind_msg(); 
+    
   } else {
     assert("Invalid data type");
   }

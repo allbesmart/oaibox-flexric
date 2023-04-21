@@ -62,7 +62,6 @@ byte_array_t kpm_enc_event_trigger_asn(kpm_event_trigger_def_t const* event_trig
           }
   }
   
-  
   byte_array_t ba = {.buf = malloc(2048), .len = 2048}; 
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
   asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_KPM_EventTriggerDefinition, pdu, ba.buf, ba.len);
@@ -129,8 +128,8 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
     }
   }
 
-  xer_fprint(stderr, &asn_DEF_E2SM_KPM_ActionDefinition, pdu);
-  fflush(stdout);
+//  xer_fprint(stderr, &asn_DEF_E2SM_KPM_ActionDefinition, pdu);
+//  fflush(stdout);
 
   /* XXX-tuning: 
    * below bytearray sizing needs to be reviewed and made dynamic. It looks too small for the general case of action definition.
@@ -223,8 +222,8 @@ byte_array_t kpm_enc_ind_msg_asn(kpm_ind_msg_t const* ind_msg)
   }
 
 
-  xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage, pdu);
-  fflush(stdout);
+//  xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage, pdu);
+//  fflush(stdout);
 
   byte_array_t  ba = {.buf = malloc(2048), .len = 2048};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
@@ -439,8 +438,8 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
   }
 
 
-  xer_fprint(stderr, &asn_DEF_E2SM_KPM_RANfunction_Description, pdu);
-  fflush(stdout);
+//  xer_fprint(stderr, &asn_DEF_E2SM_KPM_RANfunction_Description, pdu);
+//  fflush(stdout);
 
   byte_array_t  ba = {.buf = malloc(2048), .len = 2048};
   assert(ba.buf != NULL && "Memory exhausted");

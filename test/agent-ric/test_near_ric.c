@@ -39,27 +39,58 @@
 #include <stdio.h>
 #include <unistd.h>
 
+static
+void read_e2_setup_agent(sm_ag_if_rd_e2setup_t* e2ap)
+{
+  assert(e2ap != NULL);
+  assert(e2ap->type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0 || e2ap->type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
+  if(e2ap->type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0 ){
+    e2ap->kpm.ran_func_def = fill_kpm_ran_func_def(); 
+  } else if(e2ap->type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0 ){
+    e2ap->rc.ran_func_def = fill_rc_ran_func_def();
+  } else {
+    assert(0 != 0 && "Unknown type");
+  }
+}
+
+static
+void read_ind_agent(sm_ag_if_rd_ind_t* ind)
+{
+  assert(ind != NULL);
+  if(ind->type == MAC_STATS_V0){
+    fill_mac_ind_data(&ind->mac);
+  } else if(ind->type == RLC_STATS_V0){
+    fill_rlc_ind_data(&ind->rlc);
+  } else if (ind->type == PDCP_STATS_V0){
+    fill_pdcp_ind_data(&ind->pdcp);
+  } else if(ind->type == SLICE_STATS_V0){
+    fill_slice_ind_data(&ind->slice);
+  } else if(ind->type == GTP_STATS_V0){
+    fill_gtp_ind_data(&ind->gtp);
+  } else if(ind->type == TC_STATS_V0){
+    fill_tc_ind_data(&ind->tc);
+  } else if(ind->type == KPM_STATS_V3_0){
+    ind->kpm.ind.hdr = fill_kpm_ind_hdr();
+    ind->kpm.ind.msg = fill_kpm_ind_msg();
+  } else if(ind->type == RAN_CTRL_STATS_V1_03){
+    assert(0!=0 && "Not implemented");
+  } else {
+    assert(0!=0 && "Unknown type");
+  } 
+}
 
 static
 void read_RAN(sm_ag_if_rd_t* ag_rd)
 {
   assert(ag_rd != NULL);
-  assert(ag_rd->type == INDICATION_MSG_AGENT_IF_ANS_V0 );
-  
-  sm_ag_if_rd_ind_t* data = &ag_rd->ind; 
+  assert(ag_rd->type == INDICATION_MSG_AGENT_IF_ANS_V0 || E2_SETUP_AGENT_IF_ANS_V0 );
 
-  assert(data->type == MAC_STATS_V0 || data->type == RLC_STATS_V0 ||  data->type == PDCP_STATS_V0 || data->type == SLICE_STATS_V0);
-
-  if(data->type == MAC_STATS_V0 ){
-      fill_mac_ind_data(&data->mac);
-  } else if(data->type == RLC_STATS_V0) {
-      fill_rlc_ind_data(&data->rlc);
-  } else if (data->type == PDCP_STATS_V0 ){
-      fill_pdcp_ind_data(&data->pdcp);
-  } else if(data->type == SLICE_STATS_V0 ){
-    fill_slice_ind_data(&data->slice);
+  if(ag_rd->type == E2_SETUP_AGENT_IF_ANS_V0){
+    read_e2_setup_agent(&ag_rd->e2ap);
+  } else if(ag_rd->type == INDICATION_MSG_AGENT_IF_ANS_V0 ){
+    read_ind_agent(&ag_rd->ind);
   } else {
-    assert("Invalid data type");
+    assert(0!=0 && "Unknown type");
   }
 }
 
@@ -108,11 +139,10 @@ int main(int argc, char *argv[])
   assert(e2_nodes.len > 0 && "No E2 Nodes connected");
 
   global_e2_node_id_t const* id = &e2_nodes.n[0].id;
-
+/*
   const uint16_t MAC_ran_func_id = 142;
   const char* cmd = "5_ms";
-  report_service_near_ric_api(id, MAC_ran_func_id, cmd );
-  sleep(2);
+  uint16_t h = report_service_near_ric_api(id, MAC_ran_func_id, cmd );
 
 //  const char* cmd2 = "Hello";
 //  control_service_near_ric_api(id, MAC_ran_func_id, cmd2 );  
@@ -121,21 +151,47 @@ int main(int argc, char *argv[])
 //  load_sm_near_ric_api("../test/so/librlc_sm.so");
 
   const uint16_t RLC_ran_func_id = 143;
-  report_service_near_ric_api(id,RLC_ran_func_id, cmd);
-  sleep(2);
+  uint16_t h2 = report_service_near_ric_api(id, RLC_ran_func_id, cmd);
 
   const uint16_t PDCP_ran_func_id = 144;
-  report_service_near_ric_api(id,PDCP_ran_func_id, cmd);
-  sleep(2);
+  uint16_t h3 = report_service_near_ric_api(id, PDCP_ran_func_id, cmd);
 
   const uint16_t SLICE_ran_func_id = 145;
-  report_service_near_ric_api(id,SLICE_ran_func_id, cmd);
+  uint16_t h4 = report_service_near_ric_api(id, SLICE_ran_func_id, cmd);
+
+  const uint16_t TC_ran_func_id = 146;
+  uint16_t h5 = report_service_near_ric_api(id, TC_ran_func_id, cmd);
+
+  const uint16_t GTP_ran_func_id = 148;
+  uint16_t h6 = report_service_near_ric_api(id, GTP_ran_func_id, cmd);
+*/
+  const uint16_t KPM_ran_func_id = 2;
+  kpm_sub_data_t kpm_sub = {.ev_trg_def.type = FORMAT_1_RIC_EVENT_TRIGGER,
+                            .ev_trg_def.kpm_ric_event_trigger_format_1.report_period_ms = 5};
+  // [1-16]
+  kpm_sub.sz_ad = 1;
+  kpm_sub.ad = calloc(kpm_sub.sz_ad, sizeof(kpm_act_def_t));
+  assert(kpm_sub.ad != NULL && "Memory exhausted");
+ 
+  kpm_sub.ad[0] = fill_kpm_action_def();
+
+  uint16_t h7 = report_service_near_ric_api(id, KPM_ran_func_id, &kpm_sub);
+
+  const uint16_t RC_ran_func_id = 3;
+
+//  uint16_t h8 = report_service_near_ric_api(id, RC_ran_func_id, cmd);
+
+
   sleep(2);
 
-  rm_report_service_near_ric_api(id ,MAC_ran_func_id, cmd);
-  rm_report_service_near_ric_api(id ,RLC_ran_func_id, cmd);
-  rm_report_service_near_ric_api(id ,PDCP_ran_func_id, cmd);
-  rm_report_service_near_ric_api(id ,SLICE_ran_func_id, cmd);
+//  rm_report_service_near_ric_api(id, MAC_ran_func_id, h);
+//  rm_report_service_near_ric_api(id, RLC_ran_func_id, h2);
+//  rm_report_service_near_ric_api(id, PDCP_ran_func_id, h3);
+//  rm_report_service_near_ric_api(id, SLICE_ran_func_id, h4);
+//  rm_report_service_near_ric_api(id, TC_ran_func_id, h5);
+//  rm_report_service_near_ric_api(id, GTP_ran_func_id, h6);
+  rm_report_service_near_ric_api(id, KPM_ran_func_id, h7);
+//  rm_report_service_near_ric_api(id, RC_ran_func_id, h8);
 
   sleep(1);
 
@@ -144,6 +200,9 @@ int main(int argc, char *argv[])
 
   // Stop the RIC
   stop_near_ric_api();
+
+  free_kpm_sub_data(&kpm_sub); 
+  free_e2_nodes_api(&e2_nodes); // e2_nodes_api_t* src);
 
   printf("Test communicating E2-Agent and Near-RIC run SUCCESSFULLY\n");
 

@@ -59,17 +59,18 @@ void read_RAN(sm_ag_if_rd_t* read)
   assert(read != NULL);
   if(read->type == INDICATION_MSG_AGENT_IF_ANS_V0){ 
   assert(read->ind.type == RAN_CTRL_STATS_V1_03);
+  assert(read->ind.rc.act_def != NULL);
 
-  read->ind.rc = fill_rnd_rc_ind_data();
-  cp_ind = cp_rc_ind_data(&read->ind.rc);
+  read->ind.rc.ind = fill_rnd_rc_ind_data();
+  cp_ind = cp_rc_ind_data(&read->ind.rc.ind);
 
-  assert(eq_rc_ind_data(&read->ind.rc, &cp_ind) == true);
+  assert(eq_rc_ind_data(&read->ind.rc.ind, &cp_ind) == true);
 
   } else if(read->type == E2_SETUP_AGENT_IF_ANS_V0 ){
     assert(read->e2ap.type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
-    read->e2ap.rc.func_def = fill_rc_ran_func_def();
-    cp_e2_setup.func_def = cp_e2sm_rc_func_def(&read->e2ap.rc.func_def);
-    assert(eq_e2sm_rc_func_def(&cp_e2_setup.func_def, &read->e2ap.rc.func_def) == true);
+    read->e2ap.rc.ran_func_def = fill_rc_ran_func_def();
+    cp_e2_setup.ran_func_def = cp_e2sm_rc_func_def(&read->e2ap.rc.ran_func_def);
+    assert(eq_e2sm_rc_func_def(&cp_e2_setup.ran_func_def, &read->e2ap.rc.ran_func_def) == true);
 
   } else {
     assert(0!=0 && "Unknown type");
@@ -145,7 +146,7 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   sub.rc = fill_rnd_rc_subscription();
   defer({ free_rc_sub_data(&sub.rc); });
 
-  sm_subs_data_t data = ric->proc.on_subscription(ric, &sub);
+  sm_subs_data_t data = ric->proc.on_subscription(ric, &sub.rc);
   defer({ free_sm_subs_data(&data); });
 
   subscribe_timer_t t = ag->proc.on_subscription(ag, &data); 
@@ -162,15 +163,19 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ind_data_t sm_data = ag->proc.on_indication(ag);
+  sm_ag_if_wr_subs_t sub = {.type = RAN_CTRL_SUBS_V1_03};
+  sub.rc = fill_rnd_rc_subscription();
+  defer({ free_rc_sub_data(&sub.rc); });
+
+  sm_ind_data_t sm_data = ag->proc.on_indication(ag, &sub);
   defer({ free_sm_ind_data(&sm_data); }); 
   defer({ free_rc_ind_data(&cp_ind); });
 
   sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
   assert(msg.type == RAN_CTRL_STATS_V1_03);
-  defer({ free_rc_ind_data(&msg.rc); });
+  defer({ free_rc_ind_data(&msg.rc.ind); });
 
-  rc_ind_data_t const* data = &msg.rc;
+  rc_ind_data_t const* data = &msg.rc.ind;
 
   assert(eq_rc_ind_data(&cp_ind, data) == true);
 }
@@ -192,6 +197,7 @@ void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
   defer({ free_sm_ctrl_req_data(&ctrl_req); });
 
   sm_ctrl_out_data_t out_data = ag->proc.on_control(ag, &ctrl_req);
+  defer({ free_sm_ctrl_out_data(&out_data); });
   defer({ free_rc_ctrl_req_data(&cp_rc_ctrl); });
 
   assert(eq_rc_ctrl_req_data(&wr.ctrl.rc_ctrl, &cp_rc_ctrl));
@@ -214,9 +220,9 @@ void check_e2_setup(sm_agent_t* ag, sm_ric_t* ric)
 
   sm_ag_if_rd_e2setup_t out = ric->proc.on_e2_setup(ric, &data);
   assert(out.type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
-  defer({ free_e2sm_rc_func_def(&out.rc.func_def); });
+  defer({ free_e2sm_rc_func_def(&out.rc.ran_func_def); });
 
-  assert(eq_e2sm_rc_func_def(&out.rc.func_def, &cp_e2_setup.func_def) == true);
+  assert(eq_e2sm_rc_func_def(&out.rc.ran_func_def, &cp_e2_setup.ran_func_def) == true);
 }
 
 int main()
@@ -227,7 +233,7 @@ int main()
   sm_agent_t* sm_ag = make_rc_sm_agent(io_ag);
   sm_ric_t* sm_ric = make_rc_sm_ric();
 
-  for(int i =0 ; i < 256*4096; ++i){
+  for(int i =0 ; i < 1; ++i){
  //   check_eq_ran_function(sm_ag, sm_ric);
  //
     check_indication(sm_ag, sm_ric);

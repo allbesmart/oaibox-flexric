@@ -35,6 +35,8 @@
 #include "../../rc_sm/ie/rc_data_ie.h"
 #include "../../kpm_sm_v03.00/ie/kpm_data_ie.h"
 
+#include "../write/subscribe_timer.h"
+
 ////////////////////
 // Indication Message 
 ////////////////////
@@ -53,6 +55,18 @@ typedef enum{
 } sm_ag_if_rd_ind_e;
 
 typedef struct{
+  kpm_ind_data_t ind;
+  // Non-owning pointer
+  kpm_act_def_t const* act_def;
+} kpm_rd_ind_data_t;
+
+typedef struct{
+  rc_ind_data_t ind;
+  // Non-owning pointer
+  e2sm_rc_action_def_t const* act_def;
+} rc_rd_ind_data_t;
+
+typedef struct{
   sm_ag_if_rd_ind_e type;
   union {
     mac_ind_data_t mac;
@@ -61,8 +75,8 @@ typedef struct{
     slice_ind_data_t slice;
     tc_ind_data_t tc;
     gtp_ind_data_t gtp;
-    kpm_ind_data_t kpm;
-    rc_ind_data_t rc;
+    kpm_rd_ind_data_t kpm;
+    rc_rd_ind_data_t rc;
   };
 } sm_ag_if_rd_ind_t;
 

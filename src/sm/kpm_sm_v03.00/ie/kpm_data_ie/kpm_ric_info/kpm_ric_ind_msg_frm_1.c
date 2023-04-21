@@ -56,59 +56,99 @@ bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1
   // Measurement Data
   if (m0->meas_data_lst_len != m1->meas_data_lst_len)
     return false;
+
   for (size_t i = 0; i < m0->meas_data_lst_len; ++i)
   {
-    if (eq_meas_data_lst(&m0->meas_data_lst[i], &m0->meas_data_lst[i]) != true)
+    if (eq_meas_data_lst(&m0->meas_data_lst[i], &m0->meas_data_lst[i]) != true){
+      assert(0!=0);
       return false;
+    }
   }
 
 
   // Measurement Information
-  if (m0->meas_info_lst_len != m1->meas_info_lst_len)
+  if (m0->meas_info_lst_len != m1->meas_info_lst_len){
+      assert(0!=0);
     return false;
+  }
   for (size_t i = 0; i < m0->meas_info_lst_len; ++i)
   {
     // Meas Type
-    if (eq_meas_type(&m0->meas_info_lst[i].meas_type, &m1->meas_info_lst[i].meas_type) != true)
+    if (eq_meas_type(&m0->meas_info_lst[i].meas_type, &m1->meas_info_lst[i].meas_type) != true){
+      assert(0!=0);
       return false;
-
+    }
 
     // Label Info
 
-    if (m0->meas_info_lst[i].label_info_lst_len != m1->meas_info_lst[i].label_info_lst_len)
+    if (m0->meas_info_lst[i].label_info_lst_len != m1->meas_info_lst[i].label_info_lst_len){
+      assert(0!=0);
       return false;
+    }
     
     for (size_t j = 0; j < m0->meas_info_lst[i].label_info_lst_len; ++j)
     {
-      if (eq_label_info(&m0->meas_info_lst[i].label_info_lst[j], &m1->meas_info_lst[i].label_info_lst[j]) != true)
+      if (eq_label_info(&m0->meas_info_lst[i].label_info_lst[j], &m1->meas_info_lst[i].label_info_lst[j]) != true){
+      assert(0!=0);
         return false;
+    }
     }
   }
 
   // Granularity Period
-  if ((m0->gran_period_ms != NULL || m1->gran_period_ms != NULL) && *m0->gran_period_ms != *m1->gran_period_ms)
+  if ((m0->gran_period_ms != NULL || m1->gran_period_ms != NULL) && *m0->gran_period_ms != *m1->gran_period_ms){
+      assert(0!=0);
     return false;
-
+  }
 
   return true;
 }
 
 
-kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src) {
-
+kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src) 
+{
   assert(src != NULL);
-  kpm_ind_msg_format_1_t ret = {0};
+  kpm_ind_msg_format_1_t dst = {0};
 
-  if (src->gran_period_ms) {
-    ret.gran_period_ms = malloc (sizeof(ret.gran_period_ms));
-    ret.gran_period_ms = src->gran_period_ms; 
+  assert(src->meas_data_lst_len > 0 && src->meas_data_lst_len < 65536);
+  dst.meas_data_lst_len = src->meas_data_lst_len;
+  dst.meas_data_lst = calloc(dst.meas_data_lst_len, sizeof(meas_data_lst_t));
+  assert(dst.meas_data_lst != NULL && "Memory exhausted");
+  for(size_t i = 0; i < dst.meas_data_lst_len; ++i){
+    dst.meas_data_lst[i] = cp_meas_data_lst(&src->meas_data_lst[i]);          
   }
 
+  // [0, 65535]
+  if(src->meas_info_lst_len > 0){
+    assert(src->meas_info_lst_len < 65536);
+    dst.meas_info_lst_len = src->meas_info_lst_len;  
+    dst.meas_info_lst = calloc(dst.meas_info_lst_len, sizeof(meas_info_format_1_lst_t  ));
+    assert(dst.meas_info_lst != NULL && "Memory exhausted");
+    for(size_t i = 0; i < dst.meas_info_lst_len; ++i){
+      dst.meas_info_lst[i] = cp_meas_info_format_1_lst(&src->meas_info_lst[i]); 
+    }
+  }
+
+  //uint32_t *gran_period_ms;  // 8.3.8  -  OPTIONAL
+  if (src->gran_period_ms) {
+    dst.gran_period_ms = malloc(sizeof(dst.gran_period_ms));
+    assert(dst.gran_period_ms != NULL && "Memory exhausted");
+    *dst.gran_period_ms = *src->gran_period_ms; 
+  }
+
+  return dst;
+  /*
   if (src->meas_data_lst_len)
   {
     ret.meas_data_lst_len = src->meas_data_lst_len;
 
     ret.meas_data_lst = calloc(src->meas_data_lst_len, sizeof(meas_data_lst_t));
+    assert(ret.meas_data_lst != NULL && "Memory exhausted");
+   
+    for(size_t i = 0; i < src->meas_data_lst_len; ++i){
+     ret.meas_data_lst[i] = ;  
+    }
+
     memcpy (ret.meas_data_lst, src->meas_data_lst, src->meas_data_lst_len * sizeof(meas_data_lst_t));
     
     for (size_t i = 0; i<ret.meas_data_lst_len; i++)
@@ -147,4 +187,5 @@ kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src) {
   }
   
   return ret;
+  */
 }

@@ -98,7 +98,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ind_data_t sm_data = ag->proc.on_indication(ag);
+  sm_ind_data_t sm_data = ag->proc.on_indication(ag, NULL);
   sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
 
   assert(msg.type == MAC_STATS_V0);

@@ -895,8 +895,8 @@ byte_array_t rc_enc_event_trigger_asn(e2sm_rc_event_trigger_t const* src)
     assert(0!=0 && "Unknown format");
   }
 
-  xer_fprint(stdout, &asn_DEF_E2SM_RC_EventTrigger, &dst);
-  fflush(stdout);
+  //xer_fprint(stdout, &asn_DEF_E2SM_RC_EventTrigger, &dst);
+  //fflush(stdout);
 
   byte_array_t ba = {.buf = malloc(512*1024), .len = 512*1024};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
@@ -1392,8 +1392,8 @@ byte_array_t rc_enc_action_def_asn(e2sm_rc_action_def_t const* src)
     assert(0!=0 && "not implemented");
   }
 
-  xer_fprint(stdout, &asn_DEF_E2SM_RC_ActionDefinition, &dst);
-  fflush(stdout);
+  //xer_fprint(stdout, &asn_DEF_E2SM_RC_ActionDefinition, &dst);
+  //fflush(stdout);
 
   byte_array_t ba = {.buf = malloc(512*1024), .len = 512*1024};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
@@ -1517,8 +1517,8 @@ byte_array_t rc_enc_ind_hdr_asn(e2sm_rc_ind_hdr_t const* src)
     assert( 0!=0 && "unknown format type");
   }
 
-  xer_fprint(stdout, &asn_DEF_E2SM_RC_IndicationHeader, &dst);
-  fflush(stdout);
+  //xer_fprint(stdout, &asn_DEF_E2SM_RC_IndicationHeader, &dst);
+  //fflush(stdout);
 
   byte_array_t ba = {.buf = malloc(1024), .len = 1024};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
@@ -1951,8 +1951,8 @@ byte_array_t rc_enc_ind_msg_asn(e2sm_rc_ind_msg_t const* src)
     assert(0!=0 && "Unknown format type");
   }
 
-  xer_fprint(stdout, &asn_DEF_E2SM_RC_IndicationMessage, &dst);
-  fflush(stdout);
+  //xer_fprint(stdout, &asn_DEF_E2SM_RC_IndicationMessage, &dst);
+  //fflush(stdout);
 
   byte_array_t ba = {.buf = malloc(128*1024), .len = 128*1024};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
@@ -1984,8 +1984,8 @@ byte_array_t rc_enc_cpid_asn(e2sm_rc_cpid_t const* src)
   dst.ric_callProcessID_formats.choice.callProcessID_Format1->ric_callProcess_ID = src->ric_cpid;
 
   
-  xer_fprint(stdout, &asn_DEF_E2SM_RC_CallProcessID, &dst);
-  fflush(stdout);
+  //xer_fprint(stdout, &asn_DEF_E2SM_RC_CallProcessID, &dst);
+  //fflush(stdout);
 
   byte_array_t ba = {.buf = malloc(16*1024), .len = 16*1024};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
@@ -2072,8 +2072,8 @@ byte_array_t rc_enc_ctrl_hdr_asn(e2sm_rc_ctrl_hdr_t const* src)
     assert(0!=0 && "Unknown format");
   }
 
-  xer_fprint(stdout, &asn_DEF_E2SM_RC_ControlHeader, &dst);
-  fflush(stdout);
+  //xer_fprint(stdout, &asn_DEF_E2SM_RC_ControlHeader, &dst);
+  //fflush(stdout);
 
   byte_array_t ba = {.buf = malloc(16*1024), .len = 16*1024};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
@@ -2227,8 +2227,8 @@ byte_array_t rc_enc_ctrl_msg_asn(e2sm_rc_ctrl_msg_t const* src)
     assert(0 != 0 && "Unknown format type");
   }
 
-  xer_fprint(stdout, &asn_DEF_E2SM_RC_ControlMessage, &dst);
-  fflush(stdout);
+  //xer_fprint(stdout, &asn_DEF_E2SM_RC_ControlMessage, &dst);
+  //fflush(stdout);
 
   byte_array_t ba = {.buf = malloc(16*1024), .len = 16*1024};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
@@ -2451,9 +2451,8 @@ byte_array_t rc_enc_ctrl_out_asn(e2sm_rc_ctrl_out_t const* src)
     assert(0!=0 && "Unknown format");
   }
 
-
-  xer_fprint(stdout, &asn_DEF_E2SM_RC_ControlOutcome, &dst);
-  fflush(stdout);
+  //xer_fprint(stdout, &asn_DEF_E2SM_RC_ControlOutcome, &dst);
+  //fflush(stdout);
 
   byte_array_t ba = {.buf = malloc(16*1024), .len = 16*1024};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
@@ -3464,8 +3463,8 @@ byte_array_t rc_enc_func_def_asn(e2sm_rc_func_def_t const* src)
     *dst.ranFunctionDefinition_Policy = enc_ran_func_def_policy(src->policy);  
   }
 
-  xer_fprint(stdout, &asn_DEF_E2SM_RC_RANFunctionDefinition, &dst);
-  fflush(stdout);
+  //xer_fprint(stdout, &asn_DEF_E2SM_RC_RANFunctionDefinition, &dst);
+  //fflush(stdout);
 
   byte_array_t ba = {.buf = malloc(16*1024), .len = 16*1024};
   const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;

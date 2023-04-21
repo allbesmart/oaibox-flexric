@@ -24,13 +24,13 @@ typedef enum {
 } format_ric_event_trigger_e;
 
 
-// 8.2.1.1    RIC EVENT TRIGGER DEFINITION IE
+// 8.2.1.1 RIC EVENT TRIGGER DEFINITION IE
 
 typedef struct {
-    format_ric_event_trigger_e type;
-    union {
-        kpm_ric_event_trigger_format_1_t kpm_ric_event_trigger_format_1;
-    };
+  format_ric_event_trigger_e type;
+  union {
+    kpm_ric_event_trigger_format_1_t kpm_ric_event_trigger_format_1;
+  };
 
 } kpm_event_trigger_def_t;
 

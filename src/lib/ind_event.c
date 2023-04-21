@@ -20,7 +20,6 @@
  */
 
 
-
 #include "ind_event.h"
 
 #include <assert.h>
@@ -34,5 +33,25 @@ int cmp_ind_event(void const* m0_v, void const* m1_v)
   ind_event_t* m1 = (ind_event_t*)m1_v;
 
   int cmp = cmp_ric_gen_id(&m0->ric_id, &m1->ric_id);
+  if(cmp != 0)
+    return cmp;
+
+  // Not implemented
+  // sm_ag_if_wr_subs_t subs;
+
   return cmp;
 }
+
+/*
+void free_ind_event(ind_event_t* src)
+{
+  assert(src != NULL);
+
+//  ric_gen_id_t ric_id;
+  // Non-owning ptr
+//  sm_agent_t* sm;
+//  uint8_t action_id;
+  free_subscribe_timer(&src->sub);
+}
+*/
+

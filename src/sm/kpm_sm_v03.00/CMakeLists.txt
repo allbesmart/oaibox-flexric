@@ -36,6 +36,8 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
   add_subdirectory(ie/asn)
   add_library(kpm_sm SHARED
                       ${SM_ENCODING_KPM_SRC}
+                      # This dependency sucks!
+                      ../../lib/ap/e2ap_types/common/e2ap_ran_function.c
                       enc/kpm_enc_asn.c 
                       dec/kpm_dec_asn.c 
                       ie/kpm_data_ie.c
@@ -56,7 +58,6 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
                       $<TARGET_OBJECTS:sm_common_ie_obj>
                       $<TARGET_OBJECTS:sm_common_dec_asn_obj>
                       $<TARGET_OBJECTS:sm_common_enc_asn_obj>
-                      #../../../test/encode_decode/sm/kpm/fill_rnd_data_kpm.c
                       )
 
   target_link_libraries(kpm_sm PUBLIC -lm)

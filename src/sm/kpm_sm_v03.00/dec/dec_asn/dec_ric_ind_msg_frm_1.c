@@ -9,12 +9,10 @@ kpm_ind_msg_format_1_t kpm_dec_ind_msg_frm_1_asn(const E2SM_KPM_IndicationMessag
 {
     kpm_ind_msg_format_1_t ind_msg = {0};
 
-
     //  1. Measurement Data : [1, 65535]
     ind_msg.meas_data_lst_len = ind_msg_asn->measData.list.count;
     assert(ind_msg.meas_data_lst_len >= 1 && ind_msg.meas_data_lst_len <= maxnoofMeasurementRecord);
     ind_msg.meas_data_lst = kpm_dec_meas_data_asn(ind_msg_asn->measData, ind_msg.meas_data_lst_len);
-
 
     //  2. Measurement Information List : [0, 65535], OPTIONAL
     if (ind_msg_asn->measInfoList->list.count != 0)

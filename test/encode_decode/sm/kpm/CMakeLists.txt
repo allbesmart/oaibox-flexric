@@ -1,7 +1,8 @@
 project (test_enc_dec_kpm_sm)
 
 add_executable(test_enc_dec_kpm_sm 
-  fill_rnd_data_kpm.c
+  ../../../rnd/fill_rnd_data_kpm.c
+  ../../../../src/util/time_now_us.c
   main.c)
 
 target_link_libraries(test_enc_dec_kpm_sm PUBLIC 

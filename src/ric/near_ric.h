@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *-------------------------------------------------------------------------------
- * For more information about the OpenAirInterface (OAI) Software Alliance:
+e* For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
  */
 
@@ -83,9 +83,9 @@ seq_arr_t conn_e2_nodes(near_ric_t* ric);
 //size_t num_conn_e2_nodes(near_ric_t* ric);
 
 
-void report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd);
+uint16_t report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void const* cmd);
 
-void rm_report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd);
+void rm_report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, uint16_t act_id);
 
 void control_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, sm_ag_if_wr_ctrl_t const* ctrl);
 

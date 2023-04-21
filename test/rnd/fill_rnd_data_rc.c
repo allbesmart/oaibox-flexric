@@ -28,22 +28,6 @@
 #include <math.h>
 #include <limits.h>
 
-static
-byte_array_t cp_str_to_ba(const char* str)
-{
-  assert(str != NULL);
-  
-  const size_t sz = strlen(str);
-
-  byte_array_t dst = {.len = sz};
-
-  dst.buf = calloc(sz,sizeof(uint8_t));
-  assert(dst.buf != NULL && "Memory exhausted");
-
-  memcpy(dst.buf, str, sz);
-
-  return dst;
-}
 /*
 static
 double rand_double()

@@ -19,13 +19,12 @@
  *      contact@openairinterface.org
  */
 
-
-
 #include "mac_sm_agent.h"
+
+#include "../../util/alg_ds/alg/defer.h"
 #include "mac_sm_id.h"
 #include "enc/mac_enc_generic.h"
 #include "dec/mac_dec_generic.h"
-#include "../../util/alg_ds/alg/defer.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -70,20 +69,19 @@ subscribe_timer_t on_subscription_mac_sm_ag(sm_agent_t const* sm_agent, const sm
 //  printf("on_subscription called with event trigger = %u \n", ev.ms);
 }
 
-
 static
-sm_ind_data_t on_indication_mac_sm_ag(sm_agent_t const* sm_agent)
+sm_ind_data_t on_indication_mac_sm_ag(sm_agent_t const* sm_agent, void* act_def)
 {
   //printf("on_indication called \n");
-
   assert(sm_agent != NULL);
+  assert(act_def == NULL && "Action definition data not needed for this SM");
   sm_mac_agent_t* sm = (sm_mac_agent_t*)sm_agent;
 
   sm_ind_data_t ret = {0};
 
   // Fill Indication Header
   mac_ind_hdr_t hdr = {.dummy = 0 };
-  byte_array_t ba_hdr = mac_enc_ind_hdr(&sm->enc, &hdr );
+  byte_array_t ba_hdr = mac_enc_ind_hdr(&sm->enc, &hdr);
   ret.ind_hdr = ba_hdr.buf;
   ret.len_hdr = ba_hdr.len;
 
@@ -100,9 +98,7 @@ sm_ind_data_t on_indication_mac_sm_ag(sm_agent_t const* sm_agent)
   defer({ free_mac_ind_msg(&ind->msg) ;});
   defer({ free_mac_call_proc_id(ind->proc_id);});
 
-
   byte_array_t ba = mac_enc_ind_msg(&sm->enc, &ind->msg);
-
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 
@@ -158,12 +154,22 @@ sm_e2_setup_data_t on_e2_setup_mac_sm_ag(sm_agent_t const* sm_agent)
 
   sm_mac_agent_t* sm = (sm_mac_agent_t*)sm_agent;
 
-  sm_e2_setup_data_t setup = {.len_rfd =0, .ran_fun_def = NULL  }; 
+  sm_e2_setup_data_t setup = {.len_rfd = 0, .ran_fun_def = NULL }; 
 
   setup.len_rfd = strlen(sm->base.ran_func_name);
   setup.ran_fun_def = calloc(1, strlen(sm->base.ran_func_name));
   assert(setup.ran_fun_def != NULL);
   memcpy(setup.ran_fun_def, sm->base.ran_func_name, strlen(sm->base.ran_func_name));
+
+  // RAN Function
+  setup.rf.def = cp_str_to_ba(SM_MAC_SHORT_NAME);
+  setup.rf.id = SM_MAC_ID;
+  setup.rf.rev = SM_MAC_REV;
+
+  setup.rf.oid = calloc(1, sizeof(byte_array_t) );
+  assert(setup.rf.oid != NULL && "Memory exhausted");
+
+  *setup.rf.oid = cp_str_to_ba(SM_MAC_OID);
 
   return setup;
 }
@@ -195,6 +201,7 @@ sm_agent_t* make_mac_sm_agent(sm_io_ag_t io)
 
   sm->base.io = io;
   sm->base.free_sm = free_mac_sm_ag;
+  sm->base.free_act_def = NULL; //free_act_def_mac_sm_ag;
 
   sm->base.proc.on_subscription = on_subscription_mac_sm_ag;
   sm->base.proc.on_indication = on_indication_mac_sm_ag;

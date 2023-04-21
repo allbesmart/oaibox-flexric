@@ -62,39 +62,45 @@ subscribe_timer_t on_subscription_kpm_sm_ag(sm_agent_t const* sm_agent, const sm
   kpm_sub_data_t sub_data = {0};
   defer({free_kpm_sub_data(&sub_data);}); 
 
-
   sub_data.ev_trg_def = kpm_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
   assert(sub_data.ev_trg_def.kpm_ric_event_trigger_format_1.report_period_ms > 0);
 
   subscribe_timer_t timer = { .type = KPM_V3_0_SUB_DATA_ENUM ,
                               .ms = sub_data.ev_trg_def.kpm_ric_event_trigger_format_1.report_period_ms};
-  timer.kpm_ad = calloc(1, sizeof(kpm_act_def_t));
-  assert(timer.kpm_ad != NULL && "Memory exhausted");
-  timer.kpm_ad[0] = kpm_dec_action_def(&sm->enc, data->len_ad, data->action_def);
-  
+  // Only 1 supported
+ kpm_act_def_t* tmp = calloc(1, sizeof(kpm_act_def_t));
+  assert(tmp != NULL && "Memory exhausted");
+  *tmp = kpm_dec_action_def(&sm->enc, data->len_ad, data->action_def);
+ 
+  timer.act_def = tmp; 
+
   return timer;
 }
 
 static 
-sm_ind_data_t on_indication_kpm_sm_ag(sm_agent_t const* sm_agent)
+sm_ind_data_t on_indication_kpm_sm_ag(sm_agent_t const* sm_agent, void* act_def_v)
 {
   assert(sm_agent != NULL);
+  assert(act_def_v != NULL && "Action Definition data needed for this SM");
   sm_kpm_agent_t* sm = (sm_kpm_agent_t*)sm_agent;
+
+  kpm_act_def_t* act_def = act_def_v;
 
   sm_ind_data_t ret = {0};
 
-  // Fill Indication Message  and Header
-  sm_ag_if_rd_t rd_if = {0};
-  rd_if.type = INDICATION_MSG_AGENT_IF_ANS_V0; 
+  // Fill Indication Message and Header
+  sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
   rd_if.ind.type = KPM_STATS_V3_0;
+  rd_if.ind.kpm.act_def = act_def;
   sm->base.io.read(&rd_if); 
+  // Free memory allocated by the RAN. Sucks
+  defer({ free_kpm_ind_data(&rd_if.ind.kpm.ind); });
 
-
-  byte_array_t ba_hdr = kpm_enc_ind_hdr(&sm->enc, &rd_if.ind.kpm.hdr);
+  byte_array_t ba_hdr = kpm_enc_ind_hdr(&sm->enc, &rd_if.ind.kpm.ind.hdr);
   ret.ind_hdr = ba_hdr.buf;
   ret.len_hdr = ba_hdr.len;
 
-  byte_array_t ba = kpm_enc_ind_msg(&sm->enc, &rd_if.ind.kpm.msg);
+  byte_array_t ba = kpm_enc_ind_msg(&sm->enc, &rd_if.ind.kpm.ind.msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 
@@ -125,6 +131,16 @@ sm_e2_setup_data_t on_e2_setup_kpm_sm_ag(sm_agent_t const* sm_agent)
   sm_e2_setup_data_t setup = {0}; 
   setup.len_rfd = ba.len;
   setup.ran_fun_def = ba.buf;
+
+  // RAN Function
+  setup.rf.def = cp_str_to_ba(SM_KPM_STR);
+  setup.rf.id = SM_KPM_ID;
+  setup.rf.rev = SM_KPM_REV;
+
+  setup.rf.oid = calloc(1, sizeof(byte_array_t) );
+  assert(setup.rf.oid != NULL && "Memory exhausted");
+
+  *setup.rf.oid = cp_str_to_ba(SM_KPM_OID);
 
   return setup;
 }
@@ -160,6 +176,17 @@ static void free_kpm_sm_ag(sm_agent_t *sm_agent)
   free(sm);
 }
 
+static
+void free_act_def_kpm_sm_ag(sm_agent_t *sm_agent, void* act_def_v)
+{
+  assert(sm_agent != NULL);
+  assert(act_def_v != NULL);
+
+  kpm_act_def_t* act_def = act_def_v;
+  free_kpm_action_def(act_def);
+  free(act_def);
+}
+
 sm_agent_t *make_kpm_sm_agent(sm_io_ag_t io)
 {
   sm_kpm_agent_t *sm = calloc(1, sizeof(*sm));
@@ -169,6 +196,7 @@ sm_agent_t *make_kpm_sm_agent(sm_io_ag_t io)
 
   sm->base.io = io;
   sm->base.free_sm = free_kpm_sm_ag;
+  sm->base.free_act_def = free_act_def_kpm_sm_ag;
 
   // Memory DeAllocation 
   sm->base.alloc.free_subs_data_msg = NULL;
@@ -191,3 +219,4 @@ sm_agent_t *make_kpm_sm_agent(sm_io_ag_t io)
 
   return &sm->base;
 }
+

@@ -21,35 +21,33 @@ typedef struct{
 #endif
 } sm_tc_ric_t;
 
-
 static
-sm_subs_data_t on_subscription_tc_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_subs_t const* subs)
+sm_subs_data_t on_subscription_tc_sm_ric(sm_ric_t const* sm_ric, void* cmd)
 {
   assert(sm_ric != NULL); 
-  assert(subs != NULL); 
+  assert(cmd != NULL); 
   sm_tc_ric_t* sm = (sm_tc_ric_t*)sm_ric;  
 
-  /*
-  tc_event_trigger_t ev = {0};
+
+  tc_sub_data_t tc = {0}; 
 
   const int max_str_sz = 10;
   if(strncmp(cmd, "1_ms", max_str_sz) == 0 ){
-    ev.ms = 1;
+    tc.et.ms = 1;
   } else if (strncmp(cmd, "2_ms", max_str_sz) == 0 ) {
-    ev.ms = 2;
+    tc.et.ms = 2;
   } else if (strncmp(cmd, "5_ms", max_str_sz) == 0 ) {
-    ev.ms = 5;
+    tc.et.ms = 5;
   } else if (strncmp(cmd, "10_ms", max_str_sz) == 0 ) {
-    ev.ms = 10;
+    tc.et.ms = 10;
   } else {
     assert(0 != 0 && "Invalid input");
   }
-*/
 
-  const byte_array_t ba = tc_enc_event_trigger(&sm->enc, &subs->tc.et); 
+  const byte_array_t ba = tc_enc_event_trigger(&sm->enc, &tc.et); 
 
   sm_subs_data_t data = {0}; 
-  
+
   // Event trigger IE
   data.event_trigger = ba.buf;
   data.len_et = ba.len;
@@ -166,7 +164,11 @@ static
 void free_ind_data_tc_sm_ric(void* msg)
 {
   assert(msg != NULL);
-  tc_ind_data_t* ind  = (tc_ind_data_t*)msg;
+  
+  sm_ag_if_rd_ind_t* rd_ind = (sm_ag_if_rd_ind_t*)msg;
+  assert(rd_ind->type == TC_STATS_V0);
+
+  tc_ind_data_t* ind = &rd_ind->tc;
   free_tc_ind_hdr(&ind->hdr); 
   free_tc_ind_msg(&ind->msg); 
 }

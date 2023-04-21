@@ -2,14 +2,12 @@
 #include "../../../../src/util/byte_array.h"
 #include "../../../../src/sm/kpm_sm_v03.00/enc/kpm_enc_asn.h"
 #include "../../../../src/sm/kpm_sm_v03.00/dec/kpm_dec_asn.h"
-#include "fill_rnd_data_kpm.h"
+#include "../../../rnd/fill_rnd_data_kpm.h"
 
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-
-
 
 void test_kpm_ric_event_trigger_def_asn(void)
 {
@@ -70,7 +68,7 @@ void test_kpm_ind_msg(void)
 
 void test_kpm_ran_function(void)
 {
-  kpm_ran_function_def_t msg = fill_kpm_ran_function();
+  kpm_ran_function_def_t msg =  fill_kpm_ran_func_def();
   defer({ free_kpm_ran_function_def(&msg); });
 
   byte_array_t ba = kpm_enc_func_def_asn(&msg);

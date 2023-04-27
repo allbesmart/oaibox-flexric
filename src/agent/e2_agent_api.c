@@ -123,4 +123,9 @@ void stop_agent_api(void)
   assert(rc == 0);
 }
 
+void async_event_agent_api(uint32_t ric_req_id, void* ind_data)
+{
+  assert(agent != NULL);
+  e2_async_event_agent(agent, ric_req_id, ind_data);
+}
 

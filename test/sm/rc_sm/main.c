@@ -96,7 +96,7 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
 
   if(data->type == SUBSCRIPTION_SM_AG_IF_WR){
     assert(data->subs.type == RAN_CTRL_SUBS_V1_03); 
-    cp_rc_sub = cp_rc_sub_data(&data->subs.rc);
+    cp_rc_sub = cp_rc_sub_data(&data->subs.wr_rc.rc);
 
   } else if(data->type == CONTROL_SM_AG_IF_WR){
     assert(data->ctrl.type == RAN_CONTROL_CTRL_V1_03);
@@ -143,17 +143,17 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   assert(ric != NULL);
 
   sm_ag_if_wr_subs_t sub = {.type = RAN_CTRL_SUBS_V1_03};
-  sub.rc = fill_rnd_rc_subscription();
-  defer({ free_rc_sub_data(&sub.rc); });
+  sub.wr_rc.rc = fill_rnd_rc_subscription();
+  defer({ free_rc_sub_data(&sub.wr_rc.rc); });
 
-  sm_subs_data_t data = ric->proc.on_subscription(ric, &sub.rc);
+  sm_subs_data_t data = ric->proc.on_subscription(ric, &sub.wr_rc.rc);
   defer({ free_sm_subs_data(&data); });
 
   subscribe_timer_t t = ag->proc.on_subscription(ag, &data); 
   defer({  free_rc_sub_data(&cp_rc_sub); });
-  assert(t.ms == -1);
+  assert(t.ms == 0);
 
-  assert(eq_rc_sub_data(&sub.rc, &cp_rc_sub) == true);
+  assert(eq_rc_sub_data(&sub.wr_rc.rc, &cp_rc_sub) == true);
 }
 
 // E2 -> RIC
@@ -163,11 +163,12 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ag_if_wr_subs_t sub = {.type = RAN_CTRL_SUBS_V1_03};
-  sub.rc = fill_rnd_rc_subscription();
-  defer({ free_rc_sub_data(&sub.rc); });
+  rc_ind_data_t* d = calloc(1, sizeof(rc_ind_data_t)); 
+  assert(d != NULL && "Memory exhausted");
+  *d = fill_rnd_rc_ind_data();
+  cp_ind = cp_rc_ind_data(d);
 
-  sm_ind_data_t sm_data = ag->proc.on_indication(ag, &sub);
+  sm_ind_data_t sm_data = ag->proc.on_indication(ag, d);
   defer({ free_sm_ind_data(&sm_data); }); 
   defer({ free_rc_ind_data(&cp_ind); });
 
@@ -187,20 +188,17 @@ void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
-  wr.ctrl.type = RAN_CONTROL_CTRL_V1_03;
+  rc_ctrl_req_data_t rc_ctrl = fill_rc_ctrl();
+  defer({ free_rc_ctrl_req_data(&rc_ctrl); });
 
-  wr.ctrl.rc_ctrl = fill_rc_ctrl();
-  defer({ free_rc_ctrl_req_data(&wr.ctrl.rc_ctrl); });
-
-  sm_ctrl_req_data_t ctrl_req = ric->proc.on_control_req(ric, &wr.ctrl);
+  sm_ctrl_req_data_t ctrl_req = ric->proc.on_control_req(ric, &rc_ctrl);
   defer({ free_sm_ctrl_req_data(&ctrl_req); });
 
   sm_ctrl_out_data_t out_data = ag->proc.on_control(ag, &ctrl_req);
   defer({ free_sm_ctrl_out_data(&out_data); });
   defer({ free_rc_ctrl_req_data(&cp_rc_ctrl); });
 
-  assert(eq_rc_ctrl_req_data(&wr.ctrl.rc_ctrl, &cp_rc_ctrl));
+  assert(eq_rc_ctrl_req_data(&rc_ctrl, &cp_rc_ctrl));
 
   sm_ag_if_ans_ctrl_t ans = ric->proc.on_control_out(ric, &out_data);
   assert(ans.type == RAN_CTRL_V1_3_AGENT_IF_CTRL_ANS_V0);

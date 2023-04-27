@@ -98,18 +98,16 @@ sm_ag_if_rd_ind_t on_indication_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_
 }
 
 static
-sm_ctrl_req_data_t on_control_req_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_ctrl_t const* data_v)
+sm_ctrl_req_data_t on_control_req_pdcp_sm_ric(sm_ric_t const* sm_ric, void* ctrl)
 {
   assert(sm_ric != NULL); 
-  assert(data_v != NULL); 
-  assert(data_v->type == PDCP_CTRL_REQ_V0);
+  assert(ctrl != NULL); 
 
   sm_pdcp_ric_t* sm = (sm_pdcp_ric_t*)sm_ric;  
 
-  pdcp_ctrl_req_data_t const* req = &data_v->pdcp_req_ctrl;
+  pdcp_ctrl_req_data_t const* req =  ( pdcp_ctrl_req_data_t const*)ctrl;
 
   sm_ctrl_req_data_t ret_data = {0};  
-
 
   byte_array_t ba = pdcp_enc_ctrl_hdr(&sm->enc, &req->hdr);
   ret_data.ctrl_hdr = ba.buf;

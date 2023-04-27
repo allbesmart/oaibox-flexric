@@ -17,17 +17,18 @@
  *-------------------------------------------------------------------------------
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
- */
-
-
+ *
+*/
 
 #include "msg_handler_agent.h"
 #include "lib/ind_event.h"
 #include "lib/pending_events.h"
 #include "sm/sm_agent.h"
 #include "util/alg_ds/alg/alg.h"
+#include "util/alg_ds/ds/lock_guard/lock_guard.h"
 #include "util/compare.h"
 
+#include <assert.h>
 #include <stdio.h>
 
 static
@@ -50,15 +51,12 @@ bool check_valid_msg_type(e2_msg_type_t msg_type )
 }
 
 static inline
-bool eq_ind_event(const void* value, const void* key)
+bool not_aperiodic_ind_event(int fd)
 {
-  assert(value != NULL);
-  assert(key != NULL);
-  
-  ric_gen_id_t* ric_id = (ric_gen_id_t*)value; 
-  ind_event_t* ind_ev = (ind_event_t*)key;
-  bool eq = eq_ric_gen_id(ric_id, &ind_ev->ric_id );
-  return eq;
+  assert(fd > -1);
+
+  // 0 value used for aperiodic indication events
+  return fd != 0;
 }
 
 static
@@ -72,16 +70,19 @@ void stop_ind_event(e2_agent_t* ag, ric_gen_id_t id)
   void* end_r = assoc_rb_tree_end(&ag->ind_event.right);
   void* it_r = find_if_rb_tree(&ag->ind_event.right, start_r, end_r, &tmp, eq_ind_event); 
   assert(it_r != end_r);
-  ind_event_t* ind_ev = assoc_rb_tree_key( &ag->ind_event.right ,it_r);
+  ind_event_t* ind_ev = assoc_rb_tree_key(&ag->ind_event.right, it_r);
 
-  ind_ev->sm->free_act_def(ind_ev->sm, ind_ev->act_def);
+  // These 3 lines need refactoring
+  if(ind_ev->sm->free_act_def != NULL)
+    ind_ev->sm->free_act_def(ind_ev->sm, ind_ev->act_def);
   //
 
-
-  int* fd = bi_map_extract_right(&ag->ind_event, &tmp, sizeof(tmp) );
-  assert(*fd > 0);
+  int* fd = bi_map_extract_right(&ag->ind_event, &tmp, sizeof(tmp));
+  assert(*fd > -1);
   //printf("fd value in stopping pending event = %d \n", *fd);
-  rm_fd_asio_agent(&ag->io, *fd);
+ 
+  if(not_aperiodic_ind_event(*fd))
+    rm_fd_asio_agent(&ag->io, *fd);
   free(fd);
 }
 
@@ -124,11 +125,13 @@ bool supported_ric_subscription_request(ric_subscription_request_t const* sr)
 }
 
 static
-sm_subs_data_t generate_sm_subs_data( ric_subscription_request_t const* sr )
+sm_subs_data_t generate_sm_subs_data(ric_subscription_request_t const* sr)
 {
   assert(sr != NULL);
   sm_subs_data_t data =  { .event_trigger = sr->event_trigger.buf,
-                           .len_et = sr->event_trigger.len };
+                           .len_et = sr->event_trigger.len,
+                           .ric_req_id = sr->ric_id.ric_req_id };
+
   if(sr->action->definition != NULL){
     data.action_def = sr->action->definition->buf;
     data.len_ad = sr->action->definition->len;
@@ -166,24 +169,37 @@ e2ap_msg_t e2ap_handle_subscription_request_agent(e2_agent_t* ag, const e2ap_msg
   sm_subs_data_t data = generate_sm_subs_data(sr);
   uint16_t const ran_func_id = sr->ric_id.ran_func_id; 
   sm_agent_t* sm = sm_plugin_ag(&ag->plugin, ran_func_id);
+  
   subscribe_timer_t t = sm->proc.on_subscription(sm, &data);
-  assert(t.ms > -1 && "Bug? 0 not valid value"); 
+  assert(t.ms > -2 && "Bug? 0 = create pipe value"); 
+
+  // Register the indication event
+  ind_event_t ev = {0};
+  ev.action_id = sr->action[0].id;
+  ev.ric_id = sr->ric_id;
+  ev.sm = sm;
+  ev.act_def = t.act_def;
 
   if(t.ms > 0){
+    // Periodic indication message generated i.e., every 5 ms
     assert(t.ms < 10001 && "Subscription for granularity larger than 10 seconds requested? ");
     int fd_timer = create_timer_ms_asio_agent(&ag->io, t.ms, t.ms); 
-    //printf("fd_timer for subscription value created == %d\n", fd_timer);
-
-    // Register the indication event
-    ind_event_t ev = {0};
-    ev.action_id = sr->action[0].id;
-    ev.ric_id = sr->ric_id;
-    ev.sm = sm;
-    ev.act_def = t.act_def;
-
+  
+    {
+    lock_guard(&ag->mtx_ind_event);
     bi_map_insert(&ag->ind_event, &fd_timer, sizeof(fd_timer), &ev, sizeof(ev));
-    printf("Register event ric_req_id %d action id %d \n", ev.ric_id.ric_req_id, ev.action_id);
+    }
+
+  } else if(t.ms == 0){
+    // Aperiodic indication generated i.e., the RAN will generate it via 
+    // void async_event_agent_api(uint32_t ric_req_id, void* ind_data);
+    lock_guard(&ag->mtx_ind_event);
+    int fd = 0;
+    bi_map_insert(&ag->ind_event, &fd, sizeof(int), &ev, sizeof(ev));
+  } else {
+    assert(0!=0 && "Unknown subscritpion timer value");
   }
+
   uint8_t const ric_act_id = sr->action[0].id;
   e2ap_msg_t ans = {.type = RIC_SUBSCRIPTION_RESPONSE, 
                     .u_msgs.ric_sub_resp = generate_subscription_response(&sr->ric_id, ric_act_id) };

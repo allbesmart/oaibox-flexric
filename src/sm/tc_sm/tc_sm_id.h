@@ -11,13 +11,13 @@
 static
 const uint16_t SM_TC_ID = 146; 
 
-static
+__attribute__((unused)) static
 const char* SM_TC_STR = "TC_STATS_V0"; 
 
 static
 const uint16_t SM_TC_REV = 1; 
 
-static
+__attribute__((unused)) static
 const char SM_TC_SHORT_NAME[] = "E2SM-TC";
 
 //iso(0) identified-organization(0)
@@ -26,10 +26,10 @@ const char SM_TC_SHORT_NAME[] = "E2SM-TC";
 // version1 (1) e2sm(145) e2sm-RC-
 // IEs (0)
 
-static
+__attribute__((unused)) static
 const char SM_TC_OID[] = "0.0.0.0.0.0.0.0.1.146.0"; 
 
-static
+__attribute__((unused)) static
 const char SM_TC_DESCRIPTION[] = "TC Service Model";
 
 #endif

@@ -64,6 +64,7 @@ typedef struct{
   rc_ind_data_t ind;
   // Non-owning pointer
   e2sm_rc_action_def_t const* act_def;
+  uint32_t ric_id;
 } rc_rd_ind_data_t;
 
 typedef struct{

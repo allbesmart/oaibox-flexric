@@ -40,14 +40,12 @@
 #include "util/alg_ds/ds/lock_guard/lock_guard.h"
 #include "util/compare.h"
 
-
 #include <assert.h>
 #include <dlfcn.h>
 #include <limits.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
-
 
 static inline
 void free_sm_ric(void* key, void* value)
@@ -654,11 +652,11 @@ void rm_report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, 
 }
 
 static
-ric_control_request_t generate_control_request(near_ric_t* ric, sm_ric_t* sm, sm_ag_if_wr_ctrl_t const* wr)
+ric_control_request_t generate_control_request(near_ric_t* ric, sm_ric_t* sm, void* ctrl)
 {
   assert(ric != NULL);
   assert(sm != NULL);
-  assert(wr != NULL);
+  assert(ctrl != NULL);
 
   const ric_gen_id_t ric_id = {.ric_req_id = ric->req_id++ ,.ric_inst_id = 0, .ran_func_id = sm->ran_func_id};
 
@@ -667,7 +665,7 @@ ric_control_request_t generate_control_request(near_ric_t* ric, sm_ric_t* sm, sm
   assert(ctrl_req.ack_req != NULL && "Memory exhausted" );
   *ctrl_req.ack_req = RIC_CONTROL_REQUEST_ACK; 
 
-  sm_ctrl_req_data_t data = sm->proc.on_control_req(sm, wr);
+  sm_ctrl_req_data_t data = sm->proc.on_control_req(sm, ctrl);
 
   ctrl_req.hdr.len = data.len_hdr;
   ctrl_req.hdr.buf = data.ctrl_hdr;
@@ -677,16 +675,16 @@ ric_control_request_t generate_control_request(near_ric_t* ric, sm_ric_t* sm, sm
   return ctrl_req;
 }
 
-void control_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, sm_ag_if_wr_ctrl_t const* ctrl)
+void control_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void* ctrl)
 {
   assert(ric != NULL);
   assert(ran_func_id > 0);
   assert(ctrl != NULL);
 
-  sm_ric_t* sm = sm_plugin_ric(&ric->plugin ,ran_func_id); 
-  assert((sm->ran_func_id == 142 || sm->ran_func_id == 145) && "Only ctrl for MAC supported");
+//  assert(ran_func_id == SM_RC_ID || ran_func_id == SM_SLICE_ID || ran_func_id == SM_TC_ID );
+  assert(ran_func_id == 3 || ran_func_id == 145 || ran_func_id == 146);
 
-//  sm_ag_if_wr_t* wr = (sm_ag_if_wr_t*) cmd;
+  sm_ric_t* sm = sm_plugin_ric(&ric->plugin ,ran_func_id); 
 
   ric_control_request_t ctrl_req = generate_control_request(ric, sm, ctrl);
 

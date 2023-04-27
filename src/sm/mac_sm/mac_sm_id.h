@@ -31,13 +31,13 @@
 static
 const uint16_t SM_MAC_ID = 142; 
 
-static
+__attribute__((unused)) static
 const char* SM_MAC_STR = "MAC_STATS_V0"; 
 
 static
 const uint16_t SM_MAC_REV = 1; 
 
-static
+__attribute__((unused)) static
 const char SM_MAC_SHORT_NAME[] = "E2SM-MAC";
 
 //iso(0) identified-organization(0)
@@ -46,10 +46,10 @@ const char SM_MAC_SHORT_NAME[] = "E2SM-MAC";
 // version1 (1) e2sm(142) e2sm-RC-
 // IEs (0)
 
-static
+__attribute__((unused)) static
 const char SM_MAC_OID[] = "0.0.0.0.0.0.0.0.1.142.0"; 
 
-static
+__attribute__((unused)) static
 const char SM_MAC_DESCRIPTION[] = "MAC Service Model";
 
 #endif

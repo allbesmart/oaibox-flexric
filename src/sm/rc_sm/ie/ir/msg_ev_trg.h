@@ -46,7 +46,7 @@ typedef struct{
   };
 
   //Message Direction
-  //Optinonal
+  //Optional
   e2rc_msg_dir_e* msg_dir;
 
   //  Associated UE Info

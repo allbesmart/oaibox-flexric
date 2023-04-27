@@ -13,6 +13,7 @@ add_executable(test_near_ric
                   ../rnd/fill_rnd_data_rc.c                  
                   ../rnd/fill_rnd_data_slice.c                  
                   ../../src/sm/kpm_sm_v03.00/ie/kpm_data_ie.c
+                  ../../src/sm/rc_sm/ie/rc_data_ie.c
                   ../../src/util/conversions.c
                   )
 
@@ -30,6 +31,11 @@ target_link_libraries(test_near_ric
                       $<TARGET_OBJECTS:sm_common_ie_obj>
                       $<TARGET_OBJECTS:sm_common_dec_asn_obj>
                       $<TARGET_OBJECTS:sm_common_enc_asn_obj>
+                      $<TARGET_OBJECTS:e2sm_rc_ir_obj>
+
+
+
+
                       near_ric_test
                       -pthread
                       -lsctp

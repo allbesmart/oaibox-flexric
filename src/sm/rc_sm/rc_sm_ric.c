@@ -84,14 +84,13 @@ sm_ag_if_rd_ind_t on_indication_rc_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t 
 }
 
 static
-sm_ctrl_req_data_t ric_on_control_req_rc_sm_ric(sm_ric_t const* sm_ric, sm_ag_if_wr_ctrl_t const* src)
+sm_ctrl_req_data_t ric_on_control_req_rc_sm_ric(sm_ric_t const* sm_ric, void* ctrl)
 {
   assert(sm_ric != NULL); 
-  assert(src != NULL); 
-  assert(src->type == RAN_CONTROL_CTRL_V1_03);
+  assert(ctrl != NULL); 
   sm_rc_ric_t* sm = (sm_rc_ric_t*)sm_ric;  
 
-  rc_ctrl_req_data_t const* req = &src->rc_ctrl;
+  rc_ctrl_req_data_t const* req = (rc_ctrl_req_data_t const*)ctrl; 
   sm_ctrl_req_data_t dst = {0};
  
   // Header

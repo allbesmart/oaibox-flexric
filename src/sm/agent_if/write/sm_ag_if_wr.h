@@ -39,6 +39,7 @@
 //////////////////////
 //////////////////////
 
+
 typedef enum{
   MAC_CTRL_REQ_V0 = 0,
   RLC_CTRL_REQ_V0 = 1,
@@ -84,6 +85,12 @@ typedef enum{
   SM_AGENT_IF_WRITE_SUBS_V0_END,
 } sm_ag_if_subs_e;
 
+typedef struct{ 
+  uint32_t ric_req_id;
+  rc_sub_data_t rc;
+} wr_rc_sub_data_t;
+
+
 typedef struct{
   sm_ag_if_subs_e type;
   union{
@@ -94,7 +101,7 @@ typedef struct{
     tc_sub_data_t tc;
     gtp_sub_data_t gtp;
     kpm_sub_data_t kpm;
-    rc_sub_data_t rc;
+    wr_rc_sub_data_t wr_rc;
   };
 } sm_ag_if_wr_subs_t;
 

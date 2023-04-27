@@ -34,13 +34,13 @@
 static
 const uint16_t SM_PDCP_ID = 144; 
 
-static
+__attribute__((unused)) static
 const char* SM_PDCP_STR = "PDCP_STATS_V0"; 
 
 static
 const uint16_t SM_PDCP_REV = 1; 
 
-static
+__attribute__((unused)) static
 const char SM_PDCP_SHORT_NAME[] = "E2SM-PDCP";
 
 //iso(0) identified-organization(0)
@@ -49,12 +49,11 @@ const char SM_PDCP_SHORT_NAME[] = "E2SM-PDCP";
 // version1 (1) e2sm(144) e2sm-RC-
 // IEs (0)
 
-static
+__attribute__((unused)) static
 const char SM_PDCP_OID[] = "0.0.0.0.0.0.0.0.1.144.0"; 
 
-static
+__attribute__((unused)) static
 const char SM_PDCP_DESCRIPTION[] = "PDCP Service Model";
-
 
 #endif
 

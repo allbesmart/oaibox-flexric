@@ -11,13 +11,13 @@
 static
 const uint16_t SM_SLICE_ID = 145; 
 
-static
+__attribute__((unused)) static
 const char* SM_SLICE_STR = "SLICE_STATS_V0"; 
 
 static
 const uint16_t SM_SLICE_REV = 1; 
 
-static
+__attribute__((unused)) static
 const char SM_SLICE_SHORT_NAME[] = "E2SM-SLICE";
 
 //iso(0) identified-organization(0)
@@ -26,10 +26,10 @@ const char SM_SLICE_SHORT_NAME[] = "E2SM-SLICE";
 // version1 (1) e2sm(145) e2sm-RC-
 // IEs (0)
 
-static
+__attribute__((unused)) static
 const char SM_SLICE_OID[] = "0.0.0.0.0.0.0.0.1.145.0"; 
 
-static
+__attribute__((unused)) static
 const char SM_SLICE_DESCRIPTION[] = "SLICE Service Model";
 
 #endif

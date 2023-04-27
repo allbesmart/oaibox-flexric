@@ -87,8 +87,7 @@ uint16_t report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id,
 
 void rm_report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, uint16_t act_id);
 
-void control_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, sm_ag_if_wr_ctrl_t const* ctrl);
-
+void control_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void* ctrl);
 
 // Plug-ins functions
 

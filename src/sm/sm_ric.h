@@ -38,7 +38,7 @@ typedef struct {
 
   sm_ag_if_rd_ind_t (*on_indication)(sm_ric_t const*, sm_ind_data_t const* data);
 
-  sm_ctrl_req_data_t (*on_control_req)(sm_ric_t const*, sm_ag_if_wr_ctrl_t const*);
+  sm_ctrl_req_data_t (*on_control_req)(sm_ric_t const*, void*);
 
   sm_ag_if_ans_ctrl_t (*on_control_out)(sm_ric_t const*, sm_ctrl_out_data_t const*);
 

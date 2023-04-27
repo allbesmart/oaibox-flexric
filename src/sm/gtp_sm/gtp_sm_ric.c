@@ -103,12 +103,11 @@ sm_ag_if_rd_ind_t on_indication_gtp_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t
 }
 
 static
- sm_ctrl_req_data_t ric_on_control_req_gtp_sm_ric(sm_ric_t const* sm_ric, const sm_ag_if_wr_ctrl_t* data)
+ sm_ctrl_req_data_t ric_on_control_req_gtp_sm_ric(sm_ric_t const* sm_ric, void* ctrl)
 {
   assert(sm_ric != NULL); 
-  assert(data != NULL); 
-  assert(data->type == GTP_CTRL_REQ_V0);
-  gtp_ctrl_req_data_t const* req = &data->gtp_ctrl;
+  assert(ctrl != NULL); 
+  gtp_ctrl_req_data_t const* req = (gtp_ctrl_req_data_t const*)ctrl;
   assert(req->hdr.dummy == 0);
   assert(req->msg.action == 42);
 

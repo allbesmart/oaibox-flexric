@@ -35,6 +35,7 @@
 
 
 typedef struct{
+  uint32_t ric_req_id;
 
   uint8_t* event_trigger;
   size_t len_et;

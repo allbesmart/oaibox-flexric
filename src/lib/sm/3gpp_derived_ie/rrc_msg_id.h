@@ -12,9 +12,7 @@ typedef enum{
   END_RRC_MESSAGE_ID,
 } rrc_message_id_e;
 
-
 typedef enum{
-
   BCCH_BCH_LTE_RRC_CLASS, 
   BCCH_BCH_MBMS_LTE_RRC_CLASS,
   BCCH_DL_SCH_LTE_RRC_CLASS,
@@ -33,9 +31,7 @@ typedef enum{
 
 } lte_rrc_class_e;
 
-
 typedef enum{
-
   BCCH_BCH_NR_RRC_CLASS, 
   BCCH_DL_SCH_NR_RRC_CLASS, 
   DL_CCCH_NR_RRC_CLASS, 

@@ -24,13 +24,13 @@ SOFTWARE.
 
 
 /*
- * Thread Safe Queue. 
+ * Thread Safe Notification Queue. 
  * Inspired by Anthony Williams C++ Concurrency in Action Book, Section 6.2
  */
 
 
-#ifndef THREAD_SAFE_QUEUE_MIR_H
-#define THREAD_SAFE_QUEUE_MIR_H 
+#ifndef THREAD_SAFE_NOTIFICATION_QUEUE_MIR_H
+#define THREAD_SAFE_NOTIFICATION_QUEUE_MIR_H 
 
 #include <stdatomic.h>
 #include <stdbool.h>
@@ -44,21 +44,21 @@ typedef struct{
   seq_ring_t r;
   atomic_bool stop_token;
   atomic_bool stopped;
-} tsq_t;
+} tsnq_t;
 
-void init_tsq(tsq_t* q, size_t elm_sz);
+void init_tsnq(tsnq_t* q, size_t elm_sz);
 
-void free_tsq(tsq_t* q, void (*f)(void*) ) ;
+void free_tsnq(tsnq_t* q, void (*f)(void*) ) ;
 
-void push_tsq(tsq_t* q, void* val, size_t size);
+void push_tsnq(tsnq_t* q, void* val, size_t size);
 
-void* wait_and_pop_tsq(tsq_t* q, void* (*f)(void*) );
+void* wait_and_pop_tsnq(tsnq_t* q, void* (*f)(void*) );
 
-void* pop_tsq_10(tsq_t* q, void* (*f)(void*) );
+void* pop_tsnq_10(tsnq_t* q, void* (*f)(void*) );
 
-void* pop_tsq_100(tsq_t* q, void* (*f)(void*) );
+void* pop_tsnq_100(tsnq_t* q, void* (*f)(void*) );
 
-size_t size_tsq(tsq_t* q);
+size_t size_tsnq(tsnq_t* q);
 
 #endif
 

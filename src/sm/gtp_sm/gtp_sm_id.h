@@ -36,11 +36,10 @@ const uint16_t SM_GTP_ID = 148;
 __attribute__((unused)) static
 const char* SM_GTP_STR = "GTP_STATS_V0"; 
 
-
 static
 const uint16_t SM_GTP_REV = 1; 
 
-static
+__attribute__((unused)) static
 const char SM_GTP_SHORT_NAME[] = "E2SM-GTP";
 
 //iso(0) identified-organization(0)
@@ -49,10 +48,10 @@ const char SM_GTP_SHORT_NAME[] = "E2SM-GTP";
 // version1 (1) e2sm(148) e2sm-RC-
 // IEs (0)
 
-static
+__attribute__((unused)) static
 const char SM_GTP_OID[] = "0.0.0.0.0.0.0.0.1.148.0"; 
 
-static
+__attribute__((unused)) static
 const char SM_RAN_CTRL_DESCRIPTION[] = "GTP Service Model";
 
 #endif

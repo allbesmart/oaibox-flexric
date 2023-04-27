@@ -107,12 +107,11 @@ sm_ag_if_rd_ind_t on_indication_mac_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t
 }
 
 static
-sm_ctrl_req_data_t ric_on_control_req_mac_sm_ric(sm_ric_t const* sm_ric, const sm_ag_if_wr_ctrl_t* data)
+sm_ctrl_req_data_t ric_on_control_req_mac_sm_ric(sm_ric_t const* sm_ric, void* ctrl)
 {
   assert(sm_ric != NULL); 
-  assert(data != NULL); 
-  assert(data->type == MAC_CTRL_REQ_V0 );
-  mac_ctrl_req_data_t const* req = &data->mac_ctrl;
+  assert(ctrl != NULL); 
+  mac_ctrl_req_data_t const* req = (mac_ctrl_req_data_t const*)ctrl;
   assert(req->hdr.dummy == 0);
   assert(req->msg.action == 42);
 

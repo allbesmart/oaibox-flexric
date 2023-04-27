@@ -30,10 +30,53 @@
 #include "sm/mac_sm/mac_sm_agent.h"
 #include "sm/rlc_sm/rlc_sm_agent.h"
 #include "util/alg_ds/alg/alg.h"
+#include "util/alg_ds/ds/lock_guard/lock_guard.h"
 #include "util/compare.h"
 
 #include <assert.h>
 #include <stdio.h>
+
+
+// Equality file descriptors
+static inline
+bool eq_fd_pair(const void* key1, const void* key2 )
+{
+  assert(key1 != NULL);
+  assert(key2 != NULL);
+
+  fd_pair_t* fd1 = (fd_pair_t*)key1;
+  fd_pair_t* fd2 = (fd_pair_t*)key2;
+
+  assert(fd1->r > 0 && "File descriptors must be larger than zero");
+  assert(fd2->r > 0 && "File descriptors must be larger than zero");
+
+  assert(fd1->w > 0 && "File descriptors must be larger than zero");
+  assert(fd2->w > 0 && "File descriptors must be larger than zero");
+
+  return eq_fd(&fd1->r, &fd2->r) && eq_fd(&fd1->w, &fd2->w);
+}
+
+// Comparation file descriptors
+static inline 
+int cmp_fd_pair(void const* fd_v1, void const* fd_v2)
+{
+  assert(fd_v1 != NULL);
+  assert(fd_v2 != NULL);
+ fd_pair_t* fd1 = (fd_pair_t*)fd_v1;
+ fd_pair_t* fd2 = (fd_pair_t*)fd_v2;
+
+  assert(fd1->r > 0&& "File descriptors must be larger than zero");
+  assert(fd2->r > 0&& "File descriptors must be larger than zero");
+
+  assert(fd1->w > 0&& "File descriptors must be larger than zero");
+  assert(fd2->w > 0&& "File descriptors must be larger than zero");
+
+  int cmp = cmp_fd(&fd1->r, &fd2->r);
+  if(cmp != 0)
+    return cmp;
+
+  return cmp_fd(&fd1->w, &fd2->w);
+}
 
 static
 e2_setup_request_t generate_setup_request(e2_agent_t* ag)
@@ -72,6 +115,34 @@ e2_setup_request_t generate_setup_request(e2_agent_t* ag)
   assert(it == assoc_end(&ag->plugin.sm_ds) && "Length mismatch");
   return sr;
 }
+
+static
+ric_indication_t generate_aindication(e2_agent_t* ag, sm_ind_data_t* data, aind_event_t* ai_ev)
+{
+  assert(ag != NULL);
+  assert(data != NULL);
+  assert(ai_ev != NULL);
+
+  ric_indication_t ind = {
+    .ric_id = ai_ev->ric_id, 
+    .action_id = ai_ev->action_id, 
+    .sn = NULL, 
+    .type = RIC_IND_REPORT };
+
+  ind.hdr.len = data->len_hdr;
+  ind.hdr.buf = data->ind_hdr;
+  ind.msg.len = data->len_msg;
+  ind.msg.buf = data->ind_msg;
+  if(data->call_process_id != NULL){
+    ind.call_process_id = malloc(sizeof(data->len_cpid) );
+    assert(ind.call_process_id != NULL && "Memory exhausted" );
+    ind.call_process_id->buf = data->call_process_id;
+    ind.call_process_id->len = data->len_cpid;
+  }
+  return ind;
+}
+
+
 
 static
 ric_indication_t generate_indication(e2_agent_t* ag, sm_ind_data_t* data, ind_event_t* i_ev)
@@ -132,6 +203,7 @@ void free_indication_event(e2_agent_t* ag)
 {
   assert(ag != NULL);
   bi_map_free(&ag->ind_event);
+  pthread_mutex_destroy(&ag->mtx_ind_event);
 }
 
 static inline
@@ -166,7 +238,7 @@ void free_key(void* key, void* value)
 
   (void)key;
 
-  int* fd = (int* )value;
+  int* fd = (int*)value;
   free(fd);
 }
 
@@ -179,6 +251,14 @@ void init_indication_event(e2_agent_t* ag)
   size_t key_sz_ind = sizeof(ind_event_t);
 
   bi_map_init(&ag->ind_event, key_sz_fd, key_sz_ind, cmp_fd, cmp_ind_event, free_ind_event_map, free_key);
+
+  pthread_mutexattr_t attr = {0};
+#ifdef DEBUG
+  pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK); 
+#endif
+  int rc = pthread_mutex_init(&ag->mtx_ind_event, &attr);
+  assert(rc == 0);
+
 }
 
 static inline
@@ -206,13 +286,24 @@ static inline
 bool ind_event(e2_agent_t* ag, int fd, ind_event_t** i_ev)
 {
   assert(*i_ev == NULL);
-    void* it = ind_fd(ag, fd);   
-    void* end_it = assoc_end(&ag->ind_event.left); // bi_map_end_left(&ag->ind_event);
-    if(it != end_it){
-      *i_ev = assoc_value(&ag->ind_event.left, it);
-      return true;
-    } 
+  void* it = ind_fd(ag, fd);   
+  void* end_it = assoc_end(&ag->ind_event.left); // bi_map_end_left(&ag->ind_event);
+  if(it != end_it){
+    *i_ev = assoc_value(&ag->ind_event.left, it);
+    return true;
+  } 
+  return false;
+}
+
+static inline
+bool aind_event(e2_agent_t* ag, int fd, aind_event_t* ai_ev)
+{
+  if(fd != ag->io.pipe.r)
     return false;
+
+  pop_tsq(&ag->aind,ai_ev, sizeof(aind_event_t));
+
+  return true;
 }
 
 static inline
@@ -260,7 +351,7 @@ void consume_fd(int fd)
   assert(fd > 0);
   uint64_t read_buf = 0;
   ssize_t const bytes = read(fd,&read_buf, sizeof(read_buf));
-  assert(bytes == sizeof(read_buf));
+  assert(bytes <= (ssize_t)sizeof(read_buf));
 }
 
 static
@@ -287,6 +378,9 @@ async_event_t next_async_event_agent(e2_agent_t* ag)
     } else { 
       assert(0!=0 && "Unknown type");
     }
+
+  } else if(aind_event(ag, fd, &e.ai_ev) == true) {
+    e.type = APERIODIC_INDICATION_EVENT;
 
   } else if (ind_event(ag, fd, &e.i_ev) == true) {
     e.type = INDICATION_EVENT;
@@ -329,11 +423,29 @@ void e2_event_loop_agent(e2_agent_t* ag)
 
           break;
         }
+      case APERIODIC_INDICATION_EVENT:
+        {
+          sm_agent_t const* sm = e.ai_ev.sm;
+          void* ind_data = e.ai_ev.ind_data;
+          sm_ind_data_t data = sm->proc.on_indication(sm, ind_data); // , &e.i_ev->ric_id);
+
+          ric_indication_t ind = generate_aindication(ag, &data, &e.ai_ev);
+          defer({ e2ap_free_indication(&ind); } );
+
+          byte_array_t ba = e2ap_enc_indication_ag(&ag->ap, &ind); 
+          defer({ free_byte_array(ba); } );
+
+          e2ap_send_bytes_agent(&ag->ep, ba);
+
+          consume_fd(ag->io.pipe.r);
+
+          break;
+        }
       case INDICATION_EVENT:
         {
           sm_agent_t const* sm = e.i_ev->sm;
           void* act_def = e.i_ev->act_def; 
-          sm_ind_data_t data = sm->proc.on_indication(sm, act_def);
+          sm_ind_data_t data = sm->proc.on_indication(sm, act_def); // , &e.i_ev->ric_id);
 
           ric_indication_t ind = generate_indication(ag, &data, e.i_ev);
           defer({ e2ap_free_indication(&ind); } );
@@ -411,7 +523,9 @@ e2_agent_t* e2_init_agent(const char* addr, int port, global_e2_node_id_t ge2nid
   init_pending_events(ag);
 
   init_indication_event(ag);
-  
+
+  init_tsq(&ag->aind, sizeof(aind_event_t));
+
   ag->global_e2_node_id = ge2nid;
   ag->stop_token = false;
   ag->agent_stopped = false;
@@ -459,8 +573,118 @@ void e2_free_agent(e2_agent_t* ag)
 
   free_indication_event(ag);
 
+  free_tsq(&ag->aind, NULL);
+
   free(ag);
 }
+
+void e2_async_event_agent(e2_agent_t* ag, uint32_t ric_req_id, void* ind_data)
+{
+  assert(ag != NULL);
+
+  void* f = NULL; 
+  void* l = NULL;
+  void* it = NULL;
+
+  ind_event_t tmp = {.ric_id.ric_req_id = ric_req_id, 
+    .sm = NULL, 
+    .action_id = 0 };
+
+  assoc_rb_tree_t* tree = &ag->ind_event.right;
+ 
+  for(size_t i =0; i < 5; ++i){
+    int rc = pthread_mutex_lock(&ag->mtx_ind_event);  
+    assert(rc == 0);
+
+
+    f = assoc_rb_tree_front(tree);
+    l = assoc_rb_tree_end(tree);
+    it = find_if_rb_tree(tree, f, l, &tmp, eq_ind_event_ric_req_id); 
+    if(it != l) break; 
+
+    rc = pthread_mutex_unlock(&ag->mtx_ind_event);
+    assert(rc == 0);
+
+    // Give some time to propagate the subscription request and be sure
+    // it has been writen in the ind_event ds.
+    usleep(10);
+  }
+
+  assert(it != l && "Not found RIC Request ID");
+
+  ind_event_t* ind_ev = assoc_rb_tree_key(tree, it);
+
+  aind_event_t aind = {.ric_id = ind_ev->ric_id,
+    .sm = ind_ev->sm,
+    .action_id = ind_ev->action_id,
+    .ind_data = ind_data};
+
+  int rc = pthread_mutex_unlock(&ag->mtx_ind_event);
+  assert(rc == 0);
+
+  // Push the data into the queue
+  push_tsq(&ag->aind, &aind ,sizeof(aind_event_t));
+
+  // Inform epoll that an aperiodic event happened
+  int num_char = 32;
+  char str[num_char];
+  memset(str, '\0', num_char);
+  rc = snprintf(str, num_char ,"%u\n", ric_req_id );
+  assert(rc > 0 && rc < num_char -1);
+
+  rc = write(ag->io.pipe.w, str, rc);
+  assert(rc != 0);
+}
+
+/*
+void e2_async_agent(e2_agent_t* ag, uint32_t ric_req_id)
+{
+  assert(ag != NULL);
+  
+  ind_event_t tmp = {.ric_id.ric_req_id = ric_req_id, 
+                     .sm = NULL, 
+                     .action_id = 0 };
+
+  void* start_r = NULL;
+  void* end_r = NULL;
+  void* it_r = NULL; 
+  int num = 5;
+  while(num > 0){
+    
+    int rc = pthread_mutex_lock(&ag->mtx_ind_event);  
+    assert(rc == 0);
+
+    start_r = assoc_rb_tree_front(&ag->ind_event.right);
+    end_r = assoc_rb_tree_end(&ag->ind_event.right);
+    it_r = find_if_rb_tree(&ag->ind_event.right, start_r, end_r, &tmp, eq_ind_event_ric_req_id); 
+    if(it_r != end_r) break;
+
+    rc = pthread_mutex_unlock(&ag->mtx_ind_event);
+    assert(rc == 0);
+
+    num -= 1;
+    // Give some time to propagate the subscription request and be sure
+    // it has been writen in the ind_event ds.
+    usleep(10);
+  }
+
+  assert(it_r != end_r && "ric_rec_id not found");
+  ind_event_t* ind_ev = assoc_rb_tree_key(&ag->ind_event.right, it_r);
+  int fd_write = ind_ev->fd_write; 
+  int rc = pthread_mutex_unlock(&ag->mtx_ind_event);
+  assert(rc == 0);
+
+  assert(fd_write > 0);
+  int num_char = 32;
+  char str[num_char];
+  memset(str, '\0', num_char);
+  rc = snprintf(str, num_char ,"%u\n", ric_req_id );
+  assert(rc > 0 && rc < num_char -1);
+
+  rc = write(fd_write, str, rc);
+  assert(rc != 0);
+}
+*/
 
 //////////////////////////////////
 /////////////////////////////////
@@ -524,5 +748,7 @@ void e2_send_control_failure(e2_agent_t* ag, const ric_control_failure_t* cf)
   e2ap_send_bytes_agent(&ag->ep, ba);
   free_byte_array(ba);
 }
+
+
 
 

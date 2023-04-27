@@ -31,7 +31,7 @@
 #include "util/alg_ds/ds/seq_container/seq_generic.h"
 #include "util/alg_ds/ds/assoc_container/assoc_generic.h"
 #include "util/alg_ds/ds/assoc_container/bimap.h"
-#include "util/alg_ds/ds/ts_queue/ts_queue.h"
+#include "util/alg_ds/ds/tsn_queue/tsn_queue.h"
 
 #include "../lib/msg_hand/reg_e2_nodes.h"
 #include "db/db.h"

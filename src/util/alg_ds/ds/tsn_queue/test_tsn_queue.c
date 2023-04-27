@@ -31,7 +31,7 @@ SOFTWARE.
 #include <string.h>
 #include <unistd.h>
 
-#include "ts_queue.h"
+#include "tsn_queue.h"
 
 
 typedef struct

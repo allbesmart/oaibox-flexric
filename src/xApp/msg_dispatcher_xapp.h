@@ -25,7 +25,7 @@
 #define MESSAGE_DISPATCHER_XAPP_H 
 
 
-#include "../util/alg_ds/ds/ts_queue/ts_queue.h"
+#include "../util/alg_ds/ds/tsn_queue/tsn_queue.h"
 #include "../sm/agent_if/read/sm_ag_if_rd.h"
 
 #include <pthread.h>
@@ -33,7 +33,7 @@
 
 typedef struct{
   pthread_t p;
-  tsq_t q;
+  tsnq_t q;
 } msg_dispatcher_xapp_t;
 
 typedef struct{

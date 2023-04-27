@@ -22,15 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
-
 #include <assert.h>
 #include <unistd.h>
 
 #include "../lock_guard/lock_guard.h"
-#include "ts_queue.h"
+#include "tsn_queue.h"
 
-void init_tsq(tsq_t* q, size_t elm_sz)
+void init_tsnq(tsnq_t* q, size_t elm_sz)
 {
   assert(q != NULL);
   assert(elm_sz > 0);
@@ -53,7 +51,7 @@ void init_tsq(tsq_t* q, size_t elm_sz)
   q->stopped = false;
 }
 
-void free_tsq(tsq_t* q, void (*f)(void*) )
+void free_tsnq(tsnq_t* q, void (*f)(void*) )
 {
   assert(q != NULL);
 
@@ -76,7 +74,7 @@ void free_tsq(tsq_t* q, void (*f)(void*) )
   assert(rc == 0); 
 }
 
-void push_tsq(tsq_t* q, void* val, size_t sz)
+void push_tsnq(tsnq_t* q, void* val, size_t sz)
 {
   lock_guard(&q->mtx);
 
@@ -84,7 +82,7 @@ void push_tsq(tsq_t* q, void* val, size_t sz)
   pthread_cond_signal(&q->cv);
 }
 
-void* wait_and_pop_tsq(tsq_t* q, void* (*f)(void*) )
+void* wait_and_pop_tsnq(tsnq_t* q, void* (*f)(void*) )
 {
   assert(q != NULL);
 
@@ -117,7 +115,7 @@ void* wait_and_pop_tsq(tsq_t* q, void* (*f)(void*) )
   return elm;
 }
 
-void* pop_tsq_10(tsq_t* q, void* (*f)(void*) )
+void* pop_tsnq_10(tsnq_t* q, void* (*f)(void*) )
 {
   assert(q != NULL);
 
@@ -148,7 +146,7 @@ void* pop_tsq_10(tsq_t* q, void* (*f)(void*) )
   return elm;
 }
 
-void* pop_tsq_100(tsq_t* q, void* (*f)(void*) )
+void* pop_tsnq_100(tsnq_t* q, void* (*f)(void*) )
 {
   assert(q != NULL);
 
@@ -180,7 +178,7 @@ void* pop_tsq_100(tsq_t* q, void* (*f)(void*) )
   return elm;
 }
 
-size_t size_tsq(tsq_t* q)
+size_t size_tsnq(tsnq_t* q)
 {
   assert(q != NULL);
   

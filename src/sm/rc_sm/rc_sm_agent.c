@@ -134,52 +134,56 @@ subscribe_timer_t on_subscription_rc_sm_ag(sm_agent_t const* sm_agent, const sm_
   assert(data != NULL);
 
   sm_ag_if_wr_t wr = {.type = SUBSCRIPTION_SM_AG_IF_WR};
-
   wr.subs.type = RAN_CTRL_SUBS_V1_03;
-  wr.subs.rc.et = rc_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
-  defer({ free_e2sm_rc_event_trigger(&wr.subs.rc.et); });
+  wr.subs.wr_rc.ric_req_id = data->ric_req_id; 
 
-  wr.subs.rc.sz_ad = 1;
-  wr.subs.rc.ad = calloc(wr.subs.rc.sz_ad, sizeof(e2sm_rc_action_def_t));
-  assert(wr.subs.rc.ad != NULL && "Memory exhausted");
-  defer({ free_e2sm_rc_action_def( wr.subs.rc.ad); free(wr.subs.rc.ad); });
+  rc_sub_data_t* rc = &wr.subs.wr_rc.rc;
 
-  wr.subs.rc.ad[0] = rc_dec_action_def(&sm->enc, data->len_ad, data->action_def);
+  rc->et = rc_dec_event_trigger(&sm->enc, data->len_et, data->event_trigger);
+  defer({ free_e2sm_rc_event_trigger(&rc->et); });
+
+  // Only 1 supported
+  rc->sz_ad = 1;
+  rc->ad = calloc(rc->sz_ad, sizeof(e2sm_rc_action_def_t));
+  assert(rc->ad != NULL && "Memory exhausted");
+  defer({ free_e2sm_rc_action_def(rc->ad); free(rc->ad); });
+
+  rc->ad[0] = rc_dec_action_def(&sm->enc, data->len_ad, data->action_def);
 
   sm->base.io.write(&wr);
 
-  subscribe_timer_t timer = {.ms = -1};
+  subscribe_timer_t timer = {.ms = 0};
 
   return timer;
 }
 
 static
-sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t const* sm_agent, void* act_def)
+sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t const* sm_agent, void* ind_data)
 {
 //  printf("on_indication RC called \n");
   assert(sm_agent != NULL);
-  assert(act_def == NULL && "Action definition data not needed for this SM");
+  assert(ind_data != NULL && "Indication data needed for this SM");
   sm_rc_agent_t* sm = (sm_rc_agent_t*)sm_agent;
 
   sm_ind_data_t ret = {0};
 
   // Fill Indication 
-  sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
-  rd_if.ind.type = RAN_CTRL_STATS_V1_03;
-  rd_if.ind.rc.act_def = act_def;
-  sm->base.io.read(&rd_if);
+  //sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
+  //rd_if.ind.type = RAN_CTRL_STATS_V1_03;
+  //rd_if.ind.rc.act_def = act_def;
+  //sm->base.io.read(&rd_if);
 
   // Liberate the memory if previously allocated by the RAN. It sucks
-  rc_ind_data_t* ind = &rd_if.ind.rc.ind;
-  defer({ free_rc_ind_data(ind); });
+  rc_ind_data_t* ind = (rc_ind_data_t*)ind_data; 
+  defer({ free_rc_ind_data(ind); free(ind); });
 
   // Fill Indication Header
-  byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &rd_if.ind.rc.ind.hdr);
+  byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &ind->hdr);
   ret.ind_hdr = ba_hdr.buf;
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message
-  byte_array_t ba_msg = rc_enc_ind_msg(&sm->enc, &rd_if.ind.rc.ind.msg);
+  byte_array_t ba_msg = rc_enc_ind_msg(&sm->enc, &ind->msg);
   ret.ind_msg = ba_msg.buf;
   ret.len_msg = ba_msg.len;
 
@@ -273,7 +277,6 @@ void free_rc_sm_ag(sm_agent_t* sm_agent)
   free(sm);
 }
 
-
 sm_agent_t* make_rc_sm_agent(sm_io_ag_t io)
 {
   sm_rc_agent_t* sm = calloc(1, sizeof(sm_rc_agent_t));
@@ -297,7 +300,6 @@ sm_agent_t* make_rc_sm_agent(sm_io_ag_t io)
 
   return &sm->base;
 }
-
 
 uint16_t id_rc_sm_agent(sm_agent_t const* sm_agent )
 {

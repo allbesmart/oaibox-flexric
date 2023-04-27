@@ -76,22 +76,23 @@ sm_ag_if_rd_ind_t on_indication_tc_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_t 
 }
 
 static
-sm_ctrl_req_data_t ric_on_control_req_tc_sm_ric(sm_ric_t const* sm_ric, const sm_ag_if_wr_ctrl_t * data)
+sm_ctrl_req_data_t ric_on_control_req_tc_sm_ric(sm_ric_t const* sm_ric, void* ctrl)
 {
   assert(sm_ric != NULL); 
-  assert(data != NULL); 
-  assert(data->type == TC_CTRL_REQ_V0);
+  assert(ctrl != NULL); 
 
   sm_tc_ric_t* sm = (sm_tc_ric_t*)sm_ric;  
 
+  tc_ctrl_req_data_t const* data = ( tc_ctrl_req_data_t const*)ctrl; 
 
-  byte_array_t ba = tc_enc_ctrl_hdr(&sm->enc,  &data->tc_req_ctrl.hdr );
+
+  byte_array_t ba = tc_enc_ctrl_hdr(&sm->enc, &data->hdr );
 
   sm_ctrl_req_data_t ret_data = {0};  
   ret_data.ctrl_hdr = ba.buf;
   ret_data.len_hdr = ba.len;
 
-  ba = tc_enc_ctrl_msg(&sm->enc, &data->tc_req_ctrl.msg);
+  ba = tc_enc_ctrl_msg(&sm->enc, &data->msg);
   ret_data.ctrl_msg = ba.buf;
   ret_data.len_msg = ba.len;
 

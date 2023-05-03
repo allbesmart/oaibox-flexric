@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
   printf("Connected E2 nodes len = %d\n", nodes.len);
 
   // SLICE indication
-  inter_xapp_e inter_t = ms_5;
+  const char* inter_t = "5_ms";
   sm_ans_xapp_t* slice_handle = NULL;
 
   if(nodes.len > 0){
@@ -260,7 +260,7 @@ int main(int argc, char *argv[])
     for (size_t j = 0; j < n->len_rf; ++j)
       printf("Registered ran func id = %d \n ", n->ack_rf[j].id);
 
-    slice_handle[i] = report_sm_xapp_api(&nodes.n[i].id, n->ack_rf[3].id, inter_t, sm_cb_slice);
+    slice_handle[i] = report_sm_xapp_api(&nodes.n[i].id, n->ack_rf[3].id, (void*)inter_t, sm_cb_slice);
     assert(slice_handle[i].success == true);
     sleep(2);
 

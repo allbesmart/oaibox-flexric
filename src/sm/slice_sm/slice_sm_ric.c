@@ -82,7 +82,7 @@ sm_ctrl_req_data_t ric_on_control_req_slice_sm_ric(sm_ric_t const* sm_ric, void*
 
   sm_slice_ric_t* sm = (sm_slice_ric_t*)sm_ric;  
 
-  slice_ctrl_req_data_t const* data = (slice_ctrl_req_data_t const*)ctrl; 
+  slice_ctrl_req_data_t const* data = (  slice_ctrl_req_data_t const*)ctrl; 
 
   byte_array_t ba = slice_enc_ctrl_hdr(&sm->enc, &data->hdr);
 

@@ -5,7 +5,6 @@ add_executable(xapp_mac_rlc_pdcp_moni
 
  target_link_libraries(xapp_mac_rlc_pdcp_moni
                       PUBLIC
-                      kpm_sm
                       e42_xapp
                       -pthread
                       -lsctp
@@ -20,7 +19,6 @@ add_executable(xapp_gtp_moni
 
 target_link_libraries(xapp_gtp_moni
                 PUBLIC
-                kpm_sm
                 e42_xapp
                 -pthread
                 -lsctp

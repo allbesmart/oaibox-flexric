@@ -25,6 +25,7 @@
 #include "../../src/sm/slice_sm/slice_sm_id.h"
 #include "../../src/sm/gtp_sm/gtp_sm_id.h"
 #include "../../src/sm/kpm_sm_v03.00/kpm_sm_id.h"
+#include "../../src/sm/rc_sm/rc_sm_id.h" 
 #include "../../src/util/alg_ds/alg/defer.h"
 #include "../../src/util/time_now_us.h"
 
@@ -69,9 +70,7 @@ void read_RAN(sm_ag_if_rd_t* ag_if)
   if(ag_if->type == E2_SETUP_AGENT_IF_ANS_V0)
     return read_e2_setup_agent(&ag_if->e2ap);
 
-
-
- sm_ag_if_rd_ind_t*  data = &ag_if->ind;
+ sm_ag_if_rd_ind_t* data = &ag_if->ind;
 
   assert(data->type == MAC_STATS_V0 || 
         data->type == RLC_STATS_V0 ||  
@@ -91,8 +90,9 @@ void read_RAN(sm_ag_if_rd_t* ag_if)
   } else if(data->type == GTP_STATS_V0){
     fill_gtp_ind_data(&data->gtp);
   } else if(data->type == KPM_STATS_V3_0){
-    assert(0!=0 && "Not implemented");
-//    fill_kpm_ind_data(&data->kpm);
+    assert(data->kpm.act_def != NULL && "Which action should be sent to KPM?"); 
+    data->kpm.ind.hdr = fill_kpm_ind_hdr();
+    data->kpm.ind.msg = fill_kpm_ind_msg();
   } else {
     assert("Invalid data type");
   }
@@ -109,7 +109,7 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* ag_wr)
 
   if(data->type == MAC_CTRL_REQ_V0){
     //printf("Control message called in the RAN \n");
-    sm_ag_if_ans_t ans = {.type =  CTRL_OUTCOME_SM_AG_IF_ANS_V0};
+    sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
     ans.ctrl_out.type = MAC_AGENT_IF_CTRL_ANS_V0;
     ans.ctrl_out.mac.ans = MAC_CTRL_OUT_OK;
     return ans;
@@ -132,7 +132,15 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* ag_wr)
     ans.ctrl_out.type = SLICE_AGENT_IF_CTRL_ANS_V0;
     return ans;
 
-  } else {
+  } else if(data->type == RAN_CONTROL_CTRL_V1_03){
+    rc_ctrl_req_data_t const* rc_ctrl = &data->rc_ctrl;
+
+    sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
+    ans.ctrl_out.type = RAN_CTRL_V1_3_AGENT_IF_CTRL_ANS_V0;
+    ans.ctrl_out.rc = fill_rnd_rc_ctrl_out();
+    return ans;
+
+  } else  {
     assert(0 != 0 && "Not supported function ");
   }
   sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
@@ -174,14 +182,29 @@ void sm_cb_gtp(sm_ag_if_rd_t const* rd)
 }
 
 static
-sm_ag_if_wr_t create_add_slice(void)
+void sm_cb_kpm(sm_ag_if_rd_t const* rd)
 {
-  sm_ag_if_wr_t ctrl_msg = {.type =CONTROL_SM_AG_IF_WR };
-  ctrl_msg.ctrl.type = SLICE_CTRL_REQ_V0;
+  assert(rd != NULL);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == KPM_STATS_V3_0); 
 
-  ctrl_msg.ctrl.slice_req_ctrl.hdr.dummy = 2;
+  kpm_ind_data_t const* kpm = &rd->ind.kpm.ind;
+
+  int64_t now = time_now_us();
+  printf("KPM ind_msg latency = %ld μs\n", now - kpm->hdr.kpm_ric_ind_hdr_format_1.collectStartTime);
+}
+
+
+
+
+static
+slice_ctrl_req_data_t create_add_slice(void)
+{
+  slice_ctrl_req_data_t ctrl_msg = {0}; 
+
+  ctrl_msg.hdr.dummy = 2;
  
-  slice_ctrl_msg_t* sl_ctrl_msg = &ctrl_msg.ctrl.slice_req_ctrl.msg;
+  slice_ctrl_msg_t* sl_ctrl_msg = &ctrl_msg.msg;
   sl_ctrl_msg->type = SLICE_CTRL_SM_V0_ADD;
   char sched_name[] = "My scheduler";
   size_t const sz = strlen(sched_name);
@@ -197,19 +220,16 @@ sm_ag_if_wr_t create_add_slice(void)
   sl_ctrl_msg->u.add_mod_slice.dl.slices[0].params.u.sta.pos_low = 0;
  
   return ctrl_msg; 
-
 }
 
 static
-sm_ag_if_wr_t create_assoc_slice(void)
+slice_ctrl_req_data_t create_assoc_slice(void)
 {
-  assert(0!=0 && "Unknown type");
+  slice_ctrl_req_data_t ctrl_msg = {0}; 
 
-  sm_ag_if_wr_t ctrl_msg = {.type =CONTROL_SM_AG_IF_WR };
-  ctrl_msg.ctrl.type = SLICE_CTRL_REQ_V0;
-  ctrl_msg.ctrl.slice_req_ctrl.hdr.dummy = 2;
+  ctrl_msg.hdr.dummy = 2;
  
-  slice_ctrl_msg_t* sl_ctrl_msg = &ctrl_msg.ctrl.slice_req_ctrl.msg;
+  slice_ctrl_msg_t* sl_ctrl_msg = &ctrl_msg.msg;
   sl_ctrl_msg->type = SLICE_CTRL_SM_V0_UE_SLICE_ASSOC;
 
   ue_slice_conf_t* ue_slice = &sl_ctrl_msg->u.ue_slice;
@@ -222,6 +242,8 @@ sm_ag_if_wr_t create_assoc_slice(void)
     assoc->ul_id = 42;
     assoc->rnti = 121;
   }
+
+  return ctrl_msg;
 }
 
 int main(int argc, char *argv[])
@@ -265,47 +287,60 @@ int main(int argc, char *argv[])
  // assert(h.success == true);
  // sleep(2);
 
-  inter_xapp_e i_1 = ms_1;
+
+  const char* period = "5_ms";
+
   // returns a handle
-  sm_ans_xapp_t h_1 = report_sm_xapp_api(&nodes.n[0].id, 142 , i_1, sm_cb_mac);
+  sm_ans_xapp_t h_1 = report_sm_xapp_api(&nodes.n[0].id, 142, (void*)period, sm_cb_mac);
   assert(h_1.success == true);
-  sleep(2);
 
-  inter_xapp_e i_2 = ms_1;
   // returns a handle
-  sm_ans_xapp_t h_2 = report_sm_xapp_api(&nodes.n[0].id, 143, i_2, sm_cb_rlc);
+  sm_ans_xapp_t h_2 = report_sm_xapp_api(&nodes.n[0].id, 143, (void*)period, sm_cb_rlc);
   assert(h_2.success == true);
-  sleep(2);
 
-  inter_xapp_e i_3 = ms_1;
   // returns a handle
-  sm_ans_xapp_t h_3 = report_sm_xapp_api(&nodes.n[0].id, SM_GTP_ID, i_3, sm_cb_gtp);
+  sm_ans_xapp_t h_3 = report_sm_xapp_api(&nodes.n[0].id, SM_GTP_ID, (void*)period, sm_cb_gtp);
   assert(h_3.success == true);
-  sleep(2);
 
   // Control ADD slice
-  sm_ag_if_wr_t ctrl_msg_add = create_add_slice();
+  slice_ctrl_req_data_t ctrl_msg_add = create_add_slice();
+ 
   control_sm_xapp_api(&nodes.n[0].id, SM_SLICE_ID, &ctrl_msg_add);
-  free(ctrl_msg_add.ctrl.slice_req_ctrl.msg.u.add_mod_slice.dl.slices); 
-  free(ctrl_msg_add.ctrl.slice_req_ctrl.msg.u.add_mod_slice.dl.sched_name);
+  free(ctrl_msg_add.msg.u.add_mod_slice.dl.slices); 
+  free(ctrl_msg_add.msg.u.add_mod_slice.dl.sched_name);
 
   sleep(1);
 
   // Control ASSOC slice
-  sm_ag_if_wr_t ctrl_msg_assoc = create_assoc_slice();
+  slice_ctrl_req_data_t ctrl_msg_assoc = create_assoc_slice();
   control_sm_xapp_api(&nodes.n[0].id, SM_SLICE_ID, &ctrl_msg_assoc);
-  free(ctrl_msg_assoc.ctrl.slice_req_ctrl.msg.u.ue_slice.ues); 
+  free(ctrl_msg_assoc.msg.u.ue_slice.ues); 
 
   sleep(1);
-  
-//  inter_xapp_e i = ms_1000;
-  // returns a handle for KPM
-//  sm_ans_xapp_t h = report_sm_xapp_api(&nodes.n[0].id, SM_KPM_ID, i, sm_cb_kpm);
-//  assert(h.success == true);
-  sleep(20);
+
+  // KPM 
+  kpm_sub_data_t kpm_sub = {0};
+  kpm_sub.ev_trg_def = fill_kpm_event_trigger_def();
+  kpm_sub.sz_ad = 1; 
+  kpm_sub.ad = calloc(1, sizeof(kpm_act_def_t));
+  assert(kpm_sub.ad != NULL && "Memory exhausted");
+  kpm_sub.ad[0] = fill_kpm_action_def();
+  defer({ free_kpm_sub_data(&kpm_sub); });
+
+  sm_ans_xapp_t h_4 = report_sm_xapp_api(&nodes.n[0].id, SM_KPM_ID, &kpm_sub, sm_cb_kpm);
+  assert(h_4.success == true);
+  sleep(10);
+
+  // RC 
+  rc_ctrl_req_data_t rc_ctrl = fill_rc_ctrl();
+  sm_ans_xapp_t ans_rc = control_sm_xapp_api(&nodes.n[0].id, SM_RC_ID, &rc_ctrl);
+  free_rc_ctrl_req_data(&rc_ctrl);
 
   // Remove the handle previously returned
-  //rm_report_sm_xapp_api(h.u.handle);
+  rm_report_sm_xapp_api(h_1.u.handle);
+  rm_report_sm_xapp_api(h_2.u.handle);
+  rm_report_sm_xapp_api(h_3.u.handle);
+  rm_report_sm_xapp_api(h_4.u.handle);
 
   sleep(1);
 

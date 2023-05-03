@@ -81,13 +81,13 @@ int main(int argc, char *argv[])
   printf("Connected E2 nodes = %d\n", nodes.len);
 
   // MAC indication
-  inter_xapp_e i_0 = ms_5;
+  const char* i_0 = "5_ms";
   sm_ans_xapp_t* mac_handle = NULL;
   // RLC indication
-  inter_xapp_e i_1 = ms_5;
+  const char* i_1 = "5_ms";
   sm_ans_xapp_t* rlc_handle = NULL;
   // PDCP indication
-  inter_xapp_e i_2 = ms_5;
+  const char* i_2 = "5_ms";
   sm_ans_xapp_t* pdcp_handle = NULL;
 
   if(nodes.len > 0){
@@ -104,13 +104,13 @@ int main(int argc, char *argv[])
     for (size_t j = 0; j < n->len_rf; j++)
       printf("Registered node %d ran func id = %d \n ", i, n->ack_rf[j].id);
 
-    mac_handle[i] = report_sm_xapp_api(&nodes.n[i].id, n->ack_rf[0].id, i_0, sm_cb_mac);
+    mac_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 142, (void*)i_0, sm_cb_mac);
     assert(mac_handle[i].success == true);
 
-    rlc_handle[i] = report_sm_xapp_api(&nodes.n[i].id, n->ack_rf[1].id, i_1, sm_cb_rlc);
+    rlc_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 143, (void*)i_1, sm_cb_rlc);
     assert(rlc_handle[i].success == true);
 
-    pdcp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, n->ack_rf[2].id, i_2, sm_cb_pdcp);
+    pdcp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 144, (void*)i_2, sm_cb_pdcp);
     assert(pdcp_handle[i].success == true);
   }
 

@@ -1230,6 +1230,9 @@ void close_db_sqlite3(sqlite3* db)
   assert(rc == SQLITE_OK && "Error while closing the DB");
 }
 
+static
+int kpm_acc = 0; 
+
 void write_db_sqlite3(sqlite3* db, global_e2_node_id_t const* id, sm_ag_if_rd_t const* ag_rd)
 {
   assert(db != NULL);
@@ -1250,7 +1253,11 @@ void write_db_sqlite3(sqlite3* db, global_e2_node_id_t const* id, sm_ag_if_rd_t 
   } else if (rd->type == GTP_STATS_V0) {
     write_gtp_stats(db, id, &rd->gtp);
   } else if (rd->type == KPM_STATS_V3_0) {
-    assert(0!=0 && "Not implemented");
+    kpm_acc++;
+    if(kpm_acc > 2048){
+    printf("KPM sqlite not implemented\n"); 
+    kpm_acc = 0;
+    }
   } else {
     assert(0!=0 && "Unknown statistics type received ");
   }

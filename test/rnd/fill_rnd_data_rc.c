@@ -1951,7 +1951,7 @@ e2sm_rc_ctrl_hdr_t fill_rnd_rc_ctrl_hdr(void)
   dst.format = rand() % END_E2SM_RC_CTRL_HDR;
 
   if(dst.format == FORMAT_1_E2SM_RC_CTRL_HDR){
-    dst.frmt_1 =  fill_rnd_rc_ctrl_hdr_frmat_1();
+    dst.frmt_1 = fill_rnd_rc_ctrl_hdr_frmat_1();
   } else if(dst.format == FORMAT_2_E2SM_RC_CTRL_HDR){
      dst.frmt_2 = fill_rnd_rc_ctrl_hdr_frmat_2();
   } else {
@@ -2986,7 +2986,7 @@ e2sm_rc_ctrl_out_t fill_rc_ctrl_out(void)
 
 rc_ctrl_req_data_t fill_rc_ctrl(void)
 {
-rc_ctrl_req_data_t dst = {0};
+  rc_ctrl_req_data_t dst = {0};
   dst.hdr = fill_rnd_rc_ctrl_hdr(); 
   dst.msg = fill_rnd_rc_ctrl_msg();
   return dst;

@@ -206,8 +206,8 @@ int main()
     printf("Registered ran func id = %d \n ", n->ack_rf[i].id );
 
 
-  inter_xapp_e i = ms_5;
-  sm_ans_xapp_t h = report_sm_xapp_api(&nodes.n[0].id, 143, i, sm_cb_rlc);
+  const char* i = "5_ms";
+  sm_ans_xapp_t h = report_sm_xapp_api(&nodes.n[0].id, 143, (void*)i, sm_cb_rlc);
   assert(h.success == true);
 
   printf("Registered to RLC SM \n ");

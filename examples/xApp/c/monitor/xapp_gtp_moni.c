@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
   printf("Connected E2 nodes = %d\n", nodes.len);
 
   // gtp indication
-  inter_xapp_e i_2 = ms_1;
+  const char* i_2 = "1_ms";
   sm_ans_xapp_t* gtp_handle = NULL;
 
   if(nodes.len > 0){
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     for (size_t j = 0; j < n->len_rf; j++)
       printf("Registered node %d ran func id = %d \n ", i, n->ack_rf[j].id);
 
-    gtp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, SM_GTP_ID, i_2, sm_cb_gtp);
+    gtp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, SM_GTP_ID, (void*)i_2, sm_cb_gtp);
     assert(gtp_handle[i].success == true);
   }
 

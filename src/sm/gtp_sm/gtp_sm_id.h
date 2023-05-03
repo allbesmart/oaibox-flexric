@@ -52,7 +52,7 @@ __attribute__((unused)) static
 const char SM_GTP_OID[] = "0.0.0.0.0.0.0.0.1.148.0"; 
 
 __attribute__((unused)) static
-const char SM_RAN_CTRL_DESCRIPTION[] = "GTP Service Model";
+const char SM_GTP_DESCRIPTION[] = "GTP Service Model";
 
 #endif
 

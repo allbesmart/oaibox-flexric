@@ -102,13 +102,13 @@ e2_node_arr_t e2_nodes_xapp(e42_xapp_t* xapp);
 size_t not_dispatch_msg(e42_xapp_t* xapp);
 
 // We wait for the message to come back and avoid asyncronous programming
-sm_ans_xapp_t report_sm_sync_xapp(e42_xapp_t* xapp, global_e2_node_id_t* id, uint16_t ran_func_id, inter_xapp_e i, sm_cb cb);
+sm_ans_xapp_t report_sm_sync_xapp(e42_xapp_t* xapp, global_e2_node_id_t* id, uint16_t ran_func_id, void* data, sm_cb cb);
 
 // We wait for the message to come back and avoid asyncronous programming
 void rm_report_sm_sync_xapp(e42_xapp_t* xapp, int handle);
 
 // We wait for the message to come back and avoid asyncronous programming
-sm_ans_xapp_t control_sm_sync_xapp(e42_xapp_t* xapp,  global_e2_node_id_t* id, uint16_t ran_func_id, sm_ag_if_wr_t const* ctrl_msg);
+sm_ans_xapp_t control_sm_sync_xapp(e42_xapp_t* xapp, global_e2_node_id_t* id, uint16_t ran_func_id, void* ctrl_msg);
 
 #endif
 

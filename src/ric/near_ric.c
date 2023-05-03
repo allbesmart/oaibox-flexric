@@ -491,7 +491,7 @@ void free_near_ric(near_ric_t* ric)
 }
 
 static
-ric_subscription_request_t generate_subscription_request(near_ric_t* ric, sm_ric_t const* sm, uint16_t ran_func_id, sm_ag_if_wr_subs_t const* cmd)
+ric_subscription_request_t generate_subscription_request(near_ric_t* ric, sm_ric_t const* sm, uint16_t ran_func_id, void* cmd)
 {
   assert(ric != NULL);
   ric_subscription_request_t sr = {0}; 
@@ -551,7 +551,7 @@ seq_arr_t conn_e2_nodes(near_ric_t* ric)
   return arr;
 }
 
-uint16_t report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void const* cmd)
+uint16_t report_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd)
 {
   assert(ric != NULL);
   assert(ran_func_id != 0 && "Reserved SM ID value");

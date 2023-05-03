@@ -21,5 +21,5 @@ add_library(3gpp_derived_ie_enc_asn_obj OBJECT ${3GPP_DERIVED_IE_ENC_ASN_SRCS} )
                                       #  e2sm_kpm_asn1_obj)
                                         
               
-target_compile_options(3gpp_derived_ie_enc_asn_obj PUBLIC "-DASN_DISABLE_OER_SUPPORT")
+                                      target_compile_options(3gpp_derived_ie_enc_asn_obj PRIVATE "-DASN_DISABLE_OER_SUPPORT")
 target_compile_options(3gpp_derived_ie_enc_asn_obj PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter -fPIC)

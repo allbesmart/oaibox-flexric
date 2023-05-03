@@ -40,18 +40,14 @@ set(XAPP_SRC
 
   # KPM SM
   ../sm/kpm_sm_v03.00/ie/kpm_data_ie.c
+  ../../test/rnd/fill_rnd_data_kpm.c
   #$<TARGET_OBJECTS:e2sm_kpm_asn1_obj>
   $<TARGET_OBJECTS:kpm_ric_info_common_obj>
   $<TARGET_OBJECTS:kpm_ric_info_obj>
 
-  #$<TARGET_OBJECTS:kpm_dec_common_asn_obj>
-  #$<TARGET_OBJECTS:kpm_dec_ie_asn_obj>
-
-  #$<TARGET_OBJECTS:kpm_enc_common_asn_obj>
-  #$<TARGET_OBJECTS:kpm_enc_ie_asn_obj>
-
   # RAN Control SM
   ../sm/rc_sm/ie/rc_data_ie.c
+  ../../test/rnd/fill_rnd_data_rc.c
   $<TARGET_OBJECTS:e2sm_rc_ir_obj>
   $<TARGET_OBJECTS:e2sm_common_ie_obj>
   $<TARGET_OBJECTS:sm_common_ie_obj>
@@ -62,6 +58,7 @@ set(XAPP_SRC
   $<TARGET_OBJECTS:sm_common_enc_asn_obj>
   $<TARGET_OBJECTS:sm_common_ie_obj>
 
+  
 
 
   ../util/ngran_type.c

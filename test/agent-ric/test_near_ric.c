@@ -213,16 +213,10 @@ int main(int argc, char *argv[])
   assert(e2_nodes.len > 0 && "No E2 Nodes connected");
 
   global_e2_node_id_t const* id = &e2_nodes.n[0].id;
-/*
+
   const uint16_t MAC_ran_func_id = 142;
-  const char* cmd = "5_ms";
+  char* cmd = "5_ms";
   uint16_t h = report_service_near_ric_api(id, MAC_ran_func_id, cmd );
-
-//  const char* cmd2 = "Hello";
-//  control_service_near_ric_api(id, MAC_ran_func_id, cmd2 );  
-//  sleep(2);
-
-//  load_sm_near_ric_api("../test/so/librlc_sm.so");
 
   const uint16_t RLC_ran_func_id = 143;
   uint16_t h2 = report_service_near_ric_api(id, RLC_ran_func_id, cmd);
@@ -250,8 +244,6 @@ int main(int argc, char *argv[])
 
   const uint16_t h7 = report_service_near_ric_api(id, KPM_ran_func_id, &kpm_sub);
 
-*/
-  
 
   /// RAN Control Indication 
   
@@ -276,13 +268,13 @@ int main(int argc, char *argv[])
 
   sleep(10);
 
-//  rm_report_service_near_ric_api(id, MAC_ran_func_id, h);
-//  rm_report_service_near_ric_api(id, RLC_ran_func_id, h2);
-//  rm_report_service_near_ric_api(id, PDCP_ran_func_id, h3);
-//  rm_report_service_near_ric_api(id, SLICE_ran_func_id, h4);
-//  rm_report_service_near_ric_api(id, TC_ran_func_id, h5);
-//  rm_report_service_near_ric_api(id, GTP_ran_func_id, h6);
-//  rm_report_service_near_ric_api(id, KPM_ran_func_id, h7);
+  rm_report_service_near_ric_api(id, MAC_ran_func_id, h);
+  rm_report_service_near_ric_api(id, RLC_ran_func_id, h2);
+  rm_report_service_near_ric_api(id, PDCP_ran_func_id, h3);
+  rm_report_service_near_ric_api(id, SLICE_ran_func_id, h4);
+  rm_report_service_near_ric_api(id, TC_ran_func_id, h5);
+  rm_report_service_near_ric_api(id, GTP_ran_func_id, h6);
+  rm_report_service_near_ric_api(id, KPM_ran_func_id, h7);
   rm_report_service_near_ric_api(id, RC_ran_func_id, h8);
 
   sleep(1);
@@ -293,17 +285,14 @@ int main(int argc, char *argv[])
   // Stop the RIC
   stop_near_ric_api();
 
-//  free_kpm_sub_data(&kpm_sub); 
+  free_kpm_sub_data(&kpm_sub); 
   free_rc_sub_data(&rc_sub); 
-
   free_rc_ctrl_req_data(&rc_ctrl);
-
 
   free_e2_nodes_api(&e2_nodes); // e2_nodes_api_t* src);
 
   int rc = pthread_join(t, NULL);
   assert(rc == 0);
-
 
   printf("Test communicating E2-Agent and Near-RIC run SUCCESSFULLY\n");
 

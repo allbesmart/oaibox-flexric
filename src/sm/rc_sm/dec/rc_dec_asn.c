@@ -544,6 +544,7 @@ e2sm_rc_ev_trg_frmt_3_t dec_rc_ev_trigger_format_3(E2SM_RC_EventTrigger_Format3_
   return dst; 
 }
 
+/*
 static
 rrc_state_t dec_rrc_state(TriggerType_Choice_RRCstate_Item_t const * src)
 {
@@ -567,7 +568,7 @@ rrc_state_t dec_rrc_state(TriggerType_Choice_RRCstate_Item_t const * src)
 
   return dst;
 }
-
+*/
 /*
 static
 rrc_state_lst_t dec_rrc_state_lst(TriggerType_Choice_RRCstate_t const* src)

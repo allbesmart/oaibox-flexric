@@ -33,7 +33,7 @@
 #include "e42_xapp.h"
 
 
-ric_subscription_request_t generate_subscription_request(ric_gen_id_t ric_id , sm_ric_t const* sm, const char* cmd);
+ric_subscription_request_t generate_subscription_request(ric_gen_id_t ric_id, sm_ric_t const* sm, void* cmd);
 
 e42_ric_subscription_request_t generate_e42_ric_subscription_request(uint16_t xapp_id, global_e2_node_id_t* id,  ric_subscription_request_t* sr); 
 

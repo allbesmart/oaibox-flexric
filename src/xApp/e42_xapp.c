@@ -48,6 +48,9 @@
 #include "../sm/gtp_sm/gtp_sm_id.h"
 #include "../sm/kpm_sm_v03.00/kpm_sm_id.h"
 
+#include "../../test/rnd/fill_rnd_data_rc.h"
+#include "../../test/rnd/fill_rnd_data_kpm.h"
+
 
 #include <assert.h>
 #include <time.h>
@@ -119,8 +122,18 @@ static
 void read_xapp(sm_ag_if_rd_t* data)
 {
   assert(data != NULL);
-  assert(0!=0 && "Program should never come here");
-  exit(-1);
+  assert(data->type == E2_SETUP_AGENT_IF_ANS_V0 && "Only E2 Setup. Else program should not come here");
+  sm_ag_if_rd_e2setup_t* e2ap = &data->e2ap;
+
+  assert(e2ap->type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0 || e2ap->type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
+  if(e2ap->type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0 ){
+    e2ap->kpm.ran_func_def = fill_kpm_ran_func_def(); 
+  } else if(e2ap->type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0 ){
+    e2ap->rc.ran_func_def = fill_rc_ran_func_def();
+  } else {
+    assert(0 != 0 && "Unknown type");
+  }
+
 }
 
 static

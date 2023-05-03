@@ -177,7 +177,6 @@ e2ap_msg_t e2ap_msg_handle_ric(near_ric_t* ric, const e2ap_msg_t* msg)
 
 #ifndef TEST_AGENT_RIC  
   notify_msg_iapp_api(msg);
-  assert(0!=0 && "Here we are?");
 #endif
 
   e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};

@@ -24,5 +24,5 @@ add_library(3gpp_derived_ie_dec_asn_obj OBJECT
                                   # e2sm_kpm_asn1_obj)
     
               
-target_compile_options(3gpp_derived_ie_dec_asn_obj PUBLIC "-DASN_DISABLE_OER_SUPPORT")
+                                  target_compile_options(3gpp_derived_ie_dec_asn_obj PRIVATE "-DASN_DISABLE_OER_SUPPORT")
 target_compile_options(3gpp_derived_ie_dec_asn_obj PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter -fPIC)

@@ -43,7 +43,7 @@ elseif(SM_ENCODING_RC STREQUAL "ASN" )
 
                       )
   target_include_directories(rc_sm PRIVATE "ie/asn")
-  target_compile_options(rc_sm PUBLIC "-DASN_DISABLE_OER_SUPPORT")
+  target_compile_options(rc_sm  PRIVATE "-DASN_DISABLE_OER_SUPPORT")
   target_compile_options(rc_sm PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter)
 
 elseif(SM_ENCODING_RC STREQUAL "FLATBUFFERS" )

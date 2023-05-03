@@ -66,6 +66,7 @@ void init_udp_socket()
 
 }
 
+/*
 static
 void notify_kpm_ind_msg_frm_1(const kpm_ind_msg_format_1_t message, uint32_t truncated_ts)
 {
@@ -177,6 +178,7 @@ void notify_kpm_ind_msg_frm_1(const kpm_ind_msg_format_1_t message, uint32_t tru
     }
 
 }
+*/
 
 void notify_influx_listener(sm_ag_if_rd_ind_t const* data)
 {
@@ -250,17 +252,19 @@ void notify_influx_listener(sm_ag_if_rd_ind_t const* data)
       assert(rc != -1);
     }
   } else if(data->type == KPM_STATS_V3_0){
-    kpm_ind_data_t const* kpm = &data->kpm;
+    assert(0!=0 && "Not implemented");
+
+    // kpm_ind_data_t const* kpm = &data->kpm;
 
     // From Indication Header : Collect Start Time
     // To be defined better, switch/case for specific format
-    uint64_t truncated_ts = (uint64_t)kpm->hdr.kpm_ric_ind_hdr_format_1.collectStartTime;
+    // uint64_t truncated_ts = (uint64_t)kpm->hdr.kpm_ric_ind_hdr_format_1.collectStartTime;
 
-    switch (kpm->msg.type)
-    {
-    case FORMAT_1_INDICATION_MESSAGE:
-      notify_kpm_ind_msg_frm_1(kpm->msg.frm_1, truncated_ts);
-      break;
+   // switch (kpm->msg.type)
+   // {
+   // case FORMAT_1_INDICATION_MESSAGE:
+   //   notify_kpm_ind_msg_frm_1(kpm->msg.frm_1, truncated_ts);
+   //   break;
 
     // case FORMAT_2_INDICATION_MESSAGE:
     //   kpm_ind_msg_format_2_t * message = calloc(1, sizeof(kpm_ind_msg_format_2_t));
@@ -274,11 +278,10 @@ void notify_influx_listener(sm_ag_if_rd_ind_t const* data)
     //   print_kpm_ind_msg_frm_3(&message);
     //   break;
 
-    default:
-      assert(false && "Unknown Indication Message Type");
-    }
+   // default:
+   //   assert(false && "Unknown Indication Message Type");
+   // }
 
-    
   } else {
     assert(0 != 0 || "invalid data type ");
   }

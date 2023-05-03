@@ -118,7 +118,7 @@ void free_e2_nodes_api(e2_nodes_api_t* src)
   free(src->n);
 }
 
-uint16_t report_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_func_id, void const* cmd )
+uint16_t report_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd)
 {
   assert(ric != NULL);
   assert(ran_func_id != 0 && "Reserved SM ID");  

@@ -23,15 +23,12 @@
 
 #include <assert.h>
 
-ric_subscription_request_t generate_subscription_request(ric_gen_id_t ric_id , sm_ric_t const* sm, const char* cmd)
+ric_subscription_request_t generate_subscription_request(ric_gen_id_t ric_id , sm_ric_t const* sm, void* cmd)
 {
   assert(sm != NULL);
+  assert(cmd != NULL);
 
-  assert(0!=0 && "Clean this and not implemented");
-  
-  sm_ag_if_wr_subs_t dummy = {0};
-  (void)cmd;
-  sm_subs_data_t data = sm->proc.on_subscription(sm, &dummy);
+  sm_subs_data_t data = sm->proc.on_subscription(sm, cmd);
 
   ric_subscription_request_t sr = {0}; 
   sr.ric_id = ric_id;

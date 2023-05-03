@@ -43,12 +43,33 @@
 #include <time.h>
 #include <unistd.h>
 
+
+static
+void read_e2_setup_agent(sm_ag_if_rd_e2setup_t* e2ap)
+{
+  assert(e2ap != NULL);
+  assert(e2ap->type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0 || e2ap->type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
+  if(e2ap->type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0 ){
+    e2ap->kpm.ran_func_def = fill_kpm_ran_func_def(); 
+  } else if(e2ap->type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0 ){
+    e2ap->rc.ran_func_def = fill_rc_ran_func_def();
+  } else {
+    assert(0 != 0 && "Unknown type");
+  }
+}
+
 static
 void read_RAN(sm_ag_if_rd_t* ag_if)
 {
   assert(ag_if != NULL);
 
-  assert(ag_if->type == INDICATION_MSG_AGENT_IF_ANS_V0 );
+  assert(ag_if->type == INDICATION_MSG_AGENT_IF_ANS_V0 ||
+        ag_if->type == E2_SETUP_AGENT_IF_ANS_V0);
+
+  if(ag_if->type == E2_SETUP_AGENT_IF_ANS_V0)
+    return read_e2_setup_agent(&ag_if->e2ap);
+
+
 
  sm_ag_if_rd_ind_t*  data = &ag_if->ind;
 
@@ -246,13 +267,13 @@ int main(int argc, char *argv[])
 
   inter_xapp_e i_1 = ms_1;
   // returns a handle
-  sm_ans_xapp_t h_1 = report_sm_xapp_api(&nodes.n[0].id, n->ack_rf[0].id, i_1, sm_cb_mac);
+  sm_ans_xapp_t h_1 = report_sm_xapp_api(&nodes.n[0].id, 142 , i_1, sm_cb_mac);
   assert(h_1.success == true);
   sleep(2);
 
   inter_xapp_e i_2 = ms_1;
   // returns a handle
-  sm_ans_xapp_t h_2 = report_sm_xapp_api(&nodes.n[0].id, n->ack_rf[1].id, i_2, sm_cb_rlc);
+  sm_ans_xapp_t h_2 = report_sm_xapp_api(&nodes.n[0].id, 143, i_2, sm_cb_rlc);
   assert(h_2.success == true);
   sleep(2);
 

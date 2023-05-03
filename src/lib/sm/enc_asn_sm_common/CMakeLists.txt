@@ -15,5 +15,5 @@ add_library(sm_common_enc_asn_obj OBJECT
                               #  e2sm_kpm_asn1_obj)
 
               
-target_compile_options(sm_common_enc_asn_obj PUBLIC "-DASN_DISABLE_OER_SUPPORT")
+                              target_compile_options(sm_common_enc_asn_obj PRIVATE "-DASN_DISABLE_OER_SUPPORT")
 target_compile_options(sm_common_enc_asn_obj PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter -fPIC)

@@ -177,7 +177,7 @@ typedef struct {
 
 void free_e2sm_rc_action_def(e2sm_rc_action_def_t* src); 
 
-e2sm_rc_action_def_t cp_e2sm_rc_action_def(e2sm_rc_action_def_t* src);
+e2sm_rc_action_def_t cp_e2sm_rc_action_def(e2sm_rc_action_def_t const* src);
 
 bool eq_e2sm_rc_action_def(e2sm_rc_action_def_t* m0,  e2sm_rc_action_def_t* m1);
 

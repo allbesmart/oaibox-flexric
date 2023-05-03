@@ -52,7 +52,7 @@ e2_nodes_api_t e2_nodes_near_ric_api(void);
 // in Near-Real-time RAN Intelligent Controller
 // E2 Service Model (E2SM)
 
-uint16_t report_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_func_id, void const* cmd);
+uint16_t report_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_func_id, void* cmd);
 
 void rm_report_service_near_ric_api(global_e2_node_id_t const* id, uint16_t ran_func_id, uint16_t act_id);
 

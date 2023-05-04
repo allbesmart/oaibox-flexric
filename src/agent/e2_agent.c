@@ -596,7 +596,6 @@ void e2_async_event_agent(e2_agent_t* ag, uint32_t ric_req_id, void* ind_data)
     int rc = pthread_mutex_lock(&ag->mtx_ind_event);  
     assert(rc == 0);
 
-
     f = assoc_rb_tree_front(tree);
     l = assoc_rb_tree_end(tree);
     it = find_if_rb_tree(tree, f, l, &tmp, eq_ind_event_ric_req_id); 
@@ -623,7 +622,7 @@ void e2_async_event_agent(e2_agent_t* ag, uint32_t ric_req_id, void* ind_data)
   assert(rc == 0);
 
   // Push the data into the queue
-  push_tsq(&ag->aind, &aind ,sizeof(aind_event_t));
+  push_tsq(&ag->aind, &aind, sizeof(aind_event_t));
 
   // Inform epoll that an aperiodic event happened
   int num_char = 32;

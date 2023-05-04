@@ -249,9 +249,11 @@ sm_ind_data_t ind_sm_payload(ric_indication_t const* src)
   sm_ind_data_t ind_data = ind_sm_payload(src);
 
   msg_dispatch_t msg_disp = {.rd.type = INDICATION_MSG_AGENT_IF_ANS_V0 };
-  msg_disp.rd.ind = sm->proc.on_indication(sm,&ind_data);
-  assert(msg_disp.rd.ind.type == MAC_STATS_V0 || msg_disp.rd.ind.type == RLC_STATS_V0 || msg_disp.rd.ind.type == PDCP_STATS_V0 
-        || msg_disp.rd.ind.type == SLICE_STATS_V0 || msg_disp.rd.ind.type == KPM_STATS_V3_0 || msg_disp.rd.ind.type == GTP_STATS_V0);
+  msg_disp.rd.ind = sm->proc.on_indication(sm, &ind_data);
+  assert(msg_disp.rd.ind.type == MAC_STATS_V0 || msg_disp.rd.ind.type == RLC_STATS_V0 
+      || msg_disp.rd.ind.type == PDCP_STATS_V0 || msg_disp.rd.ind.type == SLICE_STATS_V0 
+      || msg_disp.rd.ind.type == KPM_STATS_V3_0 || msg_disp.rd.ind.type == GTP_STATS_V0
+      || msg_disp.rd.ind.type == RAN_CTRL_STATS_V1_03);
   
   act_proc_ans_t ans = find_act_proc(&xapp->act_proc, src->ric_id.ric_req_id);
 
@@ -262,13 +264,12 @@ sm_ind_data_t ind_sm_payload(ric_indication_t const* src)
   } else {
    
    // Write to SQL DB
-   write_db_xapp(&xapp->db, &ans.val.e2_node ,&msg_disp.rd);
+   write_db_xapp(&xapp->db, &ans.val.e2_node, &msg_disp.rd);
 
     // Write to the callback. Should I send the E2 Node info to the cb??
     msg_disp.sm_cb = ans.val.sm_cb;
     send_msg_dispatcher(&xapp->msg_disp, &msg_disp );
-  }
-  
+ }
 
   e2ap_msg_t ret = {.type = NONE_E2_MSG_TYPE };
   return ret;
@@ -290,7 +291,6 @@ sm_ind_data_t ind_sm_payload(ric_indication_t const* src)
 
   printf("[xApp]: CONTROL ACK received\n");
 
-
   // A pending event is created along with a timer of 5000 ms,
   // after which an event will be generated
   pending_event_xapp_t ev = {.ev = E42_RIC_CONTROL_REQUEST_PENDING_EVENT, .id = rv.val.id };
@@ -300,6 +300,9 @@ sm_ind_data_t ind_sm_payload(ric_indication_t const* src)
 
   // Unblock UI thread  
   signal_sync_ui(&xapp->sync);
+
+  // If the answer of control_ack is needed 
+  // use the field ack->control_outcome 
 
   e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};
   return ans;

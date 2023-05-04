@@ -209,7 +209,6 @@ sm_ctrl_out_data_t on_control_rc_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_req_d
   rc_ctrl->msg = rc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
   defer({ free_rc_ctrl_req_data(rc_ctrl); });
 
-
   sm_ag_if_ans_t ret = sm->base.io.write(&wr);
   assert(ret.type == CTRL_OUTCOME_SM_AG_IF_ANS_V0);
   assert(ret.ctrl_out.type == RAN_CTRL_V1_3_AGENT_IF_CTRL_ANS_V0);

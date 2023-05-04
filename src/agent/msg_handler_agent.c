@@ -252,7 +252,6 @@ e2ap_msg_t e2ap_handle_control_request_agent(e2_agent_t* ag, const e2ap_msg_t* m
   assert(ag != NULL);
   assert(msg != NULL);
   assert(msg->type == RIC_CONTROL_REQUEST);
-
  
   ric_control_request_t const* ctrl_req = &msg->u_msgs.ric_ctrl_req;
   assert(ctrl_req->ack_req != NULL && *ctrl_req->ack_req == RIC_CONTROL_REQUEST_ACK );
@@ -277,7 +276,6 @@ e2ap_msg_t e2ap_handle_control_request_agent(e2_agent_t* ag, const e2ap_msg_t* m
                                             .status = RIC_CONTROL_STATUS_SUCCESS,
                                             .control_outcome = ba_ctrl_ans } ;
 
-
   printf("[E2-AGENT]: CONTROL ACKNOWLEDGE sent\n");
   e2ap_msg_t ans = {.type = RIC_CONTROL_ACKNOWLEDGE};
   ans.u_msgs.ric_ctrl_ack = ric_ctrl_ack;
@@ -293,7 +291,6 @@ e2ap_msg_t e2ap_handle_error_indication_agent(e2_agent_t* ag, const e2ap_msg_t* 
 
   e2ap_msg_t ans = {0};
   return ans; 
-
 }
 
 static

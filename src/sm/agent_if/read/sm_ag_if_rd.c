@@ -83,11 +83,14 @@ sm_ag_if_rd_ind_t cp_sm_ag_if_rd_ind(sm_ag_if_rd_ind_t const* d)
     //*tmp = cp_kpm_act_def(d->kpm.act_def);
     ans.kpm.act_def = d->kpm.act_def;
   } else if(ans.type == RAN_CTRL_STATS_V1_03) {
+    ans.rc.ric_id = d->rc.ric_id;
     ans.rc.ind = cp_rc_ind_data(&d->rc.ind);
-    e2sm_rc_action_def_t* tmp = calloc(1, sizeof(e2sm_rc_action_def_t));
-    assert(tmp != NULL && "Memory exhausted");
-    *tmp = cp_e2sm_rc_action_def(d->rc.act_def);
-    ans.rc.act_def = tmp;
+    if(d->rc.act_def != NULL){
+      e2sm_rc_action_def_t* tmp = calloc(1, sizeof(e2sm_rc_action_def_t));
+      assert(tmp != NULL && "Memory exhausted");
+      *tmp = cp_e2sm_rc_action_def(d->rc.act_def);
+      ans.rc.act_def = tmp;
+    }
   } else {
     assert("Unknown type or not implemented");
   }

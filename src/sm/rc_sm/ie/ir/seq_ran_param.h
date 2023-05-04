@@ -7,10 +7,15 @@
 #include "ran_parameter_value_type.h"
 
 typedef struct{
-  //RAN Parameter ID
-  //Mandatory
-  //9.3.8
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
   // [1 - 4294967295]
+  // This IE uniquely identifies 
+  // a specific RAN parameter of 
+  // a given RIC Control style.
+  // Standard is probably broken as it can
+  // come from Indication Message Format 1
   uint32_t ran_param_id;
 
   // RAN Parameter Value Type

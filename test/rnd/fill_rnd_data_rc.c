@@ -2949,7 +2949,6 @@ e2sm_rc_func_def_t fill_rnd_rc_ran_func_def(void)
 /////////////////////////////
 /////////////////////////////
 
-
 rc_ind_data_t fill_rnd_rc_ind_data(void)
 {
   rc_ind_data_t dst = {0}; 

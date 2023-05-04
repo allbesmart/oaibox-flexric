@@ -480,7 +480,6 @@ void send_control_request(e42_xapp_t* xapp, global_e2_node_id_t* id, ric_gen_id_
   xapp->handle_msg[E42_RIC_CONTROL_REQUEST](xapp, &msg);
 }
 
-
 sm_ans_xapp_t control_sm_sync_xapp(e42_xapp_t* xapp, global_e2_node_id_t* id, uint16_t ran_func_id, void* ctrl_msg)
 {
   assert(xapp != NULL);

@@ -1232,6 +1232,9 @@ void close_db_sqlite3(sqlite3* db)
 
 static
 int kpm_acc = 0; 
+static
+int rc_acc = 0; 
+
 
 void write_db_sqlite3(sqlite3* db, global_e2_node_id_t const* id, sm_ag_if_rd_t const* ag_rd)
 {
@@ -1240,7 +1243,10 @@ void write_db_sqlite3(sqlite3* db, global_e2_node_id_t const* id, sm_ag_if_rd_t 
   assert(ag_rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
 
   sm_ag_if_rd_ind_t const* rd = &ag_rd->ind; 
-  assert(rd->type == MAC_STATS_V0 || rd->type == RLC_STATS_V0|| rd->type == PDCP_STATS_V0 || rd->type == SLICE_STATS_V0 ||rd->type == KPM_STATS_V3_0 ||rd->type == GTP_STATS_V0);
+  assert(rd->type == MAC_STATS_V0   || rd->type == RLC_STATS_V0 
+      || rd->type == PDCP_STATS_V0  || rd->type == SLICE_STATS_V0 
+      || rd->type == KPM_STATS_V3_0 || rd->type == GTP_STATS_V0
+      || rd->type == RAN_CTRL_STATS_V1_03);
 
   if(rd->type == MAC_STATS_V0){
     write_mac_stats(db, id, &rd->mac);
@@ -1257,6 +1263,12 @@ void write_db_sqlite3(sqlite3* db, global_e2_node_id_t const* id, sm_ag_if_rd_t 
     if(kpm_acc > 2048){
     printf("KPM sqlite not implemented\n"); 
     kpm_acc = 0;
+    }
+  } else if(rd->type ==  RAN_CTRL_STATS_V1_03){
+    rc_acc++;
+    if(rc_acc > 2048){
+      printf("RAN Control sqlite not implemented\n"); 
+      rc_acc = 0;
     }
   } else {
     assert(0!=0 && "Unknown statistics type received ");

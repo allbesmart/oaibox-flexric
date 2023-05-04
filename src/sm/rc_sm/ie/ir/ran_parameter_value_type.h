@@ -20,7 +20,6 @@ typedef enum{
 
  // 9.3.11
 typedef struct{
-
   ran_parameter_val_type_e type;
   union{
     // Pointers avoid cycles. Bad design. 

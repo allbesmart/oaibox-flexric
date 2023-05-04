@@ -65,6 +65,8 @@ typedef struct{
   // entry of a given RRC message class
   // defined in TS 36.331 [14] or TS
   // 38.331 [15].
+  // My interpretation is that they start
+  // from BCCH-BCH-Message, DL-CCCH-Message
   uint64_t rrc_msg_id;
 
 } rrc_msg_id_t;

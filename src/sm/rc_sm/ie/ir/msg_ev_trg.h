@@ -32,6 +32,13 @@ typedef struct{
   // Mandatory
   // 9.3.21
   // [1- 65535]
+
+  // ORAN.WG3.E2SM-RC-v01.03 pag. 21
+  // For each information change configured, Event Trigger Condition ID 
+  // is assigned so that E2 Node can reply to Near-RT
+  // RIC in the RIC INDICATION message to inform which event(s) 
+  // are the cause for triggering.
+
   uint16_t ev_trigger_cond_id;
 
   // CHOICE Message Type

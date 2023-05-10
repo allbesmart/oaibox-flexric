@@ -5,23 +5,18 @@
 #include <stdint.h>
 #include "../../../../util/byte_array.h"
 
-
-//  9.3.14
+// 9.3.14
 typedef enum{
-
   BOOLEAN_RAN_PARAMETER_VALUE,
   INTEGER_RAN_PARAMETER_VALUE,
   REAL_RAN_PARAMETER_VALUE,
   BIT_STRING_RAN_PARAMETER_VALUE,
   OCTET_STRING_RAN_PARAMETER_VALUE,
   PRINTABLESTRING_RAN_PARAMETER_VALUE,
-
   END_RAN_PARAMETER_VALUE 
-
 } ran_parameter_value_e; 
 
-
-//  9.3.14
+// 9.3.14
 typedef struct ran_parameter_value_s{
   ran_parameter_value_e type;
   union{

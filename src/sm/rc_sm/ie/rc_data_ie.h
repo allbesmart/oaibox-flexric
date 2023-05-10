@@ -278,10 +278,8 @@ bool eq_e2sm_rc_cpid(e2sm_rc_cpid_t const* m0, e2sm_rc_cpid_t const* m1);
 typedef enum{
   FORMAT_1_E2SM_RC_CTRL_HDR,
   FORMAT_2_E2SM_RC_CTRL_HDR,
-
   END_E2SM_RC_CTRL_HDR,
 } e2sm_rc_ctrl_hdr_e; 
-
 
 typedef struct {
   e2sm_rc_ctrl_hdr_e format; 
@@ -305,7 +303,6 @@ bool eq_e2sm_rc_ctrl_hdr(e2sm_rc_ctrl_hdr_t const* m0, e2sm_rc_ctrl_hdr_t const*
 typedef enum{
   FORMAT_1_E2SM_RC_CTRL_MSG,
   FORMAT_2_E2SM_RC_CTRL_MSG,
-
   END_E2SM_RC_CTRL_MSG,
 } e2sm_rc_ctrl_msg_e; 
 
@@ -334,7 +331,6 @@ typedef enum{
   FORMAT_1_E2SM_RC_CTRL_OUT,
   FORMAT_2_E2SM_RC_CTRL_OUT,
   FORMAT_3_E2SM_RC_CTRL_OUT,
-
   END_E2SM_RC_CTRL_OUT,
 } e2sm_rc_ctrl_out_e; 
 

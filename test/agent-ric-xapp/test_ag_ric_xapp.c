@@ -162,6 +162,7 @@ sm_ag_if_ans_t write_RAN_ctrl( sm_ag_if_wr_ctrl_t const* data)
 static
 void* emulate_rrc_msg(void* ptr)
 {
+  
   uint32_t* ric_id = (uint32_t*)ptr; 
   for(size_t i = 0; i < 5; ++i){
     usleep(rand()%4000);
@@ -402,7 +403,6 @@ int main(int argc, char *argv[])
   for(size_t i = 0; i < n->len_rf; ++i)
     printf("Registered ran func id = %d \n ", n->ack_rf[i].id );
 
-  
   const char* period = "5_ms";
 
   // returns a handle
@@ -430,7 +430,6 @@ int main(int argc, char *argv[])
   control_sm_xapp_api(&nodes.n[0].id, SM_SLICE_ID, &ctrl_msg_assoc);
   free(ctrl_msg_assoc.msg.u.ue_slice.ues); 
 
-
   // KPM 
   kpm_sub_data_t kpm_sub = {0};
   kpm_sub.ev_trg_def = fill_kpm_event_trigger_def();
@@ -457,13 +456,12 @@ int main(int argc, char *argv[])
   rc_sub.sz_ad = 1;
   rc_sub.ad = calloc(rc_sub.sz_ad, sizeof(e2sm_rc_action_def_t));
   assert(rc_sub.ad != NULL && "Memory exhausted");
- 
   rc_sub.ad[0] = fill_rnd_rc_action_def();
 
   sm_ans_xapp_t h_5 = report_sm_xapp_api(&nodes.n[0].id, SM_RC_ID, &rc_sub, sm_cb_rc);
   assert(h_5.success);
 
-
+/*
   // RC Subscription 
   rc_sub_data_t sub = {0}; 
   defer({ free_rc_sub_data(&sub); } );
@@ -497,7 +495,9 @@ int main(int argc, char *argv[])
 
   sm_ans_xapp_t h_6 = report_sm_xapp_api(&nodes.n[0].id, SM_RC_ID, &sub, sm_cb_rc);
   assert(h_6.success);
-  
+*/ 
+
+
   sleep(5);
   
   rm_report_sm_xapp_api(h_1.u.handle);
@@ -505,7 +505,6 @@ int main(int argc, char *argv[])
   rm_report_sm_xapp_api(h_3.u.handle);
   rm_report_sm_xapp_api(h_4.u.handle);
   rm_report_sm_xapp_api(h_5.u.handle);
-  rm_report_sm_xapp_api(h_6.u.handle);
 
   sleep(1);
 

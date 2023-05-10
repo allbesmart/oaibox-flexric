@@ -10,7 +10,6 @@ typedef struct{
   // [0- 65535]
   size_t sz_ran_param; 
   seq_ran_param_t* ran_param;
-
 } e2sm_rc_ctrl_msg_frmt_1_t;
 
 void free_e2sm_rc_ctrl_msg_frmt_1( e2sm_rc_ctrl_msg_frmt_1_t* src);

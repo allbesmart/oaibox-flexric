@@ -1,12 +1,10 @@
+#include "enc_meas_data.h"
+#include "../../ie/asn/asn_constant.h"
+#include "../../ie/asn/MeasurementDataItem.h"
+#include "../../ie/asn/MeasurementRecordItem.h"
 #include <assert.h>
 #include <stdbool.h>
 
-#include "../../ie/asn/asn_constant.h"
-
-
-#include "enc_meas_data.h"
-#include "../../ie/asn/MeasurementDataItem.h"
-#include "../../ie/asn/MeasurementRecordItem.h"
 
 MeasurementData_t kpm_enc_meas_data_asn(const meas_data_lst_t * meas_data, const size_t meas_data_len)
 {

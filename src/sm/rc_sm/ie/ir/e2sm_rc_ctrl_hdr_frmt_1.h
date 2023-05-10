@@ -6,16 +6,15 @@
 typedef enum{
   ACCEPT_RIC_CTRL_DECISION , 
   REJECT_RIC_CTRL_DECISION ,
-
   END_RIC_CTRL_DECISION
 } ric_ctrl_decision_e;
 
 // 9.2.1.6.1
 typedef struct{
-
   // UE ID
   // Mandatory
   // 9.3.10
+  // 6.2.2.6
   ue_id_e2sm_t ue_id;
 
   // RIC Style Type
@@ -34,7 +33,6 @@ typedef struct{
   // RIC Control decision
   // Optional
   ric_ctrl_decision_e* ric_ctrl_decision;
-
 } e2sm_rc_ctrl_hdr_frmt_1_t;
 
 void free_e2sm_rc_ctrl_hdr_frmt_1(e2sm_rc_ctrl_hdr_frmt_1_t* src);

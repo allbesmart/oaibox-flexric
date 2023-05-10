@@ -19,8 +19,6 @@
  *      contact@openairinterface.org
  */
 
-
-
 #include "../../../src/agent/e2_agent_api.h"
 #include "../../../test/rnd/fill_rnd_data_gtp.h"
 #include "../../../test/rnd/fill_rnd_data_mac.h"
@@ -56,9 +54,17 @@ void read_RAN_ind(sm_ag_if_rd_ind_t* data)
     fill_gtp_ind_data(&data->gtp);
   } else if(data->type == KPM_STATS_V3_0){
     assert(data->kpm.act_def!= NULL && "Cannot be NULL");
-    data->kpm.ind.hdr = fill_kpm_ind_hdr(); 
-    data->kpm.ind.msg = fill_kpm_ind_msg(); 
+    if(data->kpm.act_def->type == FORMAT_4_ACTION_DEFINITION){
+     printf("%s \n", data->kpm.act_def->frm_4.action_def_format_1.meas_info_lst->meas_type.name.buf); 
+     data->kpm.ind.hdr = fill_kpm_ind_hdr(); 
+      data->kpm.ind.msg = fill_kpm_ind_msg(); 
 
+//      assert(0 != 0 && "Here we arrived");
+    } else {
+      data->kpm.ind.hdr = fill_kpm_ind_hdr(); 
+      data->kpm.ind.msg = fill_kpm_ind_msg(); 
+    }
+    printf("%s \n", (char*)data->kpm.act_def->frm_1.meas_info_lst[0].meas_type.name.buf);
   } else {
     assert("Invalid data type");
   }

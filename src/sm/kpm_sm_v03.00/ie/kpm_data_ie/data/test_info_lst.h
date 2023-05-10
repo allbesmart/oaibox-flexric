@@ -23,16 +23,12 @@ typedef enum {
     fiveQI_TEST_COND_TYPE,
     QCI_TEST_COND_TYPE,
     S_NSSAI_TEST_COND_TYPE,
-
     END_TEST_COND_TYPE_KPM_V2
-
 } test_cond_type_e;
 
 typedef enum {
     TRUE_TEST_COND_TYPE,
-
     END_COND_TYPE_KPM_V2
-
 } cond_type_e;
 
 typedef enum {
@@ -64,7 +60,6 @@ typedef enum {
 
 // 8.3.22   Test Condition Information
 typedef struct {
-    
     test_cond_type_e test_cond_type;
     union {
         cond_type_e GBR;
@@ -78,11 +73,9 @@ typedef struct {
         cond_type_e fiveQI;
         cond_type_e QCI;
         cond_type_e S_NSSAI;
-
     };
     
     test_cond_e *test_cond;  /* OPTIONAL */
-
     test_cond_value_e *test_cond_value;  /* 8.3.23, OPTIONAL */
     union {
         int64_t * int_value;

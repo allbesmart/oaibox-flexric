@@ -17,9 +17,7 @@ typedef enum {
 	INTEGER_MEAS_VALUE,
 	REAL_MEAS_VALUE,
 	NO_VALUE_MEAS_VALUE,
-
 	END_MEAS_VALUE
-
 } meas_value_e;
 
 typedef struct {
@@ -29,7 +27,6 @@ typedef struct {
 		double	   real_val;
 		void*      no_value; 
 	};
-
 } meas_record_lst_t;
 
 meas_record_lst_t cp_meas_record_lst(meas_record_lst_t const* src);

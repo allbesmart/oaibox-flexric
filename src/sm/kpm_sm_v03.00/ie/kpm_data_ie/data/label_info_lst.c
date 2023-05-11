@@ -38,7 +38,13 @@ label_info_lst_t cp_label_info(label_info_lst_t const *src)
   assert(src->startEndInd == NULL && "Not implemented");
   assert(src->min == NULL && "Not implemented");
   assert(src->max == NULL && "Not implemented");
-  assert(src->avg == NULL && "Not implemented");
+ 
+   if (src->avg != NULL) {
+    dst.avg = calloc(1, sizeof(*dst.avg));
+    assert(dst.avg != NULL && "Memory exhausted");
+    *dst.avg = *src->avg;
+  }
+
   assert(src->ssbIndex == NULL && "Not implemented");
   assert(src->nonGoB_beamformModeIndex == NULL && "Not implemented");
   assert(src->mimoModeIndex == NULL && "Not implemented");
@@ -110,7 +116,7 @@ void free_label_info(label_info_lst_t *l)
     assert(false && "not implemented");
   }
 	if (l->avg != NULL) {
-    assert(false && "not implemented");
+    free(l->avg);
   }
 }
 
@@ -190,8 +196,14 @@ bool eq_label_info(const label_info_lst_t *l1, const label_info_lst_t *l2)
   assert(l1->max == NULL && "Not implemented");
   assert(l2->max == NULL && "Not implemented");
   
-  assert(l1->avg == NULL && "Not implemented");
-  assert(l2->avg == NULL && "Not implemented");
+  if(l1->avg != NULL || l2->avg != NULL){
+    if(l1->avg == NULL)
+      return false;
+    if(l2->avg == NULL)
+      return false;
+    if(*l1->avg != *l2->avg)
+      return false;
+  }
 
   assert(l1->ssbIndex == NULL && "Not implemented");
   assert(l2->ssbIndex == NULL && "Not implemented");

@@ -102,7 +102,8 @@ gnb_e2sm_t cp_gnb_ue_id_e2sm(const gnb_e2sm_t * src)
 
   // gNB-CU UE F1AP ID List
   dst.gnb_cu_ue_f1ap_lst_len = src->gnb_cu_ue_f1ap_lst_len;
-  dst.gnb_cu_ue_f1ap_lst = calloc(dst.gnb_cu_ue_f1ap_lst_len, sizeof(uint32_t));
+  if(dst.gnb_cu_ue_f1ap_lst_len > 0) 
+    dst.gnb_cu_ue_f1ap_lst = calloc(dst.gnb_cu_ue_f1ap_lst_len, sizeof(uint32_t));
 
   for (size_t i = 0; i<dst.gnb_cu_ue_f1ap_lst_len; i++)
   {
@@ -111,8 +112,9 @@ gnb_e2sm_t cp_gnb_ue_id_e2sm(const gnb_e2sm_t * src)
 
   // gNB-CU-CP UE E1AP
   dst.gnb_cu_cp_ue_e1ap_lst_len = src->gnb_cu_cp_ue_e1ap_lst_len;
-
-  dst.gnb_cu_cp_ue_e1ap_lst = calloc(dst.gnb_cu_cp_ue_e1ap_lst_len, sizeof(uint32_t));
+  
+  if(dst.gnb_cu_cp_ue_e1ap_lst_len > 0)
+    dst.gnb_cu_cp_ue_e1ap_lst = calloc(dst.gnb_cu_cp_ue_e1ap_lst_len, sizeof(uint32_t));
 
   for (size_t i = 0; i<dst.gnb_cu_cp_ue_e1ap_lst_len; i++)
   {

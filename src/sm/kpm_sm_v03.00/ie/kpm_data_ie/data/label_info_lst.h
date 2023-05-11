@@ -13,9 +13,7 @@ extern "C" {
 typedef enum {
 	START_IND,
 	END_IND,
-
 	END_START_END_IND
-
 } start_end_ind_e;
 
 

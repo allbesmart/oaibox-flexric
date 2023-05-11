@@ -104,7 +104,7 @@ kpm_act_def_format_1_t gen_act_def_frmt_1(const char* action)
   return dst;
 }
 
-
+static
 kpm_act_def_format_4_t gen_act_def_frmt_4(const char* action)
 {
   kpm_act_def_format_4_t dst = {0};

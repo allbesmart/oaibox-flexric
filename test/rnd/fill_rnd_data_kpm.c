@@ -145,12 +145,15 @@ static kpm_act_def_format_1_t fill_kpm_action_def_frm_1(void)
     
     for (size_t j = 0; j < meas_info->label_info_lst_len; j++)
     {
+      if(j%2){
       meas_info->label_info_lst[j].plmn_id = malloc(sizeof(e2sm_plmn_t));
       assert(meas_info->label_info_lst[j].plmn_id  != NULL);
 
       *meas_info->label_info_lst[j].plmn_id = (e2sm_plmn_t) {.mcc = 505, .mnc = 1, .mnc_digit_len = 2};
-      // action_def_frm_1.meas_info_lst[i].label_info_lst[j].noLabel = malloc(sizeof(enum_value_e));
-      // *action_def_frm_1.meas_info_lst[i].label_info_lst[j].noLabel = TRUE_ENUM_VALUE;
+      } else {
+       action_def_frm_1.meas_info_lst[i].label_info_lst[j].noLabel = malloc(sizeof(enum_value_e));
+       *action_def_frm_1.meas_info_lst[i].label_info_lst[j].noLabel = TRUE_ENUM_VALUE;
+      }
     }
   }
   
@@ -1271,7 +1274,8 @@ static kpm_ind_msg_format_2_t fill_kpm_ind_msg_frm_2(void)
   return msg_frm_2;
 }
 
-static kpm_ind_msg_format_3_t fill_kpm_ind_msg_frm_3(void)
+static 
+kpm_ind_msg_format_3_t fill_kpm_ind_msg_frm_3(void)
 {
   kpm_ind_msg_format_3_t msg_frm_3 = {0};
 
@@ -1295,7 +1299,7 @@ kpm_ind_msg_t fill_kpm_ind_msg(void)
 {
   kpm_ind_msg_t msg = {0};
 
-  msg.type = rand()%END_INDICATION_MESSAGE;
+  msg.type = FORMAT_3_INDICATION_MESSAGE; // rand()%END_INDICATION_MESSAGE;
   
   switch (msg.type)
   {

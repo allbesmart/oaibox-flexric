@@ -46,21 +46,6 @@
 #include <unistd.h>
 
 static
-byte_array_t copy_str_to_ba(const char* str)
-{
-  assert(str != NULL);
-
-  size_t const sz = strlen(str);
-  byte_array_t dst = {.len = sz }; 
-  dst.buf = calloc(sz ,sizeof(uint8_t) );
-  assert(dst.buf != NULL);
-
-  memcpy(dst.buf, str, sz);
-
-  return dst;
-}
-
-static
 void read_e2_setup_agent(sm_ag_if_rd_e2setup_t* e2ap)
 {
   assert(e2ap != NULL);
@@ -175,42 +160,6 @@ void* emulate_rrc_msg(void* ptr)
 
   free(ptr);
   return NULL;
-
-/*
-  uint32_t* ric_id = (uint32_t*)ptr; 
-  for(size_t i = 0; i < 5; ++i){
-    usleep(rand()%10000);
-    rc_ind_data_t* d = calloc(1, sizeof(rc_ind_data_t)); 
-    assert(d != NULL && "Memory exhausted");
-
-    d->hdr.format = FORMAT_1_E2SM_RC_IND_HDR; 
-    d->hdr.frmt_1.ev_trigger_id = malloc(sizeof(uint16_t));
-    assert(d->hdr.frmt_1.ev_trigger_id != NULL);
-    *d->hdr.frmt_1.ev_trigger_id = 2;
-
-    d->msg.format = FORMAT_1_E2SM_RC_IND_MSG;
-    d->msg.frmt_1.sz_seq_ran_param = 1;
-    d->msg.frmt_1.seq_ran_param = calloc(1, sizeof(seq_ran_param_t));
-    assert(d->msg.frmt_1.seq_ran_param != NULL && "Memory exhausted");
-    seq_ran_param_t* seq_ran = &d->msg.frmt_1.seq_ran_param[0];
-    seq_ran->ran_param_id = 1;
-
-    seq_ran->ran_param_val.type = ELEMENT_KEY_FLAG_TRUE_RAN_PARAMETER_VAL_TYPE;
-    seq_ran->ran_param_val.flag_true = calloc(1, sizeof(ran_parameter_value_t));
-    assert(seq_ran->ran_param_val.flag_true != NULL && "Memory exhausted");
-
-    ran_parameter_value_t* rpv = seq_ran->ran_param_val.flag_true;
-    rpv->type = PRINTABLESTRING_RAN_PARAMETER_VALUE;
-    const char* str = "RRC event occurred!";
-    rpv->printable_str_ran = copy_str_to_ba(str); 
-
-    async_event_agent_api(*ric_id, d);
-    printf("Event for RIC Req ID %u generated\n", *ric_id);
-  }
-
-  free(ptr);
-  return NULL;
-*/
 }
 
 static

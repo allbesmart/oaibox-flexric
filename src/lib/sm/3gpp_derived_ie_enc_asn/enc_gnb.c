@@ -29,9 +29,9 @@ UEID_GNB_t* enc_gNB_UE_asn(const gnb_e2sm_t* gnb)
   gnb_asn->amf_UE_NGAP_ID.buf = calloc(5, sizeof(uint8_t));
   assert(gnb_asn->amf_UE_NGAP_ID.buf != NULL && "Memory exhausted");
 
-  memcpy(gnb_asn->amf_UE_NGAP_ID.buf, &gnb->amf_ue_ngap_id, 5);
-  gnb_asn->amf_UE_NGAP_ID.size = 5;
-
+  //memcpy(gnb_asn->amf_UE_NGAP_ID.buf, &gnb->amf_ue_ngap_id, 5);
+  //gnb_asn->amf_UE_NGAP_ID.size = 5;
+  asn_ulong2INTEGER(&gnb_asn->amf_UE_NGAP_ID, gnb->amf_ue_ngap_id);
 
   // GUAMI
   MCC_MNC_TO_PLMNID(gnb->guami.plmn_id.mcc, gnb->guami.plmn_id.mnc, gnb->guami.plmn_id.mnc_digit_len, &gnb_asn->guami.pLMNIdentity);

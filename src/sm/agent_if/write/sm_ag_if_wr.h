@@ -48,7 +48,6 @@ typedef enum{
   TC_CTRL_REQ_V0 = 4,
   GTP_CTRL_REQ_V0 = 5,
   RAN_CONTROL_CTRL_V1_03 = 6, 
-
   SM_AGENT_IF_WRITE_CTRL_V0_END,
 } sm_ag_if_ctrl_e;
 
@@ -73,7 +72,7 @@ typedef struct{
 //////////////////////
 
 typedef enum{
-  MAC_SUBS_V0, 
+  MAC_SUBS_V0 = 0, 
   RLC_SUBS_V0, 
   PDCP_SUBS_V0, 
   SLICE_SUBS_V0, 
@@ -81,7 +80,6 @@ typedef enum{
   GTP_SUBS_V0, 
   KPM_SUBS_V3_0, 
   RAN_CTRL_SUBS_V1_03, 
-
   SM_AGENT_IF_WRITE_SUBS_V0_END,
 } sm_ag_if_subs_e;
 

@@ -19,8 +19,11 @@ gnb_e2sm_t dec_gNB_UE_asn(const UEID_GNB_t * gnb_asn)
     // AMF UE NGAP ID
     assert(gnb_asn->amf_UE_NGAP_ID.buf != NULL);
     assert(gnb_asn->amf_UE_NGAP_ID.size < 6); // 2^40 max -> 2^(8*5) max 
-    memcpy(&gnb.amf_ue_ngap_id, gnb_asn->amf_UE_NGAP_ID.buf, gnb_asn->amf_UE_NGAP_ID.size);
+
+    asn_INTEGER2ulong(&gnb_asn->amf_UE_NGAP_ID, &gnb.amf_ue_ngap_id );
+//    memcpy(&gnb.amf_ue_ngap_id, gnb_asn->amf_UE_NGAP_ID.buf, gnb_asn->amf_UE_NGAP_ID.size);
     assert(gnb.amf_ue_ngap_id < (1UL << 40) );
+
 
     // GUAMI
 

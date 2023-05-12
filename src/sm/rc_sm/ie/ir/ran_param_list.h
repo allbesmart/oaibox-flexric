@@ -8,11 +8,9 @@
 
 // 9.3.13
 typedef struct ran_param_list_s {
-
   // [0- 65535]
   size_t sz_lst_ran_param;
   lst_ran_param_t* lst_ran_param;
-
 } ran_param_list_t;
 
 void free_ran_param_list(ran_param_list_t* src);

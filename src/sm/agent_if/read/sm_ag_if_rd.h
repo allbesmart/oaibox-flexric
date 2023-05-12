@@ -41,8 +41,9 @@
 // Indication Message 
 ////////////////////
 
+// Do not change the order!
 typedef enum{
-  MAC_STATS_V0,
+  MAC_STATS_V0 = 0,
   RLC_STATS_V0,
   PDCP_STATS_V0,
   SLICE_STATS_V0,
@@ -50,7 +51,6 @@ typedef enum{
   GTP_STATS_V0, 
   KPM_STATS_V3_0, 
   RAN_CTRL_STATS_V1_03,
-
   SM_AGENT_IF_READ_V0_END,
 } sm_ag_if_rd_ind_e;
 
@@ -69,6 +69,8 @@ typedef struct{
 
 typedef struct{
   sm_ag_if_rd_ind_e type;
+
+// Do not change the order!
   union {
     mac_ind_data_t mac;
     rlc_ind_data_t rlc;
@@ -90,7 +92,7 @@ sm_ag_if_rd_ind_t cp_sm_ag_if_rd_ind(sm_ag_if_rd_ind_t const* d);
 ////////////////////
 
 typedef enum{
-  MAC_AGENT_IF_E2_SETUP_ANS_V0,
+  MAC_AGENT_IF_E2_SETUP_ANS_V0 = 0,
   RLC_AGENT_IF_E2_SETUP_ANS_V0,
   PDCP_AGENT_IF_E2_SETUP_ANS_V0,
   SLICE_AGENT_IF_E2_SETUP_ANS_V0,
@@ -98,7 +100,6 @@ typedef enum{
   GTP_AGENT_IF_E2_SETUP_ANS_V0,
   KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0,
   RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0,
-
   SM_AGENT_IF_E2_SETUP_ANS_V0_END,
 } sm_ag_if_rd_e2setup_e;
 

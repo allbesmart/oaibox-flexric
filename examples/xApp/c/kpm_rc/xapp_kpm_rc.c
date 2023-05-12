@@ -24,10 +24,12 @@
 #include "../../../../src/sm/rc_sm/ie/ir/ran_param_list.h"
 #include "../../../../src/util/alg_ds/alg/defer.h"
 #include "../../../../src/util/time_now_us.h"
+#include "../../../../src/util/alg_ds/ds/lock_guard/lock_guard.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
+#include <pthread.h>
 
 static
 byte_array_t copy_str_to_ba(const char* str)
@@ -44,6 +46,13 @@ byte_array_t copy_str_to_ba(const char* str)
   return dst;
 }
 
+
+static
+ue_id_e2sm_t ue_id;
+
+static
+pthread_mutex_t mtx;
+
 static
 void sm_cb_kpm(sm_ag_if_rd_t const* rd)
 {
@@ -55,7 +64,15 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
 
   int64_t now = time_now_us();
   printf("KPM ind_msg latency = %ld μs\n", now - kpm->hdr.kpm_ric_ind_hdr_format_1.collectStartTime);
+  printf("Sojourn time %lf \n",kpm->msg.frm_3.meas_report_per_ue[0].ind_msg_format_1.meas_data_lst[0].meas_record_lst[0].real_val);
+
+  {
+  lock_guard(&mtx);
+  ue_id = cp_ue_id_e2sm(&kpm->msg.frm_3.meas_report_per_ue[0].ue_meas_report_lst);
+  }
+  printf("UE ID %ld \n ", ue_id.gnb.amf_ue_ngap_id);
 }
+
 
 static
 kpm_event_trigger_def_t gen_ev_trig(uint64_t period)
@@ -894,6 +911,125 @@ e2sm_rc_ctrl_msg_t gen_rc_ctrl_msg(void)
 }
 */
 
+typedef enum{
+  DRB_QoS_Configuration_7_6_2_1 = 1,
+  QoS_flow_mapping_configuration_7_6_2_1 = 2,
+  Logical_channel_configuration_7_6_2_1 = 3,
+  Radio_admission_control_7_6_2_1 = 4,
+  DRB_termination_control_7_6_2_1 = 5,
+  DRB_split_ratio_control_7_6_2_1 = 6,
+  PDCP_Duplication_control_7_6_2_1 = 7,
+} rc_ctrl_service_style_1_e;
+
+static
+e2sm_rc_ctrl_hdr_frmt_1_t gen_rc_ctrl_hdr_frmt_1(void)
+{
+  e2sm_rc_ctrl_hdr_frmt_1_t dst = {0};
+
+  // 6.2.2.6
+  {
+  lock_guard(&mtx);
+  dst.ue_id = cp_ue_id_e2sm(&ue_id);
+  }
+  // CONTROL Service Style 1: Radio Bearer Control
+  dst.ric_style_type = 1;
+
+  // QoS flow mapping conf 
+  dst.ctrl_act_id = QoS_flow_mapping_configuration_7_6_2_1 ;
+
+  return dst;
+}
+
+static
+e2sm_rc_ctrl_hdr_t gen_rc_ctrl_hdr(void)
+{
+  e2sm_rc_ctrl_hdr_t dst = {0};
+  // Radio Bearer Control
+  dst.format = FORMAT_1_E2SM_RC_CTRL_HDR;
+  dst.frmt_1 = gen_rc_ctrl_hdr_frmt_1();
+  return dst;
+}
+
+typedef enum {
+  DRB_ID_8_4_2_2 = 1,
+  LIST_OF_QOS_FLOWS_MOD_IN_DRB_8_4_2_2 = 2,
+  QOS_FLOW_ITEM_8_4_2_2 = 3,
+  QOS_FLOW_ID_8_4_2_2 = 4,
+  QOS_FLOW_MAPPING_IND_8_4_2_2 = 5,
+} qos_flow_mapping_conf_e;
+
+static
+e2sm_rc_ctrl_msg_frmt_1_t gen_rc_ctrl_msg_frmt_1_qos_flow_map()
+{
+  e2sm_rc_ctrl_msg_frmt_1_t dst = {0}; 
+
+  // 8.4.2.2 QoS flow mapping configuration
+  dst.sz_ran_param = 2;
+  dst.ran_param = calloc(2, sizeof(seq_ran_param_t));
+  assert(dst.ran_param != NULL && "Memory exhausted");
+
+  dst.ran_param[0].ran_param_id = DRB_ID_8_4_2_2;
+  dst.ran_param[0].ran_param_val.type = ELEMENT_KEY_FLAG_TRUE_RAN_PARAMETER_VAL_TYPE;
+  dst.ran_param[0].ran_param_val.flag_true = calloc(1, sizeof(ran_parameter_value_t)) ;
+  assert(dst.ran_param[0].ran_param_val.flag_true != NULL && "Memory exhausted");
+
+  // Let's suppose that it is the DRB 5 
+  dst.ran_param[0].ran_param_val.flag_true->type = INTEGER_RAN_PARAMETER_VALUE; 
+  dst.ran_param[0].ran_param_val.flag_true->int_ran = 5; 
+
+  // List of QoS Flows to be modified in DRB
+  dst.ran_param[1].ran_param_id = LIST_OF_QOS_FLOWS_MOD_IN_DRB_8_4_2_2;
+  dst.ran_param[1].ran_param_val.type = LIST_RAN_PARAMETER_VAL_TYPE;
+  dst.ran_param[1].ran_param_val.lst = calloc(1, sizeof(ran_param_list_t));
+  assert(dst.ran_param[1].ran_param_val.lst != NULL && "Memory exhausted");
+  ran_param_list_t* rpl = dst.ran_param[1].ran_param_val.lst;
+
+  rpl->sz_lst_ran_param = 1; 
+  rpl->lst_ran_param = calloc(1, sizeof(lst_ran_param_t));
+  assert(rpl->lst_ran_param != NULL && "Memory exhausted");
+
+  // QoS Flow Item
+  rpl->lst_ran_param[0].ran_param_id = QOS_FLOW_ITEM_8_4_2_2; 
+  rpl->lst_ran_param[0].ran_param_struct.sz_ran_param_struct = 2;
+  rpl->lst_ran_param[0].ran_param_struct.ran_param_struct = calloc(2, sizeof(seq_ran_param_t));
+  assert(rpl->lst_ran_param[0].ran_param_struct.ran_param_struct != NULL && "Memory exhausted");
+  seq_ran_param_t* rps = rpl->lst_ran_param[0].ran_param_struct.ran_param_struct ;
+
+  // QoS Flow Identifier
+  rps[0].ran_param_id = QOS_FLOW_ID_8_4_2_2;
+  rps[0].ran_param_val.type = ELEMENT_KEY_FLAG_TRUE_RAN_PARAMETER_VAL_TYPE;
+  rps[0].ran_param_val.flag_true = calloc(1, sizeof(ran_parameter_value_t));
+  assert(rps[0].ran_param_val.flag_true != NULL && "Memory exhausted");
+  rps[0].ran_param_val.flag_true->type = INTEGER_RAN_PARAMETER_VALUE; 
+  // Let's suppose that we have QFI 10
+  rps[0].ran_param_val.flag_true->int_ran = 10; 
+
+  // QoS Flow Mapping Indication
+  rps[1].ran_param_id = QOS_FLOW_MAPPING_IND_8_4_2_2;
+  rps[1].ran_param_val.type = ELEMENT_KEY_FLAG_FALSE_RAN_PARAMETER_VAL_TYPE; 
+  rps[1].ran_param_val.flag_false = calloc(1, sizeof(ran_parameter_value_t));
+  assert(rps[1].ran_param_val.flag_false != NULL && "Memory exhausted"); 
+
+  // ENUMERATED (ul, dl, ...) 
+  rps[1].ran_param_val.flag_false->type = INTEGER_RAN_PARAMETER_VALUE;
+  rps[1].ran_param_val.flag_false->int_ran = 1; 
+
+  return dst;
+}
+
+static
+e2sm_rc_ctrl_msg_t gen_rc_ctrl_msg(void)
+{
+  e2sm_rc_ctrl_msg_t dst = {0}; 
+
+  // Radio Bearer Control
+  dst.format = FORMAT_1_E2SM_RC_CTRL_MSG;
+  //dst.frmt_1 = gen_rc_ctrl_msg_frmt_1();
+  dst.frmt_1 = gen_rc_ctrl_msg_frmt_1_qos_flow_map();
+
+  return dst;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -908,6 +1044,10 @@ int main(int argc, char *argv[])
   assert(nodes.len > 0);
 
   printf("Connected E2 nodes = %d\n", nodes.len);
+
+  pthread_mutexattr_t attr = {0};
+  int rc = pthread_mutex_init(&mtx, &attr);
+  assert(rc == 0);
 
   //////////// 
   // START KPM 
@@ -947,7 +1087,7 @@ int main(int argc, char *argv[])
 //  sm_ans_xapp_t h_2 = report_sm_xapp_api(&nodes.n[0].id, RC_ran_function, &rc_sub, sm_cb_rc);
 //  assert(h_2.success == true);
 
-  /*
+  
   // RC Control 
   rc_ctrl_req_data_t rc_ctrl = {0};
   defer({ free_rc_ctrl_req_data(&rc_ctrl); });
@@ -957,7 +1097,7 @@ int main(int argc, char *argv[])
 
   const int RC_ran_function = 3;
   control_sm_xapp_api(&nodes.n[0].id, RC_ran_function, &rc_ctrl);
-*/
+
 
   //////////// 
   // END RC 
@@ -973,6 +1113,9 @@ int main(int argc, char *argv[])
   //Stop the xApp
   while(try_stop_xapp_api() == false)
     usleep(1000);
+
+  rc = pthread_mutex_destroy(&mtx);
+  assert(rc == 0);
 
   printf("Test xApp run SUCCESSFULLY\n");
 }

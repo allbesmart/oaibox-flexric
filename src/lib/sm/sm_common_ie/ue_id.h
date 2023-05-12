@@ -40,7 +40,6 @@ typedef struct {
     en_gnb_e2sm_t  en_gnb;
     enb_e2sm_t enb;
   };
-	
 } ue_id_e2sm_t;
 
 void free_ue_id_e2sm(ue_id_e2sm_t * src);

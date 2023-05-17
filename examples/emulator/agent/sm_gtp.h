@@ -3,11 +3,11 @@
 
 #include "../../../src/agent/e2_agent_api.h"
 
-void read_gtp_sm(sm_ag_if_rd_ind_t*);
+void read_gtp_sm(void*);
 
-void read_gtp_setup_sm(sm_ag_if_rd_e2setup_t*);
+void read_gtp_setup_sm(void*);
 
-sm_ag_if_ans_t write_ctrl_gtp_sm(sm_ag_if_wr_ctrl_t const*);
+sm_ag_if_ans_t write_ctrl_gtp_sm(void const*);
 
 #endif
 

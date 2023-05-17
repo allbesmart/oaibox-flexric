@@ -34,6 +34,6 @@
  * @param[in] io structure containing defintion of read/write functions to communicate with the RAN
  * @return the agent structure just created
  */
-sm_agent_t *make_kpm_sm_agent(sm_io_ag_t io);
+sm_agent_t *make_kpm_sm_agent(sm_io_ag_ran_t io);
 
 #endif

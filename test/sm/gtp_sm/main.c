@@ -19,11 +19,9 @@
  *      contact@openairinterface.org
  */
 
-
 #include "../../rnd/fill_rnd_data_gtp.h"
 #include "../../../src/sm/gtp_sm/gtp_sm_agent.h"
 #include "../../../src/sm/gtp_sm/gtp_sm_ric.h"
-
 #include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -40,25 +38,15 @@ gtp_ind_data_t cp;
 ////
 
 static
-void read_RAN(sm_ag_if_rd_t* read)
+void read_gtp_RAN(void* read)
 {
   assert(read != NULL);
-  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
-  assert(read->ind.type == GTP_STATS_V0);
 
-  fill_gtp_ind_data(&read->ind.gtp);
-  cp.hdr = cp_gtp_ind_hdr(&read->ind.gtp.hdr);
-  cp.msg = cp_gtp_ind_msg(&read->ind.gtp.msg);
-}
+  gtp_ind_data_t* gtp = (gtp_ind_data_t*)read;
 
-
-static 
-sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
-{
-  assert(data != NULL);
-  assert(0!=0 && "Not implemented");
-  sm_ag_if_ans_t ans = {0};
-  return ans;
+  fill_gtp_ind_data(gtp);
+  cp.hdr = cp_gtp_ind_hdr(&gtp->hdr);
+  cp.msg = cp_gtp_ind_msg(&gtp->msg);
 }
 
 /////////////////////////////
@@ -80,11 +68,10 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ag_if_wr_subs_t sub = {.type = MAC_SUBS_V0};
-  sub.gtp.et.ms = 2;
+  char sub[] = "2_ms";
   sm_subs_data_t data = ric->proc.on_subscription(ric, &sub);
   subscribe_timer_t t = ag->proc.on_subscription(ag, &data); 
-  assert(t.ms == sub.gtp.et.ms);
+  assert(t.ms == 2);
 
   free_sm_subs_data(&data);
 }
@@ -130,7 +117,9 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
 
 int main()
 {
-  sm_io_ag_t io_ag = {.read = read_RAN, .write = write_RAN};  
+  sm_io_ag_ran_t io_ag = {0};
+  io_ag.read_ind_tbl[GTP_STATS_V0] = read_gtp_RAN;
+
   sm_agent_t* sm_ag = make_gtp_sm_agent(io_ag);
 
   sm_ric_t* sm_ric = make_gtp_sm_ric();

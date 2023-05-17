@@ -88,8 +88,7 @@ sm_ag_if_rd_ind_t on_indication_pdcp_sm_ric(sm_ric_t const* sm_ric, sm_ind_data_
   assert(data != NULL); 
   sm_pdcp_ric_t* sm = (sm_pdcp_ric_t*)sm_ric;  
 
-  sm_ag_if_rd_ind_t rd_if = {0};
-  rd_if.type = PDCP_STATS_V0;
+  sm_ag_if_rd_ind_t rd_if = {.type = PDCP_STATS_V0 };
 
   rd_if.pdcp.hdr = pdcp_dec_ind_hdr(&sm->enc, data->len_hdr, data->ind_hdr);
   rd_if.pdcp.msg = pdcp_dec_ind_msg(&sm->enc, data->len_msg, data->ind_msg);
@@ -186,7 +185,7 @@ void free_ind_data_pdcp_sm_ric(void* msg)
   sm_ag_if_rd_ind_t* rd_ind  = (sm_ag_if_rd_ind_t*)msg;
   assert(rd_ind->type == PDCP_STATS_V0);
 
-  pdcp_ind_data_t* ind = &rd_ind->pdcp;
+  pdcp_ind_data_t* ind = &rd_ind->pdcp; 
   free_pdcp_ind_hdr(&ind->hdr); 
   free_pdcp_ind_msg(&ind->msg); 
 }

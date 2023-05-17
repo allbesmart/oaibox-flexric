@@ -119,6 +119,7 @@ void consume_fd(int fd)
   assert(bytes == sizeof(read_buf));
 }
 
+/*
 static
 void read_xapp(sm_ag_if_rd_t* data)
 {
@@ -136,16 +137,37 @@ void read_xapp(sm_ag_if_rd_t* data)
   }
 
 }
+*/
 
 static
-sm_ag_if_ans_t write_xapp(sm_ag_if_wr_t const* data)
+void read_kpm_e2setup_xapp(void* data)
 {
   assert(data != NULL);
-  assert(0!=0 && "Program should never come here");
-  exit(-1);
-  sm_ag_if_ans_t ans = {0};
-  return ans; 
+  kpm_e2_setup_t* kpm = (kpm_e2_setup_t*)(data);
+  kpm->ran_func_def = fill_kpm_ran_func_def(); 
+
 }
+
+static
+void read_rc_e2_setup_xapp(void* data)
+{
+  assert(data != NULL);
+//  assert(data->type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
+  rc_e2_setup_t* rc = (rc_e2_setup_t*)data;
+  rc->ran_func_def = fill_rc_ran_func_def();
+}
+
+static
+sm_io_ag_ran_t init_io_ag_ran(void)
+{
+  sm_io_ag_ran_t dst = {0};
+
+  dst.read_setup_tbl[KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0] = read_kpm_e2setup_xapp;
+  dst.read_setup_tbl[RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0] = read_rc_e2_setup_xapp;
+
+  return dst;
+}
+
 
 e42_xapp_t* init_e42_xapp(fr_args_t const* args)
 {
@@ -173,7 +195,8 @@ e42_xapp_t* init_e42_xapp(fr_args_t const* args)
 
   init_handle_msg_xapp(&xapp->handle_msg);
 
-  sm_io_ag_t io = {.read = read_xapp, .write = write_xapp };
+  sm_io_ag_ran_t io = init_io_ag_ran();
+
   init_plugin_ag(&xapp->plugin_ag, args->libs_dir, io);
   init_plugin_ric(&xapp->plugin_ric, args->libs_dir);
 

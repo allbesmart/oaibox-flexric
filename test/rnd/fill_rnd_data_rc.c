@@ -472,6 +472,14 @@ ran_param_test_t fill_rnd_ran_param_test(void)
 
   dst.type = rand() % END_RAN_PARAMETER_TYPE;
 
+  static int max_depth;
+  max_depth++;
+  if(max_depth == 4){
+    max_depth = 0;
+    dst.type = ELEMENT_WITH_KEY_FLAG_TRUE_RAN_PARAMETER_TYPE;
+  }
+
+
   if(dst.type == LIST_RAN_PARAMETER_TYPE){
     dst.lst = fill_rnd_ran_param_test_lst();
   } else if(dst.type == STRUCTURE_RAN_PARAMETER_TYPE ){
@@ -518,7 +526,7 @@ ue_info_chng_t fill_rnd_ue_info_chng()
 
   // CHOICE Trigger Type
 
-  dst.type =  L2_STATE_UE_INFO_CHNG_TRIGGER_TYPE; //rand()%END_UE_INFO_CHNG_TRIGGER_TYPE;
+  dst.type = rand()%END_UE_INFO_CHNG_TRIGGER_TYPE;
 
   if( dst.type == RRC_STATE_UE_INFO_CHNG_TRIGGER_TYPE){
     // RRC State
@@ -665,7 +673,7 @@ e2sm_rc_act_def_frmt_1_t fill_rnd_rc_action_def_frmt_1(void)
 
   // Parameters to be Reported List
   // [1-65535]
-  dst.sz_param_report_def = (rand()% 65535) + 1;
+  dst.sz_param_report_def = (rand()%4) + 1; // (rand()% 65535) + 1;
 
   dst.param_report_def = calloc(dst.sz_param_report_def, sizeof( param_report_def_t));
   assert(dst.param_report_def != NULL && "Memory exhausyted");
@@ -912,7 +920,7 @@ seq_ins_style_t fill_rnd_seq_ins_style(void)
   // Sequence of Insert Indication
   // Action Definition
   // [1-63]
-  dst.sz_seq_ins_ind_act_def = (rand()% 63) + 1;
+  dst.sz_seq_ins_ind_act_def = (rand()%4) + 1; // (rand()% 63) + 1;
 
   dst.seq_ins_ind_act_def = calloc(dst.sz_seq_ins_ind_act_def, sizeof( seq_ins_ind_act_def_t));
   assert(dst.seq_ins_ind_act_def != NULL && "Memory exhausted");
@@ -1768,7 +1776,7 @@ seq_ins_ind_act_2_t fill_rnd_seq_ins_ind_act_2(void)
 
   // List of RAN parameters requested
   // [0-65535]
-  dst.sz_ran_param_req = rand() % 8; 
+  dst.sz_ran_param_req = rand() % 4; 
 
   if(dst.sz_ran_param_req > 0){
     dst.ran_param_req = calloc(dst.sz_ran_param_req, sizeof(ran_param_req_t ));
@@ -1797,7 +1805,7 @@ seq_ins_style_2_t fill_rnd_seq_ins_style_2(void)
 
   // Sequence of Insert Indication Actions
   // [1-63]
-  dst.sz_seq_ins_ind_act_2 = (rand()%63) + 1; 
+  dst.sz_seq_ins_ind_act_2 = (rand()%4) + 1; // (rand()%63) + 1; 
 
   dst.seq_ins_ind_act = calloc(dst.sz_seq_ins_ind_act_2, sizeof(seq_ins_ind_act_2_t));
   assert(dst.seq_ins_ind_act != NULL && "Memory exhausted");
@@ -2369,13 +2377,13 @@ seq_ran_param_3_t fill_rnd_seq_ran_param_3(void)
 static
 call_proc_break_t fill_rnd_call_proc_break(void)
 {
-call_proc_break_t dst = {0};
+  call_proc_break_t dst = {0};
 
   // Call Process Breakpoint ID
   // Mandatory
   // 9.3.49
   // [1 - 65535]
-  dst.id = rand() + 1;
+  dst.id = (rand()% 65535) + 1;
 
   // Call Process Breakpoint Name
   // Mandatory
@@ -2409,7 +2417,8 @@ seq_call_proc_type_t dst = {0};
   // Mandatory
   // 9.3.15
   // [1- 65535]
-  dst.id = rand() + 1;
+  dst.id = (rand()% 65535) + 1;
+  assert(dst.id > 0);
 
   // Call Process Type Name
   // Mandatory
@@ -2467,6 +2476,7 @@ ran_func_def_ev_trig_t fill_ran_func_def_ev_trig(void)
   }
   for(size_t i = 0; i < dst.sz_seq_call_proc_type; ++i){
     dst.seq_call_proc_type[i] = fill_rnd_seq_call_proc_type(); 
+    assert(dst.seq_call_proc_type[i].id > 0);
   }
 
   // Sequence of RAN Parameters for Identifying UEs

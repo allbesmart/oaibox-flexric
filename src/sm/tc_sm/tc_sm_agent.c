@@ -61,17 +61,19 @@ sm_ind_data_t on_indication_tc_sm_ag(sm_agent_t const* sm_agent, void* act_def)
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message 
-  sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
-  rd_if.ind.type = TC_STATS_V0;
-  sm->base.io.read(&rd_if);
+//  sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
+//  rd_if.ind.type = TC_STATS_V0;
+
+  tc_ind_data_t tc = {0};
+  sm->base.io.read_ind(&tc);
 
 // Liberate the memory if previously allocated by the RAN. It sucks
-  tc_ind_data_t* ind = &rd_if.ind.tc;
-  defer({ free_tc_ind_hdr(&ind->hdr) ;});
-  defer({ free_tc_ind_msg(&ind->msg) ;});
-  defer({ free_tc_call_proc_id(ind->proc_id);});
+//  tc_ind_data_t* ind = &rd_if.ind.tc;
+  defer({ free_tc_ind_hdr(&tc.hdr) ;});
+  defer({ free_tc_ind_msg(&tc.msg) ;});
+  defer({ free_tc_call_proc_id(tc.proc_id);});
 
-  byte_array_t ba = tc_enc_ind_msg(&sm->enc, &rd_if.ind.tc.msg);
+  byte_array_t ba = tc_enc_ind_msg(&sm->enc, &tc.msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 
@@ -89,16 +91,18 @@ sm_ctrl_out_data_t on_control_tc_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_req_d
   assert(data != NULL);
   sm_tc_agent_t* sm = (sm_tc_agent_t*) sm_agent;
 
-  sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
-  wr.ctrl.type = TC_CTRL_REQ_V0;
+  //sm_ag_if_wr_t wr = {.type =CONTROL_SM_AG_IF_WR };
+  //wr.ctrl.type = TC_CTRL_REQ_V0;
 
-  wr.ctrl.tc_req_ctrl.hdr = tc_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
-  defer({ free_tc_ctrl_hdr(&wr.ctrl.tc_req_ctrl.hdr ); });
+  tc_ctrl_req_data_t tc_req_ctrl = {0};
 
-  wr.ctrl.tc_req_ctrl.msg = tc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
-  defer({ free_tc_ctrl_msg(&wr.ctrl.tc_req_ctrl.msg); });
+  tc_req_ctrl.hdr = tc_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
+  defer({ free_tc_ctrl_hdr(&tc_req_ctrl.hdr ); });
+
+  tc_req_ctrl.msg = tc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
+  defer({ free_tc_ctrl_msg(&tc_req_ctrl.msg); });
    
-  sm_ag_if_ans_t ans = sm->base.io.write(&wr);
+  sm_ag_if_ans_t ans = sm->base.io.write_ctrl(&tc_req_ctrl);
   defer({free_tc_ctrl_out(&ans.ctrl_out.tc); });
 
   assert(ans.type == CTRL_OUTCOME_SM_AG_IF_ANS_V0);
@@ -162,14 +166,23 @@ void free_tc_sm_ag(sm_agent_t* sm_agent)
   free(sm);
 }
 
-sm_agent_t* make_tc_sm_agent(sm_io_ag_t io)
+sm_agent_t* make_tc_sm_agent(sm_io_ag_ran_t io)
 {
   sm_tc_agent_t* sm = calloc(1, sizeof(sm_tc_agent_t));
   assert(sm != NULL && "Memory exhausted!!!");
 
   *(uint16_t*)(&sm->base.ran_func_id) = SM_TC_ID; 
 
-  sm->base.io = io;
+//  sm->base.io = io;
+
+  // Read
+  sm->base.io.read_ind = io.read_ind_tbl[TC_STATS_V0];
+  sm->base.io.read_setup = io.read_setup_tbl[TC_AGENT_IF_E2_SETUP_ANS_V0];
+ 
+  //Write
+  sm->base.io.write_ctrl = io.write_ctrl_tbl[TC_CTRL_REQ_V0];
+  sm->base.io.write_subs = io.write_subs_tbl[TC_SUBS_V0];
+
   sm->base.free_sm = free_tc_sm_ag;
   sm->base.free_act_def = NULL; //free_act_def_tc_sm_ag;
 

@@ -3,11 +3,11 @@
 
 #include "../../../src/agent/e2_agent_api.h"
 
-void read_kpm_sm(sm_ag_if_rd_ind_t*);
+void read_kpm_sm(void*);
 
-void read_kpm_setup_sm(sm_ag_if_rd_e2setup_t*);
+void read_kpm_setup_sm(void*);
 
-sm_ag_if_ans_t write_ctrl_kpm_sm(sm_ag_if_wr_ctrl_t const* src);
+sm_ag_if_ans_t write_ctrl_kpm_sm(void const* src);
 
 #endif
 

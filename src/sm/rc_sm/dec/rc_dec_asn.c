@@ -544,7 +544,7 @@ e2sm_rc_ev_trg_frmt_3_t dec_rc_ev_trigger_format_3(E2SM_RC_EventTrigger_Format3_
   return dst; 
 }
 
-/*
+
 static
 rrc_state_t dec_rrc_state(TriggerType_Choice_RRCstate_Item_t const * src)
 {
@@ -568,8 +568,7 @@ rrc_state_t dec_rrc_state(TriggerType_Choice_RRCstate_Item_t const * src)
 
   return dst;
 }
-*/
-/*
+
 static
 rrc_state_lst_t dec_rrc_state_lst(TriggerType_Choice_RRCstate_t const* src)
 {
@@ -592,7 +591,6 @@ rrc_state_lst_t dec_rrc_state_lst(TriggerType_Choice_RRCstate_t const* src)
   assert(dst.sz_rrc_state > 0 && dst.sz_rrc_state < 9);
   return dst; 
 }
-*/
 
 static
 ran_param_test_t dec_ran_param_test(RANParameter_Testing_Item_t const* src);
@@ -850,6 +848,7 @@ ue_info_chng_t dec_ue_info_chng(E2SM_RC_EventTrigger_Format4_Item_t const* src)
   // RRC State
   if(src->triggerType.present == TriggerType_Choice_PR_triggerType_Choice_RRCstate){
     dst.type = RRC_STATE_UE_INFO_CHNG_TRIGGER_TYPE;
+    dst.rrc_state = dec_rrc_state_lst(src->triggerType.choice.triggerType_Choice_RRCstate);
 
   // UE Identifier Change
   // [1 - 512]

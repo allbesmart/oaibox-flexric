@@ -142,41 +142,44 @@ kpm_ind_hdr_t fill_kpm_ind_hdr_sta(void)
   return hdr;
 }
 
-void read_kpm_sm(sm_ag_if_rd_ind_t* data)
+void read_kpm_sm(void* data)
 {
   assert(data != NULL);
-  assert(data->type == KPM_STATS_V3_0);
+  //assert(data->type == KPM_STATS_V3_0);
 
-  assert(data->kpm.act_def!= NULL && "Cannot be NULL");
-  if(data->kpm.act_def->type == FORMAT_4_ACTION_DEFINITION){
+  kpm_rd_ind_data_t* kpm = (kpm_rd_ind_data_t*)data;
 
-    if(data->kpm.act_def->frm_4.matching_cond_lst[0].test_info_lst.test_cond_type == CQI_TEST_COND_TYPE
-        && *data->kpm.act_def->frm_4.matching_cond_lst[0].test_info_lst.test_cond == GREATERTHAN_TEST_COND){
-      printf("Matching condition: UEs with CQI greater than %ld \n", *data->kpm.act_def->frm_4.matching_cond_lst[0].test_info_lst.int_value );
+  assert(kpm->act_def!= NULL && "Cannot be NULL");
+  if(kpm->act_def->type == FORMAT_4_ACTION_DEFINITION){
+
+    if(kpm->act_def->frm_4.matching_cond_lst[0].test_info_lst.test_cond_type == CQI_TEST_COND_TYPE
+        && *kpm->act_def->frm_4.matching_cond_lst[0].test_info_lst.test_cond == GREATERTHAN_TEST_COND){
+      printf("Matching condition: UEs with CQI greater than %ld \n", *kpm->act_def->frm_4.matching_cond_lst[0].test_info_lst.int_value );
     }
 
-    printf("Parameter to report: %s \n", data->kpm.act_def->frm_4.action_def_format_1.meas_info_lst->meas_type.name.buf); 
+    printf("Parameter to report: %s \n", kpm->act_def->frm_4.action_def_format_1.meas_info_lst->meas_type.name.buf); 
 
-    data->kpm.ind.hdr = fill_kpm_ind_hdr_sta(); 
+    kpm->ind.hdr = fill_kpm_ind_hdr_sta(); 
     // 7.8 Supported RIC Styles and E2SM IE Formats
     // Format 4 corresponds to indication message 3
-    data->kpm.ind.msg.type = FORMAT_3_INDICATION_MESSAGE;
-    data->kpm.ind.msg.frm_3 = fill_kpm_ind_msg_frm_3_sta();
+    kpm->ind.msg.type = FORMAT_3_INDICATION_MESSAGE;
+    kpm->ind.msg.frm_3 = fill_kpm_ind_msg_frm_3_sta();
   } else {
-     data->kpm.ind.hdr = fill_kpm_ind_hdr(); 
-     data->kpm.ind.msg = fill_kpm_ind_msg(); 
+     kpm->ind.hdr = fill_kpm_ind_hdr(); 
+     kpm->ind.msg = fill_kpm_ind_msg(); 
   }
 }
 
-void read_kpm_setup_sm(sm_ag_if_rd_e2setup_t* e2ap)
+void read_kpm_setup_sm(void* e2ap)
 {
   assert(e2ap != NULL);
-  assert(e2ap->type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0);
+//  assert(e2ap->type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0);
 
-  e2ap->kpm.ran_func_def = fill_kpm_ran_func_def(); 
+  kpm_e2_setup_t* kpm = (kpm_e2_setup_t*)(e2ap);
+  kpm->ran_func_def = fill_kpm_ran_func_def(); 
 }
 
-sm_ag_if_ans_t write_ctrl_kpm_sm(sm_ag_if_wr_ctrl_t const* src)
+sm_ag_if_ans_t write_ctrl_kpm_sm(void const* src)
 {
   assert(0 !=0 && "Not supported");
   (void)src;

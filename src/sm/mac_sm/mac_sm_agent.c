@@ -22,10 +22,9 @@
 #include "mac_sm_agent.h"
 
 #include "../../util/alg_ds/alg/defer.h"
+#include "dec/mac_dec_generic.h"
 #include "mac_sm_id.h"
 #include "enc/mac_enc_generic.h"
-#include "dec/mac_dec_generic.h"
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -86,19 +85,19 @@ sm_ind_data_t on_indication_mac_sm_ag(sm_agent_t const* sm_agent, void* act_def)
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message 
-  sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
-  rd_if.ind.type = MAC_STATS_V0;
+  //sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
+  //rd_if.ind.type = MAC_STATS_V0;
 
+  mac_ind_data_t mac = {0};
   // This may allocate memory by the RAN
-  sm->base.io.read(&rd_if);
+  sm->base.io.read_ind(&mac);
   // Liberate the memory if previously allocated by the RAN. It sucks. Profoundly
   //  defer({ free_sm_rd_if(&rd_if); }; );
-  mac_ind_data_t* ind = &rd_if.ind.mac;
-  defer({ free_mac_ind_hdr(&ind->hdr) ;});
-  defer({ free_mac_ind_msg(&ind->msg) ;});
-  defer({ free_mac_call_proc_id(ind->proc_id);});
+  defer({ free_mac_ind_hdr(&mac.hdr) ;});
+  defer({ free_mac_ind_msg(&mac.msg) ;});
+  defer({ free_mac_call_proc_id(mac.proc_id);});
 
-  byte_array_t ba = mac_enc_ind_msg(&sm->enc, &ind->msg);
+  byte_array_t ba = mac_enc_ind_msg(&sm->enc, &mac.msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 
@@ -122,13 +121,14 @@ sm_ctrl_out_data_t on_control_mac_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_req_
   mac_ctrl_msg_t msg = mac_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
   assert(msg.action == 42 && "Only action number 42 supported");
 
-  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
-  wr.ctrl.type = MAC_CTRL_REQ_V0; 
+//  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
+//  wr.ctrl.type = MAC_CTRL_REQ_V0; 
 
-  wr.ctrl.mac_ctrl.hdr.dummy = 0;
-  wr.ctrl.mac_ctrl.msg.action = msg.action;
+  mac_ctrl_req_data_t mac_ctrl = {0};
+  mac_ctrl.hdr.dummy = 0;
+  mac_ctrl.msg.action = msg.action;
 
-  sm->base.io.write(&wr);
+  sm->base.io.write_ctrl(&mac_ctrl);
   sm_ctrl_out_data_t ret = {0};
   ret.len_out = 0;
   ret.ctrl_out = NULL;
@@ -193,13 +193,19 @@ void free_mac_sm_ag(sm_agent_t* sm_agent)
   free(sm);
 }
 
-
-sm_agent_t* make_mac_sm_agent(sm_io_ag_t io)
+sm_agent_t* make_mac_sm_agent(sm_io_ag_ran_t io)
 {
   sm_mac_agent_t* sm = calloc(1, sizeof(sm_mac_agent_t));
   assert(sm != NULL && "Memory exhausted!!!");
 
-  sm->base.io = io;
+  // Read
+  sm->base.io.read_ind = io.read_ind_tbl[MAC_STATS_V0];
+  sm->base.io.read_setup = io.read_setup_tbl[MAC_AGENT_IF_E2_SETUP_ANS_V0];
+ 
+  //Write
+  sm->base.io.write_ctrl = io.write_ctrl_tbl[MAC_CTRL_REQ_V0];
+  sm->base.io.write_subs = io.write_subs_tbl[MAC_SUBS_V0];
+
   sm->base.free_sm = free_mac_sm_ag;
   sm->base.free_act_def = NULL; //free_act_def_mac_sm_ag;
 
@@ -216,7 +222,6 @@ sm_agent_t* make_mac_sm_agent(sm_io_ag_t io)
 
   return &sm->base;
 }
-
 
 uint16_t id_mac_sm_agent(sm_agent_t const* sm_agent )
 {

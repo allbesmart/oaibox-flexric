@@ -113,7 +113,6 @@ typedef struct{
 typedef enum{
  CONTROL_SM_AG_IF_WR,
  SUBSCRIPTION_SM_AG_IF_WR,
-
  END_SM_AG_IF_WR,
 } sm_ag_if_wr_e; 
 

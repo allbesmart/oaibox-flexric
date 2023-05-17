@@ -7,27 +7,27 @@
 #include <pthread.h>
 #include <unistd.h>
 
-void read_rc_sm(sm_ag_if_rd_ind_t* data)
+void read_rc_sm(void* data)
 {
   assert(data != NULL);
-  assert(data->type == RAN_CTRL_STATS_V1_03);
+//  assert(data->type == RAN_CTRL_STATS_V1_03);
   assert(0!=0 && "Not implemented");
 }
 
-void read_rc_setup_sm(sm_ag_if_rd_e2setup_t* data)
+void read_rc_setup_sm(void* data)
 {
   assert(data != NULL);
-  assert(data->type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
-
-  data->rc.ran_func_def = fill_rc_ran_func_def();
+//  assert(data->type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
+  rc_e2_setup_t* rc = (rc_e2_setup_t*)data;
+  rc->ran_func_def = fill_rc_ran_func_def();
 }
 
-sm_ag_if_ans_t write_ctrl_rc_sm(sm_ag_if_wr_ctrl_t const* data)
+sm_ag_if_ans_t write_ctrl_rc_sm(void const* data)
 {
   assert(data != NULL);
-  assert(data->type == RAN_CONTROL_CTRL_V1_03 );
+//  assert(data->type == RAN_CONTROL_CTRL_V1_03 );
 
-  rc_ctrl_req_data_t const* ctrl = &data->rc_ctrl;
+  rc_ctrl_req_data_t const* ctrl = (rc_ctrl_req_data_t const*)data;
   if(ctrl->hdr.format == FORMAT_1_E2SM_RC_CTRL_HDR){
     if(ctrl->hdr.frmt_1.ric_style_type == 1 && ctrl->hdr.frmt_1.ctrl_act_id == 2){
       printf("QoS flow mapping configuration \n");
@@ -90,14 +90,16 @@ void* emulate_rrc_msg(void* ptr)
 static
 pthread_t t_ran_ctrl;
 
-sm_ag_if_ans_t write_subs_rc_sm(sm_ag_if_wr_subs_t const* src)
+sm_ag_if_ans_t write_subs_rc_sm(void const* src)
 {
-  assert(src != NULL && src->type == RAN_CTRL_SUBS_V1_03);
-  printf("ric req id %d \n", src->wr_rc.ric_req_id);
+  assert(src != NULL); // && src->type == RAN_CTRL_SUBS_V1_03);
+
+  wr_rc_sub_data_t* wr_rc = (wr_rc_sub_data_t*)src;
+  printf("ric req id %d \n", wr_rc->ric_req_id);
 
   uint32_t* ptr = malloc(sizeof(uint32_t));
   assert(ptr != NULL);
-  *ptr = src->wr_rc.ric_req_id;
+  *ptr = wr_rc->ric_req_id;
 
   int rc = pthread_create(&t_ran_ctrl, NULL, emulate_rrc_msg, ptr);
   assert(rc == 0);

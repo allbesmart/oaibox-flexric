@@ -3,11 +3,11 @@
 
 #include "../../../src/agent/e2_agent_api.h"
 
-void read_rlc_sm(sm_ag_if_rd_ind_t*);
+void read_rlc_sm(void*);
 
-void read_rlc_setup_sm(sm_ag_if_rd_e2setup_t* data);
+void read_rlc_setup_sm(void* data);
 
-sm_ag_if_ans_t write_ctrl_rlc_sm(sm_ag_if_wr_ctrl_t const* data);
+sm_ag_if_ans_t write_ctrl_rlc_sm(void const* data);
 
 #endif
 

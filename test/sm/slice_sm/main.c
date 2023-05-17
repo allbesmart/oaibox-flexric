@@ -20,18 +20,6 @@ slice_ind_data_t cp;
 static
 slice_ctrl_req_data_t cp_ctrl;
 
-static
-void ctrl_slice(slice_ctrl_req_data_t const* ctrl)
-{
-  assert(ctrl != NULL);
-
-  bool const ans_hdr = eq_slice_ctrl_hdr(&cp_ctrl.hdr, &ctrl->hdr);
-  assert(ans_hdr == true);
-
-  bool const ans_msg = eq_slice_ctrl_msg(&cp_ctrl.msg, &ctrl->msg);
-  assert(ans_msg == true);
-}
-
 //
 // Functions 
 
@@ -41,29 +29,27 @@ void ctrl_slice(slice_ctrl_req_data_t const* ctrl)
 ////
 
 static
-void read_RAN(sm_ag_if_rd_t* read)
+void read_ind_slice(void* read)
 {
   assert(read != NULL);
-  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
-  assert(read->ind.type == SLICE_STATS_V0);
 
-  fill_slice_ind_data(&read->ind.slice);
-  cp.msg = cp_slice_ind_msg(&read->ind.slice.msg);
+  slice_ind_data_t* slice = (slice_ind_data_t*)read;
+  fill_slice_ind_data(slice);
+  cp.msg = cp_slice_ind_msg(&slice->msg);
 }
 
-
 static 
-sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
+sm_ag_if_ans_t write_ctrl_slice(void const* data)
 {
   assert(data != NULL);
-  assert(data->type == CONTROL_SM_AG_IF_WR);
-  assert(data->ctrl.type == SLICE_CTRL_REQ_V0);
 
-  if(data->ctrl.type ==  SLICE_CTRL_REQ_V0){
-    ctrl_slice(&data->ctrl.slice_req_ctrl);
-  } else {
-    assert(0!=0 && "Unknown data type");
-  }
+  slice_ctrl_req_data_t const* ctrl = (slice_ctrl_req_data_t const*)data; 
+
+  bool const ans_hdr = eq_slice_ctrl_hdr(&cp_ctrl.hdr, &ctrl->hdr);
+  assert(ans_hdr == true);
+
+  bool const ans_msg = eq_slice_ctrl_msg(&cp_ctrl.msg, &ctrl->msg);
+  assert(ans_msg == true);
 
   sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0}; 
   ans.ctrl_out.type = SLICE_AGENT_IF_CTRL_ANS_V0;
@@ -97,13 +83,11 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ag_if_wr_subs_t sub = {.type = SLICE_SUBS_V0};
-  sub.slice.et.ms = 2;
-
+  char sub[] = "2_ms";
   sm_subs_data_t data = ric->proc.on_subscription(ric, &sub );
   subscribe_timer_t t = ag->proc.on_subscription(ag, &data); 
 
-  assert(t.ms == sub.mac.et.ms);
+  assert(t.ms == 2);
   free_sm_subs_data(&data);
 }
 
@@ -137,14 +121,16 @@ void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
-  wr.ctrl.type = SLICE_CTRL_REQ_V0 ;
-  fill_slice_ctrl(&wr.ctrl.slice_req_ctrl);
+  //sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
+  //wr.ctrl.type = SLICE_CTRL_REQ_V0 ;
 
-  cp_ctrl.hdr = cp_slice_ctrl_hdr(&wr.ctrl.slice_req_ctrl.hdr);
-  cp_ctrl.msg = cp_slice_ctrl_msg(&wr.ctrl.slice_req_ctrl.msg);
+  slice_ctrl_req_data_t slice_req_ctrl = {0};
+  fill_slice_ctrl(&slice_req_ctrl);
 
-  sm_ctrl_req_data_t ctrl_req = ric->proc.on_control_req(ric, &wr.ctrl);
+  cp_ctrl.hdr = cp_slice_ctrl_hdr(&slice_req_ctrl.hdr);
+  cp_ctrl.msg = cp_slice_ctrl_msg(&slice_req_ctrl.msg);
+
+  sm_ctrl_req_data_t ctrl_req = ric->proc.on_control_req(ric, &slice_req_ctrl);
 
   sm_ctrl_out_data_t out_data = ag->proc.on_control(ag, &ctrl_req);
 
@@ -162,8 +148,8 @@ void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
 
   free_slice_ctrl_out(&ans.slice);
 
-  free_slice_ctrl_hdr(&wr.ctrl.slice_req_ctrl.hdr); 
-  free_slice_ctrl_msg(&wr.ctrl.slice_req_ctrl.msg); 
+  free_slice_ctrl_hdr(&slice_req_ctrl.hdr); 
+  free_slice_ctrl_msg(&slice_req_ctrl.msg); 
 
   free_slice_ctrl_hdr(&cp_ctrl.hdr);
   free_slice_ctrl_msg(&cp_ctrl.msg);
@@ -171,7 +157,10 @@ void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
 
 int main()
 {
-  sm_io_ag_t io_ag = {.read = read_RAN, .write = write_RAN};  
+  sm_io_ag_ran_t io_ag = {0}; //.read = read_RAN, .write = write_RAN};  
+  io_ag.read_ind_tbl[SLICE_STATS_V0] = read_ind_slice;
+  io_ag.write_ctrl_tbl[SLICE_CTRL_REQ_V0] = write_ctrl_slice;
+
   sm_agent_t* sm_ag = make_slice_sm_agent(io_ag);
   sm_ric_t* sm_ric = make_slice_sm_ric();
 

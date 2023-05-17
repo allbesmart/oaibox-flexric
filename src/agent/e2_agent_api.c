@@ -76,7 +76,7 @@ void init_agent_api(int mcc,
                     int nb_id,
                     int cu_du_id,
                     ngran_node_t ran_type,
-                    sm_io_ag_t io,
+                    sm_io_ag_ran_t io,
 		                fr_args_t const* args)
 {
   assert(agent == NULL);  

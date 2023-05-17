@@ -84,17 +84,18 @@ sm_ind_data_t on_indication_rlc_sm_ag(sm_agent_t const* sm_agent,void* act_def)
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message 
-  sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
-  rd_if.ind.type = RLC_STATS_V0;
-  sm->base.io.read(&rd_if);
+  //sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
+  //rd_if.ind.type = RLC_STATS_V0;
+
+  rlc_ind_data_t rlc = {0};
+  sm->base.io.read_ind(&rlc);
 
   // Liberate the memory if previously allocated by the RAN. It sucks
-  rlc_ind_data_t* ind = &rd_if.ind.rlc;
-  defer({ free_rlc_ind_hdr(&ind->hdr) ;});
-  defer({ free_rlc_ind_msg(&ind->msg) ;});
-  defer({ free_rlc_call_proc_id(ind->proc_id);});
+  defer({ free_rlc_ind_hdr(&rlc.hdr) ;});
+  defer({ free_rlc_ind_msg(&rlc.msg) ;});
+  defer({ free_rlc_call_proc_id(rlc.proc_id);});
 
-  byte_array_t ba = rlc_enc_ind_msg(&sm->enc, &ind->msg);
+  byte_array_t ba = rlc_enc_ind_msg(&sm->enc, &rlc.msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 
@@ -118,12 +119,15 @@ static
   rlc_ctrl_msg_t msg = rlc_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
   assert(msg.action == 42 && "Only action number 42 supported");
 
-  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
-  wr.ctrl.type = RLC_CTRL_REQ_V0;
-  wr.ctrl.rlc_ctrl.hdr.dummy = 0; 
-  wr.ctrl.rlc_ctrl.msg.action = msg.action;
+  //sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
+  //wr.ctrl.type = RLC_CTRL_REQ_V0;
 
-  sm->base.io.write(&wr);
+  rlc_ctrl_req_data_t rlc_ctrl = {0};
+
+  rlc_ctrl.hdr.dummy = 0; 
+  rlc_ctrl.msg.action = msg.action;
+
+  sm->base.io.write_ctrl(&rlc_ctrl);
 
   // Answer from the E2 Node
   sm_ctrl_out_data_t ret = {0};
@@ -185,15 +189,21 @@ void free_rlc_sm_ag(sm_agent_t* sm_agent)
   free(sm);
 }
 
-
-sm_agent_t* make_rlc_sm_agent(sm_io_ag_t io)
+sm_agent_t* make_rlc_sm_agent(sm_io_ag_ran_t io)
 {
   sm_rlc_agent_t* sm = calloc(1, sizeof(sm_rlc_agent_t));
   assert(sm != NULL && "Memory exhausted!!!");
 
   *(uint16_t*)(&sm->base.ran_func_id) = SM_RLC_ID; 
 
-  sm->base.io = io;
+  // Read
+  sm->base.io.read_ind = io.read_ind_tbl[RLC_STATS_V0];
+  sm->base.io.read_setup = io.read_setup_tbl[RLC_AGENT_IF_E2_SETUP_ANS_V0];
+ 
+  //Write
+  sm->base.io.write_ctrl = io.write_ctrl_tbl[RLC_CTRL_REQ_V0];
+  sm->base.io.write_subs = io.write_subs_tbl[RLC_SUBS_V0];
+
   sm->base.free_sm = free_rlc_sm_ag;
   sm->base.free_act_def = NULL; //free_act_def_rlc_sm_ag;
 

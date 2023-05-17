@@ -36,81 +36,79 @@
 #include <pthread.h>
 #include <unistd.h>
 
-typedef void (*fp)(sm_ag_if_rd_ind_t*);
-fp read_tbl[SM_AGENT_IF_READ_V0_END];
+/*
+read_ind_fp read_ind_tbl[SM_AGENT_IF_READ_V0_END];
+read_e2_setup_fp read_setup_tbl[SM_AGENT_IF_E2_SETUP_ANS_V0_END];
 
-typedef void (*fp_setup)(sm_ag_if_rd_e2setup_t*);
-fp_setup read_setup_tbl[SM_AGENT_IF_E2_SETUP_ANS_V0_END];
-
-typedef sm_ag_if_ans_t (*fp_ctrl)(sm_ag_if_wr_ctrl_t const*);
-fp_ctrl write_ctrl_tbl[SM_AGENT_IF_WRITE_CTRL_V0_END];
-
-typedef sm_ag_if_ans_t (*fp_subs)(sm_ag_if_wr_subs_t const*);
-fp_subs write_subs_tbl[SM_AGENT_IF_WRITE_SUBS_V0_END];
-
+write_ctrl_fp write_ctrl_tbl[SM_AGENT_IF_WRITE_CTRL_V0_END];
+write_subs_fp write_subs_tbl[SM_AGENT_IF_WRITE_SUBS_V0_END];
+*/
 
 static
-void init_read_tbl(void)
+void init_read_ind_tbl(read_ind_fp (*read_ind_tbl)[SM_AGENT_IF_READ_V0_END])
 {
-  read_tbl[MAC_STATS_V0] = read_mac_sm;
-  read_tbl[RLC_STATS_V0] = read_rlc_sm ;
-  read_tbl[PDCP_STATS_V0] = read_pdcp_sm ;
-  read_tbl[SLICE_STATS_V0] = read_slice_sm ;
-  read_tbl[TC_STATS_V0] = read_tc_sm ;
-  read_tbl[GTP_STATS_V0] = read_gtp_sm ; 
-  read_tbl[KPM_STATS_V3_0] = read_kpm_sm ; 
-  read_tbl[RAN_CTRL_STATS_V1_03] = read_rc_sm;
+  (*read_ind_tbl)[MAC_STATS_V0] = read_mac_sm;
+  (*read_ind_tbl)[RLC_STATS_V0] = read_rlc_sm ;
+  (*read_ind_tbl)[PDCP_STATS_V0] = read_pdcp_sm ;
+  (*read_ind_tbl)[SLICE_STATS_V0] = read_slice_sm ;
+  (*read_ind_tbl)[TC_STATS_V0] = read_tc_sm ;
+  (*read_ind_tbl)[GTP_STATS_V0] = read_gtp_sm ; 
+  (*read_ind_tbl)[KPM_STATS_V3_0] = read_kpm_sm ; 
+  (*read_ind_tbl)[RAN_CTRL_STATS_V1_03] = read_rc_sm;
 }
 
 static
-void init_read_setup_tbl(void)
+void init_read_setup_tbl(read_e2_setup_fp (*read_setup_tbl)[SM_AGENT_IF_E2_SETUP_ANS_V0_END])
 {
-  read_setup_tbl[MAC_AGENT_IF_E2_SETUP_ANS_V0] = read_mac_setup_sm;
-  read_setup_tbl[RLC_AGENT_IF_E2_SETUP_ANS_V0] = read_rlc_setup_sm ;
-  read_setup_tbl[PDCP_AGENT_IF_E2_SETUP_ANS_V0] = read_pdcp_setup_sm ;
-  read_setup_tbl[SLICE_AGENT_IF_E2_SETUP_ANS_V0] = read_slice_setup_sm ;
-  read_setup_tbl[TC_AGENT_IF_E2_SETUP_ANS_V0] = read_tc_setup_sm ;
-  read_setup_tbl[GTP_AGENT_IF_E2_SETUP_ANS_V0] = read_gtp_setup_sm ; 
-  read_setup_tbl[KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0] = read_kpm_setup_sm ; 
-  read_setup_tbl[RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0] = read_rc_setup_sm;
+  (*read_setup_tbl)[MAC_AGENT_IF_E2_SETUP_ANS_V0] = read_mac_setup_sm;
+  (*read_setup_tbl)[RLC_AGENT_IF_E2_SETUP_ANS_V0] = read_rlc_setup_sm ;
+  (*read_setup_tbl)[PDCP_AGENT_IF_E2_SETUP_ANS_V0] = read_pdcp_setup_sm ;
+  (*read_setup_tbl)[SLICE_AGENT_IF_E2_SETUP_ANS_V0] = read_slice_setup_sm ;
+  (*read_setup_tbl)[TC_AGENT_IF_E2_SETUP_ANS_V0] = read_tc_setup_sm ;
+  (*read_setup_tbl)[GTP_AGENT_IF_E2_SETUP_ANS_V0] = read_gtp_setup_sm ; 
+  (*read_setup_tbl)[KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0] = read_kpm_setup_sm ; 
+  (*read_setup_tbl)[RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0] = read_rc_setup_sm;
 }
 
 static
-void init_write_ctrl(void)
+void init_write_ctrl( write_ctrl_fp (*write_ctrl_tbl)[SM_AGENT_IF_WRITE_CTRL_V0_END])
 {
-  write_ctrl_tbl[MAC_CTRL_REQ_V0] = write_ctrl_mac_sm;
-  write_ctrl_tbl[RLC_CTRL_REQ_V0] =  write_ctrl_rlc_sm;
-  write_ctrl_tbl[PDCP_CTRL_REQ_V0] =  write_ctrl_pdcp_sm;
-  write_ctrl_tbl[SLICE_CTRL_REQ_V0] =  write_ctrl_slice_sm;
-  write_ctrl_tbl[TC_CTRL_REQ_V0] =  write_ctrl_tc_sm;
-  write_ctrl_tbl[GTP_CTRL_REQ_V0] =  write_ctrl_gtp_sm;
-  write_ctrl_tbl[RAN_CONTROL_CTRL_V1_03] =  write_ctrl_rc_sm;
-}
-
-static
-void init_write_subs(void)
-{
-  write_subs_tbl[MAC_SUBS_V0] = NULL;
-  write_subs_tbl[RLC_SUBS_V0] = NULL;
-  write_subs_tbl[PDCP_SUBS_V0] = NULL;
-  write_subs_tbl[SLICE_SUBS_V0] = NULL;
-  write_subs_tbl[TC_SUBS_V0] = NULL;
-  write_subs_tbl[GTP_SUBS_V0] = NULL;
-  write_subs_tbl[KPM_SUBS_V3_0] = NULL;
-  write_subs_tbl[RAN_CTRL_SUBS_V1_03] = write_subs_rc_sm;
+  (*write_ctrl_tbl)[MAC_CTRL_REQ_V0] = write_ctrl_mac_sm;
+  (*write_ctrl_tbl)[RLC_CTRL_REQ_V0] =  write_ctrl_rlc_sm;
+  (*write_ctrl_tbl)[PDCP_CTRL_REQ_V0] =  write_ctrl_pdcp_sm;
+  (*write_ctrl_tbl)[SLICE_CTRL_REQ_V0] =  write_ctrl_slice_sm;
+  (*write_ctrl_tbl)[TC_CTRL_REQ_V0] =  write_ctrl_tc_sm;
+  (*write_ctrl_tbl)[GTP_CTRL_REQ_V0] =  write_ctrl_gtp_sm;
+  (*write_ctrl_tbl)[RAN_CONTROL_CTRL_V1_03] =  write_ctrl_rc_sm;
 }
 
 
 static
-void init_tbls()
+void init_write_subs(write_subs_fp (*write_subs_tbl)[SM_AGENT_IF_WRITE_SUBS_V0_END])
 {
-  init_read_tbl();
-  init_read_setup_tbl();
-  init_write_ctrl();
-  init_write_subs();
+  (*write_subs_tbl)[MAC_SUBS_V0] = NULL;
+  (*write_subs_tbl)[RLC_SUBS_V0] = NULL;
+  (*write_subs_tbl)[PDCP_SUBS_V0] = NULL;
+  (*write_subs_tbl)[SLICE_SUBS_V0] = NULL;
+  (*write_subs_tbl)[TC_SUBS_V0] = NULL;
+  (*write_subs_tbl)[GTP_SUBS_V0] = NULL;
+  (*write_subs_tbl)[KPM_SUBS_V3_0] = NULL;
+  (*write_subs_tbl)[RAN_CTRL_SUBS_V1_03] = write_subs_rc_sm;
 }
 
+static
+sm_io_ag_ran_t init_io_ag()
+{
+  sm_io_ag_ran_t io = {0};
+  init_read_ind_tbl(&io.read_ind_tbl);
+  init_read_setup_tbl(&io.read_setup_tbl);
+  init_write_ctrl(&io.write_ctrl_tbl);
+  init_write_subs(&io.write_subs_tbl);
 
+  return io;
+}
+
+/*
 static
 void read_RAN(sm_ag_if_rd_t* ag_rd)
 {
@@ -118,7 +116,7 @@ void read_RAN(sm_ag_if_rd_t* ag_rd)
       || ag_rd->type == E2_SETUP_AGENT_IF_ANS_V0);
 
   if(ag_rd->type == INDICATION_MSG_AGENT_IF_ANS_V0)
-      read_tbl[ag_rd->ind.type](&ag_rd->ind);
+      read_ind_tbl[ag_rd->ind.type](&ag_rd->ind);
   else if(ag_rd->type == E2_SETUP_AGENT_IF_ANS_V0 )
       read_setup_tbl[ag_rd->e2ap.type](&ag_rd->e2ap);
   else
@@ -137,6 +135,9 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* ag_wr)
   }
   return write_subs_tbl[ag_wr->subs.type](&ag_wr->subs);
 }
+
+*/
+
 
 static
 void stop_and_exit()
@@ -171,9 +172,8 @@ int main(int argc, char *argv[])
   const int nb_id = TEST_AGENT_NB_ID;
   const int cu_du_id = TEST_AGENT_CU_DU_ID;
 
-  init_tbls();
+  sm_io_ag_ran_t io = init_io_ag();
 
-  sm_io_ag_t io = {.read = read_RAN, .write = write_RAN};
   fr_args_t args = init_fr_args(argc, argv);
 
   if (NODE_IS_MONOLITHIC(ran_type))

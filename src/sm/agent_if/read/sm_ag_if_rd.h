@@ -69,7 +69,6 @@ typedef struct{
 
 typedef struct{
   sm_ag_if_rd_ind_e type;
-
 // Do not change the order!
   union {
     mac_ind_data_t mac;

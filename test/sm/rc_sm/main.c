@@ -54,27 +54,27 @@ static
 rc_e2_setup_t cp_e2_setup; 
 
 static
-void read_RAN(sm_ag_if_rd_t* read)
+void read_ind_rc(void* read)
 {
   assert(read != NULL);
-  if(read->type == INDICATION_MSG_AGENT_IF_ANS_V0){ 
-  assert(read->ind.type == RAN_CTRL_STATS_V1_03);
-  assert(read->ind.rc.act_def != NULL);
 
-  read->ind.rc.ind = fill_rnd_rc_ind_data();
-  cp_ind = cp_rc_ind_data(&read->ind.rc.ind);
+  rc_rd_ind_data_t* rc = (rc_rd_ind_data_t*)read;
 
-  assert(eq_rc_ind_data(&read->ind.rc.ind, &cp_ind) == true);
+  rc->ind = fill_rnd_rc_ind_data();
+  cp_ind = cp_rc_ind_data(&rc->ind);
 
-  } else if(read->type == E2_SETUP_AGENT_IF_ANS_V0 ){
-    assert(read->e2ap.type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
-    read->e2ap.rc.ran_func_def = fill_rc_ran_func_def();
-    cp_e2_setup.ran_func_def = cp_e2sm_rc_func_def(&read->e2ap.rc.ran_func_def);
-    assert(eq_e2sm_rc_func_def(&cp_e2_setup.ran_func_def, &read->e2ap.rc.ran_func_def) == true);
+  assert(eq_rc_ind_data(&rc->ind, &cp_ind) == true);
+}
 
-  } else {
-    assert(0!=0 && "Unknown type");
-  }
+static
+void read_setup_rc(void* read)
+{
+  assert(read != NULL);
+
+  rc_e2_setup_t* rc = (rc_e2_setup_t*) read;
+  rc->ran_func_def = fill_rc_ran_func_def();
+  cp_e2_setup.ran_func_def = cp_e2sm_rc_func_def(&rc->ran_func_def);
+  assert(eq_e2sm_rc_func_def(&cp_e2_setup.ran_func_def, &rc->ran_func_def) == true);
 }
 
 // For testing purposes
@@ -87,6 +87,40 @@ rc_ctrl_req_data_t cp_rc_ctrl;
 static
 e2sm_rc_ctrl_out_t cp_rc_ctrl_out; 
 
+
+static 
+sm_ag_if_ans_t write_ctrl_rc(void const* data)
+{
+  assert(data != NULL); 
+
+  rc_ctrl_req_data_t const* ctrl = (rc_ctrl_req_data_t const*)data;
+
+  // RAN Input
+  cp_rc_ctrl = cp_rc_ctrl_req_data(ctrl);
+
+  // RAN Output
+  sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
+  ans.ctrl_out.type = RAN_CTRL_V1_3_AGENT_IF_CTRL_ANS_V0;
+  ans.ctrl_out.rc = fill_rc_ctrl_out();
+  cp_rc_ctrl_out = cp_e2sm_rc_ctrl_out( &ans.ctrl_out.rc );
+
+  return ans;
+}
+
+static 
+sm_ag_if_ans_t write_subs_rc(void const* data)
+{
+  assert(data != NULL); 
+
+  wr_rc_sub_data_t const* wr_rc = (wr_rc_sub_data_t const*)data;
+
+  cp_rc_sub = cp_rc_sub_data(&wr_rc->rc);
+
+  sm_ag_if_ans_t ans = {.type = NONE_SM_AG_IF_ANS_V0};
+  return ans;
+}
+
+/*
 static 
 sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
 {
@@ -116,6 +150,7 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
 
   return ans;
 }
+*/
 
 
 /////////////////////////////
@@ -142,18 +177,18 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ag_if_wr_subs_t sub = {.type = RAN_CTRL_SUBS_V1_03};
-  sub.wr_rc.rc = fill_rnd_rc_subscription();
-  defer({ free_rc_sub_data(&sub.wr_rc.rc); });
+//  sm_ag_if_wr_subs_t sub = {.type = RAN_CTRL_SUBS_V1_03};
+  rc_sub_data_t rc = fill_rnd_rc_subscription();
+  defer({ free_rc_sub_data(&rc); });
 
-  sm_subs_data_t data = ric->proc.on_subscription(ric, &sub.wr_rc.rc);
+  sm_subs_data_t data = ric->proc.on_subscription(ric, &rc);
   defer({ free_sm_subs_data(&data); });
 
   subscribe_timer_t t = ag->proc.on_subscription(ag, &data); 
   defer({  free_rc_sub_data(&cp_rc_sub); });
   assert(t.ms == 0);
 
-  assert(eq_rc_sub_data(&sub.wr_rc.rc, &cp_rc_sub) == true);
+  assert(eq_rc_sub_data(&rc, &cp_rc_sub) == true);
 }
 
 // E2 -> RIC
@@ -221,25 +256,33 @@ void check_e2_setup(sm_agent_t* ag, sm_ric_t* ric)
   defer({ free_e2sm_rc_func_def(&out.rc.ran_func_def); });
 
   assert(eq_e2sm_rc_func_def(&out.rc.ran_func_def, &cp_e2_setup.ran_func_def) == true);
+  free_e2sm_rc_func_def(&cp_e2_setup.ran_func_def);
 }
 
 int main()
 {
   srand(time(0)); 
 
-  sm_io_ag_t io_ag = {.read = read_RAN, .write = write_RAN};  
+  sm_io_ag_ran_t io_ag = {0}; //.read = read_RAN, .write = write_RAN};  
+  // Read 
+  io_ag.read_ind_tbl[RAN_CTRL_STATS_V1_03] = read_ind_rc; 
+  io_ag.read_setup_tbl[RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0] = read_setup_rc; 
+
+  // Write
+  io_ag.write_ctrl_tbl[RAN_CONTROL_CTRL_V1_03] =  write_ctrl_rc;
+  io_ag.write_subs_tbl[RAN_CTRL_SUBS_V1_03] =  write_subs_rc;
+
   sm_agent_t* sm_ag = make_rc_sm_agent(io_ag);
   sm_ric_t* sm_ric = make_rc_sm_ric();
 
-  for(int i =0 ; i < 1; ++i){
- //   check_eq_ran_function(sm_ag, sm_ric);
- //
+  printf("Running RAN Control SM test. Patience. \n");
+  for(int i =0 ; i < 10*1024; ++i){
+    // check_eq_ran_function(sm_ag, sm_ric);
     check_indication(sm_ag, sm_ric);
     check_subscription(sm_ag, sm_ric);
     check_ctrl(sm_ag, sm_ric);
     check_e2_setup(sm_ag, sm_ric);
     // check_ric_service_update(sm_ag, sm_ric);
-
   }
 
   sm_ag->free_sm(sm_ag);

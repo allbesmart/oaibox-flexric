@@ -38,20 +38,20 @@ mac_ind_data_t cp;
 ////
 
 static
-
-void read_RAN(sm_ag_if_rd_t* read)
+void read_ind_mac(void* read)
 {
   assert(read != NULL);
-  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
-  assert(read->ind.type == MAC_STATS_V0);
+//  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+//  assert(read->ind.type == MAC_STATS_V0);
 
-  mac_ind_data_t* ind = &read->ind.mac;
+  mac_ind_data_t* ind = (mac_ind_data_t*)read; // &read->ind.mac;
 
   fill_mac_ind_data(ind);
   cp.hdr = cp_mac_ind_hdr(&ind->hdr);
   cp.msg = cp_mac_ind_msg(&ind->msg);
 }
 
+/*
 static 
 sm_ag_if_ans_t write_RAN(const sm_ag_if_wr_t* data)
 {
@@ -60,7 +60,7 @@ sm_ag_if_ans_t write_RAN(const sm_ag_if_wr_t* data)
   sm_ag_if_ans_t ans = {0};
   return ans;
 }
-
+*/
 
 /////////////////////////////
 // Check Functions
@@ -81,12 +81,11 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ag_if_wr_subs_t sub = {.type = MAC_SUBS_V0};
-  sub.mac.et.ms = 2;
+  char sub[] = "2_ms";
   sm_subs_data_t data = ric->proc.on_subscription(ric, &sub);
 
   subscribe_timer_t t = ag->proc.on_subscription(ag, &data); 
-  assert(t.ms == sub.mac.et.ms);
+  assert(t.ms == 2);
 
   free_sm_subs_data(&data);
 }
@@ -116,7 +115,9 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
 
 int main()
 {
-  sm_io_ag_t io_ag = {.read = read_RAN, .write = write_RAN};  
+  sm_io_ag_ran_t io_ag = {0};
+  io_ag.read_ind_tbl[MAC_STATS_V0] = read_ind_mac; 
+
   sm_agent_t* sm_ag = make_mac_sm_agent(io_ag);
   sm_ric_t* sm_ric = make_mac_sm_ric();
 

@@ -301,7 +301,7 @@ bool aind_event(e2_agent_t* ag, int fd, aind_event_t* ai_ev)
   if(fd != ag->io.pipe.r)
     return false;
 
-  pop_tsq(&ag->aind,ai_ev, sizeof(aind_event_t));
+  pop_tsq(&ag->aind, ai_ev, sizeof(aind_event_t));
 
   return true;
 }
@@ -434,7 +434,7 @@ void e2_event_loop_agent(e2_agent_t* ag)
 
           byte_array_t ba = e2ap_enc_indication_ag(&ag->ap, &ind); 
           defer({ free_byte_array(ba); } );
-
+          
           e2ap_send_bytes_agent(&ag->ep, ba);
 
           consume_fd(ag->io.pipe.r);
@@ -498,7 +498,7 @@ void e2_event_loop_agent(e2_agent_t* ag)
   ag->agent_stopped = true;
 }
 
-e2_agent_t* e2_init_agent(const char* addr, int port, global_e2_node_id_t ge2nid, sm_io_ag_t io, fr_args_t const* args)
+e2_agent_t* e2_init_agent(const char* addr, int port, global_e2_node_id_t ge2nid, sm_io_ag_ran_t io, fr_args_t const* args)
 {
   assert(addr != NULL);
   assert(port > 0 && port < 65535);
@@ -532,7 +532,6 @@ e2_agent_t* e2_init_agent(const char* addr, int port, global_e2_node_id_t ge2nid
   
   return ag;
 }
-
 
 void e2_start_agent(e2_agent_t* ag)
 {
@@ -592,7 +591,7 @@ void e2_async_event_agent(e2_agent_t* ag, uint32_t ric_req_id, void* ind_data)
 
   assoc_rb_tree_t* tree = &ag->ind_event.right;
  
-  for(size_t i =0; i < 5; ++i){
+  for(size_t i =0; i < 10; ++i){
     int rc = pthread_mutex_lock(&ag->mtx_ind_event);  
     assert(rc == 0);
 
@@ -625,7 +624,7 @@ void e2_async_event_agent(e2_agent_t* ag, uint32_t ric_req_id, void* ind_data)
   push_tsq(&ag->aind, &aind, sizeof(aind_event_t));
 
   // Inform epoll that an aperiodic event happened
-  int num_char = 32;
+  int const num_char = 32;
   char str[num_char];
   memset(str, '\0', num_char);
   rc = snprintf(str, num_char ,"%u\n", ric_req_id );

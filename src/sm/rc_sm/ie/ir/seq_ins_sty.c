@@ -171,9 +171,12 @@ seq_ins_sty_t dst = {0};
   // Sequence of Insert Indications
   // [0-65535]
   assert(src->sz_seq_ins_ind < 65536);
-  dst.sz_seq_ins_ind = src->sz_seq_ins_ind;
-  dst.seq_ins_ind = calloc(src->sz_seq_ins_ind, sizeof(seq_ins_ind_t));
-  assert(dst.seq_ins_ind != NULL && "memory exhausted");
+ 
+  if(src->sz_seq_ins_ind > 0){
+    dst.sz_seq_ins_ind = src->sz_seq_ins_ind;
+    dst.seq_ins_ind = calloc(src->sz_seq_ins_ind, sizeof(seq_ins_ind_t));
+    assert(dst.seq_ins_ind != NULL && "memory exhausted");
+  }
 
   for(size_t i = 0; i < dst.sz_seq_ins_ind; ++i){
     dst.seq_ins_ind[i] = cp_seq_ins_ind(&src->seq_ins_ind[i]);

@@ -88,7 +88,6 @@ call_proc_break_t cp_call_proc_break(call_proc_break_t const* src)
   // [0-65535]
   if(src->sz_param > 0){
     dst.sz_param = src->sz_param;
-
     dst.param = calloc(dst.sz_param , sizeof(seq_ran_param_3_t));
     assert(dst.param != NULL && "Memory exhausted");
   } 

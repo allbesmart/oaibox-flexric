@@ -42,20 +42,20 @@ pdcp_ind_data_t cp;
 ////
 
 static
-void read_RAN(sm_ag_if_rd_t* read)
+void read_ind_pdcp(void* read)
 {
   assert(read != NULL);
-  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
-  assert(read->ind.type == PDCP_STATS_V0);
+//  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+//  assert(read->ind.type == PDCP_STATS_V0);
 
-  pdcp_ind_data_t* ind = &read->ind.pdcp;
+  pdcp_ind_data_t* ind = (pdcp_ind_data_t*)read; // &read->ind.pdcp;
 
   fill_pdcp_ind_data(ind);
   cp.hdr = cp_pdcp_ind_hdr(&ind->hdr);
   cp.msg = cp_pdcp_ind_msg(&ind->msg);
 }
 
-
+/*
 static 
 sm_ag_if_ans_t write_RAN(const sm_ag_if_wr_t* data)
 {
@@ -79,7 +79,7 @@ sm_ag_if_ans_t write_RAN(const sm_ag_if_wr_t* data)
 
   return ans;
 }
-
+*/
 
 /////////////////////////////
 // Check Functions
@@ -100,12 +100,11 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
  
-  sm_ag_if_wr_subs_t sub = {.type = PDCP_SUBS_V0};
-  sub.pdcp.et.ms = 2;
+  char sub[] = "2_ms";
   sm_subs_data_t data = ric->proc.on_subscription(ric, &sub);
   
   subscribe_timer_t t = ag->proc.on_subscription(ag, &data); 
-  assert(t.ms == sub.pdcp.et.ms);
+  assert(t.ms == 2);
 
   free_sm_subs_data(&data);
 }
@@ -124,7 +123,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
 
   assert(msg.type == PDCP_STATS_V0);
   pdcp_ind_data_t* data = &msg.pdcp;
-  defer({ ric->alloc.free_ind_data(data); });
+  defer({ ric->alloc.free_ind_data(&msg); });
 
   assert(eq_pdcp_ind_hdr(&data->hdr, &cp.hdr) == true);
   assert(eq_pdcp_ind_msg(&data->msg, &cp.msg) == true);
@@ -164,9 +163,10 @@ void check_control(sm_agent_t* ag, sm_ric_t* ric)
 
 int main()
 {
-  sm_io_ag_t io_ag = {.read = read_RAN, .write = write_RAN};  
-  sm_agent_t* sm_ag = make_pdcp_sm_agent(io_ag);
+  sm_io_ag_ran_t io_ag = {0};
+  io_ag.read_ind_tbl[PDCP_STATS_V0] = read_ind_pdcp; 
 
+  sm_agent_t* sm_ag = make_pdcp_sm_agent(io_ag);
   sm_ric_t* sm_ric = make_pdcp_sm_ric();
 
   for(int i =0; i < 262144; ++i){

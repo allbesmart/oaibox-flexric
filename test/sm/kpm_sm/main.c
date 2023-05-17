@@ -54,33 +54,36 @@ static
 kpm_e2_setup_t cp_e2_setup; 
 
 static
-void read_RAN(sm_ag_if_rd_t* read)
+void read_ind_kpm(void* read)
 {
   assert(read != NULL);
-  if(read->type == INDICATION_MSG_AGENT_IF_ANS_V0){ 
-  assert(read->ind.type == KPM_STATS_V3_0);
 
-  read->ind.kpm.ind.hdr = fill_kpm_ind_hdr();
-  read->ind.kpm.ind.msg = fill_kpm_ind_msg(); 
-  assert(read->ind.kpm.act_def!= NULL);
+  kpm_rd_ind_data_t* kpm = (kpm_rd_ind_data_t*)read;
+
+  kpm->ind.hdr = fill_kpm_ind_hdr();
+  kpm->ind.msg = fill_kpm_ind_msg(); 
+  assert(kpm->act_def!= NULL);
   
   //
-  cp_ind.hdr = cp_kpm_ind_hdr(&read->ind.kpm.ind.hdr);
-  cp_ind.msg = cp_kpm_ind_msg(&read->ind.kpm.ind.msg);
+  cp_ind.hdr = cp_kpm_ind_hdr(&kpm->ind.hdr);
+  cp_ind.msg = cp_kpm_ind_msg(&kpm->ind.msg);
+  
 
-  assert(eq_kpm_ind_hdr(&read->ind.kpm.ind.hdr, &cp_ind.hdr) == true);
-  assert(eq_kpm_ind_msg(&read->ind.kpm.ind.msg, &cp_ind.msg) == true);
+  assert(eq_kpm_ind_hdr(&kpm->ind.hdr, &cp_ind.hdr) == true);
+  assert(eq_kpm_ind_msg(&kpm->ind.msg, &cp_ind.msg) == true);
+}
 
-  } else if(read->type == E2_SETUP_AGENT_IF_ANS_V0 ){
-    assert(read->e2ap.type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0);
-    read->e2ap.kpm.ran_func_def = fill_kpm_ran_func_def(); 
-    cp_e2_setup.ran_func_def = cp_kpm_ran_function_def(&read->e2ap.kpm.ran_func_def);
+static
+void read_e2_setup_kpm(void* data)
+{
+  assert(data != NULL);
 
-    assert(eq_kpm_ran_function_def(&cp_e2_setup.ran_func_def, &read->e2ap.kpm.ran_func_def) == true);
+  kpm_e2_setup_t* kpm = (kpm_e2_setup_t*)data;
 
-  } else {
-    assert(0!=0 && "Unknown type");
-  }
+  kpm->ran_func_def = fill_kpm_ran_func_def(); 
+  cp_e2_setup.ran_func_def = cp_kpm_ran_function_def(&kpm->ran_func_def);
+
+  assert(eq_kpm_ran_function_def(&cp_e2_setup.ran_func_def, &kpm->ran_func_def) == true);
 }
 
 // For testing purposes
@@ -186,10 +189,10 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(sub.kpm.ad != NULL && "Memory exhausted");
   sub.kpm.ad[0] = 
 */
+  
   kpm_act_def_t act_def = fill_kpm_action_def();
   defer({  free_kpm_action_def(&act_def); } );
   
-
   sm_ind_data_t sm_data = ag->proc.on_indication(ag, &act_def);
   defer({ free_sm_ind_data(&sm_data); }); 
   defer({ free_kpm_ind_data(&cp_ind); });
@@ -213,6 +216,7 @@ void check_e2_setup(sm_agent_t* ag, sm_ric_t* ric)
 
   sm_ag_if_rd_e2setup_t out = ric->proc.on_e2_setup(ric, &data);
   assert(out.type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0);
+
   defer({ free_kpm_ran_function_def(&out.kpm.ran_func_def); });
 
   assert(eq_kpm_ran_function_def(&out.kpm.ran_func_def, &cp_e2_setup.ran_func_def) == true);
@@ -222,11 +226,14 @@ int main()
 {
   srand(time(0)); 
 
-  sm_io_ag_t io_ag = {.read = read_RAN, .write = write_RAN};  
+  sm_io_ag_ran_t io_ag = {0};
+  io_ag.read_ind_tbl[KPM_STATS_V3_0] = read_ind_kpm;
+  io_ag.read_setup_tbl[KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0] = read_e2_setup_kpm;
+
   sm_agent_t* sm_ag = make_kpm_sm_agent(io_ag);
   sm_ric_t* sm_ric = make_kpm_sm_ric();
 
-//  for(int i =0 ; i < 1; ++i){
+  for(int i =0 ; i < 1024; ++i){
  //   check_eq_ran_function(sm_ag, sm_ric);
  //
     check_indication(sm_ag, sm_ric);
@@ -236,7 +243,7 @@ int main()
 
 // check_ric_service_update(sm_ag, sm_ric);
 
-//  }
+  }
 
   sm_ag->free_sm(sm_ag);
   sm_ric->free_sm(sm_ric);

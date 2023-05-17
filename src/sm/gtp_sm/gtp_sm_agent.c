@@ -84,17 +84,14 @@ sm_ind_data_t on_indication_gtp_sm_ag(sm_agent_t const* sm_agent, void* act_def)
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message 
-  sm_ag_if_rd_t rd_if = {.type =INDICATION_MSG_AGENT_IF_ANS_V0};
-  rd_if.ind.type =  GTP_STATS_V0;
-  sm->base.io.read(&rd_if);
-
+  gtp_ind_data_t gtp = {0};
+  sm->base.io.read_ind(&gtp);
   // Liberate the memory if previously allocated by the RAN. It sucks
-  gtp_ind_data_t* ind = &rd_if.ind.gtp;
-  defer({ free_gtp_ind_hdr(&ind->hdr) ;});
-  defer({ free_gtp_ind_msg(&ind->msg) ;});
-  defer({ free_gtp_call_proc_id(ind->proc_id);});
+  defer({ free_gtp_ind_hdr(&gtp.hdr) ;});
+  defer({ free_gtp_ind_msg(&gtp.msg) ;});
+  defer({ free_gtp_call_proc_id(gtp.proc_id);});
 
-  byte_array_t ba = gtp_enc_ind_msg(&sm->enc, &rd_if.ind.gtp.msg);
+  byte_array_t ba = gtp_enc_ind_msg(&sm->enc, &gtp.msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 
@@ -118,13 +115,12 @@ sm_ctrl_out_data_t on_control_gtp_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_req_
   gtp_ctrl_msg_t msg = gtp_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
   assert(msg.action == 42 && "Only action number 42 supported");
 
-  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR};
-  wr.ctrl.type = GTP_CTRL_REQ_V0; 
+  //sm_ag_if_wr_ctrl_t ctrl = {.type = GTP_CTRL_REQ_V0}; 
+  gtp_ctrl_req_data_t gtp_ctrl = {0};
+  gtp_ctrl.hdr.dummy = 0; 
+  gtp_ctrl.msg.action = msg.action;
 
-  wr.ctrl.gtp_ctrl.hdr.dummy = 0; 
-  wr.ctrl.gtp_ctrl.msg.action = msg.action;
-
-  sm->base.io.write(&wr);
+  sm->base.io.write_ctrl(&gtp_ctrl);
 
   // Answer from the E2 Node
   sm_ctrl_out_data_t ret = {0};
@@ -183,15 +179,21 @@ void free_gtp_sm_ag(sm_agent_t* sm_agent)
   free(sm);
 }
 
-
-sm_agent_t* make_gtp_sm_agent(sm_io_ag_t io)
+sm_agent_t* make_gtp_sm_agent(sm_io_ag_ran_t io)
 {
   sm_gtp_agent_t* sm = calloc(1, sizeof(sm_gtp_agent_t));
   assert(sm != NULL && "Memory exhausted!!!");
 
   *(uint16_t*)(&sm->base.ran_func_id) = SM_GTP_ID; 
 
-  sm->base.io = io;
+  // Read
+  sm->base.io.read_ind = io.read_ind_tbl[GTP_STATS_V0];
+  sm->base.io.read_setup = io.read_setup_tbl[GTP_AGENT_IF_E2_SETUP_ANS_V0];
+ 
+  //Write
+  sm->base.io.write_ctrl = io.write_ctrl_tbl[GTP_CTRL_REQ_V0];
+  sm->base.io.write_subs = io.write_subs_tbl[GTP_SUBS_V0];
+
   sm->base.free_sm = free_gtp_sm_ag;
   sm->base.free_act_def = NULL; //free_act_def_gtp_sm_ag;
 

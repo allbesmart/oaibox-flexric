@@ -68,17 +68,19 @@ sm_ind_data_t on_indication_slice_sm_ag(sm_agent_t const* sm_agent, void* act_de
   ret.len_hdr = ba_hdr.len;
 
   // Fill Indication Message 
-  sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
-  rd_if.ind.type = SLICE_STATS_V0;
-  sm->base.io.read(&rd_if);
+  //sm_ag_if_rd_t rd_if = {.type = INDICATION_MSG_AGENT_IF_ANS_V0};
+  //rd_if.ind.type = SLICE_STATS_V0;
+
+  slice_ind_data_t slice = {0};
+  sm->base.io.read_ind(&slice);
 
 // Liberate the memory if previously allocated by the RAN. It sucks
-  slice_ind_data_t* ind = &rd_if.ind.slice;
-  defer({ free_slice_ind_hdr(&ind->hdr) ;});
-  defer({ free_slice_ind_msg(&ind->msg) ;});
-  defer({ free_slice_call_proc_id(ind->proc_id);});
+//  slice_ind_data_t* ind = &rd_if.ind.slice;
+  defer({ free_slice_ind_hdr(&slice.hdr) ;});
+  defer({ free_slice_ind_msg(&slice.msg) ;});
+  defer({ free_slice_call_proc_id(slice.proc_id);});
 
-  byte_array_t ba = slice_enc_ind_msg(&sm->enc, &rd_if.ind.slice.msg);
+  byte_array_t ba = slice_enc_ind_msg(&sm->enc, &slice.msg);
   ret.ind_msg = ba.buf;
   ret.len_msg = ba.len;
 
@@ -96,16 +98,17 @@ sm_ctrl_out_data_t on_control_slice_sm_ag(sm_agent_t const* sm_agent, sm_ctrl_re
   assert(data != NULL);
   sm_slice_agent_t* sm = (sm_slice_agent_t*) sm_agent;
 
-  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
-  wr.ctrl.type = SLICE_CTRL_REQ_V0; 
+//  sm_ag_if_wr_t wr = {.type = CONTROL_SM_AG_IF_WR };
+//  wr.ctrl.type = SLICE_CTRL_REQ_V0; 
 
-  wr.ctrl.slice_req_ctrl.hdr = slice_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
-  defer({ free_slice_ctrl_hdr(&wr.ctrl.slice_req_ctrl.hdr ); });
+  slice_ctrl_req_data_t ctrl = {0};
+  ctrl.hdr = slice_dec_ctrl_hdr(&sm->enc, data->len_hdr, data->ctrl_hdr);
+  defer({ free_slice_ctrl_hdr(&ctrl.hdr ); });
 
-  wr.ctrl.slice_req_ctrl.msg = slice_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
-  defer({ free_slice_ctrl_msg(&wr.ctrl.slice_req_ctrl.msg); });
+  ctrl.msg = slice_dec_ctrl_msg(&sm->enc, data->len_msg, data->ctrl_msg);
+  defer({ free_slice_ctrl_msg(&ctrl.msg); });
 
-  sm_ag_if_ans_t ans = sm->base.io.write(&wr);
+  sm_ag_if_ans_t ans = sm->base.io.write_ctrl(&ctrl);
   assert(ans.type == CTRL_OUTCOME_SM_AG_IF_ANS_V0);
   assert(ans.ctrl_out.type == SLICE_AGENT_IF_CTRL_ANS_V0);
  
@@ -171,15 +174,23 @@ void free_slice_sm_ag(sm_agent_t* sm_agent)
   free(sm);
 }
 
-
-sm_agent_t* make_slice_sm_agent(sm_io_ag_t io)
+sm_agent_t* make_slice_sm_agent(sm_io_ag_ran_t io)
 {
   sm_slice_agent_t* sm = calloc(1, sizeof(sm_slice_agent_t));
   assert(sm != NULL && "Memory exhausted!!!");
 
   *(uint16_t*)(&sm->base.ran_func_id) = SM_SLICE_ID; 
 
-  sm->base.io = io;
+//  sm->base.io = io;
+
+  // Read
+  sm->base.io.read_ind = io.read_ind_tbl[SLICE_STATS_V0];
+  sm->base.io.read_setup = io.read_setup_tbl[SLICE_AGENT_IF_E2_SETUP_ANS_V0];
+ 
+  //Write
+  sm->base.io.write_ctrl = io.write_ctrl_tbl[SLICE_CTRL_REQ_V0];
+  sm->base.io.write_subs = io.write_subs_tbl[SLICE_SUBS_V0];
+
   sm->base.free_sm = free_slice_sm_ag;
   sm->base.free_act_def = NULL; //free_act_def_slice_sm_ag;
 

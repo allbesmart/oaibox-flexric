@@ -208,8 +208,6 @@ BIT_STRING_t copy_ba_to_bit_string(byte_array_t ba)
   return bs;
 }
 
-
-
 static
 MessageType_Choice_NI_t* cp_msg_type_ni(network_interface_e2rc_t const* src)
 {
@@ -377,7 +375,7 @@ E2SM_RC_EventTrigger_Format1_Item_t* cp_rc_ev_trigger_format_1_it(msg_ev_trg_t c
   } else if(src->msg_type == RRC_MSG_MSG_TYPE_EV_TRG){
     dst->messageType.present = MessageType_Choice_PR_messageType_Choice_RRC;
     dst->messageType.choice.messageType_Choice_RRC = cp_msg_type_rrc(&src->rrc_msg);
-  } else {
+  } else{
     assert(0!=0 && "Unknown type");
   }
 
@@ -738,7 +736,6 @@ RANParameter_Testing_Item_t* enc_ran_param_test(ran_param_test_t const* src)
   return dst;
 }
 
-
 static
 E2SM_RC_EventTrigger_Format4_Item_t* cp_rc_ev_trigger_format_4_it(ue_info_chng_t const* src)
 {
@@ -764,7 +761,7 @@ E2SM_RC_EventTrigger_Format4_Item_t* cp_rc_ev_trigger_format_4_it(ue_info_chng_t
     TriggerType_Choice_RRCstate_t* dst_rrc = dst->triggerType.choice.triggerType_Choice_RRCstate; 
 
     // [1 - 8]
-    assert(src->rrc_state.sz_rrc_state > 0 &&  src->rrc_state.sz_rrc_state < 9); 
+    assert(src->rrc_state.sz_rrc_state > 0 && src->rrc_state.sz_rrc_state < 9); 
     for(size_t i = 0; i < src->rrc_state.sz_rrc_state; ++i){
       TriggerType_Choice_RRCstate_Item_t* ie = enc_rrc_state(&src->rrc_state.state_chng_to[i]);
       int rc = ASN_SEQUENCE_ADD(&dst_rrc->rrcState_List.list, ie);

@@ -121,6 +121,8 @@ sm_ag_if_rd_e2setup_t on_e2_setup_kpm_sm_ric(sm_ric_t const* sm_ric, sm_e2_setup
   sm_ag_if_rd_e2setup_t dst = {.type = KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0};
   dst.kpm.ran_func_def = kpm_dec_func_def(&sm->enc, data->len_rfd, data->ran_fun_def);
 
+  assert(dst.kpm.ran_func_def.name.name.len > 0);
+
   return dst;
 }
 

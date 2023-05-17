@@ -53,7 +53,7 @@ typedef struct sm_agent_s {
   sm_e2ap_procedures_agent_t proc; 
 
   // Functions provided to the SM. Implemented in the RAN.
-  sm_io_ag_t io;
+   sm_io_ag_sm_t io;
 
   // Free function
   void (*free_sm)(sm_agent_t* sm_agent);

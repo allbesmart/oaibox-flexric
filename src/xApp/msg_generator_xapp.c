@@ -29,6 +29,7 @@ ric_subscription_request_t generate_subscription_request(ric_gen_id_t ric_id , s
   assert(cmd != NULL);
 
   sm_subs_data_t data = sm->proc.on_subscription(sm, cmd);
+  assert(data.len_ad < 2048);
 
   ric_subscription_request_t sr = {0}; 
   sr.ric_id = ric_id;

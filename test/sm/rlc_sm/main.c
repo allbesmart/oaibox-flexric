@@ -39,18 +39,18 @@ rlc_ind_data_t cp;
 ////
 
 static
-void read_RAN(sm_ag_if_rd_t* read)
+void read_rlc_ind(void* read)
 {
   assert(read != NULL);
-  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
-  assert(read->ind.type == RLC_STATS_V0);
 
-  fill_rlc_ind_data(&read->ind.rlc);
-  cp.hdr = cp_rlc_ind_hdr(&read->ind.rlc.hdr);
-  cp.msg = cp_rlc_ind_msg(&read->ind.rlc.msg);
+  rlc_ind_data_t* rlc = (rlc_ind_data_t*)read;
+
+  fill_rlc_ind_data(rlc);
+  cp.hdr = cp_rlc_ind_hdr(&rlc->hdr);
+  cp.msg = cp_rlc_ind_msg(&rlc->msg);
 }
 
-
+/*
 static 
 sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
 {
@@ -59,6 +59,7 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
   sm_ag_if_ans_t ans = {0};
   return ans;
 }
+*/
 
 /////////////////////////////
 // Check Functions
@@ -79,12 +80,11 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ag_if_wr_subs_t sub = {.type = RLC_SUBS_V0};
-  sub.rlc.et.ms = 2;
+  char sub[] = "2_ms";
   sm_subs_data_t data = ric->proc.on_subscription(ric, &sub);
  
   subscribe_timer_t t = ag->proc.on_subscription(ag, &data); 
-  assert(t.ms == sub.rlc.et.ms);
+  assert(t.ms == 2); 
 
   free_sm_subs_data(&data);
 }
@@ -129,7 +129,10 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
 
 int main()
 {
-  sm_io_ag_t io_ag = {.read = read_RAN, .write = write_RAN};  
+  sm_io_ag_ran_t io_ag = {0};
+
+  io_ag.read_ind_tbl[RLC_SUBS_V0] = read_rlc_ind; 
+
   sm_agent_t* sm_ag = make_rlc_sm_agent(io_ag);
 
   sm_ric_t* sm_ric = make_rlc_sm_ric();

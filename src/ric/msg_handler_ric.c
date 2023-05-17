@@ -283,9 +283,6 @@ void publish_ind_msg(near_ric_t* ric,  uint16_t ran_func_id, sm_ag_if_rd_ind_t* 
 
   publish_ind_msg(ric, ran_func_id, &d);
 
-//  if(d.type ==  MAC_STATS_V0 )
-//    ((e2ap_msg_t*)msg)->tstamp = d.mac_stats.msg.tstamp;
-
   // Notify the iApp
 #ifndef TEST_AGENT_RIC  
   notify_msg_iapp_api(msg);

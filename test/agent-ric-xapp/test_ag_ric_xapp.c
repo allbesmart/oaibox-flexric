@@ -46,6 +46,169 @@
 #include <unistd.h>
 
 static
+void read_e2_setup_kpm(void* data)
+{
+  assert(data != NULL);
+  kpm_e2_setup_t* kpm = (kpm_e2_setup_t*)data;
+  kpm->ran_func_def = fill_kpm_ran_func_def(); 
+}
+
+static
+void read_e2_setup_rc(void* data)
+{
+  assert(data != NULL);
+  rc_e2_setup_t* rc = (rc_e2_setup_t*)data;
+  rc->ran_func_def = fill_rc_ran_func_def(); 
+}
+
+static
+void read_ind_mac(void* ind)
+{
+  assert(ind != NULL);
+  mac_ind_data_t* mac = (mac_ind_data_t*)ind;
+  fill_mac_ind_data(mac);
+}
+
+static
+void read_ind_rlc(void* ind)
+{
+  assert(ind != NULL);
+  rlc_ind_data_t* rlc = (rlc_ind_data_t*)ind;
+  fill_rlc_ind_data(rlc);
+}
+
+static
+void read_ind_pdcp(void* ind)
+{
+  assert(ind != NULL);
+  pdcp_ind_data_t* pdcp = (pdcp_ind_data_t*)ind;
+  fill_pdcp_ind_data(pdcp);
+}
+
+static
+void read_ind_slice(void* ind)
+{
+  assert(ind != NULL);
+  slice_ind_data_t* slice = (slice_ind_data_t*)ind;
+  fill_slice_ind_data(slice);
+}
+
+static
+void read_ind_gtp(void* ind)
+{
+  assert(ind != NULL);
+  gtp_ind_data_t* gtp = (gtp_ind_data_t*)ind;
+  fill_gtp_ind_data(gtp);
+}
+
+static
+void read_ind_tc(void* ind)
+{
+  assert(ind != NULL);
+  tc_ind_data_t* tc = (tc_ind_data_t*)ind;
+  fill_tc_ind_data(tc);
+}
+
+static
+void read_ind_kpm(void* ind)
+{
+  assert(ind != NULL);
+  kpm_ind_data_t* kpm = (kpm_ind_data_t*)ind;
+  kpm->hdr = fill_kpm_ind_hdr();
+  kpm->msg = fill_kpm_ind_msg();
+}
+
+static
+void read_ind_rc(void* ind)
+{
+  assert(ind != NULL);
+  assert(0!=0 && "The logic in RAN Ctrl SM for indication is different!"); 
+}
+
+static
+sm_ag_if_ans_t write_ctrl_slice(void const* data)
+{
+  assert(data != NULL);
+
+  slice_ctrl_req_data_t const* slice_req_ctrl = (slice_ctrl_req_data_t const*)data;
+  slice_ctrl_msg_t const* msg = &slice_req_ctrl->msg;
+
+  if(msg->type == SLICE_CTRL_SM_V0_ADD){
+    printf("[E2 Agent]: SLICE CONTROL ADD rx\n");
+  } else if (msg->type == SLICE_CTRL_SM_V0_DEL){
+    printf("[E2 Agent]: SLICE CONTROL DEL rx\n");
+  } else if (msg->type == SLICE_CTRL_SM_V0_UE_SLICE_ASSOC){
+    printf("[E2 Agent]: SLICE CONTROL ASSOC rx\n");
+  } else {
+    assert(0!=0 && "Unknown msg_type!");
+  }
+
+  sm_ag_if_ans_t ans = {.type =  CTRL_OUTCOME_SM_AG_IF_ANS_V0};
+  ans.ctrl_out.type = SLICE_AGENT_IF_CTRL_ANS_V0;
+  return ans;
+}
+
+static
+sm_ag_if_ans_t write_ctrl_rc(void const* ctrl)
+{
+  assert(ctrl != NULL);
+  
+  rc_ctrl_req_data_t const* rc_ctrl = (rc_ctrl_req_data_t const*)ctrl;
+  (void)rc_ctrl;
+
+  printf("RAN_CONTROL_CTRL_V1_03 message called in the RAN \n");
+
+  sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
+  ans.ctrl_out.type = RAN_CTRL_V1_3_AGENT_IF_CTRL_ANS_V0;
+  ans.ctrl_out.rc = fill_rnd_rc_ctrl_out();
+  return ans;
+}
+
+static
+void* emulate_rrc_msg(void* ptr)
+{
+  uint32_t* ric_id = (uint32_t*)ptr; 
+  for(size_t i = 0; i < 100; ++i){
+    usleep(rand()%500);
+    rc_ind_data_t* d = calloc(1, sizeof(rc_ind_data_t)); 
+    assert(d != NULL && "Memory exhausted");
+    *d = fill_rnd_rc_ind_data();
+    async_event_agent_api(*ric_id, d);
+    printf("Event for RIC Req ID %u generated\n", *ric_id);
+  }
+
+  free(ptr);
+  return NULL;
+}
+
+static
+pthread_t t;
+
+static
+sm_ag_if_ans_t write_subs_rc(void const* data)
+{
+  assert(data != NULL);
+  wr_rc_sub_data_t const* wr_rc = (wr_rc_sub_data_t const*)data; 
+
+  uint32_t* ptr = malloc(sizeof(uint32_t));
+  assert(ptr != NULL);
+  *ptr = wr_rc->ric_req_id;
+
+  int rc = pthread_create(&t, NULL, emulate_rrc_msg, ptr);
+  assert(rc == 0);
+
+  sm_ag_if_ans_t ans = {0};
+  return ans;
+}
+
+
+
+
+
+
+
+/*
+static
 void read_e2_setup_agent(sm_ag_if_rd_e2setup_t* e2ap)
 {
   assert(e2ap != NULL);
@@ -208,6 +371,9 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* ag_wr)
   return write_RAN_subs(&ag_wr->subs);
 }
 
+*/
+
+
 static
 void sm_cb_mac(sm_ag_if_rd_t const* rd)
 {
@@ -317,6 +483,40 @@ slice_ctrl_req_data_t create_assoc_slice(void)
   return ctrl_msg;
 }
 
+static
+sm_io_ag_ran_t init_sm_io_ag_ran(void)
+{
+  sm_io_ag_ran_t dst = {0};
+
+  // READ: Indication
+  dst.read_ind_tbl[MAC_STATS_V0 ] =  read_ind_mac;
+  dst.read_ind_tbl[RLC_STATS_V0] =   read_ind_rlc;
+  dst.read_ind_tbl[PDCP_STATS_V0] =   read_ind_pdcp;
+  dst.read_ind_tbl[SLICE_STATS_V0] =   read_ind_slice;
+  dst.read_ind_tbl[TC_STATS_V0] =   read_ind_tc;
+  dst.read_ind_tbl[GTP_STATS_V0] =   read_ind_gtp;
+  dst.read_ind_tbl[KPM_STATS_V3_0] =   read_ind_kpm;
+  dst.read_ind_tbl[RAN_CTRL_STATS_V1_03] = read_ind_rc;
+
+  //  READ: E2 Setup
+  dst.read_setup_tbl[KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0] = read_e2_setup_kpm;
+  dst.read_setup_tbl[RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0] = read_e2_setup_rc;
+
+  // WRITE: CONTROL
+  dst.write_ctrl_tbl[SLICE_CTRL_REQ_V0] = write_ctrl_slice;
+  dst.write_ctrl_tbl[RAN_CONTROL_CTRL_V1_03] = write_ctrl_rc;
+
+  // WRITE: SUBSCRIPTION
+  dst.write_subs_tbl[RAN_CTRL_SUBS_V1_03] = write_subs_rc; 
+
+  return dst;
+}
+
+
+
+
+
+
 int main(int argc, char *argv[])
 {
   // Init the Agent
@@ -326,11 +526,11 @@ int main(int argc, char *argv[])
   const int nb_id = 42;
   const int cu_du_id = 0;
   ngran_node_t ran_type = ngran_gNB;
-  sm_io_ag_t io = {.read = read_RAN, .write = write_RAN};
+  sm_io_ag_ran_t io = init_sm_io_ag_ran(); // {.read = read_RAN, .write = write_RAN};
 
   fr_args_t args = init_fr_args(argc, argv);  // Parse arguments
   
-  init_agent_api( mcc, mnc, mnc_digit_len, nb_id, cu_du_id, ran_type, io, &args);
+  init_agent_api(mcc, mnc, mnc_digit_len, nb_id, cu_du_id, ran_type, io, &args);
   sleep(1);
 
   // Init the RIC
@@ -353,7 +553,6 @@ int main(int argc, char *argv[])
     printf("Registered ran func id = %d \n ", n->ack_rf[i].id );
 
   const char* period = "5_ms";
-
   // returns a handle
   sm_ans_xapp_t h_1 = report_sm_xapp_api(&nodes.n[0].id, 142, (void*)period, sm_cb_mac);
   assert(h_1.success == true);
@@ -395,7 +594,8 @@ int main(int argc, char *argv[])
   rc_ctrl_req_data_t rc_ctrl = fill_rc_ctrl();
   control_sm_xapp_api(&nodes.n[0].id, SM_RC_ID, &rc_ctrl);
   free_rc_ctrl_req_data(&rc_ctrl);
-
+  
+  // RC Subscription 
   rc_sub_data_t rc_sub = {0};
   defer({ free_rc_sub_data(&rc_sub); });
 
@@ -407,45 +607,9 @@ int main(int argc, char *argv[])
   assert(rc_sub.ad != NULL && "Memory exhausted");
   rc_sub.ad[0] = fill_rnd_rc_action_def();
 
+
   sm_ans_xapp_t h_5 = report_sm_xapp_api(&nodes.n[0].id, SM_RC_ID, &rc_sub, sm_cb_rc);
   assert(h_5.success);
-
-/*
-  // RC Subscription 
-  rc_sub_data_t sub = {0}; 
-  defer({ free_rc_sub_data(&sub); } );
-
-  // Event Trigger
-  sub.et.format = FORMAT_1_E2SM_RC_EV_TRIGGER_FORMAT;
-  sub.et.frmt_1.sz_msg_ev_trg = 1;
-  sub.et.frmt_1.msg_ev_trg = calloc(1, sizeof(msg_ev_trg_t));
-
-  msg_ev_trg_t* msg_ev = &sub.et.frmt_1.msg_ev_trg[0]; 
-
-  msg_ev->ev_trigger_cond_id = 1; // This field needs to be unique, as identifies the event
-  msg_ev->msg_type = RRC_MSG_MSG_TYPE_EV_TRG;
-  
-  rrc_msg_id_t* rrc_msg = &msg_ev->rrc_msg;
-  rrc_msg->type = NR_RRC_MESSAGE_ID;
-  rrc_msg->nr = BCCH_BCH_NR_RRC_CLASS;
-  rrc_msg->rrc_msg_id = 0; // zero, associated with BCCH_BCH
-
-  // Action Definition
-  sub.sz_ad = 1;
-  sub.ad = calloc(1, sizeof(e2sm_rc_action_def_t));
-  assert(sub.ad != NULL && "Memory exhausted");
-  sub.ad[0].ric_style_type = 1;
-  sub.ad[0].format = FORMAT_1_E2SM_RC_ACT_DEF;
-  sub.ad[0].frmt_1.sz_param_report_def = 1;
-  sub.ad[0].frmt_1.param_report_def = calloc(1, sizeof(param_report_def_t));
-  assert(sub.ad[0].frmt_1.param_report_def != NULL && "Memory exhausted");
-  param_report_def_t* p = &sub.ad[0].frmt_1.param_report_def[0];
-  p->ran_param_id = 1;
-
-  sm_ans_xapp_t h_6 = report_sm_xapp_api(&nodes.n[0].id, SM_RC_ID, &sub, sm_cb_rc);
-  assert(h_6.success);
-*/ 
-
 
   sleep(5);
   
@@ -467,7 +631,7 @@ int main(int argc, char *argv[])
   // Stop the RIC
   stop_near_ric_api();
 
-  int const rc = pthread_join(t_ran_ctrl, NULL);
+  int const rc = pthread_join(t, NULL);
   assert(rc == 0);
 
 

@@ -3,28 +3,29 @@
 #include <assert.h>
 #include <stdio.h>
 
-void read_slice_sm(sm_ag_if_rd_ind_t* data)
+void read_slice_sm(void* data)
 {
   assert(data != NULL);
-  assert(data->type == SLICE_STATS_V0);
+//  assert(data->type == SLICE_STATS_V0);
 
-  fill_slice_ind_data(&data->slice);
+  slice_ind_data_t* slice = (slice_ind_data_t*)data;
+  fill_slice_ind_data(slice);
 }
 
-void read_slice_setup_sm(sm_ag_if_rd_e2setup_t* data)
+void read_slice_setup_sm(void* data)
 {
   assert(data != NULL);
-  assert(data->type == SLICE_AGENT_IF_E2_SETUP_ANS_V0 );
+//  assert(data->type == SLICE_AGENT_IF_E2_SETUP_ANS_V0 );
 
   assert(0 !=0 && "Not supported");
 }
 
-sm_ag_if_ans_t write_ctrl_slice_sm(sm_ag_if_wr_ctrl_t const* data)
+sm_ag_if_ans_t write_ctrl_slice_sm(void const* data)
 {
   assert(data != NULL);
-  assert(data->type == SLICE_CTRL_REQ_V0);
+//  assert(data->type == SLICE_CTRL_REQ_V0);
 
-  slice_ctrl_req_data_t const* slice_req_ctrl = &data->slice_req_ctrl;
+  slice_ctrl_req_data_t const* slice_req_ctrl = (slice_ctrl_req_data_t const* )data; // &data->slice_req_ctrl;
   slice_ctrl_msg_t const* msg = &slice_req_ctrl->msg;
 
   if(msg->type == SLICE_CTRL_SM_V0_ADD){

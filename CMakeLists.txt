@@ -52,7 +52,7 @@ message(STATUS "Selected xApp dir : ${XAPP_DB_DIR}")
 ### SANITIZER 
 ########
 
-set(SANITIZER "ADDRESS" CACHE STRING "Sanitizers")
+set(SANITIZER "THREAD" CACHE STRING "Sanitizers")
 set_property(CACHE SANITIZER PROPERTY STRINGS "NONE" "ADDRESS" "THREAD")
 message(STATUS "Selected SANITIZER TYPE: ${SANITIZER}")
 
@@ -61,13 +61,13 @@ if(${SANITIZER} STREQUAL "ADDRESS")
    add_link_options("-fsanitize=address")
 elseif(${SANITIZER} STREQUAL "THREAD")
   add_compile_options("-fsanitize=thread;-g;")
-  add_link_options("-fsanitize=thread")
+  add_link_options("-fsanitize=thread;")
 elseif(${SANITIZER} STREQUAL "STACK")
   add_compile_options("-fstack-protector-all")
   add_link_options("-fstack-protector-all")
 endif()
 
-option(CODE_COVERAGE "Code coverage" ON)
+option(CODE_COVERAGE "Code coverage" OFF)
 if(CODE_COVERAGE)
   add_compile_options("-fprofile-arcs;-ftest-coverage")
   add_link_options("-lgcov;-coverage")

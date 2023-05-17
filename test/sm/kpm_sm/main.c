@@ -86,64 +86,9 @@ void read_e2_setup_kpm(void* data)
   assert(eq_kpm_ran_function_def(&cp_e2_setup.ran_func_def, &kpm->ran_func_def) == true);
 }
 
-// For testing purposes
-//static
-//kpm_sub_data_t cp_kpm_sub; 
-
-//static
-//kpm_ctrl_req_data_t cp_kpm_ctrl; 
-
-//static
-//e2sm_kpm_ctrl_out_t cp_kpm_ctrl_out; 
-
-static 
-sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* data)
-{
-  assert(data != NULL); 
-  sm_ag_if_ans_t ans = {.type = NONE_SM_AG_IF_ANS_V0};
-
-/*
-  if(data->type == SUBSCRIPTION_SM_AG_IF_WR){
-    assert(data->subs.type == RAN_CTRL_SUBS_V1_03); 
-    cp_kpm_sub = cp_kpm_sub_data(&data->subs.kpm);
-
-  } else if(data->type == CONTROL_SM_AG_IF_WR){
-    assert(data->ctrl.type == RAN_CONTROL_CTRL_V1_03);
-    
-    // RAN Input
-    cp_kpm_ctrl = cp_kpm_ctrl_req_data(&data->ctrl.kpm_ctrl);
-
-    // RAN Output
-    ans.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0; 
-    ans.ctrl_out.type = RAN_CTRL_V1_3_AGENT_IF_CTRL_ANS_V0;
-    ans.ctrl_out.rc = fill_kpm_ctrl_out();
-    cp_kpm_ctrl_out = cp_e2sm_kpm_ctrl_out( &ans.ctrl_out.rc );
-
-  } else {
-    assert(0!=0 && "Unknown type");
-  }
-*/
-  return ans;
-  
-}
-
-
 /////////////////////////////
 // Check Functions
 // //////////////////////////
-
-/*
-static
-void check_eq_ran_function(sm_agent_t const* ag, sm_ric_t const* ric)
-{
-  assert(ag != NULL);
-  assert(ric != NULL);
-
-
-  assert(ag->ran_func_id == ric->ran_func_id);
-}
-
-*/
 
 // RIC -> E2
 static

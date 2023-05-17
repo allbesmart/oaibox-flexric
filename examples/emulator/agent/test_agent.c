@@ -19,6 +19,13 @@
  *      contact@openairinterface.org
  */
 
+#if defined(__clang__) || defined (__GNUC__)
+# define ATTRIBUTE_NO_SANITIZE_THREAD  __attribute__((no_sanitize("thread"))) 
+#else
+# define ATTRIBUTE_NO_SANITIZE_THREAD 
+#endif
+
+
 #include "../../../src/agent/e2_agent_api.h"
 #include "sm_mac.h"
 #include "sm_rlc.h"
@@ -35,14 +42,6 @@
 #include <poll.h>
 #include <pthread.h>
 #include <unistd.h>
-
-/*
-read_ind_fp read_ind_tbl[SM_AGENT_IF_READ_V0_END];
-read_e2_setup_fp read_setup_tbl[SM_AGENT_IF_E2_SETUP_ANS_V0_END];
-
-write_ctrl_fp write_ctrl_tbl[SM_AGENT_IF_WRITE_CTRL_V0_END];
-write_subs_fp write_subs_tbl[SM_AGENT_IF_WRITE_SUBS_V0_END];
-*/
 
 static
 void init_read_ind_tbl(read_ind_fp (*read_ind_tbl)[SM_AGENT_IF_READ_V0_END])
@@ -139,7 +138,7 @@ sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* ag_wr)
 */
 
 
-static
+ATTRIBUTE_NO_SANITIZE_THREAD static 
 void stop_and_exit()
 {
   // Stop the E2 Agent

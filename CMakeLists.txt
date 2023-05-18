@@ -52,7 +52,7 @@ message(STATUS "Selected xApp dir : ${XAPP_DB_DIR}")
 ### SANITIZER 
 ########
 
-set(SANITIZER "THREAD" CACHE STRING "Sanitizers")
+set(SANITIZER "NONE" CACHE STRING "Sanitizers")
 set_property(CACHE SANITIZER PROPERTY STRINGS "NONE" "ADDRESS" "THREAD")
 message(STATUS "Selected SANITIZER TYPE: ${SANITIZER}")
 
@@ -128,7 +128,6 @@ message(STATUS "Selected KPM SM_ENCODING: ${SM_ENCODING_KPM}")
 set(SM_ENCODING_RC "ASN" CACHE STRING "The RC SM encoding to use")
 set_property(CACHE SM_ENCODING_RC PROPERTY STRINGS "PLAIN" "ASN" "FLATBUFFERS")
 message(STATUS "Selected RC SM_ENCODING: ${SM_ENCODING_RC}")
-
 
 # MAC Service Model
 set(SM_ENCODING_MAC "PLAIN" CACHE STRING "The MAC SM encoding to use")

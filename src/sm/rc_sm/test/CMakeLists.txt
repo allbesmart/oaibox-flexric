@@ -268,7 +268,7 @@ elseif(SM_ENCODING_RC STREQUAL "ASN")
     ../../../lib/sm/3gpp_derived_ie/gnb_cu_up.c
     ../../../lib/sm/3gpp_derived_ie/gnb_du.c
     ../../../lib/sm/3gpp_derived_ie/guami.c
-    ../../../lib/sm/3gpp_derived_ie/gummei.c
+    ../../../lib/sm/3gpp_derived_ie/e2sm_gummei.c
     ../../../lib/sm/3gpp_derived_ie/ng_enb.c
     ../../../lib/sm/3gpp_derived_ie/ng_enb_du.c
     ../../../lib/sm/3gpp_derived_ie/nr_cgi.c

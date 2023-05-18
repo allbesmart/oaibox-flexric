@@ -1,4 +1,5 @@
 set(3GPP_DERIVED_IE_SRCS
+  e2sm_gummei.c
   enb.c
   en_gnb.c
   eutra_cgi.c
@@ -10,7 +11,6 @@ set(3GPP_DERIVED_IE_SRCS
   gnb_cu_up.c
   gnb_du.c
   guami.c
-  gummei.c
   ng_enb.c
   ng_enb_du.c
   nr_cgi.c

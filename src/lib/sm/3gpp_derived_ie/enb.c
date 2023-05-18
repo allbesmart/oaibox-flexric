@@ -33,7 +33,7 @@ bool eq_enb_ue_id_e2sm(enb_e2sm_t const * m0, enb_e2sm_t const * m1)
     // 6.2.3.18
     // Mandatory
     // GUMMEI
-    if (eq_gummei(&m0->gummei, &m1->gummei) != true)
+    if (eq_e2sm_gummei(&m0->gummei, &m1->gummei) != true)
       return false;
 
     // 6.2.3.23
@@ -72,8 +72,7 @@ enb_e2sm_t cp_enb_ue_id_e2sm(const enb_e2sm_t * src)
   // 6.2.3.18
   // Mandatory
   // GUMMEI
-  dst.gummei = cp_gummei(&src->gummei);
-
+  dst.gummei = cp_e2sm_gummei(&src->gummei);
 
   // 6.2.3.23
   // C-ifDCSetup

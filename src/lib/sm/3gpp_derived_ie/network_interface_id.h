@@ -6,7 +6,7 @@
 #include "f1_e2sm.h"
 #include "guami.h"
 #include "global_ng_ran_node_id.h"
-#include "gummei.h"
+#include "e2sm_gummei.h"
 #include "w1_e2sm.h"
 #include "x2_e2sm.h"
 
@@ -27,7 +27,7 @@ typedef struct{
     e1_e2sm_t e1;
 
     // s1
-    gummei_t s1;
+    e2sm_gummei_t s1;
 
     // X2
     x2_e2sm_t x2;

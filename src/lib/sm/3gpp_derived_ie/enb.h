@@ -8,7 +8,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "gummei.h"
+#include "e2sm_gummei.h"
 #include "global_enb_id.h"
 
 typedef struct {
@@ -21,7 +21,7 @@ typedef struct {
     // 6.2.3.18
     // Mandatory
     // GUMMEI
-    gummei_t gummei;
+    e2sm_gummei_t gummei;
 
     // 6.2.3.23
     // C-ifDCSetup

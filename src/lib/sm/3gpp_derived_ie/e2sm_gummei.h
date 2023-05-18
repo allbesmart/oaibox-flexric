@@ -1,5 +1,5 @@
-#ifndef GUMMEI_h
-#define GUMMEI_h
+#ifndef E2SM_GUMMEI_H
+#define E2SM_GUMMEI_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,12 +22,12 @@ typedef struct {
     uint8_t mme_code;
 
 
-} gummei_t;
+} e2sm_gummei_t;
 
 
-gummei_t cp_gummei(gummei_t const* src);
+e2sm_gummei_t cp_e2sm_gummei(e2sm_gummei_t const* src);
 
-bool eq_gummei(gummei_t const * m0, gummei_t const * m1);
+bool eq_e2sm_gummei(e2sm_gummei_t const * m0, e2sm_gummei_t const * m1);
 
 #ifdef __cplusplus
 }

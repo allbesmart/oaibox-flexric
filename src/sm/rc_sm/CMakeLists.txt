@@ -31,20 +31,17 @@ elseif(SM_ENCODING_RC STREQUAL "ASN" )
                       dec/rc_dec_asn.c 
                       $<TARGET_OBJECTS:e2sm_rc_asn1_obj>
                       $<TARGET_OBJECTS:e2sm_rc_ir_obj>
-
                       $<TARGET_OBJECTS:3gpp_derived_ie_obj>
                       $<TARGET_OBJECTS:3gpp_derived_ie_dec_asn_obj>
                       $<TARGET_OBJECTS:3gpp_derived_ie_enc_asn_obj>
                       $<TARGET_OBJECTS:sm_common_ie_obj>
                       $<TARGET_OBJECTS:sm_common_dec_asn_obj>
                       $<TARGET_OBJECTS:sm_common_enc_asn_obj>
-
-
-
                       )
   target_include_directories(rc_sm PRIVATE "ie/asn")
   target_compile_options(rc_sm  PRIVATE "-DASN_DISABLE_OER_SUPPORT")
   target_compile_options(rc_sm PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter)
+  target_link_libraries(rc_sm PRIVATE -lm)  
 
 elseif(SM_ENCODING_RC STREQUAL "FLATBUFFERS" )
   message(FATAL_ERROR "RC SM FB not implemented")

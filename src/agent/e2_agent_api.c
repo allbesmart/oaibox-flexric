@@ -107,7 +107,7 @@ void init_agent_api(int mcc,
   assert(it < 128);
   puts(str);
 
-  agent = e2_init_agent(server_ip_str, e2ap_server_port, ge2ni, io, args);
+  agent = e2_init_agent(server_ip_str, e2ap_server_port, ge2ni, io, args->libs_dir);
 
   // Spawn a new thread for the agent
   const int rc = pthread_create(&thrd_agent, NULL, static_start_agent, NULL);

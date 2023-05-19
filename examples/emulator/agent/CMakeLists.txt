@@ -37,7 +37,8 @@ target_link_libraries(emu_agent_gnb
                       ${FlatCC} 
                       -pthread
                       -lsctp
-                      -ldl)
+                      -ldl
+                      -lm)
 
 target_compile_definitions(emu_agent_gnb PRIVATE TEST_AGENT_GNB 
                                                  TEST_AGENT_RAN_TYPE=ngran_gNB

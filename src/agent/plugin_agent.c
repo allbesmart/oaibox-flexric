@@ -174,9 +174,16 @@ void load_all_pugin_ag(plugin_ag_t* p, const char* dir_path)
       continue;
     }
 
-    char file_path[1024] = {0};
-    strncat(file_path, dir_path, strlen(dir_path)); 
-    strncat(file_path + strlen(dir_path), in_file->d_name, strlen(in_file->d_name)); 
+    
+    char file_path[PATH_MAX] = {0};
+    size_t const sz_dp = strlen(dir_path);
+    assert(sz_dp < 1024);
+    strncat(file_path, dir_path, PATH_MAX - 1); 
+
+    size_t const sz_d_name = strlen(in_file->d_name);
+    assert(sz_dp + sz_d_name < PATH_MAX);
+//    strncat(file_path + sz_dp , in_file->d_name, strlen(in_file->d_name)); 
+    strncat(file_path + sz_dp , in_file->d_name, PATH_MAX - 1 - sz_dp); 
 
     const char* needle = ".conf";
     const char* ans = strstr(file_path, needle);

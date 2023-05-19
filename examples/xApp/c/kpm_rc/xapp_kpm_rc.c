@@ -1034,7 +1034,7 @@ e2sm_rc_ctrl_msg_t gen_rc_ctrl_msg(void)
 int main(int argc, char *argv[])
 {
   fr_args_t args = init_fr_args(argc, argv);
-  
+
   //Init the xApp
   init_xapp_api(&args);
   sleep(1);
@@ -1045,21 +1045,25 @@ int main(int argc, char *argv[])
 
   printf("Connected E2 nodes = %d\n", nodes.len);
 
+  sm_ans_xapp_t* h = calloc(nodes.len, sizeof(sm_ans_xapp_t)); 
+  assert(h != NULL && "Memory exhausted");
+
+
   pthread_mutexattr_t attr = {0};
   int rc = pthread_mutex_init(&mtx, &attr);
   assert(rc == 0);
 
+
   //////////// 
   // START KPM 
   //////////// 
-  
   kpm_sub_data_t kpm_sub = {0};
   defer({ free_kpm_sub_data(&kpm_sub); });
-  
+
   // KPM Event Trigger
   uint64_t period_ms = 100;
   kpm_sub.ev_trg_def = gen_ev_trig(period_ms);
-  
+
   // KPM Action Definition
   kpm_sub.sz_ad = 1;
   kpm_sub.ad = calloc(1, sizeof(kpm_act_def_t));
@@ -1068,9 +1072,12 @@ int main(int argc, char *argv[])
   *kpm_sub.ad = gen_act_def(act); 
 
   const int KPM_ran_function = 2;
-  sm_ans_xapp_t h_1 = report_sm_xapp_api(&nodes.n[0].id, KPM_ran_function, &kpm_sub, sm_cb_kpm);
-  assert(h_1.success == true);
- 
+
+  for(size_t i =0; i < nodes.len; ++i){ 
+    h[i] = report_sm_xapp_api(&nodes.n[i].id, KPM_ran_function, &kpm_sub, sm_cb_kpm);
+    assert(h[i].success == true);
+  } 
+
   //////////// 
   // END KPM 
   //////////// 
@@ -1082,12 +1089,12 @@ int main(int argc, char *argv[])
   //////////// 
 
   // RC On Demand report
-//  rc_sub_data_t rc_sub = {0};
-//  defer({ free_rc_sub_data(&rc_sub); });
-//  sm_ans_xapp_t h_2 = report_sm_xapp_api(&nodes.n[0].id, RC_ran_function, &rc_sub, sm_cb_rc);
-//  assert(h_2.success == true);
+  //  rc_sub_data_t rc_sub = {0};
+  //  defer({ free_rc_sub_data(&rc_sub); });
+  //  sm_ans_xapp_t h_2 = report_sm_xapp_api(&nodes.n[0].id, RC_ran_function, &rc_sub, sm_cb_rc);
+  //  assert(h_2.success == true);
 
-  
+
   // RC Control 
   rc_ctrl_req_data_t rc_ctrl = {0};
   defer({ free_rc_ctrl_req_data(&rc_ctrl); });
@@ -1096,8 +1103,10 @@ int main(int argc, char *argv[])
   rc_ctrl.msg = gen_rc_ctrl_msg();
 
   const int RC_ran_function = 3;
-  control_sm_xapp_api(&nodes.n[0].id, RC_ran_function, &rc_ctrl);
 
+  for(size_t i =0; i < nodes.len; ++i){ 
+    control_sm_xapp_api(&nodes.n[i].id, RC_ran_function, &rc_ctrl);
+  }
 
   //////////// 
   // END RC 
@@ -1107,12 +1116,15 @@ int main(int argc, char *argv[])
 
   for(int i = 0; i < nodes.len; ++i){
     // Remove the handle previously returned
-    rm_report_sm_xapp_api(h_1.u.handle);
+    rm_report_sm_xapp_api(h[i].u.handle);
   }
 
+  sleep(1);
   //Stop the xApp
   while(try_stop_xapp_api() == false)
     usleep(1000);
+
+  free(h);
 
   rc = pthread_mutex_destroy(&mtx);
   assert(rc == 0);

@@ -23,7 +23,6 @@
 
 #include "asio_agent.h"
 #include <assert.h>                        // for assert
-#include <bits/types/struct_itimerspec.h>  // for itimerspec
 #include <errno.h>                         // for errno
 #include <fcntl.h>                         // for fcntl, F_GETFL, F_SETFL
 #include <stdio.h>                         // for NULL, fprintf, stderr
@@ -32,7 +31,7 @@
 #include <sys/time.h>                      // for CLOCK_MONOTONIC
 #include <sys/timerfd.h>                   // for timerfd_create, timerfd_se...
 #include <sys/types.h>                     // for time_t
-#include <time.h>                          // for timespec
+#include <time.h>                          // for timespec,  itimerspec
 #include <unistd.h>                        // for close
 
 static

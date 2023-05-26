@@ -60,7 +60,6 @@ set(XAPP_SRC
 
   
 
-
   ../util/ngran_type.c
   ../sm/mac_sm/ie/mac_data_ie.c
   ../sm/rlc_sm/ie/rlc_data_ie.c
@@ -80,9 +79,12 @@ if(E2AP_ENCODING STREQUAL "ASN")
 
           add_library(e42_xapp_shared SHARED # STATIC or SHARED
             ${XAPP_SRC}
+	    ../util/conversions.c
             $<TARGET_OBJECTS:e2ap_asn1_obj>
             )
 
+	 target_compile_options(e42_xapp_shared PRIVATE "-DASN_DISABLE_OER_SUPPORT" -fPIC)
+	 target_include_directories(e42_xapp_shared PRIVATE "../lib/ap/ie/asn")
 
 elseif(E2AP_ENCODING STREQUAL "FLATBUFFERS" )
   add_library(e42_xapp ${XAPP_BLD_LIB} # STATIC or SHARED

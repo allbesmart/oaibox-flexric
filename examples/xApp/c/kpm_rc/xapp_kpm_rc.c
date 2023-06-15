@@ -46,7 +46,6 @@ byte_array_t copy_str_to_ba(const char* str)
   return dst;
 }
 
-
 static
 ue_id_e2sm_t ue_id;
 
@@ -67,12 +66,12 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
   printf("Sojourn time %lf \n",kpm->msg.frm_3.meas_report_per_ue[0].ind_msg_format_1.meas_data_lst[0].meas_record_lst[0].real_val);
 
   {
-  lock_guard(&mtx);
-  ue_id = cp_ue_id_e2sm(&kpm->msg.frm_3.meas_report_per_ue[0].ue_meas_report_lst);
+    lock_guard(&mtx);
+    free_ue_id_e2sm(&ue_id); 
+    ue_id = cp_ue_id_e2sm(&kpm->msg.frm_3.meas_report_per_ue[0].ue_meas_report_lst);
   }
   printf("UE ID %ld \n ", ue_id.gnb.amf_ue_ngap_id);
 }
-
 
 static
 kpm_event_trigger_def_t gen_ev_trig(uint64_t period)

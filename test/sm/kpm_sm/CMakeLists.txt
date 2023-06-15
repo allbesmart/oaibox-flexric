@@ -10,6 +10,7 @@ elseif(SM_ENCODING_KPM STREQUAL "ASN")
                       main.c 
                       ../../rnd/fill_rnd_data_kpm.c
                       ../../../src/util/time_now_us.c
+                      ../../../src/util/alg_ds/alg/defer.c
                       )
 
 elseif(SM_ENCODING_KPM STREQUAL "FLATBUFFERS")
@@ -17,7 +18,7 @@ elseif(SM_ENCODING_KPM STREQUAL "FLATBUFFERS")
 endif()
 
 target_compile_definitions(test_kpm_sm PUBLIC ${SM_ENCODING_KPM})
-target_link_libraries(test_kpm_sm PUBLIC kpm_sm -pthread -lm)
+target_link_libraries(test_kpm_sm PUBLIC kpm_sm_static -pthread -lm)
 
 enable_testing()
 add_test(Unit_test_KPM test_kpm_sm)

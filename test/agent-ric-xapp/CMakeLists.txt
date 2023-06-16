@@ -1,9 +1,6 @@
 if(E2AP_ENCODING STREQUAL "ASN")
 add_executable(test_ag_ric_xapp 
                 test_ag_ric_xapp.c
-                # ../sm/common/fill_ind_data.c
-                # ../../src/sm/rc_sm/test/fill_rnd_data_rc.c
-               
                   ../../../test/rnd/fill_rnd_data_gtp.c                  
                   ../../../test/rnd/fill_rnd_data_tc.c                  
                   ../../../test/rnd/fill_rnd_data_mac.c                  

@@ -1,3 +1,16 @@
+add_executable(xapp_kpm_moni 
+		xapp_kpm_moni.c
+                ../../../../src/util/alg_ds/alg/defer.c
+              )
+
+ target_link_libraries(xapp_kpm_moni
+                      PUBLIC
+                      e42_xapp
+                      -pthread
+                      -lsctp
+                      -ldl
+                      )
+
 add_executable(xapp_mac_rlc_pdcp_moni 
 		xapp_mac_rlc_pdcp_moni.c
                 ../../../../src/util/alg_ds/alg/defer.c

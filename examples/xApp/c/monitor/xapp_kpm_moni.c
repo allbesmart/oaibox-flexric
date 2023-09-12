@@ -64,6 +64,14 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
       case GNB_UE_ID_E2SM:
         printf("UE ID type = gNB, amf_ue_ngap_id = %lu\n", msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb.amf_ue_ngap_id);
         break;
+
+      case GNB_DU_UE_ID_E2SM:
+        printf("UE ID type = gNB-DU, gnb_cu_ue_f1ap = %u\n", msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb_du.gnb_cu_ue_f1ap);
+        break;
+
+      case GNB_CU_UP_UE_ID_E2SM:
+        printf("UE ID type = gNB-CU-UP, gnb_cu_cp_ue_e1ap = %u\n", msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb_cu_up.gnb_cu_cp_ue_e1ap);
+        break;
       
       default:
         assert(false && "UE ID type not yet implemented");
@@ -305,9 +313,31 @@ int main(int argc, char *argv[])
     kpm_sub.sz_ad = 1;
     kpm_sub.ad = calloc(1, sizeof(kpm_act_def_t));
     assert(kpm_sub.ad != NULL && "Memory exhausted");
-    const char *act[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", "DRB.RlcSduDelayDl", "DRB.UEThpDl", "DRB.UEThpUl", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 28.552
-    *kpm_sub.ad = gen_act_def(act);
 
+
+    switch (n->id.type)
+    {
+    case ngran_gNB: ;
+      const char *act_gnb[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", "DRB.RlcSduDelayDl", "DRB.UEThpDl", "DRB.UEThpUl", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 28.552
+      *kpm_sub.ad = gen_act_def(act_gnb);
+      break;
+
+    case ngran_gNB_CU: ;
+      const char *act_gnb_cu[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", NULL}; // 3GPP TS 28.552
+      *kpm_sub.ad = gen_act_def(act_gnb_cu);
+      break;
+
+    case ngran_gNB_DU: ;
+      const char *act_gnb_du[] = {"DRB.RlcSduDelayDl", "DRB.UEThpDl", "DRB.UEThpUl", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 28.552
+      *kpm_sub.ad = gen_act_def(act_gnb_du);
+      break;
+    
+    default:
+      assert(false && "NG-RAN Type not yet implemented");
+    }
+
+
+    
     const int KPM_ran_function = 2;
 
     kpm_handle[i] = report_sm_xapp_api(&nodes.n[i].id, KPM_ran_function, &kpm_sub, sm_cb_kpm);

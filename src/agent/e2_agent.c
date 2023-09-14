@@ -483,6 +483,8 @@ void e2_free_agent(e2_agent_t* ag)
 
   free_tsq(&ag->aind, NULL);
 
+  free_global_e2_node_id(&ag->global_e2_node_id);
+
   free(ag);
 }
 

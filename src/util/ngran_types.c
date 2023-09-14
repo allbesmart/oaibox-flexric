@@ -17,6 +17,10 @@ char* get_ngran_name(ngran_node_t ran_type)
     case ngran_eNB_DU: return "ngran_eNB_DU";
     case ngran_gNB_DU: return "ngran_gNB_DU";
     case ngran_eNB_MBMS_STA: return "ngran_eNB_MBMS_STA";
-    default: return NULL;
+    case ngran_gNB_CUCP: return "ngran_gNB_CUCP"; 
+    case ngran_gNB_CUUP: return "ngran_gNB_CUUP"; 
+    default: { assert(0!=0 && "Unknown type" );}
   }
+
+  return NULL;
 }

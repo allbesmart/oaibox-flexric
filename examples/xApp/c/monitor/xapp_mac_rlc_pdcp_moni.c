@@ -81,13 +81,13 @@ int main(int argc, char *argv[])
   printf("Connected E2 nodes = %d\n", nodes.len);
 
   // MAC indication
-  const char* i_0 = "5_ms";
+  const char* i_0 = "1_ms";
   sm_ans_xapp_t* mac_handle = NULL;
   // RLC indication
-  const char* i_1 = "5_ms";
+  const char* i_1 = "1_ms";
   sm_ans_xapp_t* rlc_handle = NULL;
   // PDCP indication
-  const char* i_2 = "5_ms";
+  const char* i_2 = "1_ms";
   sm_ans_xapp_t* pdcp_handle = NULL;
 
   if(nodes.len > 0){

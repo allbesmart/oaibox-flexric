@@ -1,9 +1,9 @@
 add_subdirectory(iApp)
 
 if(BUILDING_LIBRARY STREQUAL "STATIC")
-  set(RIC_BLD_LIB  "STATIC")
+  set(RIC_BLD_LIB "STATIC")
 elseif(BUILDING_LIBRARY STREQUAL "DYNAMIC")
-  set(RIC_BLD_LIB  "SHARED")
+  set(RIC_BLD_LIB "SHARED")
 else()
   message(FATAL_ERROR "Unknown type")
 endif()
@@ -58,16 +58,13 @@ set(RIC_SRC
 
 if(E2AP_ENCODING STREQUAL "ASN")
   add_library(near_ric 
-            ${RIC_BLD_LIB}# STATIC or SHARED
             ${RIC_SRC}
             $<TARGET_OBJECTS:e42_iapp>
             $<TARGET_OBJECTS:e2ap_asn1_obj>
             $<TARGET_OBJECTS:3gpp_derived_ie_obj>
-
             )
 
   add_library(near_ric_test 
-            ${RIC_BLD_LIB}# STATIC or SHARED
             ${RIC_SRC}
             $<TARGET_OBJECTS:e42_iapp>
             $<TARGET_OBJECTS:e2ap_asn1_obj>

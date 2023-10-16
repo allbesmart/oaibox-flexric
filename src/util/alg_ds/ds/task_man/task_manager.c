@@ -134,6 +134,7 @@ void* seq_ring_at(seq_ring_t* r, uint32_t pos)
   return r->array + mask(r->cap, r->tail + pos)*r->elt_size;
 }
 
+/*
 static inline
 int32_t seq_ring_dist(seq_ring_t* r, void* first, void* last)
 {
@@ -155,6 +156,7 @@ bool seq_ring_equal(void* it_1,void* it_2)
 {
   return (uint8_t*)it_1 == (uint8_t*)it_2;  
 }
+*/
 
 typedef void (*seq_free_func)(void*);
 

@@ -9,19 +9,16 @@ else()
   message(FATAL_ERROR "Unknown type")
 endif()
 
-if(KPM_VERSION STREQUAL "KPM_V2_03")
-set(KPM_VERSION_SRC 
-  ../sm/kpm_sm/kpm_sm_v02.03/ie/kpm_data_ie.c
-  )
+
+if(KPM_VERSION STREQUAL "KPM_V2_01")
+  set(KPM_VERSION_SRC ../sm/kpm_sm/kpm_sm_v02.01/ie/kpm_data_ie.c)
+elseif(KPM_VERSION STREQUAL "KPM_V2_03")
+  set(KPM_VERSION_SRC ../sm/kpm_sm/kpm_sm_v02.03/ie/kpm_data_ie.c)
 elseif(KPM_VERSION STREQUAL "KPM_V3_00")
-set(KPM_VERSION_SRC 
-  ../sm/kpm_sm/kpm_sm_v03.00/ie/kpm_data_ie.c
-  )
+  set(KPM_VERSION_SRC ../sm/kpm_sm/kpm_sm_v03.00/ie/kpm_data_ie.c)
 else()
   message(FATAL_ERROR "Unknown KPM version")
 endif()
-
-
 
 
 set(XAPP_SRC 

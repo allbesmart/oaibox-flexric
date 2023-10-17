@@ -56,7 +56,7 @@ endif()
 
 #https://gcc.gnu.org/bugzilla/show_bug.cgi?id=110157
 
-set(SANITIZER "NONE" CACHE STRING "Sanitizers")
+set(SANITIZER "ADDRESS" CACHE STRING "Sanitizers")
 set_property(CACHE SANITIZER PROPERTY STRINGS "NONE" "ADDRESS" "THREAD")
 message(STATUS "Selected SANITIZER TYPE: ${SANITIZER}")
 
@@ -240,7 +240,7 @@ set(SM_ENCODING_KPM "ASN" CACHE STRING "The KPM SM encoding to use")
 set_property(CACHE SM_ENCODING_KPM PROPERTY STRINGS "PLAIN" "ASN" "FLATBUFFERS")
 message(STATUS "Selected KPM SM_ENCODING: ${SM_ENCODING_KPM}")
 
-set(KPM_VERSION "KPM_V3_00" CACHE STRING "The KPM SM version to use")
+set(KPM_VERSION "KPM_V2_01" CACHE STRING "The KPM SM version to use")
 set_property(CACHE SM_ENCODING_KPM PROPERTY STRINGS  "KPM_V2_01" "KPM_V2_03" "KPM_V3_00")
 message(STATUS "Selected KPM Version: ${KPM_VERSION}")
 

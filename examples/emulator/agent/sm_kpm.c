@@ -154,7 +154,7 @@ void read_kpm_sm(void* data)
 
     if(kpm->act_def->frm_4.matching_cond_lst[0].test_info_lst.test_cond_type == CQI_TEST_COND_TYPE
         && *kpm->act_def->frm_4.matching_cond_lst[0].test_info_lst.test_cond == GREATERTHAN_TEST_COND){
-      printf("Matching condition: UEs with CQI greater than %ld \n", *kpm->act_def->frm_4.matching_cond_lst[0].test_info_lst.int_value );
+      printf("Matching condition: UEs with CQI greater than %ld \n", *kpm->act_def->frm_4.matching_cond_lst[0].test_info_lst.test_cond_value->int_value );
     }
 
     printf("Parameter to report: %s \n", kpm->act_def->frm_4.action_def_format_1.meas_info_lst->meas_type.name.buf); 

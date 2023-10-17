@@ -1,4 +1,7 @@
-if(KPM_VERSION STREQUAL "KPM_V2_03")
+if(KPM_VERSION STREQUAL "KPM_V2_01")
+  set(KPM_SRC ../../src/sm/kpm_sm/kpm_sm_v02.01/ie/kpm_data_ie.c)
+  set(KPM_ASN_DIR  "../../src/sm/kpm_sm/kpm_sm_v02.01/ie/asn")
+elseif(KPM_VERSION STREQUAL "KPM_V2_03")
   set(KPM_SRC ../../src/sm/kpm_sm/kpm_sm_v02.03/ie/kpm_data_ie.c)
   set(KPM_ASN_DIR  "../../src/sm/kpm_sm/kpm_sm_v02.03/ie/asn")
 elseif(KPM_VERSION STREQUAL "KPM_V3_00")
@@ -29,16 +32,16 @@ add_executable(test_near_ric
   )
 
 target_link_libraries(test_near_ric
-                      PUBLIC 
-                      e2_agent
-                      near_ric_test
-                      ${FlatCC} 
-		      kpm_sm_static
-		      rc_sm_static
-                      #/home/mir/workspace/flatcc/lib/libflatccrt_d.a
-                      -pthread
-                      -lsctp
-                      -ldl)
+  PUBLIC 
+  e2_agent
+  near_ric_test
+  ${FlatCC} 
+  kpm_sm_static
+  rc_sm_static
+  #/home/mir/workspace/flatcc/lib/libflatccrt_d.a
+  -pthread
+  -lsctp
+  -ldl)
 
 target_compile_options(test_near_ric PRIVATE "-DASN_DISABLE_JER_SUPPORT" "-DASN_DISABLE_OER_SUPPORT")
 target_include_directories(test_near_ric PRIVATE ${KPM_ASN_DIR} )

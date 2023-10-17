@@ -1,3 +1,12 @@
+
+## Types that change from non optional (KPM v2.01) to optional(KPM v2.02 KPM v2.03)
+
+TestCondInfo ::= SEQUENCE{
+testType TestCond-Type,
+testExpr TestCond-Expression (OPTIONAL),
+testValue TestCond-Value (OPTIONAL),
+...
+
 ## 1. ASN.1 types - v02.03
 
 

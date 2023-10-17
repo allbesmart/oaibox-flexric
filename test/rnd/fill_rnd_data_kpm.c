@@ -36,7 +36,7 @@ kpm_event_trigger_def_t fill_rnd_kpm_event_trigger_def(void)
 
   if(dst.type == FORMAT_1_RIC_EVENT_TRIGGER  ){
     // Normally the period is not free, need to check in the specs
-    dst.kpm_ric_event_trigger_format_1.report_period_ms = 2;  // rand()%1000;
+    dst.kpm_ric_event_trigger_format_1.report_period_ms = (rand()%4294967295) + 1 ;
   } else {
     assert(0 != 0 && "unknown type");
   }
@@ -44,6 +44,7 @@ kpm_event_trigger_def_t fill_rnd_kpm_event_trigger_def(void)
   return dst;
 }
 
+#if defined KPM_V2_02 || defined KPM_V3_00 
 static bin_range_def_t fill_rnd_bin_range_def(void)
 {
   bin_range_def_t bin_range_def = {0};
@@ -98,6 +99,8 @@ static bin_range_def_t fill_rnd_bin_range_def(void)
 
   return bin_range_def;
 }
+
+#endif
 
 static kpm_act_def_format_1_t fill_rnd_kpm_action_def_frm_1(void)
 {
@@ -179,7 +182,9 @@ static kpm_act_def_format_1_t fill_rnd_kpm_action_def_frm_1(void)
   default:
     assert(false && "Unknown Cell Global ID Type");
   }
-  
+ 
+#if defined KPM_V2_03 || defined KPM_V3_00 
+
   // Measurement Bin Range - OPTIONAL
   // not yet implemented in ASN.1 - possible extension
   action_def_frm_1.meas_bin_range_info_lst_len = 3;  // (rand() % 65535) + 0;
@@ -213,6 +218,7 @@ static kpm_act_def_format_1_t fill_rnd_kpm_action_def_frm_1(void)
     action_def_frm_1.meas_bin_info_lst[i].bin_range_def = fill_rnd_bin_range_def();
 
   }
+#endif
 
   return action_def_frm_1;
 }
@@ -642,7 +648,6 @@ static ue_id_e2sm_t fill_rnd_ue_id_data(void)
     assert(false && "Unknown UE ID Type");
   }
 
-
   return ue_id_data;
 }
 
@@ -652,20 +657,76 @@ static kpm_act_def_format_2_t fill_rnd_kpm_action_def_frm_2(void)
 
   // UE ID
   action_def_frm_2.ue_id = fill_rnd_ue_id_data();
-  
 
   // Action Definition Format 1
-
   action_def_frm_2.action_def_format_1 = fill_rnd_kpm_action_def_frm_1();
 
   return action_def_frm_2;
 }
 
+static
+test_cond_value_t fill_rnd_test_cond_value(void)
+{
+  test_cond_value_t dst = {0}; 
+
+label:
+  dst.type = rand() % END_TEST_COND_VALUE;
+
+  if(dst.type == BIT_STRING_TEST_COND_VALUE )
+    goto label; // Not implemented
+
+  if(dst.type == INTEGER_TEST_COND_VALUE){
+    dst.int_value = calloc(1, sizeof(int64_t));
+    assert(dst.int_value != NULL && "Memory exhausted"); 
+    *dst.int_value = rand(); 
+  } else if (dst.type == ENUMERATED_TEST_COND_VALUE){
+    dst.enum_value = calloc(1, sizeof(int64_t  ));
+    assert(dst.enum_value != NULL && "Memory exhausted"); 
+    *dst.enum_value = rand();
+  } else if(dst.type == BOOLEAN_TEST_COND_VALUE ){
+    dst.bool_value = calloc(1, sizeof(bool));
+    assert(dst.bool_value != NULL && "Memory exhausted"); 
+    *dst.bool_value = rand();
+  } else if(dst.type == BIT_STRING_TEST_COND_VALUE){
+    assert(0!= 0 && "Not implemented");
+    //dst.bit_string_value = calloc(1, sizeof(byte_array_t));
+    //assert(dst.bit_string_value != NULL && "Memory exhausted"); 
+    //*dst.bit_string_value = cp_str_to_ba("Test");
+  } else if(dst.type == OCTET_STRING_TEST_COND_VALUE){
+    dst.octet_string_value = calloc(1, sizeof(byte_array_t));
+    assert(dst. octet_string_value != NULL && "Memory exhausted"); 
+    *dst.octet_string_value = cp_str_to_ba("Test");
+  } else if(dst.type == PRINTABLE_STRING_TEST_COND_VALUE){
+    dst.printable_string_value = calloc(1, sizeof(byte_array_t));
+    assert(dst. printable_string_value != NULL && "Memory exhausted"); 
+    *dst.printable_string_value = cp_str_to_ba("Test");
+#if defined KPM_V2_02 || defined KPM_V3_00
+  } else if(*test_info.type == REAL_TEST_COND_VALUE){
+     test_info. real_value_value = calloc(1, sizeof(double));
+     assert(test_info. real_value_value != NULL && "Memory exhausted"); 
+     *test_info. real_value_value = rand();
+#endif
+  } else {
+    assert(0!= 0 && "Unknown condition value");
+  }
+
+  return dst;
+}
+
+
+
 static test_info_lst_t fill_rnd_kpm_test_info(void)
 {
   test_info_lst_t test_info = {0};
 
-  test_info.test_cond_type = rand()%END_TEST_COND_TYPE_KPM_V2;
+#if defined KPM_V2_01 
+  test_info.test_cond_type = rand()% UL_RSRP_TEST_COND_TYPE;
+#elif defined KPM_V2_03 || defined KPM_V3_00 
+  test_info.test_cond_type = rand()%END_TEST_COND_TYPE_KPM_V2_01;
+#else
+  _Static_assert(0!=0 && "Unknown KPM Version");
+#endif
+
 
   switch (test_info.test_cond_type)
   {
@@ -692,7 +753,7 @@ static test_info_lst_t fill_rnd_kpm_test_info(void)
   case DL_RSRQ_TEST_COND_TYPE:
     test_info.DL_RSRQ = TRUE_TEST_COND_TYPE;
     break;
-  
+#if defined KPM_V2_03 || defined KPM_V3_00 
   /* Possible extensions: */
   case UL_RSRP_TEST_COND_TYPE:
     test_info.UL_RSRP = TRUE_TEST_COND_TYPE;
@@ -713,17 +774,24 @@ static test_info_lst_t fill_rnd_kpm_test_info(void)
   case S_NSSAI_TEST_COND_TYPE:
     test_info.S_NSSAI = TRUE_TEST_COND_TYPE;
     break;
-  
+#endif 
+
   default:
     assert(false && "Condition type out of the range");
     break;
   }
 
-  test_info.test_cond = NULL;
+  // Test Condition
+  // Optional english, mandatory ASN
+  test_info.test_cond = calloc(1, sizeof(test_cond_e)); 
+  assert(test_info.test_cond != NULL );
+  *test_info.test_cond = rand() %END_TEST_COND; 
 
-  test_info.test_cond_value = NULL;
-
-
+  // Test Condition Value 
+  // Optional english, mandatory ASN
+  test_info.test_cond_value = calloc(1, sizeof(test_cond_value_t));
+  assert(test_info.test_cond_value != NULL && "Memory exhausted");
+  *test_info.test_cond_value = fill_rnd_test_cond_value();
 
   return test_info;
 }
@@ -791,15 +859,17 @@ static kpm_act_def_format_3_t fill_rnd_kpm_action_def_frm_3(void)
       default:
         assert(false && "Unknown Matching Condition Type");
       }
-      
+  
+#if defined KPM_V2_02 || defined KPM_V3_00
       // Logical OR
       meas_info->matching_cond_lst[j].logical_OR = calloc(1, sizeof(enum_value_e));
       assert(meas_info->matching_cond_lst[j].logical_OR != NULL && "Memory exhausted");
       *meas_info->matching_cond_lst[j].logical_OR = TRUE_ENUM_VALUE;
-
-      
+#endif
     }
 
+
+#if defined KPM_V2_02 || defined KPM_V3_00
     // Bin Range Definition
     // not yet implemented in ASN.1 - possible extension
     meas_info->bin_range_def = calloc(1, sizeof(bin_range_def_t));
@@ -814,7 +884,6 @@ static kpm_act_def_format_3_t fill_rnd_kpm_action_def_frm_3(void)
     {
       meas_info->bin_range_def->bin_x_lst[j].bin_index = (rand() % 65535) + 0;
       meas_info->bin_range_def->bin_x_lst[j].start_value.value = rand()%END_BIN_RANGE;
-
 
       // start value
       switch (meas_info->bin_range_def->bin_x_lst[j].start_value.value)
@@ -852,9 +921,9 @@ static kpm_act_def_format_3_t fill_rnd_kpm_action_def_frm_3(void)
 
     meas_info->bin_range_def->bin_z_lst_len = 0;
     meas_info->bin_range_def->bin_z_lst = NULL;
-
+#endif // defined KPM_V2_02 || defined KPM_V3_00
   }
-
+       
   // Granularity Period
   // [0, 4294967295]
   action_def_frm_3.gran_period_ms = (rand() % 4294967295) + 0;
@@ -880,9 +949,10 @@ static kpm_act_def_format_3_t fill_rnd_kpm_action_def_frm_3(void)
     assert(false && "Unknown Cell Global ID Type");
   }
 
-
   return action_def_frm_3;
 }
+
+#if defined KPM_V2_02 || defined KPM_V3_00 
 
 static kpm_act_def_format_4_t fill_rnd_kpm_action_def_frm_4(void)
 {
@@ -928,12 +998,21 @@ static kpm_act_def_format_5_t fill_rnd_kpm_action_def_frm_5(void)
 
   return action_def_frm_5;
 }
+#endif // if defined KPM_V2_02 || defined KPM_V3_00 
+
 
 kpm_act_def_t fill_rnd_kpm_action_def(void)
 {
   kpm_act_def_t action_def = {0};
 
+#ifdef KPM_V2_01
+  // Only Action [1-3] implemented
+  action_def.type = rand()%FORMAT_4_ACTION_DEFINITION;
+#elif defined KPM_V2_02 || defined KPM_V3_00  
   action_def.type = rand()%END_ACTION_DEFINITION;
+#else
+  _Static_assert(0!=0 && "Unknown KPM Version!");
+#endif
 
   switch (action_def.type)
   {
@@ -948,7 +1027,7 @@ kpm_act_def_t fill_rnd_kpm_action_def(void)
   case FORMAT_3_ACTION_DEFINITION:
     action_def.frm_3 = fill_rnd_kpm_action_def_frm_3();
     break;
-  
+#if defined KPM_V2_02 || defined KPM_V3_00 
   /* Possible extensions: */
   case FORMAT_4_ACTION_DEFINITION:
     action_def.frm_4 = fill_rnd_kpm_action_def_frm_4();
@@ -957,7 +1036,7 @@ kpm_act_def_t fill_rnd_kpm_action_def(void)
   case FORMAT_5_ACTION_DEFINITION:
     action_def.frm_5 = fill_rnd_kpm_action_def_frm_5();
     break;
-
+#endif
   default:
     assert(false && "Unknown KPM Action Definition Format Type");
   }
@@ -1062,7 +1141,9 @@ static kpm_ind_msg_format_1_t fill_rnd_kpm_ind_msg_frm_1(void)
   msg_frm_1.gran_period_ms = calloc(1, sizeof(*msg_frm_1.gran_period_ms));
   assert(msg_frm_1.gran_period_ms != NULL && "Memory exhausted");
   *msg_frm_1.gran_period_ms = (rand() % 4294967295) + 1;
-  
+ 
+#if defined KPM_V2_02 || defined  KPM_V3_00 
+
   // Measurement Information - OPTIONAL
   msg_frm_1.meas_info_lst_len = 2;
   msg_frm_1.meas_info_lst = calloc(msg_frm_1.meas_info_lst_len, sizeof(meas_info_format_1_lst_t));
@@ -1092,8 +1173,6 @@ static kpm_ind_msg_format_1_t fill_rnd_kpm_ind_msg_frm_1(void)
       default:
         assert(false && "Unknown Measurement Type");
       }
-
-      
       
       // Label Information
       msg_frm_1.meas_info_lst[i].label_info_lst_len = 1;
@@ -1109,6 +1188,7 @@ static kpm_ind_msg_format_1_t fill_rnd_kpm_ind_msg_frm_1(void)
       }
   }
 
+#endif // defined KPM_V2_02 || defined  KPM_V3_00 
 
   return msg_frm_1;
 }
@@ -1221,11 +1301,13 @@ static kpm_ind_msg_format_2_t fill_rnd_kpm_ind_msg_frm_2(void)
       default:
         assert(false && "Unknown Matching Condition Type");
       }
-      
+     
+#if defined KPM_V2_02 || defined KPM_V3_00 
       // Logical OR
       cond_ue->matching_cond_lst[j].logical_OR = calloc(1, sizeof(enum_value_e));
       assert(cond_ue->matching_cond_lst[j].logical_OR != NULL && "Memory exhausted");
       *cond_ue->matching_cond_lst[j].logical_OR = TRUE_ENUM_VALUE;
+#endif
     }
 
     // List of matched UE IDs
@@ -1239,6 +1321,7 @@ static kpm_ind_msg_format_2_t fill_rnd_kpm_ind_msg_frm_2(void)
       cond_ue->ue_id_matched_lst[j] = fill_rnd_ue_id_data();
     }
 
+#if defined KPM_V2_02 || defined KPM_V3_00
     // Sequence of Matched UE IDs for Granularity Periods
     // not yet implemented in ASN.1 - possible extension
     cond_ue->ue_id_gran_period_lst_len = 3;  // (rand() % 65535) + 0;
@@ -1274,12 +1357,13 @@ static kpm_ind_msg_format_2_t fill_rnd_kpm_ind_msg_frm_2(void)
         break;
       }
     }
-
+#endif // defined KPM_V2_02 || defined KPM_V3_00
   }
 
   return msg_frm_2;
 }
 
+#if defined KPM_V2_02 || defined KPM_V3_00
 static 
 kpm_ind_msg_format_3_t fill_rnd_kpm_ind_msg_frm_3(void)
 {
@@ -1298,15 +1382,21 @@ kpm_ind_msg_format_3_t fill_rnd_kpm_ind_msg_frm_3(void)
 
   return msg_frm_3;
 }
-
-
+#endif
 
 kpm_ind_msg_t fill_rnd_kpm_ind_msg(void)
 {
   kpm_ind_msg_t msg = {0};
 
-  msg.type = FORMAT_3_INDICATION_MESSAGE; // rand()%END_INDICATION_MESSAGE;
-  
+
+#if defined KPM_V2_01 
+  msg.type = rand() % FORMAT_3_INDICATION_MESSAGE;
+#elif defined KPM_V2_02 || defined KPM_V3_00
+  msg.type = rand() % END_INDICATION_MESSAGE;
+#else
+  _Static_assert(0!=0 && "Unknown format type");
+#endif
+
   switch (msg.type)
   {
   case FORMAT_1_INDICATION_MESSAGE:
@@ -1316,12 +1406,12 @@ kpm_ind_msg_t fill_rnd_kpm_ind_msg(void)
   case FORMAT_2_INDICATION_MESSAGE:
     msg.frm_2 = fill_rnd_kpm_ind_msg_frm_2();
     break;
-
+#if defined KPM_V2_02 || defined KPM_V3_00
   /* Possible extensions: */
   case FORMAT_3_INDICATION_MESSAGE:
     msg.frm_3 = fill_rnd_kpm_ind_msg_frm_3();
     break;
-  
+#endif 
   default:
     assert(false && "Unknown KPM Indication Message Format Type");
   }

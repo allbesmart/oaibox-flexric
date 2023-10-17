@@ -4,5 +4,6 @@ add_subdirectory(monitor)
 add_subdirectory(slice)
 add_subdirectory(tc)
 add_subdirectory(kpm_rc)
+add_subdirectory(keysight)
 
 

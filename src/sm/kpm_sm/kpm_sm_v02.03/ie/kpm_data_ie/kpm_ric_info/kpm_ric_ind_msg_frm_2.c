@@ -41,8 +41,10 @@ bool eq_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t const* m0, kpm_ind_msg_format_2
 
   for (size_t i = 0; i<m0->meas_data_lst_len; i++)
   {
-    if (eq_meas_data_lst(&m0->meas_data_lst[i], &m1->meas_data_lst[i]) != true)
+    if (eq_meas_data_lst(&m0->meas_data_lst[i], &m1->meas_data_lst[i]) != true){
+      assert(0!=0 && "Debugging purposes");
       return false;
+    }
   }
 
   // Measurement Information Condition UE List
@@ -81,13 +83,10 @@ kpm_ind_msg_format_2_t cp_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t const* src)
     dst.meas_data_lst_len = src->meas_data_lst_len;
 
     dst.meas_data_lst = calloc(src->meas_data_lst_len, sizeof(meas_data_lst_t));
-    memcpy (dst.meas_data_lst, src->meas_data_lst, src->meas_data_lst_len * sizeof(meas_data_lst_t));
-    
-    for (size_t i = 0; i<dst.meas_data_lst_len; i++)
-    {
-      dst.meas_data_lst[i].meas_record_len = src->meas_data_lst[i].meas_record_len;
-      dst.meas_data_lst[i].meas_record_lst = calloc(src->meas_data_lst[i].meas_record_len, sizeof(meas_record_lst_t));
-      memcpy (dst.meas_data_lst[i].meas_record_lst, src->meas_data_lst[i].meas_record_lst, src->meas_data_lst[i].meas_record_len * sizeof(meas_record_lst_t));
+    assert(dst.meas_data_lst != NULL && "Memory exhausted");
+
+    for (size_t i = 0; i<dst.meas_data_lst_len; i++){
+     dst.meas_data_lst[i] = cp_meas_data_lst(&src->meas_data_lst[i]);
     }
   }
 

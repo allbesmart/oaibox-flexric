@@ -22,7 +22,7 @@ TimeStamp_constraint(const asn_TYPE_descriptor_t *td, const void *sptr,
 	
 	size = st->size;
 	
-	if((size == 4UL)) {
+	if(size == 4UL) {
 		/* Constraint check succeeded */
 		return 0;
 	} else {

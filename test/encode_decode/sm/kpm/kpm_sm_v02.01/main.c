@@ -54,6 +54,7 @@ void test_kpm_ind_hdr(void)
 
 void test_kpm_ind_msg(void)
 {
+
   kpm_ind_msg_t msg = fill_rnd_kpm_ind_msg();
   defer({ free_kpm_ind_msg(&msg); });
 
@@ -65,6 +66,46 @@ void test_kpm_ind_msg(void)
 
   assert(eq_kpm_ind_msg(&msg, &out) == true);
 }
+
+void test_kpm_ind_msg_2(void)
+{
+  kpm_ind_msg_t msg = {0};
+  msg.type = FORMAT_1_INDICATION_MESSAGE;
+  kpm_ind_msg_format_1_t fmt1;
+  fmt1.gran_period_ms = NULL;
+  fmt1.meas_data_lst_len = 1;
+  fmt1.meas_data_lst = calloc(fmt1.meas_data_lst_len, sizeof(meas_data_lst_t));
+
+  for (size_t i = 0; i < fmt1.meas_data_lst_len; i++)
+  {
+    fmt1.meas_data_lst[i].meas_record_len = 1;
+    fmt1.meas_data_lst[i].meas_record_lst = calloc(fmt1.meas_data_lst[i].meas_record_len, sizeof(meas_record_lst_t));
+    fmt1.meas_data_lst[i].meas_record_lst[0].value = INTEGER_MEAS_VALUE;
+    fmt1.meas_data_lst[i].meas_record_lst[0].int_val = 273;
+  }
+
+  fmt1.meas_info_lst_len = 1;
+  fmt1.meas_info_lst = calloc(fmt1.meas_info_lst_len, sizeof(meas_info_format_1_lst_t));
+  fmt1.meas_info_lst[0].meas_type.type = NAME_MEAS_TYPE;
+  fmt1.meas_info_lst[0].meas_type.name.buf = (uint8_t*)strdup("RRU.PrbAvailDl");
+  fmt1.meas_info_lst[0].meas_type.name.len = 14;
+  fmt1.meas_info_lst[0].label_info_lst_len = 1;
+  fmt1.meas_info_lst[0].label_info_lst = calloc(fmt1.meas_info_lst[0].label_info_lst_len, sizeof(label_info_lst_t));
+
+  fmt1.meas_info_lst[0].label_info_lst[0].noLabel = calloc(1, sizeof(enum_value_e));
+  *fmt1.meas_info_lst[0].label_info_lst[0].noLabel = TRUE_ENUM_VALUE;
+
+  msg.frm_1 = fmt1;
+
+  defer({ free_kpm_ind_msg(&msg); });
+
+  byte_array_t ba = kpm_enc_ind_msg_asn(&msg);
+  assert(ba.buf[0] == 0x08);  //The message received from the E2 node has a 0x08 here
+
+  defer({ free_byte_array(ba); });
+}
+
+
 
 void test_kpm_ran_function(void)
 {
@@ -104,7 +145,9 @@ int main()
 
     // Indication Message
     test_kpm_ind_msg();
+    test_kpm_ind_msg_2();
     printf("KPM Indication Message test succeeded\n");
+
 
     // RAN Function Definition
     test_kpm_ran_function();

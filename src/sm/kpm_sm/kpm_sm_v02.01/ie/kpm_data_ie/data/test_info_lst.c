@@ -194,8 +194,9 @@ bool eq_test_info(const test_info_lst_t *m0, const test_info_lst_t *m1)
       return false;
     if(m1->test_cond_value == NULL)
       return false;
-    if(eq_test_cond_value(m0->test_cond_value, m1->test_cond_value) == false)
+    if(eq_test_cond_value(m0->test_cond_value, m1->test_cond_value) == false){
       return false;
+    }
   }
 
   return true;

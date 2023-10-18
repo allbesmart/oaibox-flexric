@@ -6,7 +6,7 @@ void free_matching_cond_frm_3(matching_condition_format_3_lst_t* src)
 {
   assert(src != NULL);
 
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
   // Logical OR
   if (src->logical_OR != NULL)
     free(src->logical_OR);
@@ -60,7 +60,7 @@ bool eq_matching_cond_frm_3(matching_condition_format_3_lst_t const * m0, matchi
     assert(false && "Unknown Matching Condition Type");
   }
 
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
   // Logical OR
   if ((m0->logical_OR != NULL || m1->logical_OR != NULL) && *m0->logical_OR != *m1->logical_OR){
     assert(0!=0 && "For debugging purposes");
@@ -93,7 +93,7 @@ matching_condition_format_3_lst_t cp_kpm_matching_cond_frm_3(matching_condition_
     assert(false && "Unknown Matching Condition Type");
   }
 
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
   // Logical OR
   if (src->logical_OR != NULL) {
     dst.logical_OR = malloc (sizeof(dst.logical_OR));

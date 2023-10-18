@@ -113,8 +113,6 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
   assert(action_def != NULL);
 
   E2SM_KPM_ActionDefinition_t pdu = {0};
-  //calloc(1, sizeof(E2SM_KPM_ActionDefinition_t));
-  //assert (pdu != NULL && "Memory exhausted");
 
   pdu.ric_Style_Type = (long)action_def->type + 1;
  

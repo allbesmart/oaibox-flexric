@@ -25,7 +25,7 @@ void free_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t* src)
   }
   free(src->ue_id_matched_lst);
 
-#if defined KPM_V2_02 || defined KPM_V3_00
+#if defined KPM_V2_03 || defined KPM_V3_00
   // Sequence of Matched UE IDs for Granularity Periods
   // not yet implemented in ASN.1 - possible extension
   if (src->ue_id_gran_period_lst != NULL || src->ue_id_gran_period_lst_len != 0)
@@ -74,7 +74,7 @@ bool eq_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t const* m0, meas_info_cond_
     }
   }
 
-#if defined KPM_V2_02 || defined KPM_V3_00
+#if defined KPM_V2_03 || defined KPM_V3_00
   // Sequence of Matched UE IDs for Granularity Periods
   // not yet implemented in ASN.1 - possible extension
   if (m0->ue_id_gran_period_lst != NULL || m0->ue_id_gran_period_lst_len != 0 || m1->ue_id_gran_period_lst_len != 0 || m1->ue_id_gran_period_lst != NULL)
@@ -122,7 +122,7 @@ meas_info_cond_ue_lst_t cp_kpm_meas_info_cond_ue(meas_info_cond_ue_lst_t const* 
     dst.ue_id_matched_lst[j] = cp_ue_id_e2sm(&src->ue_id_matched_lst[j]);
   }
 
-#if defined KPM_V2_02 || defined KPM_V3_00
+#if defined KPM_V2_03 || defined KPM_V3_00
   // Sequence of Matched UE IDs for Granularity Periods
   dst.ue_id_gran_period_lst_len = src->ue_id_gran_period_lst_len;
 

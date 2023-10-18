@@ -21,7 +21,7 @@ typedef struct {
         test_info_lst_t test_info_lst;  // 8.3.22
     };
 
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
     enum_value_e *logical_OR;  // 8.3.25  -  OPTIONAL 
 #endif
 } matching_condition_format_3_lst_t;

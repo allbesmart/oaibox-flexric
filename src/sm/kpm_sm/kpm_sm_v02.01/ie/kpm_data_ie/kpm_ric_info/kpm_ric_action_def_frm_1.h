@@ -22,7 +22,7 @@ typedef struct{
 
   cell_global_id_t* cell_global_id; // 8.3.20 - OPTIONAL
 
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
   size_t meas_bin_range_info_lst_len; // [0, 65535]
   meas_bin_range_info_lst_t *meas_bin_info_lst;
 #endif

@@ -79,9 +79,6 @@ bool eq_test_cond_value(const test_cond_value_t* m0, const test_cond_value_t* m1
 test_cond_value_t cp_test_cond_value(const test_cond_value_t* src);
 
 
-
-
-
 // 8.3.22   Test Condition Information
 typedef struct {
     

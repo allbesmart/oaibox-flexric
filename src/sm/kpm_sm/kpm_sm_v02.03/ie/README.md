@@ -61,3 +61,6 @@ The following ASN.1 types are changed:
 - MeasurementCondUEidItem
 - MeasurementCondItem
 - TestCond-Type
+- TestCond-Value 
+
+

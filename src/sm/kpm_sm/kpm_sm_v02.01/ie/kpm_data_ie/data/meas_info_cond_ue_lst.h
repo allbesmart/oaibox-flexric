@@ -20,7 +20,7 @@ typedef struct {
 
     size_t ue_id_matched_lst_len;  // [0, 65535]
     ue_id_e2sm_t *ue_id_matched_lst;
-#if defined KPM_V2_02 || defined KPM_V3_00
+#if defined KPM_V2_03 || defined KPM_V3_00
     size_t ue_id_gran_period_lst_len;  // [0, 65535]
     ue_id_gran_period_lst_t *ue_id_gran_period_lst;  // not yet implemented in ASN.1 - possible extension
 #endif

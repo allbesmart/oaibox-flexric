@@ -23,6 +23,7 @@
 #include "../../src/sm/kpm_sm/kpm_sm_id_wrapper.h"
 #include "../../src/util/time_now_us.h"
 
+
 #include <assert.h>
 #include <time.h>
 #include <stdlib.h>
@@ -44,7 +45,7 @@ kpm_event_trigger_def_t fill_rnd_kpm_event_trigger_def(void)
   return dst;
 }
 
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
 static bin_range_def_t fill_rnd_bin_range_def(void)
 {
   bin_range_def_t bin_range_def = {0};
@@ -700,11 +701,11 @@ label:
     dst.printable_string_value = calloc(1, sizeof(byte_array_t));
     assert(dst. printable_string_value != NULL && "Memory exhausted"); 
     *dst.printable_string_value = cp_str_to_ba("Test");
-#if defined KPM_V2_02 || defined KPM_V3_00
-  } else if(*test_info.type == REAL_TEST_COND_VALUE){
-     test_info. real_value_value = calloc(1, sizeof(double));
-     assert(test_info. real_value_value != NULL && "Memory exhausted"); 
-     *test_info. real_value_value = rand();
+#if defined KPM_V2_03 || defined KPM_V3_00
+  } else if(dst.type == REAL_TEST_COND_VALUE){
+     dst.real_value = calloc(1, sizeof(double));
+     assert(dst.real_value != NULL && "Memory exhausted"); 
+     *dst.real_value= rand();
 #endif
   } else {
     assert(0!= 0 && "Unknown condition value");
@@ -802,7 +803,7 @@ static kpm_act_def_format_3_t fill_rnd_kpm_action_def_frm_3(void)
 
   // Measurement Information
   // [1, 65535]
-  action_def_frm_3.meas_info_lst_len = 10; //(rand() % 65535) + 1;
+  action_def_frm_3.meas_info_lst_len = 2; //(rand() % 65535) + 1;
                                             
   action_def_frm_3.meas_info_lst = calloc(action_def_frm_3.meas_info_lst_len, sizeof(meas_info_format_3_lst_t));
   assert(action_def_frm_3.meas_info_lst != NULL && "Memory exhausted" );
@@ -860,7 +861,7 @@ static kpm_act_def_format_3_t fill_rnd_kpm_action_def_frm_3(void)
         assert(false && "Unknown Matching Condition Type");
       }
   
-#if defined KPM_V2_02 || defined KPM_V3_00
+#if defined KPM_V2_03 || defined KPM_V3_00
       // Logical OR
       meas_info->matching_cond_lst[j].logical_OR = calloc(1, sizeof(enum_value_e));
       assert(meas_info->matching_cond_lst[j].logical_OR != NULL && "Memory exhausted");
@@ -869,9 +870,10 @@ static kpm_act_def_format_3_t fill_rnd_kpm_action_def_frm_3(void)
     }
 
 
-#if defined KPM_V2_02 || defined KPM_V3_00
+#if defined KPM_V2_03 || defined KPM_V3_00
     // Bin Range Definition
     // not yet implemented in ASN.1 - possible extension
+    
     meas_info->bin_range_def = calloc(1, sizeof(bin_range_def_t));
     assert(meas_info->bin_range_def != NULL && "Memory exhausted");
 
@@ -921,7 +923,8 @@ static kpm_act_def_format_3_t fill_rnd_kpm_action_def_frm_3(void)
 
     meas_info->bin_range_def->bin_z_lst_len = 0;
     meas_info->bin_range_def->bin_z_lst = NULL;
-#endif // defined KPM_V2_02 || defined KPM_V3_00
+    
+#endif // defined KPM_V2_03 || defined KPM_V3_00
   }
        
   // Granularity Period
@@ -952,7 +955,7 @@ static kpm_act_def_format_3_t fill_rnd_kpm_action_def_frm_3(void)
   return action_def_frm_3;
 }
 
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
 
 static kpm_act_def_format_4_t fill_rnd_kpm_action_def_frm_4(void)
 {
@@ -998,7 +1001,7 @@ static kpm_act_def_format_5_t fill_rnd_kpm_action_def_frm_5(void)
 
   return action_def_frm_5;
 }
-#endif // if defined KPM_V2_02 || defined KPM_V3_00 
+#endif // if defined KPM_V2_03 || defined KPM_V3_00 
 
 
 kpm_act_def_t fill_rnd_kpm_action_def(void)
@@ -1008,7 +1011,7 @@ kpm_act_def_t fill_rnd_kpm_action_def(void)
 #ifdef KPM_V2_01
   // Only Action [1-3] implemented
   action_def.type = rand()%FORMAT_4_ACTION_DEFINITION;
-#elif defined KPM_V2_02 || defined KPM_V3_00  
+#elif defined KPM_V2_03 || defined KPM_V3_00  
   action_def.type = rand()%END_ACTION_DEFINITION;
 #else
   _Static_assert(0!=0 && "Unknown KPM Version!");
@@ -1027,7 +1030,7 @@ kpm_act_def_t fill_rnd_kpm_action_def(void)
   case FORMAT_3_ACTION_DEFINITION:
     action_def.frm_3 = fill_rnd_kpm_action_def_frm_3();
     break;
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
   /* Possible extensions: */
   case FORMAT_4_ACTION_DEFINITION:
     action_def.frm_4 = fill_rnd_kpm_action_def_frm_4();
@@ -1142,7 +1145,7 @@ static kpm_ind_msg_format_1_t fill_rnd_kpm_ind_msg_frm_1(void)
   assert(msg_frm_1.gran_period_ms != NULL && "Memory exhausted");
   *msg_frm_1.gran_period_ms = (rand() % 4294967295) + 1;
  
-#if defined KPM_V2_02 || defined  KPM_V3_00 
+#if defined KPM_V2_03 || defined  KPM_V3_00 
 
   // Measurement Information - OPTIONAL
   msg_frm_1.meas_info_lst_len = 2;
@@ -1188,7 +1191,7 @@ static kpm_ind_msg_format_1_t fill_rnd_kpm_ind_msg_frm_1(void)
       }
   }
 
-#endif // defined KPM_V2_02 || defined  KPM_V3_00 
+#endif // defined KPM_V2_03 || defined  KPM_V3_00 
 
   return msg_frm_1;
 }
@@ -1302,7 +1305,7 @@ static kpm_ind_msg_format_2_t fill_rnd_kpm_ind_msg_frm_2(void)
         assert(false && "Unknown Matching Condition Type");
       }
      
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
       // Logical OR
       cond_ue->matching_cond_lst[j].logical_OR = calloc(1, sizeof(enum_value_e));
       assert(cond_ue->matching_cond_lst[j].logical_OR != NULL && "Memory exhausted");
@@ -1321,7 +1324,7 @@ static kpm_ind_msg_format_2_t fill_rnd_kpm_ind_msg_frm_2(void)
       cond_ue->ue_id_matched_lst[j] = fill_rnd_ue_id_data();
     }
 
-#if defined KPM_V2_02 || defined KPM_V3_00
+#if defined KPM_V2_03 || defined KPM_V3_00
     // Sequence of Matched UE IDs for Granularity Periods
     // not yet implemented in ASN.1 - possible extension
     cond_ue->ue_id_gran_period_lst_len = 3;  // (rand() % 65535) + 0;
@@ -1357,13 +1360,13 @@ static kpm_ind_msg_format_2_t fill_rnd_kpm_ind_msg_frm_2(void)
         break;
       }
     }
-#endif // defined KPM_V2_02 || defined KPM_V3_00
+#endif // defined KPM_V2_03 || defined KPM_V3_00
   }
 
   return msg_frm_2;
 }
 
-#if defined KPM_V2_02 || defined KPM_V3_00
+#if defined KPM_V2_03 || defined KPM_V3_00
 static 
 kpm_ind_msg_format_3_t fill_rnd_kpm_ind_msg_frm_3(void)
 {
@@ -1391,7 +1394,7 @@ kpm_ind_msg_t fill_rnd_kpm_ind_msg(void)
 
 #if defined KPM_V2_01 
   msg.type = rand() % FORMAT_3_INDICATION_MESSAGE;
-#elif defined KPM_V2_02 || defined KPM_V3_00
+#elif defined KPM_V2_03 || defined KPM_V3_00
   msg.type = rand() % END_INDICATION_MESSAGE;
 #else
   _Static_assert(0!=0 && "Unknown format type");
@@ -1406,7 +1409,7 @@ kpm_ind_msg_t fill_rnd_kpm_ind_msg(void)
   case FORMAT_2_INDICATION_MESSAGE:
     msg.frm_2 = fill_rnd_kpm_ind_msg_frm_2();
     break;
-#if defined KPM_V2_02 || defined KPM_V3_00
+#if defined KPM_V2_03 || defined KPM_V3_00
   /* Possible extensions: */
   case FORMAT_3_INDICATION_MESSAGE:
     msg.frm_3 = fill_rnd_kpm_ind_msg_frm_3();

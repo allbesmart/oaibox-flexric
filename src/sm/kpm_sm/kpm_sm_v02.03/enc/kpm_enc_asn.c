@@ -56,8 +56,10 @@ byte_array_t encode(void* pdu, e2sm_kpm_e e)
   asn_enc_rval_t er = {0};
   if(e == E2SM_KPM_EVENT_TRIGGER_DEFINITION_ENUM)
     er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_KPM_EventTriggerDefinition, pdu, ba.buf, ba.len);
-  else if(e == E2SM_KPM_ACTION_DEFINITION_ENUM)
+  else if(e == E2SM_KPM_ACTION_DEFINITION_ENUM){
     er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_KPM_ActionDefinition, pdu, ba.buf, ba.len);
+    //xer_fprint(stderr, &asn_DEF_E2SM_KPM_ActionDefinition, pdu);
+  }
   else if(e == E2SM_KPM_INDICATION_HEADER_ENUM)
     er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_KPM_IndicationHeader, pdu, ba.buf, ba.len);
   else if(e == E2SM_KPM_INDICATION_MESSAGE_ENUM)
@@ -113,8 +115,6 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
   assert(action_def != NULL);
 
   E2SM_KPM_ActionDefinition_t pdu = {0};
-  //calloc(1, sizeof(E2SM_KPM_ActionDefinition_t));
-  //assert (pdu != NULL && "Memory exhausted");
 
   pdu.ric_Style_Type = (long)action_def->type + 1;
  
@@ -161,18 +161,6 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
 
   byte_array_t const ba = encode(&pdu, E2SM_KPM_ACTION_DEFINITION_ENUM);
 
-  /*
-  //xer_fprint(stderr, &asn_DEF_E2SM_KPM_ActionDefinition, pdu);
-  //fflush(stdout);
-
-  // FIXME Create one function for encoding common to all the methods.
-  byte_array_t ba = {.buf = malloc(2048), .len = 2048}; 
-  const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
-  asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_KPM_ActionDefinition, pdu, ba.buf, ba.len);
-  assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
-  ba.len = er.encoded;
-*/
- 
   ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_E2SM_KPM_ActionDefinition, &pdu);
 
   return ba;
@@ -305,7 +293,7 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
   {
     pdu.ranFunction_Name.ranFunction_Instance = calloc(1, sizeof(*pdu.ranFunction_Name.ranFunction_Instance));
     assert(pdu.ranFunction_Name.ranFunction_Instance != NULL && "Memory exhausted");
-    pdu.ranFunction_Name.ranFunction_Instance = func_def->name.instance;
+    *pdu.ranFunction_Name.ranFunction_Instance = *func_def->name.instance;
   }
   else
   {
@@ -446,11 +434,10 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
         assert(ret == 0);
 
         // Measurement Type ID
-        if (func_def->ric_report_style_list[i].meas_info_for_action_lst[j].id != NULL)
-        {
+        if (func_def->ric_report_style_list[i].meas_info_for_action_lst[j].id != NULL) {
           meas_item->measID = calloc(1, sizeof(MeasurementTypeID_t));
           assert(meas_item->measID != NULL && "Memory exhausted");
-          memcpy(meas_item->measID, func_def->ric_report_style_list[i].meas_info_for_action_lst[j].id, 2);
+          *meas_item->measID = *func_def->ric_report_style_list[i].meas_info_for_action_lst[j].id;
         }
 
         // Bin Range Definition

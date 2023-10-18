@@ -20,7 +20,7 @@ void free_kpm_action_def_frm_1(kpm_act_def_format_1_t* src)
     free(src->cell_global_id);
 
   
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
   // Measurement Bin Range
   if (src->meas_bin_info_lst != NULL)
   {
@@ -57,7 +57,7 @@ bool eq_kpm_action_def_frm_1(kpm_act_def_format_1_t const * m0, kpm_act_def_form
       return false;
   }
 
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
   // Measurement Bin Range Information
   if (m0->meas_bin_info_lst != NULL || m1->meas_bin_info_lst != NULL)
   {
@@ -109,7 +109,7 @@ kpm_act_def_format_1_t cp_kpm_action_def_frm_1(const kpm_act_def_format_1_t * sr
   }
 
 
-#if defined KPM_V2_02 || defined KPM_V3_00 
+#if defined KPM_V2_03 || defined KPM_V3_00 
   // Measurement Bin Range Information List - Optional
   if (src->meas_bin_info_lst != NULL)
   {

@@ -23,8 +23,10 @@
 #include "../../../../src/util/alg_ds/alg/defer.h"
 #include "../../../../src/util/time_now_us.h"
 
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <signal.h>
 #include <time.h>
 #include <unistd.h>
 

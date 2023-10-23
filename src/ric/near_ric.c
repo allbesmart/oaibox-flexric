@@ -427,7 +427,7 @@ void sctp_msg_arrived_event(void* arg)
 
   if(msg.type == E2_SETUP_REQUEST){
     global_e2_node_id_t const* id = &msg.u_msgs.e2_stp_req.id;
-    printf("Received message with id = %d, port = %d \n", id->nb_id.nb_id, sctp_msg->info.addr.sin_port);
+    //printf("Received message with id = %d, port = %d \n", id->nb_id.nb_id, sctp_msg->info.addr.sin_port);
     e2ap_reg_sock_addr_ric(&ric->ep, id, &sctp_msg->info);
   }
 
@@ -743,11 +743,11 @@ void control_service_near_ric(near_ric_t* ric, global_e2_node_id_t const* id, ui
 
   ric_control_request_t ctrl_req = generate_control_request(ric, sm, ctrl);
 
-  // A pending event is created along with a timer of 1000 ms,
+  // A pending event is created along with a timer of 3000 ms,
   // after which an event will be generated
   pending_event_ric_t ev = {.ev = CONTROL_REQUEST_PENDING_EVENT, .id = ctrl_req.ric_id };
 
-  long const wait_ms = 2000;
+  long const wait_ms = 3000;
   int fd_timer = create_timer_ms_asio_ric(&ric->io, wait_ms, wait_ms); 
   //printf("RIC: Control fd_timer for control with value created == %d\n", fd_timer);
 
@@ -887,7 +887,7 @@ uint16_t fwd_ric_control_request(near_ric_t* ric, global_e2_node_id_t const* id,
 
   e2ap_send_bytes_ric(&ric->ep, id, ba_msg);
 
-  puts("[NEAR-RIC]: CONTROL SERVICE sent\n");
+  printf("[NEAR-RIC]: CONTROL SERVICE sent\n");
 
   return ric_req_id; 
 }

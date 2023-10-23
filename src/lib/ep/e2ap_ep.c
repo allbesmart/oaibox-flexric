@@ -180,7 +180,6 @@ sctp_msg_t e2ap_recv_sctp_msg(e2ap_ep_t* ep)
     free(from.ba.buf); 
 
     from.type = SCTP_MSG_NOTIFICATION;
-    //from.notif = cp_sctp_notification((union sctp_notification*) buf, rc); 
     from.notif = calloc(1,sizeof(union sctp_notification));
     assert(from.notif != NULL && "Memory exhausted");
 

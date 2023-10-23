@@ -344,6 +344,8 @@ void free_e42_xapp(e42_xapp_t* xapp)
 
   close_db_xapp(&xapp->db);
 
+  e2ap_free_ep_xapp(&xapp->ep);
+
   free(xapp);
 }
 

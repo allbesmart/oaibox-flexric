@@ -97,8 +97,8 @@ void print_mac_stats(mac_ind_msg_t const* msg )
   pthread_once(&init_fp_once, init_fp);
   assert(fp != NULL);
 
-  int64_t now = time_now_us();
-  printf("Time diff at iApp = %ld \n", now - msg->tstamp);
+  //int64_t now = time_now_us();
+  //printf("Time diff at iApp = %ld \n", now - msg->tstamp);
 
   for(uint32_t i = 0; i < msg->len_ue_stats; ++i){
     char stats[1024] = {0};

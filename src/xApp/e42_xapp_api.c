@@ -46,6 +46,10 @@ static
 void sig_handler(int sig_num)
 {
   printf("\nEnding abnormally the xApp SDK with signal number = %d\n", sig_num);
+
+  while(try_stop_xapp_api() == false)
+    usleep(1000);
+
   exit(EXIT_FAILURE);
 }
 

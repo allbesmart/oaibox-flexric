@@ -101,5 +101,6 @@ void e2ap_send_bytes_xapp(e2ap_ep_xapp_t* ep, byte_array_t ba)
 void e2ap_free_ep_xapp(e2ap_ep_xapp_t* ep)
 {
   assert(ep != NULL);
-  assert(0!=0 && "Not implememented!");
+
+  close(ep->base.fd);
 }

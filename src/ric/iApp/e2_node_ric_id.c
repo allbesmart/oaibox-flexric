@@ -19,27 +19,35 @@
  *      contact@openairinterface.org
  */
 
-#ifndef XAPP_RIC_ID_H
-#define XAPP_RIC_ID_H 
+#include "e2_node_ric_id.h"
 
-#include "../../lib/e2ap/ric_gen_id_wrapper.h"
-#include <stdbool.h>
-#include <stdint.h>
+#include <assert.h>
+#include <stdlib.h>
 
-typedef struct{
-  ric_gen_id_t ric_id;
-  uint16_t xapp_id;
-} xapp_ric_id_t;
+e2_node_ric_id_t cp_e2_node_ric_id(e2_node_ric_id_t const* src)
+{
+  assert(src != NULL);
 
-int cmp_xapp_ric_gen_id(xapp_ric_id_t const* m0,  xapp_ric_id_t const* m1);
-int cmp_xapp_ric_gen_id_wrapper(void const* m0, void const* m1);
+  e2_node_ric_id_t dst = {0};
+  dst.ric_id = src->ric_id;
+  dst.ric_req_type = src->ric_req_type;
+  dst.e2_node_id = cp_global_e2_node_id(&src->e2_node_id);
 
-bool eq_xapp_ric_gen_id(xapp_ric_id_t const* m0, xapp_ric_id_t const* m1);
-bool eq_xapp_ric_gen_id_wrapper(void const* m0, void const* m1);
-bool eq_xapp_id(uint16_t m0, uint16_t m1);
+  return dst;
+}
 
-bool eq_xapp_id_gen_wrapper(void const* m0, void const* m1);
-bool eq_xapp_ric_gen_id_wrapper(void const* m0, void const* m1);
 
-#endif
+void free_e2_node_ric_id(e2_node_ric_id_t* src)
+{
+  assert(src != NULL);
+
+  free_global_e2_node_id(&src->e2_node_id);
+}
+
+
+void free_e2_node_ric_id_wrapper(void* src)
+{
+  assert(src != NULL);
+  return free_e2_node_ric_id(src);
+}
 

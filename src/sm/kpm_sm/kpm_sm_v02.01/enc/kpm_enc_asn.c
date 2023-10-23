@@ -160,7 +160,6 @@ byte_array_t kpm_enc_action_def_asn(kpm_act_def_t const* action_def)
   }
 
   byte_array_t const ba = encode(&pdu, E2SM_KPM_ACTION_DEFINITION_ENUM);
-
   ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_E2SM_KPM_ActionDefinition, &pdu);
 
   return ba;
@@ -241,8 +240,8 @@ byte_array_t kpm_enc_ind_msg_asn(kpm_ind_msg_t const* ind_msg)
   }
 
 
-  //xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage, pdu);
-  //fflush(stdout);
+  xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage, &pdu);
+  fflush(stdout);
 
   byte_array_t const ba = encode(&pdu, E2SM_KPM_INDICATION_MESSAGE_ENUM);
 

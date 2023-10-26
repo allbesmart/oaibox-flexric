@@ -366,7 +366,7 @@ void e2_event_loop_agent(e2_agent_t* ag)
           e2_setup_request_t sr = gen_setup_request(&ag->ap.version.type, ag); 
           defer({ e2ap_free_setup_request(&sr); } );
 
-          printf("[E2AP] Resending Setup Request after timeout\n");
+          printf("[E2 AGENT]: E2 SETUP REQUEST timeout. Resending again (tx) \n");
           byte_array_t ba = e2ap_enc_setup_request_ag(&ag->ap, &sr); 
           defer({ free_byte_array(ba); } ); 
 
@@ -392,6 +392,7 @@ void e2_event_loop_agent(e2_agent_t* ag)
         }
     }
   }
+
 
   printf("ag->agent_stopped = true \n");
   ag->agent_stopped = true;
@@ -449,7 +450,7 @@ void e2_start_agent(e2_agent_t* ag)
   e2_setup_request_t sr = gen_setup_request(&ag->ap.version.type, ag); 
   defer({ e2ap_free_setup_request(&sr);  } );
 
-  printf("[E2-AGENT]: Sending setup request\n");
+  printf("[E2-AGENT]: E2 SETUP-REQUEST tx \n");
   byte_array_t ba = e2ap_enc_setup_request_ag(&ag->ap, &sr); 
   defer({free_byte_array(ba); } ); 
 
@@ -484,6 +485,8 @@ void e2_free_agent(e2_agent_t* ag)
   free_tsq(&ag->aind, NULL);
 
   free_global_e2_node_id(&ag->global_e2_node_id);
+
+  e2ap_free_ep_agent(&ag->ep);
 
   free(ag);
 }

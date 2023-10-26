@@ -65,101 +65,6 @@ bool check_valid_msg_type(e2_msg_type_t msg_type)
   return false;
 }
 
-/*
-static
-e2_setup_response_t fill_e2_setup_response_v1(const e2_setup_request_t* req, accepted_ran_function_t* accepted, size_t len_acc)
-{
-  assert(req != NULL);
-  e2_setup_response_t sr = {
-      .id.plmn = req->id.plmn, 
-      .id.near_ric_id.double_word = 25,
-      .accepted = accepted,
-      .len_acc = len_acc,
-      .rejected = NULL,
-      .len_rej = 0,
-      .comp_conf_update_ack_list = NULL,
-      .len_ccual = 0
-  };
-  return sr;
-}
-
-static
-e2_setup_response_t fill_e2_setup_response_v2(const e2_setup_request_t* req, accepted_ran_function_t* accepted, size_t len_acc )
-{
-
-  assert(req != NULL);
-  e2_setup_response_t sr = {
-      .id.plmn = req->id.plmn, 
-      .id.near_ric_id.double_word = 25,
-      .accepted = accepted,
-      .len_acc = len_acc,
-      .rejected = NULL,
-      .len_rej = 0,
-      .comp_config_add_ack = NULL,
-      .len_ccaa = 0
-  };
-  return sr;
-
-}
-
-static
-e2_setup_response_t fill_e2_setup_response_v3(const e2_setup_request_t* req, accepted_ran_function_t* accepted, size_t len_acc )
-{
-  assert(req != NULL);
-  assert(0 !=0 && "Not implemented");
-e2_setup_response_t dst = {0};
-
-return dst;
-
-}
-*/
-
-
-/*
-static inline
-e2_setup_response_t generate_setup_response(near_ric_t* ric, const e2_setup_request_t* req)
-{
-  assert(ric != NULL);
-  assert(req != NULL);
-
-  const size_t len_acc = req->len_rf;
-  accepted_ran_function_t* accepted = calloc(len_acc, sizeof(accepted_ran_function_t));
-  assert(accepted != NULL && "Memory exhausted");
-
-  for (size_t i = 0; i < len_acc; ++i) {
-    void* start_it = assoc_front(&ric->plugin.sm_ds);
-    void* end_it = assoc_end(&ric->plugin.sm_ds);
-    uint16_t const id = req->ran_func_item[i].id;
-
-    void* it = find_if(&ric->plugin.sm_ds, start_it, end_it, &id, eq_ran_func_id); 
-
-    if(it != end_it){
-      assert(id == *(uint16_t*)assoc_key(&ric->plugin.sm_ds, it) );
-      accepted[i] = id;
-      char def[128] = {0};
-      assert(req->ran_func_item[i].def.len < 127 );
-      memcpy(def, req->ran_func_item[i].def.buf, req->ran_func_item[i].def.len);
-      printf("[NEAR-RIC]: Accepting RAN function ID %d with def = %s \n", id, def);
-    } else {
-      printf("Unknown RAN function ID, thus rejecting %d \n", id);
-
-      void* it = assoc_front(&ric->plugin.sm_ds);
-      while(it != assoc_end(&ric->plugin.sm_ds)){
-      //  printf("Registered keys = %d \n", *(uint16_t*)assoc_key(&ric->plugin.sm_ds, it));        
-        it = assoc_next(&ric->plugin.sm_ds, it);
-      }
-
-      assert(0!=0 && "Unknown RAN function ID from the agent received");
-    }
-    fflush(stdout);
-  }
-
-  e2_setup_response_t sr = fill_e2_setup_response(&ric->e2ap_version.type, req, accepted, len_acc); 
-
-  return sr;
-}
-*/
-
 static
 void stop_pending_event(near_ric_t* ric, pending_event_ric_t* ev )
 {
@@ -351,7 +256,7 @@ void publish_ind_msg(near_ric_t* ric,  uint16_t ran_func_id, sm_ag_if_rd_ind_t* 
   pending_event_ric_t ev = {.ev = CONTROL_REQUEST_PENDING_EVENT, .id = ack->ric_id }; 
   stop_pending_event(ric, &ev);
 
-  printf("[NEAR-RIC]: CONTROL ACKNOWLEDGE received\n");
+  printf("[NEAR-RIC]: CONTROL ACKNOWLEDGE rx\n");
 
 #ifndef TEST_AGENT_RIC  
   notify_msg_iapp_api(msg);
@@ -403,9 +308,9 @@ void publish_ind_msg(near_ric_t* ric,  uint16_t ran_func_id, sm_ag_if_rd_ind_t* 
   const e2ap_plmn_t* plmn = &req->id.plmn;
   const char* ran_type = get_ngran_name(req->id.type);
   if (NODE_IS_MONOLITHIC(req->id.type))
-    printf("[E2AP] Received SETUP-REQUEST from PLMN %3d.%*d Node ID %d RAN type %s\n", plmn->mcc, plmn->mnc_digit_len, plmn->mnc, req->id.nb_id.nb_id, ran_type);
+    printf("[E2AP]: E2 SETUP-REQUEST rx from PLMN %3d.%*d Node ID %d RAN type %s\n", plmn->mcc, plmn->mnc_digit_len, plmn->mnc, req->id.nb_id.nb_id, ran_type);
   else
-    printf("[E2AP] Received SETUP-REQUEST from PLMN %3d.%*d Node ID %d RAN type %s CU/DU ID %ld\n", plmn->mcc, plmn->mnc_digit_len, plmn->mnc, req->id.nb_id.nb_id, ran_type, *req->id.cu_du_id);
+    printf("[E2AP]: E2 SETUP-REQUEST rx from PLMN %3d.%*d Node ID %d RAN type %s CU/DU ID %ld\n", plmn->mcc, plmn->mnc_digit_len, plmn->mnc, req->id.nb_id.nb_id, ran_type, *req->id.cu_du_id);
   // Add the E2 Node into the iApp
   add_e2_node_iapp_api((global_e2_node_id_t*)&req->id, req->len_rf, req->ran_func_item);
 

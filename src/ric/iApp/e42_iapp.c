@@ -110,8 +110,6 @@ bool pend_event(e42_iapp_t* iapp, int fd, pending_event_t** p_ev)
   return false;
 }
 
-
-
 static
 async_event_t next_async_event_iapp(e42_iapp_t* iapp)
 {
@@ -124,17 +122,17 @@ async_event_t next_async_event_iapp(e42_iapp_t* iapp)
 
   if(fd == -1){ // no event happened. Just for checking the stop_token condition
     e.type = CHECK_STOP_TOKEN_EVENT;
-//    printf("[iApp]: No event happened\n");
   } else if (net_pkt(iapp, fd) == true){
     e.msg = e2ap_recv_msg_iapp(&iapp->ep);
- //   printf("[iApp]: Received message\n");
     if(e.msg.type == SCTP_MSG_NOTIFICATION){
-//      printf("Message notification received\n");
+      if(e.msg.notif->sn_header.sn_type == SCTP_ASSOC_CHANGE){
+        printf(" SCTP_ASSOC_CHANGE recived \n" );
+        e.type = UNKNOWN_EVENT;
+        return e;
+      } 
       e.type = SCTP_CONNECTION_SHUTDOWN_EVENT;
-      printf("[iApp]: SCTP Connection shutdown event detected \n");
     } else if (e.msg.type == SCTP_MSG_PAYLOAD){
        e.type = SCTP_MSG_ARRIVED_EVENT;
-       //printf("[iApp]: SCTP MSG ARRIVED\n");
     } else { 
       assert(0!=0 && "Unknown type");
     }
@@ -147,7 +145,6 @@ async_event_t next_async_event_iapp(e42_iapp_t* iapp)
     */
   } else if (pend_event(iapp, fd, &e.p_ev) == true){
     e.type = PENDING_EVENT;
-
   } else {
     assert(0!=0 && "Unknown event happened!");
   }
@@ -247,6 +244,17 @@ void e2_event_loop_iapp(e42_iapp_t* iapp)
         }
       case CHECK_STOP_TOKEN_EVENT:
         {
+/*       
+       socklen_t opt_len = sizeof(struct sctp_status);
+       struct sctp_status status = {0};
+          //check status
+          getsockopt(iapp->ep.base.fd, IPPROTO_SCTP, SCTP_STATUS, &status, &opt_len);
+          printf("\nSCTP Status:\n--------\n");
+    printf("assoc id  = %d\n", status.sstat_assoc_id);
+    printf("state     = %d\n", status.sstat_state);
+    printf("instrms   = %d\n", status.sstat_instrms);
+    printf("outstrms  = %d\n--------\n\n", status.sstat_outstrms);
+*/
           break;
         }
       default:
@@ -257,6 +265,9 @@ void e2_event_loop_iapp(e42_iapp_t* iapp)
     }
 
   }
+
+  e2ap_free_ep_iapp(&iapp->ep);
+
   iapp->stopped = true; 
 }
 
@@ -281,8 +292,6 @@ void free_e42_iapp(e42_iapp_t* iapp)
 
   // Emulator
   //stop_near_ric_iapp_gen(iapp->ric_if.type);
-
-  e2ap_free_ep_iapp(&iapp->ep);
 
   free_reg_e2_node(&iapp->e2_nodes);
 

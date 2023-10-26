@@ -95,7 +95,8 @@ typedef struct e42_xapp_s
   // DB handler
   db_xapp_t db;
 
-  atomic_bool connected;
+  pthread_mutex_t conn_mtx;
+  bool connected;
   atomic_bool stopped;
   atomic_bool stop_token;
 } e42_xapp_t;

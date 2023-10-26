@@ -349,7 +349,7 @@ bool pend_event(near_ric_t* ric, int fd, pending_event_t** p_ev)
  
   {
   lock_guard(&ric->pend_mtx);
-  assert(bi_map_size(&ric->pending) == 1 );
+  // assert(bi_map_size(&ric->pending) == 1 );
 
   void* start_it = assoc_front(&ric->pending.left);
   void* end_it = assoc_end(&ric->pending.left);
@@ -845,21 +845,30 @@ void fwd_ric_subscription_request_delete(near_ric_t* ric, global_e2_node_id_t co
   // A pending event is created along with a timer of 3000 ms,
   // after which an event will be generated
   pending_event_ric_t ev = {.ev = SUBSCRIPTION_DELETE_REQUEST_PENDING_EVENT, .id = sdr->ric_id };
-
-  long const wait_ms = 3000;
-  int fd_timer = create_timer_ms_asio_ric(&ric->io, wait_ms, wait_ms); 
-
   {
     lock_guard(&ric->pend_mtx);
+
+    // left: fd, right: pending_event_t 
+    assoc_rb_tree_t* tree = &ric->pending.right;
+
+    void* first = assoc_front(tree);
+    void* end  = assoc_end(tree);
+    if(find_if(tree, first, end, &ev, eq_pending_event_ric ) != end){
+      printf("[NEAR-RIC]: SUBSCRIPTION REQUEST DELETE RAN FUNC ID %d RIC REQ ID %d MSG ALREADY PENDING\n", sdr->ric_id.ran_func_id, sdr->ric_id.ric_req_id);
+      return;
+    }
+
+    long const wait_ms = 3000;
+    int fd_timer = create_timer_ms_asio_ric(&ric->io, wait_ms, wait_ms); 
     bi_map_insert(&ric->pending, &fd_timer, sizeof(fd_timer), &ev, sizeof(ev)); 
   }
 
   byte_array_t ba_msg = e2ap_enc_subscription_delete_request_ric(&ric->ap, sdr); 
-  defer({ free_byte_array(ba_msg); }  );
+  defer({ free_byte_array(ba_msg); });
 
   e2ap_send_bytes_ric(&ric->ep, id, ba_msg);
 
-  puts("[NEAR-RIC]: SUBSCRIPTION DELETE REQUEST tx\n" );
+  printf("[NEAR-RIC]: SUBSCRIPTION DELETE REQUEST tx RAN FUNC ID %d  RIC REQ ID %d \n", sdr->ric_id.ran_func_id, sdr->ric_id.ric_req_id);
 }
 
 uint16_t fwd_ric_control_request(near_ric_t* ric, global_e2_node_id_t const* id, ric_control_request_t const* cr,  void (*f)(e2ap_msg_t const* msg))

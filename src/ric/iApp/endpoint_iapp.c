@@ -65,15 +65,16 @@ int init_sctp_conn_server(const char* addr, int port)
   assert(rc != -1);
 
   struct sctp_event_subscribe evnts = {.sctp_data_io_event = 1, 
-                                       .sctp_shutdown_event = 1 /*,
-                                       .sctp_peer_error_event = 1,
-                                       .sctp_association_event = 1*/ };
+                                       /*.sctp_shutdown_event = 1,*/ 
+                                       .sctp_send_failure_event = 1
+                                       /*.sctp_association_event = 1*/
+                                       /*.sctp_peer_error_event = 1,
+                                       */ };
 
   rc = setsockopt (server_fd, IPPROTO_SCTP, SCTP_EVENTS, &evnts, sizeof (evnts));
   assert(rc != -1);
 
   const int close_time = 0; // No automatic close https://www.rfc-editor.org/rfc/pdfrfc/rfc6458.txt.pdf p. 65
-
   setsockopt(server_fd, IPPROTO_SCTP, SCTP_AUTOCLOSE, &close_time, sizeof(close_time));
 
   const int no_delay = 1;
@@ -97,7 +98,6 @@ void e2ap_init_ep_iapp(e2ap_ep_iapp_t* ep, const char* addr, int port)
   *(int*)(&ep->base.fd) = init_sctp_conn_server(addr, port);
   *(int*)(&ep->base.port) = port;
   strncpy((char*)(&ep->base.addr), addr, 16);
-
 
   init_map_xapps_sad(&ep->xapps);
 }
@@ -136,8 +136,8 @@ void e2ap_send_sctp_msg_iapp(const e2ap_ep_iapp_t* ep,sctp_msg_t* msg)
 void e2ap_free_ep_iapp(e2ap_ep_iapp_t* ep)
 {
   assert(ep != NULL);
-  e2ap_ep_free(&ep->base);
 
+  e2ap_ep_free(&ep->base);
   free_map_xapps_sad(&ep->xapps);
 }
 

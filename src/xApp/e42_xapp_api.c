@@ -45,12 +45,12 @@ pthread_t thrd_xapp;
 static
 void sig_handler(int sig_num)
 {
-  printf("\nEnding abnormally the xApp SDK with signal number = %d\n", sig_num);
+  printf("\n[xApp]:Abruptly ending with signal number = %d\n", sig_num);
 
   while(try_stop_xapp_api() == false)
     usleep(1000);
 
-  exit(EXIT_FAILURE);
+   exit(EXIT_FAILURE);
 }
 
 static inline
@@ -73,11 +73,12 @@ void init_xapp_api(fr_args_t const* args)
   xapp = init_e42_xapp(args);
 
   // Spawn a new thread for the xapp
-  const int rc = pthread_create(&thrd_xapp, NULL, static_start_xapp, NULL);
+  int rc = pthread_create(&thrd_xapp, NULL, static_start_xapp, NULL);
   assert(rc == 0);
 
   while(connected_e42_xapp(xapp) == false)
     sleep(1);
+ 
 }
   
 bool try_stop_xapp_api(void)
@@ -169,7 +170,7 @@ void rm_report_sm_xapp_api(int const handle)
   assert(xapp != NULL);
   assert(handle > -1);
 
-  printf("Remove handle number = %d \n", handle);
+  //printf("Remove handle number = %d \n", handle);
   rm_report_sm_sync_xapp(xapp, handle);
 }
 

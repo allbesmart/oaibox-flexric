@@ -426,7 +426,7 @@ byte_array_t e2ap_enc_subscription_request_asn(const ric_subscription_request_t*
   const byte_array_t ba = e2ap_enc_asn_pdu_ba(pdu);
   free_pdu(pdu);
 
-  printf("[E2AP] SUBSCRIPTION REQUEST generated\n");
+  //printf("[E2AP] SUBSCRIPTION REQUEST generated\n");
 
   return ba;
 }

@@ -61,16 +61,16 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
   kpm_ind_data_t const* kpm = &rd->ind.kpm.ind;
 
   int64_t now = time_now_us();
-  printf("KPM ind_msg latency = %ld μs\n", now - kpm->hdr.kpm_ric_ind_hdr_format_1.collectStartTime);
+  printf("[KPM RC]: KPM ind_msg latency = %ld μs\n", now - kpm->hdr.kpm_ric_ind_hdr_format_1.collectStartTime);
 
 #if defined KPM_V2_03 || defined KPM_V3_00
-  printf("Sojourn time %lf \n",kpm->msg.frm_3.meas_report_per_ue[0].ind_msg_format_1.meas_data_lst[0].meas_record_lst[0].real_val);
+  printf("[KPM RC]: Sojourn time %lf \n",kpm->msg.frm_3.meas_report_per_ue[0].ind_msg_format_1.meas_data_lst[0].meas_record_lst[0].real_val);
   {
     lock_guard(&mtx);
     free_ue_id_e2sm(&ue_id); 
     ue_id = cp_ue_id_e2sm(&kpm->msg.frm_3.meas_report_per_ue[0].ue_meas_report_lst);
   }
-   printf("UE ID %ld \n ", ue_id.gnb.amf_ue_ngap_id);
+   printf("[KPM RC]: UE ID %ld \n ", ue_id.gnb.amf_ue_ngap_id);
 #endif
 }
 
@@ -305,7 +305,7 @@ int main(int argc, char *argv[])
   e2_node_arr_t nodes = e2_nodes_xapp_api();
   assert(nodes.len > 0);
 
-  printf("Connected E2 nodes = %d\n", nodes.len);
+  printf("[KPM RC]: Connected E2 nodes = %d\n", nodes.len);
 
   sm_ans_xapp_t* h = calloc(nodes.len, sizeof(sm_ans_xapp_t)); 
   assert(h != NULL && "Memory exhausted");
@@ -396,7 +396,7 @@ int main(int argc, char *argv[])
   rc = pthread_mutex_destroy(&mtx);
   assert(rc == 0);
 
-  printf("Test xApp run SUCCESSFULLY\n");
+  printf("[KPM RC]: Test xApp run SUCCESSFULLY\n");
 
 }
 

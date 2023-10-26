@@ -156,7 +156,7 @@ pthread_once_t once = PTHREAD_ONCE_INIT;
 static
 void sig_handler(int sig_num)
 {
-  printf("\nEnding the E2 Agent with signal number = %d\n. Please, wait.", sig_num);
+  printf("\n[E2 AGENT]: Abruptly ending with signal number = %d\n[E2 AGENT]: Please, wait.\n", sig_num);
   // For the impatient, do not break my code
   pthread_once(&once, stop_and_exit);
 }

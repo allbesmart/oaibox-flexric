@@ -26,6 +26,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+
 typedef struct{
   ric_gen_id_t ric_id;
   uint16_t xapp_id;
@@ -40,6 +41,14 @@ bool eq_xapp_id(uint16_t m0, uint16_t m1);
 
 bool eq_xapp_id_gen_wrapper(void const* m0, void const* m1);
 bool eq_xapp_ric_gen_id_wrapper(void const* m0, void const* m1);
+
+typedef struct{
+  bool has_value;
+  union{
+    char* error;
+    xapp_ric_id_t xapp_ric_id;
+  };
+} xapp_ric_id_xpct_t;
 
 #endif
 

@@ -105,7 +105,7 @@ void init_agent_api(int mcc,
     assert(it > 0);
   }
   assert(it < 128);
-  puts(str);
+  printf("%s" ,str);
 
   agent = e2_init_agent(server_ip_str, e2ap_server_port, ge2ni, io, args->libs_dir);
 

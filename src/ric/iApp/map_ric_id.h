@@ -50,7 +50,7 @@ void rm_map_ric_id(map_ric_id_t* map, xapp_ric_id_t const* ric_id);
 
 //void rm_map_ric_id(map_ric_id_t* map, e2_node_ric_req_t* node); // uint16_t ric_req_id);
 
-xapp_ric_id_t find_xapp_map_ric_id(map_ric_id_t* map, uint16_t ric_req_id);
+xapp_ric_id_xpct_t find_xapp_map_ric_id(map_ric_id_t* map, uint16_t ric_req_id);
 
 e2_node_ric_id_t find_ric_req_map_ric_id(map_ric_id_t* map, xapp_ric_id_t* x);
 

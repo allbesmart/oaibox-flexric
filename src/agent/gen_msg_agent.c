@@ -30,7 +30,7 @@ e2_setup_request_t gen_setup_request_v1(e2_agent_t* ag)
   assert(ag != NULL);
 
   const size_t len_rf = assoc_size(&ag->plugin.sm_ds);
-  assert(len_rf > 0 && "No RAN function/service model registered. Check if the Service Models are located at shared library paths, default location is /usr/local/flexric/");
+  assert(len_rf > 0 && "No RAN function/service model registered. Check if the Service Models are located at shared library paths, default location is /usr/local/lib/flexric/ ");
 
   ran_function_t* ran_func = calloc(len_rf, sizeof(*ran_func));
   assert(ran_func != NULL);
@@ -71,7 +71,7 @@ e2_setup_request_t gen_setup_request_v2(e2_agent_t* ag)
   assert(ag != NULL);
 
   const size_t len_rf = assoc_size(&ag->plugin.sm_ds);
-  assert(len_rf > 0 && "No RAN function/service model registered. Check if the Service Models are located at shared library paths, default location is /usr/local/flexric/");
+  assert(len_rf > 0 && "No RAN function/service model registered. Check if the Service Models are located at shared library paths, default location is /usr/local/lib/flexric/ ");
 
   ran_function_t* ran_func = calloc(len_rf, sizeof(*ran_func));
   assert(ran_func != NULL);

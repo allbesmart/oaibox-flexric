@@ -106,7 +106,7 @@ byte_array_t mac_enc_ctrl_hdr_plain(mac_ctrl_hdr_t const* ctrl_hdr)
 {
   assert(ctrl_hdr != NULL);
   byte_array_t  ba = {0};
-  ba.buf = malloc(sizeof(mac_ind_msg_t)); 
+  ba.buf = malloc(sizeof(mac_ind_hdr_t)); 
   assert(ba.buf != NULL);
 
   memcpy(ba.buf, ctrl_hdr, sizeof(mac_ctrl_hdr_t));

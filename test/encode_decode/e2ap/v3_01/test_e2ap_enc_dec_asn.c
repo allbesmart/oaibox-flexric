@@ -573,7 +573,6 @@ void test_setup_response()
     .len_ccaa = len_ccaa,
   };
 
-
   byte_array_t ba = e2ap_enc_setup_response_asn(&e2_stp_res_begin);
   E2AP_PDU_t* pdu = e2ap_create_pdu(ba.buf, ba.len);
   free_byte_array(ba);
@@ -602,7 +601,7 @@ void test_setup_failure()
   memcpy(tl_info->address.buf, addr, strlen(addr) );
   tl_info->address.len = strlen(addr); 
   tl_info->port = calloc(1,sizeof(byte_array_t));
-  const char* port = "1010";
+  const char* port = "10";
   tl_info->port->buf = malloc(strlen(port));
   memcpy(tl_info->port->buf, port, strlen(port));
   tl_info->port->len = strlen(port);  
@@ -614,11 +613,14 @@ void test_setup_failure()
   .tl_info = tl_info, // optional
 };
 
-  E2AP_PDU_t* pdu = e2ap_enc_setup_failure_asn_pdu(&sf_begin);
+  byte_array_t ba = e2ap_enc_setup_failure_asn(&sf_begin);
+  E2AP_PDU_t* pdu = e2ap_create_pdu(ba.buf, ba.len);
+  free_byte_array(ba);
   e2ap_msg_t msg = e2ap_dec_setup_failure(pdu);
   free_pdu(pdu); 
+
   assert(msg.type == E2_SETUP_FAILURE); 
-  e2_setup_failure_t* sf_end  = &msg.u_msgs.e2_stp_fail;
+  e2_setup_failure_t* sf_end = &msg.u_msgs.e2_stp_fail;
 
   assert(eq_e2_setup_failure(&sf_begin, sf_end) == true);
   e2ap_free_setup_failure(&sf_begin);
@@ -1125,8 +1127,8 @@ int main()
    
     test_setup_request();
     test_setup_response();
-
-    //test_setup_failure();
+    test_setup_failure();
+    
     //test_reset_request(); 
     //test_reset_response();
     //test_service_update();

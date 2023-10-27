@@ -324,7 +324,7 @@ e2ap_msg_t e2ap_handle_setup_response_agent(e2_agent_t* ag, const e2ap_msg_t* ms
   assert(ag != NULL);
   assert(msg != NULL);
   assert(msg->type == E2_SETUP_RESPONSE);
-  printf("[E2-AGENT]: E2 SETUP-RESPONSE rx\n");
+  printf("[E2-AGENT]: E2 SETUP RESPONSE rx\n");
 
   // Stop the timer
   pending_event_t ev = SETUP_REQUEST_PENDING_EVENT;
@@ -343,7 +343,66 @@ e2ap_msg_t e2ap_handle_setup_failure_agent(e2_agent_t* ag, const e2ap_msg_t* msg
 {
   assert(ag != NULL);
   assert(msg != NULL);
-  assert(0!=0 && "Not implemented");
+  assert(msg->type == E2_SETUP_FAILURE);
+
+	char const* str[] = { 
+   "CAUSE_NOTHING",	/* NO COMPONENTS PRESENT */
+	 "CAUSE_RICREQUEST",
+	 "CAUSE_RICSERVICE",
+	 "CAUSE_TRANSPORT",
+	 "CAUSE_PROTOCOL",
+	 "CAUSE_MISC"
+  };
+
+  const char* str2[6][11] = { 
+    {
+      "CAUSE_NOTHING",
+    },
+    {
+      "CAUSE_RIC_RAN_FUNCTION_ID_INVALID",
+      "CAUSE_RIC_ACTION_NOT_SUPPORTED",
+      "CAUSE_RIC_EXCESSIVE_ACTIONS",
+      "CAUSE_RIC_DUPLICATE_ACTION",
+      "CAUSE_RIC_DUPLICATE_EVENT",
+      "CAUSE_RIC_FUNCTION_RESOURCE_LIMIT",
+      "CAUSE_RIC_REQUEST_ID_UNKNOWN",
+      "CAUSE_RIC_INCONSISTENT_ACTION_SUBSEQUENT_ACTION_SEQUENCE",
+      "CAUSE_RIC_CONTROL_MESSAGE_INVALID",
+      "CAUSE_RIC_CALL_PROCESS_ID_INVALID",
+      "CAUSE_RIC_UNSPECIFIED"	
+    }, 
+    {
+      "CAUSE_RICSERVICE_FUNCTION_NOT_REQUIRED",
+      "CAUSE_RICSERVICE_EXCESSIVE_FUNCTIONS",
+      "CAUSE_RICSERVICE_RIC_RESOURCE_LIMIT"
+    },
+    {
+      "CAUSE_TRANSPORT_UNSPECIFIED",
+      "CAUSE_TRANSPORT_TRANSPORT_RESOURCE_UNAVAILABLE"
+    },
+    {
+      "CAUSE_PROTOCOL_TRANSFER_SYNTAX_ERROR",
+      "CAUSE_PROTOCOL_ABSTRACT_SYNTAX_ERROR_REJECT",
+      "CAUSE_PROTOCOL_ABSTRACT_SYNTAX_ERROR_IGNORE_AND_NOTIFY",
+      "CAUSE_PROTOCOL_MESSAGE_NOT_COMPATIBLE_WITH_RECEIVER_STATE",
+      "CAUSE_PROTOCOL_SEMANTIC_ERROR",
+      "CAUSE_PROTOCOL_ABSTRACT_SYNTAX_ERROR_FALSELY_CONSTRUCTED_MESSAGE",
+      "CAUSE_PROTOCOL_UNSPECIFIED"
+    },
+    {
+      "CAUSE_MISC_CONTROL_PROCESSING_OVERLOAD",
+      "CAUSE_MISC_HARDWARE_FAILURE",
+      "CAUSE_MISC_OM_INTERVENTION",
+      "CAUSE_MISC_UNSPECIFIED"
+    }
+  };
+
+  e2_setup_failure_t const* e2_stp_fail = &msg->u_msgs.e2_stp_fail;
+	int const present = e2_stp_fail->cause.present;
+  assert(present < 6);
+  int const idx = e2_stp_fail->cause.ricRequest;
+  assert(idx < 11);
+  printf("[E2-AGENT]: E2 SETUP FAILURE rx %s %s\n", str[present], str2[present][idx]);
 
   e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};
   return ans; 

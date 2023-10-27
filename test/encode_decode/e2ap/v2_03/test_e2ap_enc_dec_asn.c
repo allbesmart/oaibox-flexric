@@ -178,7 +178,6 @@ void test_subscription_failure()
     .ric_inst_id = 2,
     .ran_func_id = 12};
 
-
   ric_action_not_admitted_t* na = calloc(1,sizeof(ric_action_not_admitted_t)); 
   na->ric_act_id = 2;
   na->cause.present = CAUSE_PROTOCOL;
@@ -605,7 +604,7 @@ void test_setup_failure()
 {
   cause_t cause = {.present = CAUSE_RICREQUEST, .ricRequest = CAUSE_RIC_RAN_FUNCTION_ID_INVALID};
 
-//  e2ap_time_to_wait_e* time_to_wait_ms = NULL;
+  //  e2ap_time_to_wait_e* time_to_wait_ms = NULL;
   e2ap_time_to_wait_e* time_to_wait_ms = calloc(1, sizeof(e2ap_time_to_wait_e)); 
   *time_to_wait_ms = TIMETOWAIT_V1S; 
 
@@ -616,23 +615,26 @@ void test_setup_failure()
   memcpy(tl_info->address.buf, addr, strlen(addr) );
   tl_info->address.len = strlen(addr); 
   tl_info->port = calloc(1,sizeof(byte_array_t));
-  const char* port = "1010";
+  const char* port = "10";
   tl_info->port->buf = malloc(strlen(port));
   memcpy(tl_info->port->buf, port, strlen(port));
   tl_info->port->len = strlen(port);  
 
   e2_setup_failure_t sf_begin = {
-  .cause = cause,
-  .time_to_wait_ms = time_to_wait_ms,            // optional
-  .crit_diag = crit_diag, // optional
-  .tl_info = tl_info, // optional
-};
+    .cause = cause,
+    .time_to_wait_ms = time_to_wait_ms,            // optional
+    .crit_diag = crit_diag, // optional
+    .tl_info = tl_info, // optional
+  };
 
-  E2AP_PDU_t* pdu = e2ap_enc_setup_failure_asn_pdu(&sf_begin);
+  byte_array_t ba = e2ap_enc_setup_failure_asn(&sf_begin);
+  E2AP_PDU_t* pdu = e2ap_create_pdu(ba.buf, ba.len);
+  free_byte_array(ba);
   e2ap_msg_t msg = e2ap_dec_setup_failure(pdu);
   free_pdu(pdu); 
+
   assert(msg.type == E2_SETUP_FAILURE); 
-  e2_setup_failure_t* sf_end  = &msg.u_msgs.e2_stp_fail;
+  e2_setup_failure_t* sf_end = &msg.u_msgs.e2_stp_fail;
 
   assert(eq_e2_setup_failure(&sf_begin, sf_end) == true);
   e2ap_free_setup_failure(&sf_begin);
@@ -1139,8 +1141,8 @@ int main()
    
     test_setup_request();
     test_setup_response();
-
-    //test_setup_failure();
+    test_setup_failure();
+    
     //test_reset_request(); 
     //test_reset_response();
     //test_service_update();

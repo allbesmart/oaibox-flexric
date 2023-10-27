@@ -1831,8 +1831,6 @@ e2ap_msg_t e2ap_dec_setup_failure(const E2AP_PDU_t* pdu)
 {
   assert(pdu != NULL);
 
-  assert(0!=0 && "Untested code");
-
   e2ap_msg_t ret = {.type = E2_SETUP_FAILURE};
   e2_setup_failure_t* sf = &ret.u_msgs.e2_stp_fail;
 
@@ -1854,7 +1852,7 @@ e2ap_msg_t e2ap_dec_setup_failure(const E2AP_PDU_t* pdu)
 
   // Cause. Mandatory
   const E2setupFailureIEs_t* cause = out->protocolIEs.list.array[1]; 
-  assert(cause->id  == ProtocolIE_ID_id_E2connectionSetupFailed);
+  assert(cause->id  == ProtocolIE_ID_id_Cause	); //  ProtocolIE_ID_id_E2connectionSetupFailed);
   assert(cause->criticality == Criticality_ignore);
   assert(cause->value.present == E2setupFailureIEs__value_PR_Cause);
   sf->cause = copy_cause(cause->value.choice.Cause);
@@ -1862,7 +1860,7 @@ e2ap_msg_t e2ap_dec_setup_failure(const E2AP_PDU_t* pdu)
   int elm_id = out->protocolIEs.list.count - 1;
   assert(elm_id > -1 && elm_id < 4);
 
-  while(elm_id != 0){
+  while(elm_id > 1){
     const E2setupFailureIEs_t* src = out->protocolIEs.list.array[elm_id];
     assert(src->value.present == E2setupFailureIEs__value_PR_TimeToWait
         || src->value.present == E2setupFailureIEs__value_PR_CriticalityDiagnostics
@@ -2686,6 +2684,10 @@ E2AP_PDU_t* e2ap_create_pdu(const uint8_t* buffer, int buffer_len)
   //printf("rval.code = %d\n", rval.code);
   //fprintf(stdout, "length of data %ld\n", rval.consumed);
   assert(rval.code == RC_OK && "Are you sending data in ATS_ALIGEND_BASIC_PER syntax?");
+
+  //xer_fprint(stdout, &asn_DEF_E2AP_PDU, pdu);
+  //fflush(stdout);
+
   return pdu;
 }
 

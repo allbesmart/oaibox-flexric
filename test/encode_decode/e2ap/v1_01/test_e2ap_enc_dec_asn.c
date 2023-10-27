@@ -510,7 +510,7 @@ void test_setup_failure()
   e2ap_msg_t msg = e2ap_dec_setup_failure(pdu);
   free_pdu(pdu); 
   assert(msg.type == E2_SETUP_FAILURE); 
-  e2_setup_failure_t* sf_end  = &msg.u_msgs.e2_stp_fail;
+  e2_setup_failure_t* sf_end = &msg.u_msgs.e2_stp_fail;
 
   assert(eq_e2_setup_failure(&sf_begin, sf_end) == true);
   e2ap_free_setup_failure(&sf_begin);

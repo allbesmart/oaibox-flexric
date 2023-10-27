@@ -1672,13 +1672,24 @@ E2AP_PDU_t* e2ap_enc_setup_failure_asn_pdu(const e2_setup_failure_t* sf)
 
   E2setupFailure_t* out = &pdu->choice.unsuccessfulOutcome->value.choice.E2setupFailure;
 
+  // Transaction ID. Mandatory
+  E2setupFailureIEs_t* trans_id = calloc(1, sizeof( E2setupFailureIEs_t)); 
+  assert(trans_id != NULL && "Memory exhausted");
+  trans_id->id = ProtocolIE_ID_id_TransactionID;
+  trans_id->criticality = Criticality_reject;
+  trans_id->value.present = E2setupFailureIEs__value_PR_TransactionID;
+  trans_id->value.choice.TransactionID = sf->trans_id;
+  int rc = ASN_SEQUENCE_ADD(&out->protocolIEs.list, trans_id);
+  assert(rc == 0);
+
   // Cause. Mandatory
   E2setupFailureIEs_t* cause = calloc(1, sizeof( E2setupFailureIEs_t)); 
-  cause->id = ProtocolIE_ID_id_E2connectionSetupFailed;
+  assert(cause != NULL && "Memory exhausted");
+  cause->id = ProtocolIE_ID_id_Cause;
   cause->criticality = Criticality_ignore;
   cause->value.present = E2setupFailureIEs__value_PR_Cause;
   cause->value.choice.Cause = copy_cause(sf->cause);
-  int rc = ASN_SEQUENCE_ADD(&out->protocolIEs.list, cause);
+  rc = ASN_SEQUENCE_ADD(&out->protocolIEs.list, cause);
   assert(rc == 0);
 
   //Time To Wait. Optional 
@@ -1713,6 +1724,7 @@ E2AP_PDU_t* e2ap_enc_setup_failure_asn_pdu(const e2_setup_failure_t* sf)
     transport_layer->value.choice.TNLinformation.tnlAddress = copy_ba_to_bit_string(sf->tl_info->address);
     if(sf->tl_info->port != NULL){
       transport_layer->value.choice.TNLinformation.tnlPort = calloc(1, sizeof(BIT_STRING_t));
+      assert(sf->tl_info->port->len == 2);
       *transport_layer->value.choice.TNLinformation.tnlPort = copy_ba_to_bit_string(*sf->tl_info->port);
     }
 

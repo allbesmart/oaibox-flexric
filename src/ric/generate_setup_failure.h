@@ -19,32 +19,27 @@
  *      contact@openairinterface.org
  */
 
+#ifndef GENERATE_SETUP_FAILURE_MIR_H
+#define GENERATE_SETUP_FAILURE_MIR_H
 
-#include <assert.h>
-#include "e2_setup_failure.h"
+#include "../lib/e2ap/e2_setup_failure_wrapper.h"
+#include "../lib/e2ap/e2_setup_request_wrapper.h"
 
-bool eq_e2_setup_failure(const e2_setup_failure_t* m0, const e2_setup_failure_t* m1)
-{
-  if(m0 == m1) return true;
+typedef struct near_ric_s near_ric_t;
 
-  if(m0 == NULL || m1 == NULL) return false;
+e2_setup_failure_t generate_setup_failure_v1(near_ric_t* ric, const e2_setup_request_t* req);
 
-  if(m0->trans_id != m1->trans_id){
-    assert(0!=0 && "Debugging");
-    return false;
-  }
+e2_setup_failure_t generate_setup_failure_v2(near_ric_t* ric, const e2_setup_request_t* req);
 
-  if(eq_cause(&m0->cause, &m1->cause) == false)
-    return false;
+e2_setup_failure_t generate_setup_failure_v3(near_ric_t* ric, const e2_setup_request_t* req);
 
-  if(eq_time_to_wait(m0->time_to_wait_ms, m1->time_to_wait_ms) == false)
-    return false;
 
-  if(eq_criticality_diagnostics(m0->crit_diag, m1->crit_diag) == false)
-    return false;
+#define generate_setup_failure(T,U,V) _Generic ((T), e2ap_v1_t*: generate_setup_failure_v1, \
+                                    e2ap_v2_t*: generate_setup_failure_v2, \
+                                    e2ap_v3_t*: generate_setup_failure_v3, \
+                                    default:  generate_setup_failure_v1) (U,V)
 
-  if(eq_transport_layer_information(m0->tl_info, m1->tl_info) == false)
-    return false;
+#endif
 
-  return true;
-}
+
+

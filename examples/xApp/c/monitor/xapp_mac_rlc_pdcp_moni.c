@@ -106,14 +106,26 @@ int main(int argc, char *argv[])
     for (size_t j = 0; j < n->len_rf; j++)
       printf("Registered node %d ran func id = %d \n ", i, n->ack_rf[j].id);
 
-    mac_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 142, (void*)i_0, sm_cb_mac);
-    assert(mac_handle[i].success == true);
+    if(n->id.type == ngran_gNB){
+      mac_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 142, (void*)i_0, sm_cb_mac);
+      assert(mac_handle[i].success == true);
 
-    rlc_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 143, (void*)i_1, sm_cb_rlc);
-    assert(rlc_handle[i].success == true);
+      rlc_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 143, (void*)i_1, sm_cb_rlc);
+      assert(rlc_handle[i].success == true);
 
-    pdcp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 144, (void*)i_2, sm_cb_pdcp);
-    assert(pdcp_handle[i].success == true);
+      pdcp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 144, (void*)i_2, sm_cb_pdcp);
+      assert(pdcp_handle[i].success == true);
+    } else if(n->id.type ==  ngran_gNB_CU ){
+      pdcp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 144, (void*)i_2, sm_cb_pdcp);
+      assert(pdcp_handle[i].success == true);
+    } else if(n->id.type == ngran_gNB_DU){
+      mac_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 142, (void*)i_0, sm_cb_mac);
+      assert(mac_handle[i].success == true);
+
+      rlc_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 143, (void*)i_1, sm_cb_rlc);
+      assert(rlc_handle[i].success == true);
+    }
+
   }
 
   sleep(10);
@@ -121,9 +133,12 @@ int main(int argc, char *argv[])
 
   for(int i = 0; i < nodes.len; ++i){
     // Remove the handle previously returned
-    rm_report_sm_xapp_api(mac_handle[i].u.handle);
-    rm_report_sm_xapp_api(rlc_handle[i].u.handle);
-    rm_report_sm_xapp_api(pdcp_handle[i].u.handle);
+    if(mac_handle[i].u.handle != 0 )
+      rm_report_sm_xapp_api(mac_handle[i].u.handle);
+    if(rlc_handle[i].u.handle != 0) 
+      rm_report_sm_xapp_api(rlc_handle[i].u.handle);
+    if(pdcp_handle[i].u.handle != 0)
+      rm_report_sm_xapp_api(pdcp_handle[i].u.handle);
   }
 
   if(nodes.len > 0){

@@ -51,16 +51,20 @@ void read_ind_mac(void* read)
   cp.msg = cp_mac_ind_msg(&ind->msg);
 }
 
-/*
+
 static 
-sm_ag_if_ans_t write_RAN(const sm_ag_if_wr_t* data)
+sm_ag_if_ans_t write_ctrl(void const* data)
 {
   assert(data != NULL);
-  assert(0!=0 && "Not implemented");
-  sm_ag_if_ans_t ans = {0};
+
+  mac_ctrl_req_data_t* ctrl = (mac_ctrl_req_data_t*)data; 
+  assert(ctrl->hdr.dummy == 1);
+  assert(ctrl->msg.action == 42);
+
+  sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0 };
   return ans;
 }
-*/
+
 
 /////////////////////////////
 // Check Functions
@@ -113,10 +117,26 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   free_sm_ind_data(&sm_data); 
 }
 
+
+// RIC -> E2
+static
+void check_ctrl(sm_agent_t* ag, sm_ric_t* ric)
+{
+  assert(ag != NULL);
+  assert(ric != NULL);
+
+  mac_ctrl_req_data_t ctrl = {.hdr.dummy = 0, .msg.action = 42}; 
+  sm_ctrl_req_data_t msg = ric->proc.on_control_req(ric, &ctrl);
+  
+  sm_ctrl_out_data_t out = ag->proc.on_control(ag, &msg);
+  assert(out.len_out == 0 && out.ctrl_out == NULL );
+}
+
 int main()
 {
   sm_io_ag_ran_t io_ag = {0};
   io_ag.read_ind_tbl[MAC_STATS_V0] = read_ind_mac; 
+  io_ag.write_ctrl_tbl[MAC_CTRL_REQ_V0] = write_ctrl; 
 
   sm_agent_t* sm_ag = make_mac_sm_agent(io_ag);
   sm_ric_t* sm_ric = make_mac_sm_ric();
@@ -124,6 +144,7 @@ int main()
   check_eq_ran_function(sm_ag, sm_ric);
   check_subscription(sm_ag, sm_ric);
   check_indication(sm_ag, sm_ric);
+  check_ctrl(sm_ag, sm_ric);
 
   sm_ag->free_sm(sm_ag);
   sm_ric->free_sm(sm_ric);

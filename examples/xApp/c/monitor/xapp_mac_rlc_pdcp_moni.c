@@ -107,6 +107,10 @@ int main(int argc, char *argv[])
       printf("Registered node %d ran func id = %d \n ", i, n->ack_rf[j].id);
 
     if(n->id.type == ngran_gNB){
+      mac_ctrl_req_data_t wr = {.hdr.dummy = 1, .msg.action = 42 };
+      sm_ans_xapp_t const a = control_sm_xapp_api(&nodes.n[i].id, 142, &wr);
+      assert(a.success == true);
+
       mac_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 142, (void*)i_0, sm_cb_mac);
       assert(mac_handle[i].success == true);
 

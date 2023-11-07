@@ -539,7 +539,7 @@ sm_ans_xapp_t control_sm_sync_xapp(e42_xapp_t* xapp, global_e2_node_id_t* id, ui
   // Remove the active procedure, control request  
   rm_act_proc(&xapp->act_proc, ric_id.ric_req_id ); 
  
-  sm_ans_xapp_t const ans = {0};
+  sm_ans_xapp_t const ans = {.success = true};
   return ans;
 }
 

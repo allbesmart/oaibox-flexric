@@ -22,8 +22,12 @@ void read_mac_setup_sm(void* data)
 sm_ag_if_ans_t write_ctrl_mac_sm(void const* data)
 {
   assert(data != NULL);
-//  assert(data->type == MAC_CTRL_REQ_V0);
 
-  assert(0 !=0 && "Not supported");
+  mac_ctrl_req_data_t* ctrl = (mac_ctrl_req_data_t*)data; 
+  assert(ctrl->hdr.dummy == 1);
+  assert(ctrl->msg.action == 42);
+
+  sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0 };
+  return ans;
 }
 

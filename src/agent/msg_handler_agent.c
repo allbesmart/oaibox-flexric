@@ -70,7 +70,7 @@ bool stop_ind_event(e2_agent_t* ag, ric_gen_id_t id)
   void* end_r = assoc_rb_tree_end(&ag->ind_event.right);
   void* it_r = find_if_rb_tree(&ag->ind_event.right, start_r, end_r, &tmp, eq_ind_event); 
   if(it_r == end_r){
-    printf("[E2 AGENT]: RAN_FUNC_ID %d RIC_REQ_ID %d not found. Spuriously occurs when abruptly closing the xApp\n", id.ric_req_id, id.ran_func_id);
+    printf("[E2 AGENT]: RAN_FUNC_ID %d RIC_REQ_ID %d not found. Spuriously occurs when abruptly closing the xApp\n", id.ran_func_id, id.ric_req_id);
     return false;;
   }
 

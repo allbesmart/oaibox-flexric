@@ -372,6 +372,21 @@ bool eq_slice(fr_slice_t const* m0, fr_slice_t const* m1)
 }
 
 static
+bool eq_sched_name(const char* m0, const char* m1, size_t len)
+{
+  if(m0 == m1)
+    return true;
+
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  if(memcmp(m0, m1, len) != 0)
+    return false;
+
+  return true;
+}
+
+static
 bool eq_ul_dl_slice_conf(ul_dl_slice_conf_t const* m0, ul_dl_slice_conf_t const* m1)
 {
   assert(m0 != NULL);
@@ -380,10 +395,10 @@ bool eq_ul_dl_slice_conf(ul_dl_slice_conf_t const* m0, ul_dl_slice_conf_t const*
   if(m0->len_sched_name != m1->len_sched_name)
     return false;
 
-  if(m0->len_slices != m1->len_slices)
+  if(eq_sched_name(m0->sched_name, m1->sched_name, m0->len_sched_name) == false)
     return false;
 
-  if(memcmp(m0->sched_name, m1->sched_name, m0->len_sched_name) != 0)
+  if(m0->len_slices != m1->len_slices)
     return false;
 
   for(size_t i = 0; i < m0->len_slices; ++i) {

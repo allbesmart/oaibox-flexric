@@ -247,15 +247,12 @@ kpm_ran_function_def_t kpm_dec_func_def_asn(size_t len, uint8_t const func_def[l
   
   if (pdu->ranFunction_Name.ranFunction_Instance != NULL)
   {
+    assert(ret.name.instance == NULL);
     ret.name.instance = calloc(1, sizeof(*ret.name.instance));
     assert(ret.name.instance != NULL && "Memory exhausted");
-    ret.name.instance = pdu->ranFunction_Name.ranFunction_Instance;
+    *ret.name.instance = *pdu->ranFunction_Name.ranFunction_Instance;
   }
-  else
-  {
-    ret.name.instance = NULL;
-  }
-
+  
 
   //  RIC Event Trigger Style Item
   if (pdu->ric_EventTriggerStyle_List != NULL)

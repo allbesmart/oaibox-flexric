@@ -126,7 +126,7 @@ static kpm_act_def_format_1_t fill_rnd_kpm_action_def_frm_1(void)
     {
     case NAME_MEAS_TYPE:
       meas_info->meas_type.type = NAME_MEAS_TYPE;
-      meas_info->meas_type.name.buf = calloc(strlen("test") + 1, sizeof(char));
+      meas_info->meas_type.name.buf = calloc(strlen("test") + 1, sizeof(uint8_t));
       memcpy(meas_info->meas_type.name.buf, "test", strlen("test"));
       meas_info->meas_type.name.len = strlen("test");
       break;
@@ -201,7 +201,7 @@ static kpm_act_def_format_1_t fill_rnd_kpm_action_def_frm_1(void)
     {
     case NAME_MEAS_TYPE:
       action_def_frm_1.meas_bin_info_lst[i].meas_type.type = NAME_MEAS_TYPE;
-      action_def_frm_1.meas_bin_info_lst[i].meas_type.name.buf = calloc(strlen("test") + 1, sizeof(char));
+      action_def_frm_1.meas_bin_info_lst[i].meas_type.name.buf = calloc(strlen("test") + 1, sizeof(uint8_t));
       memcpy(action_def_frm_1.meas_bin_info_lst[i].meas_type.name.buf, "test", strlen("test"));
       action_def_frm_1.meas_bin_info_lst[i].meas_type.name.len = strlen("test");
       break;
@@ -819,7 +819,7 @@ static kpm_act_def_format_3_t fill_rnd_kpm_action_def_frm_3(void)
     {
     case NAME_MEAS_TYPE:
       meas_info->meas_type.type = NAME_MEAS_TYPE;
-      meas_info->meas_type.name.buf = calloc(strlen("test") + 1, sizeof(char));
+      meas_info->meas_type.name.buf = calloc(strlen("test") + 1, sizeof(uint8_t));
       memcpy(meas_info->meas_type.name.buf, "test", strlen("test"));
       meas_info->meas_type.name.len = strlen("test");
       break;
@@ -1057,17 +1057,17 @@ static kpm_ric_ind_hdr_format_1_t fill_rnd_kpm_ind_hdr_frm_1(void)
   hdr_frm_1.fileformat_version = NULL;
   
   hdr_frm_1.sender_name = calloc(1, sizeof(byte_array_t));
-  hdr_frm_1.sender_name->buf = calloc(strlen("My OAI-CU") + 1, sizeof(char));
+  hdr_frm_1.sender_name->buf = calloc(strlen("My OAI-CU") + 1, sizeof(uint8_t));
   memcpy(hdr_frm_1.sender_name->buf, "My OAI-CU", strlen("My OAI-CU"));
   hdr_frm_1.sender_name->len = strlen("My OAI-CU");
   
   hdr_frm_1.sender_type = calloc(1, sizeof(byte_array_t));
-  hdr_frm_1.sender_type->buf = calloc(strlen("CU") + 1, sizeof(char));
+  hdr_frm_1.sender_type->buf = calloc(strlen("CU") + 1, sizeof(uint8_t));
   memcpy(hdr_frm_1.sender_type->buf, "CU", strlen("CU"));
   hdr_frm_1.sender_type->len = strlen("CU");
   
   hdr_frm_1.vendor_name = calloc(1, sizeof(byte_array_t));
-  hdr_frm_1.vendor_name->buf = calloc(strlen("OAI") + 1, sizeof(char));
+  hdr_frm_1.vendor_name->buf = calloc(strlen("OAI") + 1, sizeof(uint8_t));
   memcpy(hdr_frm_1.vendor_name->buf, "OAI", strlen("OAI"));
   hdr_frm_1.vendor_name->len = strlen("OAI");
 
@@ -1163,7 +1163,7 @@ static kpm_ind_msg_format_1_t fill_rnd_kpm_ind_msg_frm_1(void)
         msg_frm_1.meas_info_lst[i].meas_type.type = NAME_MEAS_TYPE;
         char s[100];
         snprintf(s, 100, "RNTI %04x PrbDlUsage", (unsigned) (1111*i + 1111));
-        msg_frm_1.meas_info_lst[i].meas_type.name.buf = calloc(strlen(s) + 1, sizeof(char));
+        msg_frm_1.meas_info_lst[i].meas_type.name.buf = calloc(strlen(s) + 1, sizeof(uint8_t));
         memcpy(msg_frm_1.meas_info_lst[i].meas_type.name.buf, s, strlen(s));
         msg_frm_1.meas_info_lst[i].meas_type.name.len = strlen(s);
         break;
@@ -1263,7 +1263,7 @@ static kpm_ind_msg_format_2_t fill_rnd_kpm_ind_msg_frm_2(void)
     {
     case NAME_MEAS_TYPE:
       cond_ue->meas_type.type = NAME_MEAS_TYPE;
-      cond_ue->meas_type.name.buf = calloc(strlen("condition UE measurement") + 1, sizeof(char));
+      cond_ue->meas_type.name.buf = calloc(strlen("condition UE measurement") + 1, sizeof(uint8_t));
       memcpy(cond_ue->meas_type.name.buf, "condition UE measurement", strlen("condition UE measurement"));
       cond_ue->meas_type.name.len = strlen("condition UE measurement");
       break;
@@ -1426,15 +1426,15 @@ kpm_ran_function_def_t fill_rnd_kpm_ran_func_def(void)
   kpm_ran_function_def_t ran_function = {0};
 
   // RAN Function Name
-  ran_function.name.description.buf = calloc(strlen(SM_KPM_DESCRIPTION) + 1, sizeof(char));
+  ran_function.name.description.buf = calloc(strlen(SM_KPM_DESCRIPTION) + 1, sizeof(uint8_t));
   memcpy(ran_function.name.description.buf, SM_KPM_DESCRIPTION, strlen(SM_KPM_DESCRIPTION));
   ran_function.name.description.len = strlen(SM_KPM_DESCRIPTION);
 
-  ran_function.name.name.buf = calloc(strlen(SM_KPM_STR) + 1, sizeof(char));
+  ran_function.name.name.buf = calloc(strlen(SM_KPM_STR) + 1, sizeof(uint8_t));
   memcpy(ran_function.name.name.buf, SM_KPM_STR, strlen(SM_KPM_STR));
   ran_function.name.name.len = strlen(SM_KPM_STR);
 
-  ran_function.name.oid.buf = calloc(strlen(SM_KPM_OID) + 1, sizeof(char));
+  ran_function.name.oid.buf = calloc(strlen(SM_KPM_OID) + 1, sizeof(uint8_t));
   memcpy(ran_function.name.oid.buf, SM_KPM_OID, strlen(SM_KPM_OID));
   ran_function.name.oid.len = strlen(SM_KPM_OID);
 
@@ -1462,7 +1462,7 @@ kpm_ran_function_def_t fill_rnd_kpm_ran_func_def(void)
      case STYLE_1_RIC_EVENT_TRIGGER:
      {
        // RIC Event Trigger Style Name
-       ran_function.ric_event_trigger_style_list[i].style_name.buf = calloc(strlen("RIC-Event-Trigger-Style-Type-1") + 1, sizeof(char));
+       ran_function.ric_event_trigger_style_list[i].style_name.buf = calloc(strlen("RIC-Event-Trigger-Style-Type-1") + 1, sizeof(uint8_t));
        memcpy(ran_function.ric_event_trigger_style_list[i].style_name.buf, "RIC-Event-Trigger-Style-Type-1", strlen("RIC-Event-Trigger-Style-Type-1"));
        ran_function.ric_event_trigger_style_list[i].style_name.len = strlen("RIC-Event-Trigger-Style-Type-1");
 
@@ -1497,7 +1497,7 @@ kpm_ran_function_def_t fill_rnd_kpm_ran_func_def(void)
        ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_1_INDICATION_MESSAGE;
 
        // RIC REPORT Style Name
-       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-1") + 1, sizeof(char));
+       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-1") + 1, sizeof(uint8_t));
        memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-1", strlen("RIC-Report-Style-Type-1"));
        ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-1");
        break;
@@ -1510,7 +1510,7 @@ kpm_ran_function_def_t fill_rnd_kpm_ran_func_def(void)
        ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_1_INDICATION_MESSAGE;
 
        // RIC REPORT Style Name
-       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-2") + 1, sizeof(char));
+       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-2") + 1, sizeof(uint8_t));
        memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-2", strlen("RIC-Report-Style-Type-2"));
        ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-2");
        break;
@@ -1523,7 +1523,7 @@ kpm_ran_function_def_t fill_rnd_kpm_ran_func_def(void)
        ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_2_INDICATION_MESSAGE;
 
   //     // RIC REPORT Style Name
-       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-3") + 1, sizeof(char));
+       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-3") + 1, sizeof(uint8_t));
        memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-3", strlen("RIC-Report-Style-Type-3"));
        ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-3");
        break;
@@ -1536,7 +1536,7 @@ kpm_ran_function_def_t fill_rnd_kpm_ran_func_def(void)
        ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_3_INDICATION_MESSAGE;
 
        // RIC REPORT Style Name
-       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-4") + 1, sizeof(char));
+       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-4") + 1, sizeof(uint8_t));
        memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-4", strlen("RIC-Report-Style-Type-4"));
        ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-4");
        break;
@@ -1549,7 +1549,7 @@ kpm_ran_function_def_t fill_rnd_kpm_ran_func_def(void)
        ran_function.ric_report_style_list[i].ind_msg_format_type = FORMAT_3_INDICATION_MESSAGE;
 
        // RIC REPORT Style Name
-       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-5") + 1, sizeof(char));
+       ran_function.ric_report_style_list[i].report_style_name.buf = calloc(strlen("RIC-Report-Style-Type-5") + 1, sizeof(uint8_t));
        memcpy(ran_function.ric_report_style_list[i].report_style_name.buf, "RIC-Report-Style-Type-5", strlen("RIC-Report-Style-Type-5"));
        ran_function.ric_report_style_list[i].report_style_name.len = strlen("RIC-Report-Style-Type-5");
        break;
@@ -1568,7 +1568,7 @@ kpm_ran_function_def_t fill_rnd_kpm_ran_func_def(void)
      for (size_t j = 0; j<ran_function.ric_report_style_list[i].meas_info_for_action_lst_len; j++)
      {
        // Measurement Type Name
-       ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].name.buf = calloc(strlen("Name_for_action") + 1, sizeof(char));
+       ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].name.buf = calloc(strlen("Name_for_action") + 1, sizeof(uint8_t));
        memcpy(ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].name.buf, "Name_for_action", strlen("Name_for_action"));
        ran_function.ric_report_style_list[i].meas_info_for_action_lst[j].name.len = strlen("Name_for_action");
 

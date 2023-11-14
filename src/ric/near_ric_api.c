@@ -109,6 +109,7 @@ e2_nodes_api_t e2_nodes_near_ric_api(void)
   it = seq_next(&arr, it);
  }
 
+ assert(i == seq_size(&arr) && "Size mismatch while copying \n");
  
   seq_free(&arr, NULL);
   return ans;

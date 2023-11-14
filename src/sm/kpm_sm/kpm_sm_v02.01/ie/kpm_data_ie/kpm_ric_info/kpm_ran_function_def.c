@@ -21,6 +21,9 @@ bool eq_ric_event_trigger_style_list(ric_event_trigger_style_item_t const* m0, r
   if(m0 == m1)
     return true;
 
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
   if(m0->style_type != m1->style_type)
     return false;
 
@@ -155,6 +158,9 @@ bool eq_ric_report_style_item(ric_report_style_item_t const* m0, ric_report_styl
 {
   if(m0 == m1)
     return true;
+
+  if(m0 == NULL || m1 == NULL)
+    return false;
 
   // 8.3.3
   if(m0->report_style_type != m1->report_style_type)

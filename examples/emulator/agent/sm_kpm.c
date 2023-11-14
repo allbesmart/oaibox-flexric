@@ -114,17 +114,17 @@ kpm_ric_ind_hdr_format_1_t fill_rnd_kpm_ind_hdr_frm_1(void)
   hdr_frm_1.fileformat_version = NULL;
   
   hdr_frm_1.sender_name = calloc(1, sizeof(byte_array_t));
-  hdr_frm_1.sender_name->buf = calloc(strlen("My OAI-MONO") + 1, sizeof(char));
+  hdr_frm_1.sender_name->buf = calloc(strlen("My OAI-MONO") + 1, sizeof(uint8_t));
   memcpy(hdr_frm_1.sender_name->buf, "My OAI-MONO", strlen("My OAI-MONO"));
   hdr_frm_1.sender_name->len = strlen("My OAI-MONO");
   
   hdr_frm_1.sender_type = calloc(1, sizeof(byte_array_t));
-  hdr_frm_1.sender_type->buf = calloc(strlen("MONO") + 1, sizeof(char));
+  hdr_frm_1.sender_type->buf = calloc(strlen("MONO") + 1, sizeof(uint8_t));
   memcpy(hdr_frm_1.sender_type->buf, "MONO", strlen("MONO"));
   hdr_frm_1.sender_type->len = strlen("MONO");
   
   hdr_frm_1.vendor_name = calloc(1, sizeof(byte_array_t));
-  hdr_frm_1.vendor_name->buf = calloc(strlen("OAI") + 1, sizeof(char));
+  hdr_frm_1.vendor_name->buf = calloc(strlen("OAI") + 1, sizeof(uint8_t));
   memcpy(hdr_frm_1.vendor_name->buf, "OAI", strlen("OAI"));
   hdr_frm_1.vendor_name->len = strlen("OAI");
 

@@ -438,7 +438,7 @@ OCTET_STRING_t int_64_to_octet_string(uint64_t x)
 {
     OCTET_STRING_t asn = {0};
 
-    asn.buf = calloc(sizeof(x) + 1, sizeof(char));
+    asn.buf = calloc(sizeof(x) + 1, sizeof(uint8_t));
     memcpy(asn.buf,&x,sizeof(x));
     asn.size = sizeof(x);
 

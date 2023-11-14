@@ -34,9 +34,9 @@ byte_array_t slice_enc_ind_hdr_plain(slice_ind_hdr_t const* ind_hdr)
   byte_array_t ba = {0};
 
   ba.len = sizeof(slice_ind_hdr_t);
-  ba.buf = malloc(sizeof(slice_ind_msg_t));
+  ba.buf = calloc(ba.len , sizeof(uint8_t));
   assert(ba.buf != NULL && "memory exhausted");
-  memcpy(ba.buf, ind_hdr, sizeof(slice_ind_hdr_t));
+  memcpy(ba.buf, ind_hdr,ba.len);
 
   return ba;
 }
@@ -535,11 +535,10 @@ byte_array_t slice_enc_ctrl_hdr_plain(slice_ctrl_hdr_t const* ctrl_hdr)
   assert(ctrl_hdr != NULL);
 
   byte_array_t ba = {0};
-
   ba.len = sizeof(slice_ind_hdr_t);
-  ba.buf = malloc(sizeof(slice_ind_msg_t));
+  ba.buf = calloc(ba.len, sizeof(uint8_t));
   assert(ba.buf != NULL && "memory exhausted");
-  memcpy(ba.buf, ctrl_hdr, sizeof(slice_ctrl_hdr_t));
+  memcpy(ba.buf, ctrl_hdr, ba.len);
 
   return ba;
 }

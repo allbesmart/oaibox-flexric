@@ -305,7 +305,7 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
   {
     pdu.ranFunction_Name.ranFunction_Instance = calloc(1, sizeof(*pdu.ranFunction_Name.ranFunction_Instance));
     assert(pdu.ranFunction_Name.ranFunction_Instance != NULL && "Memory exhausted");
-    pdu.ranFunction_Name.ranFunction_Instance = func_def->name.instance;
+    *pdu.ranFunction_Name.ranFunction_Instance = *func_def->name.instance;
   }
   else
   {
@@ -315,9 +315,8 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
 
 
   //  RIC Event Trigger Style Item
-  if (func_def->ric_event_trigger_style_list != NULL || func_def->sz_ric_event_trigger_style_list != 0)
-  {
-    assert(func_def->sz_ric_event_trigger_style_list >= 1 && func_def->sz_ric_event_trigger_style_list <= maxnoofRICStyles);
+  if (func_def->ric_event_trigger_style_list != NULL) {
+    assert(func_def->sz_ric_event_trigger_style_list > 0 && func_def->sz_ric_event_trigger_style_list <= maxnoofRICStyles);
 
     pdu.ric_EventTriggerStyle_List = calloc(func_def->sz_ric_event_trigger_style_list, sizeof(*pdu.ric_EventTriggerStyle_List));
     assert(pdu.ric_EventTriggerStyle_List != NULL && "Memory exhausted");
@@ -355,9 +354,9 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
   }
 
   // RIC Report Style Item
-  if (func_def->ric_report_style_list != NULL || func_def->sz_ric_report_style_list != 0)
+  if (func_def->ric_report_style_list != NULL)
   {
-    assert(func_def->sz_ric_report_style_list >= 1 && func_def->sz_ric_report_style_list <= maxnoofRICStyles);
+    assert(func_def->sz_ric_report_style_list > 0 && func_def->sz_ric_report_style_list <= maxnoofRICStyles);
 
     pdu.ric_ReportStyle_List = calloc(func_def->sz_ric_report_style_list, sizeof(*pdu.ric_ReportStyle_List));
     assert(pdu.ric_ReportStyle_List != NULL && "Memory exhausted");

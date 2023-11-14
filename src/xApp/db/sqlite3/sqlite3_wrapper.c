@@ -1189,7 +1189,6 @@ void init_db_sqlite3(sqlite3** db, char const* db_filename)
   assert(rc != SQLITE_CANTOPEN && "SQLITE3 cannot open the directory. Does it already exist?");
   assert(rc == SQLITE_OK && "Error while creating the DB at /tmp/db_xapp");
 
-
   // Optimizations. Write Ahead Logging
   char* err_msg = NULL;
   int const rc_2 = sqlite3_exec(*db, "pragma journal_mode=wal" , 0, 0, &err_msg);

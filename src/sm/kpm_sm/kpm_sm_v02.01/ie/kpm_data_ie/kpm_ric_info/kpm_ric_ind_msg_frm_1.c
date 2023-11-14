@@ -47,6 +47,20 @@ void free_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t* src)
     free(src->gran_period_ms);
 }
 
+static
+bool eq_gran_period_ms(uint32_t const* m0, uint32_t const* m1)
+{
+  if(m0 == m1)
+    return true;
+
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  if(*m0 != *m1)
+    return false;
+
+  return true;
+}
 
 bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1_t const* m1)
 {
@@ -67,7 +81,7 @@ bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1
 
   // Measurement Information
   if (m0->meas_info_lst_len != m1->meas_info_lst_len){
-      assert(0!=0);
+    assert(0!=0);
     return false;
   }
   for (size_t i = 0; i < m0->meas_info_lst_len; ++i)
@@ -88,24 +102,22 @@ bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1
     for (size_t j = 0; j < m0->meas_info_lst[i].label_info_lst_len; ++j)
     {
       if (eq_label_info(&m0->meas_info_lst[i].label_info_lst[j], &m1->meas_info_lst[i].label_info_lst[j]) != true){
-      assert(0!=0);
+        assert(0!=0);
         return false;
-    }
+      }
     }
   }
 
   // Granularity Period
-  if ((m0->gran_period_ms != NULL || m1->gran_period_ms != NULL) && *m0->gran_period_ms != *m1->gran_period_ms){
-      assert(0!=0);
+  if(eq_gran_period_ms(m0->gran_period_ms, m1->gran_period_ms) == false)
     return false;
-  }
 
   return true;
 }
 
 
-kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src) {
-
+kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src) 
+{
   assert(src != NULL);
   kpm_ind_msg_format_1_t dst = {0};
 
@@ -130,7 +142,7 @@ kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src) {
 
   //uint32_t *gran_period_ms;  // 8.3.8  -  OPTIONAL
   if (src->gran_period_ms) {
-    dst.gran_period_ms = malloc(sizeof(dst.gran_period_ms));
+    dst.gran_period_ms = malloc(sizeof(*dst.gran_period_ms));
     assert(dst.gran_period_ms != NULL && "Memory exhausted");
     *dst.gran_period_ms = *src->gran_period_ms;
   }

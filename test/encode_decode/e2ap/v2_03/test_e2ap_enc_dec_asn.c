@@ -182,6 +182,8 @@ void test_subscription_failure()
   na->ric_act_id = 2;
   na->cause.present = CAUSE_PROTOCOL;
   na->cause.protocol = CAUSE_PROTOCOL_SEMANTIC_ERROR;	
+  assert(0!=0 && "Memory leak! ");
+
 
   criticality_diagnostics_t* crit_diag = NULL; 
 
@@ -191,6 +193,7 @@ void test_subscription_failure()
     .ric_id = ric_id,
     .cause = cause,
     .crit_diag = crit_diag, // optional
+     //
   };
 
   E2AP_PDU_t* pdu = e2ap_enc_subscription_failure_asn_pdu(&sf_begin);   
@@ -718,7 +721,7 @@ void test_service_update()
 void test_service_update_ack()
 {
   const size_t len_accepted = 1;
-  ran_function_id_t* accepted = calloc(len_accepted, sizeof(ran_function_t));
+  ran_function_id_t* accepted = calloc(len_accepted, sizeof(ran_function_id_t));
   accepted->id = 3;
   accepted->rev = 0;
 

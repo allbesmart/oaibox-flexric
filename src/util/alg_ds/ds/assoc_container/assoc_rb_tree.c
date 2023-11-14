@@ -448,10 +448,10 @@ void* assoc_rb_tree_extract(assoc_rb_tree_t* tree, void* key)
   //free(z_node->key);
   //free(z_node);
 
-  free_node_rb_tree(z_node);
   if(original_color == ASSOC_BLACK)
     delete_fixup(tree, x_node);
 
+  free_node_rb_tree(z_node);
   assert(tree->size != 0);
   tree->size--;
   return value;

@@ -988,7 +988,8 @@ e2ap_msg_t e2ap_dec_indication(const E2AP_PDU_t* pdu)
       //RIC indication SN. Optional
       assert(ric_ind->criticality == Criticality_reject);
       assert(ric_ind->value.present == RICindication_IEs__value_PR_RICindicationSN); 
-      ind->sn =  malloc(sizeof(uint16_t));
+      assert(ind->sn == NULL);
+      ind->sn = malloc(sizeof(uint16_t));
       assert(ric_ind->value.choice.RICindicationSN < MAX_RIC_INDICATION_SN );
       *ind->sn = ric_ind->value.choice.RICindicationSN; 
     } else if (id == ProtocolIE_ID_id_RICindicationType){
@@ -1002,16 +1003,19 @@ e2ap_msg_t e2ap_dec_indication(const E2AP_PDU_t* pdu)
       assert(ric_ind->id == ProtocolIE_ID_id_RICindicationHeader);
       assert(ric_ind->criticality == Criticality_reject);
       assert(ric_ind->value.present == RICindication_IEs__value_PR_RICindicationHeader);
+      assert(ind->hdr.len == 0 && ind->hdr.buf == NULL);
       ind->hdr = copy_ostring_to_ba(ric_ind->value.choice.RICindicationHeader);
     } else if (id == ProtocolIE_ID_id_RICindicationMessage){
       // RIC indication message. Mandatory
       assert(ric_ind->criticality == Criticality_reject);
       assert(ric_ind->value.present == RICindication_IEs__value_PR_RICindicationMessage); 
+      assert(ind->msg.len == 0 && ind->msg.buf == NULL);
       ind->msg = copy_ostring_to_ba(ric_ind->value.choice.RICindicationMessage);
     } else { // if (id == ProtocolIE_ID_id_RICcallProcessID)
       // RIC call process id. Optional
       assert(ric_ind->criticality == Criticality_reject);
       assert(ric_ind->value.present == RICindication_IEs__value_PR_RICcallProcessID);
+      assert(ind->call_process_id == NULL);
       ind->call_process_id = malloc(sizeof(byte_array_t)); 
       *ind->call_process_id = copy_ostring_to_ba(ric_ind->value.choice.RICcallProcessID);  
     } 
@@ -1076,6 +1080,7 @@ e2ap_msg_t e2ap_dec_control_request(const E2AP_PDU_t* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == RICcontrolRequest_IEs__value_PR_RICcallProcessID);
+      assert(ctrl->call_process_id == NULL);
       ctrl->call_process_id = malloc(sizeof(*ctrl->call_process_id));
       assert(ctrl->call_process_id);
       *ctrl->call_process_id = copy_ostring_to_ba(ric_ctrl->value.choice.RICcallProcessID);
@@ -1085,6 +1090,7 @@ e2ap_msg_t e2ap_dec_control_request(const E2AP_PDU_t* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == RICcontrolRequest_IEs__value_PR_RICcontrolHeader);
+      assert(ctrl->hdr.len == 0 && ctrl->hdr.buf == NULL);
       ctrl->hdr = copy_ostring_to_ba(ric_ctrl->value.choice.RICcontrolHeader);
     } else if (id == ProtocolIE_ID_id_RICcontrolMessage) {
       // RIC Control Message. Mandatory
@@ -1092,6 +1098,7 @@ e2ap_msg_t e2ap_dec_control_request(const E2AP_PDU_t* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == RICcontrolRequest_IEs__value_PR_RICcontrolMessage);
+      assert(ctrl->msg.len == 0 && ctrl->msg.buf == NULL);
       ctrl->msg = copy_ostring_to_ba(ric_ctrl->value.choice.RICcontrolMessage);
     } else { // if (id == ProtocolIE_ID_id_RICcontrolAckRequest)
       // RIC Control Ack Request. Optional
@@ -1099,6 +1106,7 @@ e2ap_msg_t e2ap_dec_control_request(const E2AP_PDU_t* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == RICcontrolRequest_IEs__value_PR_RICcontrolAckRequest);
+      assert(ctrl->ack_req == NULL);
       ctrl->ack_req = malloc(sizeof(*ctrl->ack_req));
       assert(ctrl->ack_req);
       assert(ric_ctrl->value.choice.RICcontrolAckRequest < 3);
@@ -1221,6 +1229,7 @@ e2ap_msg_t e2ap_dec_e42_control_request(const struct E2AP_PDU* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == E42RICcontrolRequest_IEs__value_PR_RICcallProcessID);
+      assert(ctrl->call_process_id == NULL); 
       ctrl->call_process_id = malloc(sizeof(*ctrl->call_process_id));
       assert(ctrl->call_process_id);
       *ctrl->call_process_id = copy_ostring_to_ba(ric_ctrl->value.choice.RICcallProcessID);
@@ -1230,6 +1239,7 @@ e2ap_msg_t e2ap_dec_e42_control_request(const struct E2AP_PDU* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == E42RICcontrolRequest_IEs__value_PR_RICcontrolHeader);
+      assert(ctrl->hdr.len == 0 && ctrl->hdr.buf == NULL); 
       ctrl->hdr = copy_ostring_to_ba(ric_ctrl->value.choice.RICcontrolHeader);
     } else if (id == ProtocolIE_ID_id_RICcontrolMessage) {
       // RIC Control Message. Mandatory
@@ -1237,6 +1247,7 @@ e2ap_msg_t e2ap_dec_e42_control_request(const struct E2AP_PDU* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == E42RICcontrolRequest_IEs__value_PR_RICcontrolMessage);
+      assert(ctrl->msg.len == 0 && ctrl->msg.buf == NULL); 
       ctrl->msg = copy_ostring_to_ba(ric_ctrl->value.choice.RICcontrolMessage);
     } else { // if (id == ProtocolIE_ID_id_RICcontrolAckRequest)
       // RIC Control Ack Request. Optional
@@ -1244,6 +1255,7 @@ e2ap_msg_t e2ap_dec_e42_control_request(const struct E2AP_PDU* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == E42RICcontrolRequest_IEs__value_PR_RICcontrolAckRequest);
+      assert(ctrl->ack_req == NULL);
       ctrl->ack_req = malloc(sizeof(*ctrl->ack_req));
       assert(ctrl->ack_req);
       assert(ric_ctrl->value.choice.RICcontrolAckRequest < 3);
@@ -1296,14 +1308,16 @@ e2ap_msg_t e2ap_dec_control_ack(const E2AP_PDU_t* pdu)
         || id ==  ProtocolIE_ID_id_RICcontrolOutcome);
   //RIC Call process ID. Optional
     if(id == ProtocolIE_ID_id_RICcallProcessID){
-     assert(ric_ctrl->criticality == Criticality_reject);
-     assert(ric_ctrl->value.present == RICcontrolAcknowledge_IEs__value_PR_RICcallProcessID);
+      assert(ric_ctrl->criticality == Criticality_reject);
+      assert(ric_ctrl->value.present == RICcontrolAcknowledge_IEs__value_PR_RICcallProcessID);
+      assert(ctrl->call_process_id == NULL);
       ctrl->call_process_id = malloc(sizeof(byte_array_t));
       *ctrl->call_process_id = copy_ostring_to_ba(ric_ctrl->value.choice.RICcallProcessID); 
-  //RIC Control Outcome. Mandatory
+   //RIC Control Outcome. Mandatory
     } else { // id == ProtocolIE_ID_id_RICcontrolOutcome
       assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == RICcontrolAcknowledge_IEs__value_PR_RICcontrolOutcome);
+      assert(ctrl->control_outcome == NULL);
       ctrl->control_outcome = malloc(sizeof(byte_array_t));
       assert(ctrl->control_outcome != NULL && "Memory exhausted");
       *ctrl->control_outcome = copy_ostring_to_ba(ric_ctrl->value.choice.RICcontrolOutcome); 
@@ -1526,7 +1540,7 @@ e2ap_msg_t e2ap_dec_setup_request(const E2AP_PDU_t* pdu)
 
       assert(ran_list->value.choice.RANfunctions_List.list.count < MAX_NUM_RAN_FUNC_ID);
       sr->len_rf = ran_list->value.choice.RANfunctions_List.list.count;
-
+      assert(sr->ran_func_item == NULL);
       sr->ran_func_item = calloc(sr->len_rf, sizeof(ran_function_t));
       assert(sr->ran_func_item != NULL && "Memory exhausted");
 
@@ -1549,7 +1563,7 @@ e2ap_msg_t e2ap_dec_setup_request(const E2AP_PDU_t* pdu)
       assert(comp_add->criticality == Criticality_reject);
       assert(comp_add->value.present == E2setupRequestIEs__value_PR_E2nodeComponentConfigAddition_List); 
       sr->len_cca = comp_add->value.choice.E2nodeComponentConfigAddition_List.list.count;
-      assert(sr->len_cca > 0 && sr->len_cca < 1024);
+      assert(sr->len_cca > 0 && sr->len_cca < 1024 && sr->comp_conf_add == NULL);
       sr->comp_conf_add = calloc(sr->len_cca, sizeof(e2ap_node_component_config_add_t));
       assert(sr->comp_conf_add != NULL);
       
@@ -1661,7 +1675,7 @@ e2ap_msg_t e2ap_dec_setup_response_success(const E2AP_PDU_t* pdu)
 
       assert(ran_func->value.choice.RANfunctionsID_List.list.count < MAX_NUM_RAN_FUNC_ID);
       sr->len_acc = ran_func->value.choice.RANfunctionsID_List.list.count; 
-
+      assert(sr->accepted == NULL);
       sr->accepted = calloc(sr->len_acc, sizeof(accepted_ran_function_t));
       const RANfunctionID_ItemIEs_t** arr = (const RANfunctionID_ItemIEs_t**)ran_func->value.choice.RANfunctionsID_List.list.array; 
       for(size_t i =0; i < sr->len_acc; ++i){
@@ -1680,6 +1694,7 @@ e2ap_msg_t e2ap_dec_setup_response_success(const E2AP_PDU_t* pdu)
       assert(ran_rej->value.present == E2setupResponseIEs__value_PR_RANfunctionsIDcause_List); 
 
       sr->len_rej = ran_rej->value.choice.RANfunctionsID_List.list.count; 
+      assert(sr->rejected == NULL);
       sr->rejected = calloc( sr->len_rej, sizeof(rejected_ran_function_t));
       RANfunctionIDcause_ItemIEs_t** arr = (RANfunctionIDcause_ItemIEs_t**)ran_rej->value.choice.RANfunctionsID_List.list.array; 
       for(size_t i =0; i < sr->len_rej; ++i){
@@ -1744,6 +1759,7 @@ e2ap_msg_t e2ap_dec_setup_response_success(const E2AP_PDU_t* pdu)
       const size_t sz = ca_list->value.choice.E2nodeComponentConfigAdditionAck_List.list.count;
       assert(sz < (size_t) MAX_NUM_E2_NODE_COMPONENTS);
       sr->len_ccaa = sz;
+      assert(sr->comp_config_add_ack == NULL);
       sr->comp_config_add_ack = calloc(sz, sizeof(*sr->comp_config_add_ack));
 
       E2nodeComponentConfigAdditionAck_ItemIEs_t** arr = (E2nodeComponentConfigAdditionAck_ItemIEs_t**)ca_list->value.choice.E2nodeComponentConfigAdditionAck_List.list.array;
@@ -1870,7 +1886,8 @@ e2ap_msg_t e2ap_dec_setup_failure(const E2AP_PDU_t* pdu)
       //Time To Wait. Optional 
       assert(src->id == ProtocolIE_ID_id_TimeToWait); 
       assert(src->criticality == Criticality_ignore);
-      sf->time_to_wait_ms = calloc(1,sizeof(uint32_t));
+      assert(sf->time_to_wait_ms == NULL);
+      sf->time_to_wait_ms = calloc(1,sizeof(e2ap_time_to_wait_e));
       *sf->time_to_wait_ms = src->value.choice.TimeToWait;
     } else if (src->value.present == E2setupFailureIEs__value_PR_CriticalityDiagnostics){
       //Criticality Diagnostics. Optional
@@ -1881,7 +1898,9 @@ e2ap_msg_t e2ap_dec_setup_failure(const E2AP_PDU_t* pdu)
       //Transport Layer Information. Optional
       assert(src->id == ProtocolIE_ID_id_TNLinformation); 
       assert(src->criticality == Criticality_ignore);
+      assert(sf->tl_info == NULL);
       sf->tl_info = calloc(1, sizeof(transport_layer_information_t));
+      assert(sf->tl_info != NULL && "Memory exhausted");
       sf->tl_info->address = copy_bs_to_ba(src->value.choice.TNLinformation.tnlAddress);
       if(src->value.choice.TNLinformation.tnlPort != NULL){
         sf->tl_info->port = calloc(1, sizeof(byte_array_t));
@@ -2028,7 +2047,7 @@ e2ap_msg_t e2ap_dec_service_update(const E2AP_PDU_t* pdu)
   assert(ran_del->criticality == Criticality_reject);
   assert(ran_del->value.present == RICserviceUpdate_IEs__value_PR_RANfunctionsID_List);
   const int sz_del = ran_del->value.choice.RANfunctions_List.list.count;
-  su->deleted  = calloc(sz_del, sizeof(ran_function_t));
+  su->deleted  = calloc(sz_del, sizeof(e2ap_ran_function_id_rev_t));
   su->len_deleted = sz_del;
   for(int i = 0; i < sz_del; ++i){
     const RANfunction_ItemIEs_t* r = (const RANfunction_ItemIEs_t*)ran_del->value.choice.RANfunctions_List.list.array[i];

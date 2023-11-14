@@ -29,6 +29,21 @@ void free_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t* src)
 
 }
 
+static
+bool eq_gran_period_ms(uint32_t const* m0, uint32_t const* m1)
+{
+  if(m0 == m1)
+    return true;
+
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
+  if(*m0 != *m1)
+    return false;
+
+  return true;
+}
+
 bool eq_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t const* m0, kpm_ind_msg_format_2_t const* m1)
 {
   assert(m0 != NULL);
@@ -59,9 +74,8 @@ bool eq_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t const* m0, kpm_ind_msg_format_2
   }
 
   // Granularity Period - OPTIONAL
-  if ((m0->gran_period_ms != NULL || m1->gran_period_ms != NULL) && *m0->gran_period_ms != *m1->gran_period_ms)
+  if(eq_gran_period_ms(m0->gran_period_ms, m1->gran_period_ms) == false)
     return false;
-
 
   return true;
 }
@@ -73,8 +87,9 @@ kpm_ind_msg_format_2_t cp_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t const* src)
 
   // Granularity Period
   if (src->gran_period_ms) {
-    dst.gran_period_ms = malloc (sizeof(dst.gran_period_ms));
-    memcpy(dst.gran_period_ms, src->gran_period_ms, 4); 
+    dst.gran_period_ms = calloc(1, sizeof(uint32_t));
+    assert(dst.gran_period_ms != NULL && "Memory exhausted");
+    *dst.gran_period_ms = *src->gran_period_ms; 
   }
 
   // Measurement Data

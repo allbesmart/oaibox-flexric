@@ -831,7 +831,7 @@ E2AP_PDU_t* e2ap_enc_subscription_delete_failure_asn_pdu(const ric_subscription_
   // Message Type. Mandatory
   E2AP_PDU_t* pdu = calloc(1,sizeof(E2AP_PDU_t));
   pdu->present = E2AP_PDU_PR_unsuccessfulOutcome;
-  pdu->choice.unsuccessfulOutcome = calloc(1, sizeof(SuccessfulOutcome_t));
+  pdu->choice.unsuccessfulOutcome = calloc(1, sizeof(UnsuccessfulOutcome_t));
   pdu->choice.unsuccessfulOutcome->procedureCode = ProcedureCode_id_RICsubscriptionDelete;
   pdu->choice.unsuccessfulOutcome->criticality = Criticality_reject;
   pdu->choice.unsuccessfulOutcome->value.present = UnsuccessfulOutcome__value_PR_RICsubscriptionDeleteFailure;
@@ -1415,7 +1415,7 @@ E2nodeComponentConfigAddition_ItemIEs_t* e2ap_enc_node_component_conf_addition(c
 {
   assert(src != NULL);
 
-  E2nodeComponentConfigAddition_ItemIEs_t* cca_ie = calloc(1, sizeof(E2nodeComponentConfigUpdate_ItemIEs_t));
+  E2nodeComponentConfigAddition_ItemIEs_t* cca_ie = calloc(1, sizeof(E2nodeComponentConfigAddition_ItemIEs_t));
   cca_ie->id = ProtocolIE_ID_id_E2nodeComponentConfigAddition_Item;
   cca_ie->criticality = Criticality_reject;
   cca_ie->value.present = E2nodeComponentConfigAddition_ItemIEs__value_PR_E2nodeComponentConfigAddition_Item;
@@ -1989,7 +1989,8 @@ E2AP_PDU_t* e2ap_enc_reset_request_asn_pdu(const e2ap_reset_request_t* rr)
   // Message Type. Mandatory
   E2AP_PDU_t* pdu = calloc(1, sizeof(E2AP_PDU_t));
   pdu->present = E2AP_PDU_PR_initiatingMessage; 
-  pdu->choice.initiatingMessage = calloc(1,sizeof(UnsuccessfulOutcome_t));
+  pdu->choice.initiatingMessage = calloc(1,sizeof(InitiatingMessage_t));
+  assert(pdu->choice.initiatingMessage != NULL && "Memory exhausted");
   pdu->choice.initiatingMessage->procedureCode = ProcedureCode_id_Reset; 
   pdu->choice.initiatingMessage->criticality = Criticality_reject;
   pdu->choice.initiatingMessage->value.present = InitiatingMessage__value_PR_ResetRequest; 

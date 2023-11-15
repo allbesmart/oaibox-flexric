@@ -1,20 +1,8 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "../../../../../../util/eq.h"
 #include "kpm_ric_ind_msg_frm_1.h"
-
-// Equality implemented as euristics for the moment. This function is used in test framework.
-#define OPTIONAL_CHECK_EQUAL_SIMPLE_TYPE(T0,T1) \
-  do { \
-    if ((T0) == NULL && (T1) != NULL) \
-      return false; \
-    if ((T0) != NULL && (T1) == NULL) \
-      return false; \
-    if ((T0) != NULL && (T1) != NULL) \
-      if (*(T0) != *(T1)) \
-        return false; \
-  } while (0)
-
 
 void free_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t* src) 
 {
@@ -96,7 +84,7 @@ bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1
   }
 
   // Granularity Period
-  if ((m0->gran_period_ms != NULL || m1->gran_period_ms != NULL) && *m0->gran_period_ms != *m1->gran_period_ms){
+  if (eq_ptr(m0->gran_period_ms, m1->gran_period_ms, NULL) == false){
       assert(0!=0);
     return false;
   }
@@ -131,7 +119,7 @@ kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src)
 
   //uint32_t *gran_period_ms;  // 8.3.8  -  OPTIONAL
   if (src->gran_period_ms) {
-    dst.gran_period_ms = malloc(sizeof(dst.gran_period_ms));
+    dst.gran_period_ms = malloc(sizeof(*dst.gran_period_ms));
     assert(dst.gran_period_ms != NULL && "Memory exhausted");
     *dst.gran_period_ms = *src->gran_period_ms; 
   }

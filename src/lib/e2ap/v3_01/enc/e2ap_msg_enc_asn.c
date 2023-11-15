@@ -723,7 +723,7 @@ E2AP_PDU_t* e2ap_enc_subscription_delete_failure_asn_pdu(const ric_subscription_
   // Message Type. Mandatory
   E2AP_PDU_t* pdu = calloc(1,sizeof(E2AP_PDU_t));
   pdu->present = E2AP_PDU_PR_unsuccessfulOutcome;
-  pdu->choice.unsuccessfulOutcome = calloc(1, sizeof(SuccessfulOutcome_t));
+  pdu->choice.unsuccessfulOutcome = calloc(1, sizeof(UnsuccessfulOutcome_t));
   pdu->choice.unsuccessfulOutcome->procedureCode = ProcedureCode_id_RICsubscriptionDelete;
   pdu->choice.unsuccessfulOutcome->criticality = Criticality_reject;
   pdu->choice.unsuccessfulOutcome->value.present = UnsuccessfulOutcome__value_PR_RICsubscriptionDeleteFailure;
@@ -1338,7 +1338,7 @@ E2nodeComponentConfigAddition_ItemIEs_t* e2ap_enc_node_component_conf_addition(c
 {
   assert(src != NULL);
 
-  E2nodeComponentConfigAddition_ItemIEs_t* cca_ie = calloc(1, sizeof(E2nodeComponentConfigUpdate_ItemIEs_t));
+  E2nodeComponentConfigAddition_ItemIEs_t* cca_ie = calloc(1, sizeof(E2nodeComponentConfigAddition_ItemIEs_t));
   cca_ie->id = ProtocolIE_ID_id_E2nodeComponentConfigAddition_Item;
   cca_ie->criticality = Criticality_reject;
   cca_ie->value.present = E2nodeComponentConfigAddition_ItemIEs__value_PR_E2nodeComponentConfigAddition_Item;
@@ -1756,7 +1756,7 @@ E2AP_PDU_t* e2ap_enc_reset_request_asn_pdu(const e2ap_reset_request_t* rr)
   // Message Type. Mandatory
   E2AP_PDU_t* pdu = calloc(1, sizeof(E2AP_PDU_t));
   pdu->present = E2AP_PDU_PR_initiatingMessage; 
-  pdu->choice.initiatingMessage = calloc(1,sizeof(UnsuccessfulOutcome_t));
+  pdu->choice.initiatingMessage = calloc(1,sizeof(InitiatingMessage_t));
   pdu->choice.initiatingMessage->procedureCode = ProcedureCode_id_Reset; 
   pdu->choice.initiatingMessage->criticality = Criticality_reject;
   pdu->choice.initiatingMessage->value.present = InitiatingMessage__value_PR_ResetRequest; 
@@ -1801,18 +1801,19 @@ E2AP_PDU_t* e2ap_enc_reset_response_asn_pdu(const e2ap_reset_response_t* rr)
   pdu->choice.successfulOutcome->criticality = Criticality_reject;
   pdu->choice.successfulOutcome->value.present = SuccessfulOutcome__value_PR_ResetResponse;
 
- ResetResponse_t* out = &pdu->choice.successfulOutcome->value.choice.ResetResponse;
+  ResetResponse_t* out = &pdu->choice.successfulOutcome->value.choice.ResetResponse;
 
   // Criticality Diagnostics. Optional
   if(rr->crit_diag != NULL){
-  ResetResponseIEs_t* res = calloc(1, sizeof( ResetResponseIEs_t));
-  res->id = ProtocolIE_ID_id_CriticalityDiagnostics;
-  res->criticality = Criticality_ignore;
-  res->value.present = ResetResponseIEs__value_PR_CriticalityDiagnostics;
-  assert(0!=0 && "Not implemented");
-  //res->value.choice.CriticalityDiagnostics = *crit_diag;
-  int rc = ASN_SEQUENCE_ADD(&out->protocolIEs.list, res);
-  assert(rc == 0);
+    assert(0!=0 && "Not implemented");
+    ResetResponseIEs_t* res = calloc(1, sizeof( ResetResponseIEs_t));
+    assert(res != NULL && "memory exhausted");
+    res->id = ProtocolIE_ID_id_CriticalityDiagnostics;
+    res->criticality = Criticality_ignore;
+    res->value.present = ResetResponseIEs__value_PR_CriticalityDiagnostics;
+    //res->value.choice.CriticalityDiagnostics = *crit_diag;
+    int rc = ASN_SEQUENCE_ADD(&out->protocolIEs.list, res);
+    assert(rc == 0);
   }
   return pdu;
 }
@@ -2000,11 +2001,12 @@ byte_array_t e2ap_enc_service_update_failure_asn_msg(const e2ap_msg_t* msg)
 
 E2AP_PDU_t* e2ap_enc_service_update_failure_asn_pdu(const ric_service_update_failure_t* uf)
 {
+  assert(0!=0 && "Not implemented");
+
   assert(uf != NULL);
 
   // Message Type. Mandatory
   E2AP_PDU_t* pdu = calloc(1, sizeof(E2AP_PDU_t));
-  assert(0!=0 && "Not implemented");
 
   /*
 
@@ -2177,12 +2179,13 @@ byte_array_t e2ap_enc_node_configuration_update_ack_asn_msg(const e2ap_msg_t* ms
 
 E2AP_PDU_t* e2ap_enc_node_configuration_update_ack_asn_pdu(const e2_node_configuration_update_ack_t* cua)
 {
+  assert(0 !=0 && "Not implemented");
+  
   assert(cua != NULL);
   assert(cua->len_ccual <= (size_t)MAX_NUM_ACTION_DEF);
   // Message Type. Mandatory
   E2AP_PDU_t* pdu = calloc(1, sizeof(E2AP_PDU_t));
 
-  assert(0 !=0 && "Not implemented");
 /*
   pdu->present = E2AP_PDU_PR_successfulOutcome; 
   pdu->choice.successfulOutcome = calloc(1, sizeof(SuccessfulOutcome_t));

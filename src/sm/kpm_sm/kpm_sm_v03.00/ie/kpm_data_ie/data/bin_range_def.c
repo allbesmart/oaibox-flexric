@@ -11,19 +11,11 @@ void free_kpm_bin_range_def(bin_range_def_t* src)
 
   // Bin Y
   if (src->bin_y_lst != NULL)
-  {
-    for (size_t i = 0; i<src->bin_y_lst_len; i++)
-      free(&src->bin_y_lst[i]);
     free(src->bin_y_lst);
-  }
 
   // Bin Z
   if (src->bin_z_lst != NULL)
-  {
-    for (size_t i = 0; i<src->bin_z_lst_len; i++)
-      free(&src->bin_z_lst[i]);
     free(src->bin_z_lst);
-  }
 
 }
 
@@ -90,3 +82,9 @@ bool eq_kpm_bin_range_def(bin_range_def_t const * m0, bin_range_def_t const * m1
 
   return true;
 }
+
+bool eq_kpm_bin_range_def_wrapper(void const * m0, void const * m1)
+{
+  return  eq_kpm_bin_range_def(m0, m1);
+}
+

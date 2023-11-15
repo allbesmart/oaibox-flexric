@@ -444,13 +444,11 @@ void* assoc_rb_tree_extract(assoc_rb_tree_t* tree, void* key)
     y_node->left->parent = y_node;
     y_node->color = z_node->color;
   }
-  void* value = z_node->value;
-  //free(z_node->key);
-  //free(z_node);
 
   if(original_color == ASSOC_BLACK)
     delete_fixup(tree, x_node);
 
+  void* value = z_node->value;
   free_node_rb_tree(z_node);
   assert(tree->size != 0);
   tree->size--;

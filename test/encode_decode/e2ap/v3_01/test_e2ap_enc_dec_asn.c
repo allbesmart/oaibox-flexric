@@ -170,12 +170,6 @@ void test_subscription_failure()
     .ric_inst_id = 2,
     .ran_func_id = 12};
 
-
-  ric_action_not_admitted_t* na = calloc(1,sizeof(ric_action_not_admitted_t)); 
-  na->ric_act_id = 2;
-  na->cause.present = CAUSE_PROTOCOL;
-  na->cause.protocol = CAUSE_PROTOCOL_SEMANTIC_ERROR;	
-
   criticality_diagnostics_t* crit_diag = NULL; 
 
   cause_t cause = {0};
@@ -704,7 +698,7 @@ void test_service_update()
 void test_service_update_ack()
 {
   const size_t len_accepted = 1;
-  ran_function_id_t* accepted = calloc(len_accepted, sizeof(ran_function_t));
+  ran_function_id_t* accepted = calloc(len_accepted, sizeof(ran_function_id_t));
   accepted->id = 3;
   accepted->rev = 0;
 

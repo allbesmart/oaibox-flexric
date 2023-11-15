@@ -129,8 +129,8 @@ kpm_ind_msg_format_2_t cp_kpm_ind_msg_frm_2(kpm_ind_msg_format_2_t const* src)
 
   // Granularity Period
   if (src->gran_period_ms) {
-    dst.gran_period_ms = malloc (sizeof(dst.gran_period_ms));
-    memcpy(dst.gran_period_ms, src->gran_period_ms, 4); 
+    dst.gran_period_ms = malloc(sizeof(uint32_t));
+    memcpy(dst.gran_period_ms, src->gran_period_ms, sizeof(uint32_t)); 
   }
 
   // Measurement Data

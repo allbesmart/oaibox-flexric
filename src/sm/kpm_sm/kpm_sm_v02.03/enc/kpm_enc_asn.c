@@ -80,8 +80,8 @@ byte_array_t encode(void* pdu, e2sm_kpm_e e)
 /* Encoding Event Trigger IE
  * Direction of the message: RIC --> E2 Node
  */
-byte_array_t kpm_enc_event_trigger_asn(kpm_event_trigger_def_t const* event_trigger) 
-{
+byte_array_t kpm_enc_event_trigger_asn(kpm_event_trigger_def_t const* event_trigger) {
+
   assert(event_trigger != NULL);
 
   E2SM_KPM_EventTriggerDefinition_t *pdu = calloc(1, sizeof(E2SM_KPM_EventTriggerDefinition_t));
@@ -90,14 +90,14 @@ byte_array_t kpm_enc_event_trigger_asn(kpm_event_trigger_def_t const* event_trig
 
   switch (event_trigger->type)
   {
-    case FORMAT_1_RIC_EVENT_TRIGGER:{
-                                      pdu->eventDefinition_formats.present = E2SM_KPM_EventTriggerDefinition__eventDefinition_formats_PR_eventDefinition_Format1;
-                                      pdu->eventDefinition_formats.choice.eventDefinition_Format1 = kpm_enc_event_trigger_def_frm_1_asn(&event_trigger->kpm_ric_event_trigger_format_1);
-                                      break;
-                                    }
-    default:{
-              assert("Non valid KPM RIC Event Trigger Format");
-            }
+  case FORMAT_1_RIC_EVENT_TRIGGER:{
+    pdu->eventDefinition_formats.present = E2SM_KPM_EventTriggerDefinition__eventDefinition_formats_PR_eventDefinition_Format1;
+    pdu->eventDefinition_formats.choice.eventDefinition_Format1 = kpm_enc_event_trigger_def_frm_1_asn(&event_trigger->kpm_ric_event_trigger_format_1);
+    break;
+                                  }
+  default:{
+    assert("Non valid KPM RIC Event Trigger Format");
+          }
   }
   
   byte_array_t ba = encode(pdu, E2SM_KPM_EVENT_TRIGGER_DEFINITION_ENUM);
@@ -295,17 +295,12 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
     assert(pdu.ranFunction_Name.ranFunction_Instance != NULL && "Memory exhausted");
     *pdu.ranFunction_Name.ranFunction_Instance = *func_def->name.instance;
   }
-  else
-  {
-    pdu.ranFunction_Name.ranFunction_Instance = NULL;
-  }
-  
+
 
 
   //  RIC Event Trigger Style Item
-  if (func_def->ric_event_trigger_style_list != NULL || func_def->sz_ric_event_trigger_style_list != 0)
-  {
-    assert(func_def->sz_ric_event_trigger_style_list >= 1 && func_def->sz_ric_event_trigger_style_list <= maxnoofRICStyles);
+  if (func_def->ric_event_trigger_style_list != NULL) {
+    assert(func_def->sz_ric_event_trigger_style_list <= maxnoofRICStyles);
 
     pdu.ric_EventTriggerStyle_List = calloc(func_def->sz_ric_event_trigger_style_list, sizeof(*pdu.ric_EventTriggerStyle_List));
     assert(pdu.ric_EventTriggerStyle_List != NULL && "Memory exhausted");
@@ -343,13 +338,14 @@ byte_array_t kpm_enc_func_def_asn(kpm_ran_function_def_t const* func_def)
   }
 
   // RIC Report Style Item
-  if (func_def->ric_report_style_list != NULL || func_def->sz_ric_report_style_list != 0)
+  if (func_def->ric_report_style_list != NULL)
   {
-    assert(func_def->sz_ric_report_style_list >= 1 && func_def->sz_ric_report_style_list <= maxnoofRICStyles);
+    assert(func_def->sz_ric_report_style_list <= maxnoofRICStyles);
 
+    if(func_def->sz_ric_report_style_list > 0){
     pdu.ric_ReportStyle_List = calloc(func_def->sz_ric_report_style_list, sizeof(*pdu.ric_ReportStyle_List));
     assert(pdu.ric_ReportStyle_List != NULL && "Memory exhausted");
-
+    }
     for (size_t i = 0; i<func_def->sz_ric_report_style_list; i++)
     {
       RIC_ReportStyle_Item_t * report_item = calloc(1, sizeof(RIC_ReportStyle_Item_t));

@@ -2,19 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "kpm_ric_ind_msg_frm_1.h"
-
-// Equality implemented as euristics for the moment. This function is used in test framework.
-#define OPTIONAL_CHECK_EQUAL_SIMPLE_TYPE(T0,T1) \
-  do { \
-    if ((T0) == NULL && (T1) != NULL) \
-      return false; \
-    if ((T0) != NULL && (T1) == NULL) \
-      return false; \
-    if ((T0) != NULL && (T1) != NULL) \
-      if (*(T0) != *(T1)) \
-        return false; \
-  } while (0)
-
+#include "../../../../../../util/eq.h"
 
 void free_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t* src) 
 {
@@ -45,21 +33,6 @@ void free_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t* src)
 
   if (src->gran_period_ms != NULL)
     free(src->gran_period_ms);
-}
-
-static
-bool eq_gran_period_ms(uint32_t const* m0, uint32_t const* m1)
-{
-  if(m0 == m1)
-    return true;
-
-  if(m0 == NULL || m1 == NULL)
-    return false;
-
-  if(*m0 != *m1)
-    return false;
-
-  return true;
 }
 
 bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1_t const* m1)
@@ -104,13 +77,15 @@ bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1
       if (eq_label_info(&m0->meas_info_lst[i].label_info_lst[j], &m1->meas_info_lst[i].label_info_lst[j]) != true){
         assert(0!=0);
         return false;
-      }
+    }
     }
   }
 
   // Granularity Period
-  if(eq_gran_period_ms(m0->gran_period_ms, m1->gran_period_ms) == false)
+  if (eq_ptr(m0->gran_period_ms, m1->gran_period_ms, NULL) == false){
+      assert(0!=0);
     return false;
+  }
 
   return true;
 }

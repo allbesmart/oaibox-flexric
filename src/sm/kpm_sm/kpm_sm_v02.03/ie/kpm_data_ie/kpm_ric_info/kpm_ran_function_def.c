@@ -21,6 +21,9 @@ bool eq_ric_event_trigger_style_list(ric_event_trigger_style_item_t const* m0, r
   if(m0 == m1)
     return true;
 
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
   if(m0->style_type != m1->style_type)
     return false;
 
@@ -156,6 +159,9 @@ bool eq_ric_report_style_item(ric_report_style_item_t const* m0, ric_report_styl
   if(m0 == m1)
     return true;
 
+  if(m0 == NULL || m1 == NULL)
+    return false;
+
   // 8.3.3
   if(m0->report_style_type != m1->report_style_type)
     return false;
@@ -261,28 +267,32 @@ bool eq_kpm_ran_function_def(kpm_ran_function_def_t const * m0, kpm_ran_function
     return false;
 
   // RIC Event Trigger Style List
-  if (m0->ric_event_trigger_style_list != NULL || m1->ric_event_trigger_style_list != NULL)
-  {
-    if (m0->sz_ric_event_trigger_style_list != m1->sz_ric_event_trigger_style_list)
-      return false;
+  if (m0->sz_ric_event_trigger_style_list != m1->sz_ric_event_trigger_style_list)
+    return false;
 
-    for (size_t i = 0; i<m0->sz_ric_event_trigger_style_list; i++) {
-      if (eq_ric_event_trigger_style_list(&m0->ric_event_trigger_style_list[i], &m1->ric_event_trigger_style_list[i]) == false)
-        return false;
-    }
+  if(m0->sz_ric_event_trigger_style_list > 0){
+    assert(m0->ric_event_trigger_style_list != NULL);
+    assert(m1->ric_event_trigger_style_list != NULL);
+  }
+
+  for (size_t i = 0; i < m0->sz_ric_event_trigger_style_list; i++) {
+    if (eq_ric_event_trigger_style_list(&m0->ric_event_trigger_style_list[i], &m1->ric_event_trigger_style_list[i]) == false)
+      return false;
   }
 
   // RIC Report Style List
-  if (m0->ric_report_style_list != NULL || m1->ric_report_style_list != NULL)
-  {
-    if (m0->sz_ric_report_style_list != m1->sz_ric_report_style_list)
-      return false;
+  if (m0->sz_ric_report_style_list != m1->sz_ric_report_style_list)
+    return false;
 
-    for (size_t i = 0; i<m0->sz_ric_report_style_list; i++) {
-      // RIC Report Styles
-      if(eq_ric_report_style_item(&m0->ric_report_style_list[i], &m1->ric_report_style_list[i]) == false)
-        return false;
-    }
+  if(m0->sz_ric_report_style_list > 0){
+    assert(m0->ric_report_style_list != NULL);
+    assert(m1->ric_report_style_list != NULL);
+  }
+
+  for (size_t i = 0; i<m0->sz_ric_report_style_list; i++) {
+    // RIC Report Styles
+    if(eq_ric_report_style_item(&m0->ric_report_style_list[i], &m1->ric_report_style_list[i]) == false)
+      return false;
   }
 
   return true;

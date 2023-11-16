@@ -112,7 +112,8 @@ matching_condition_format_3_lst_t cp_kpm_matching_cond_frm_3(matching_condition_
 #if defined KPM_V2_03 || defined KPM_V3_00 
   // Logical OR
   if (src->logical_OR != NULL) {
-    dst.logical_OR = malloc (sizeof(dst.logical_OR));
+    assert(*src->logical_OR == TRUE_ENUM_VALUE);
+    dst.logical_OR = malloc(sizeof(*dst.logical_OR));
     *dst.logical_OR = *src->logical_OR; 
   }
 #endif

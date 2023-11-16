@@ -2,19 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "kpm_ric_ind_msg_frm_1.h"
-
-// Equality implemented as euristics for the moment. This function is used in test framework.
-#define OPTIONAL_CHECK_EQUAL_SIMPLE_TYPE(T0,T1) \
-  do { \
-    if ((T0) == NULL && (T1) != NULL) \
-      return false; \
-    if ((T0) != NULL && (T1) == NULL) \
-      return false; \
-    if ((T0) != NULL && (T1) != NULL) \
-      if (*(T0) != *(T1)) \
-        return false; \
-  } while (0)
-
+#include "../../../../../../util/eq.h"
 
 void free_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t* src) 
 {
@@ -47,7 +35,6 @@ void free_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t* src)
     free(src->gran_period_ms);
 }
 
-
 bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1_t const* m1)
 {
   assert(m0 != NULL);
@@ -67,7 +54,7 @@ bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1
 
   // Measurement Information
   if (m0->meas_info_lst_len != m1->meas_info_lst_len){
-      assert(0!=0);
+    assert(0!=0);
     return false;
   }
   for (size_t i = 0; i < m0->meas_info_lst_len; ++i)
@@ -88,14 +75,14 @@ bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1
     for (size_t j = 0; j < m0->meas_info_lst[i].label_info_lst_len; ++j)
     {
       if (eq_label_info(&m0->meas_info_lst[i].label_info_lst[j], &m1->meas_info_lst[i].label_info_lst[j]) != true){
-      assert(0!=0);
+        assert(0!=0);
         return false;
     }
     }
   }
 
   // Granularity Period
-  if ((m0->gran_period_ms != NULL || m1->gran_period_ms != NULL) && *m0->gran_period_ms != *m1->gran_period_ms){
+  if (eq_ptr(m0->gran_period_ms, m1->gran_period_ms, NULL) == false){
       assert(0!=0);
     return false;
   }
@@ -104,8 +91,8 @@ bool eq_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* m0, kpm_ind_msg_format_1
 }
 
 
-kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src) {
-
+kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src) 
+{
   assert(src != NULL);
   kpm_ind_msg_format_1_t dst = {0};
 
@@ -130,7 +117,7 @@ kpm_ind_msg_format_1_t cp_kpm_ind_msg_frm_1(kpm_ind_msg_format_1_t const* src) {
 
   //uint32_t *gran_period_ms;  // 8.3.8  -  OPTIONAL
   if (src->gran_period_ms) {
-    dst.gran_period_ms = malloc(sizeof(dst.gran_period_ms));
+    dst.gran_period_ms = malloc(sizeof(*dst.gran_period_ms));
     assert(dst.gran_period_ms != NULL && "Memory exhausted");
     *dst.gran_period_ms = *src->gran_period_ms;
   }

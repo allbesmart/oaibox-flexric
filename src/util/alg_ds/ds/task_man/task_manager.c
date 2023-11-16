@@ -569,6 +569,7 @@ void free_task_manager(task_manager_t* man, void (*clean)(void*))
 void async_task_manager(task_manager_t* man, task_t t)
 {
   assert(man != NULL);
+  assert(man->len_thr > 0);
   assert(t.func != NULL);
   //assert(t.args != NULL);
 

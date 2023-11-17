@@ -37,7 +37,7 @@ kpm_event_trigger_def_t fill_rnd_kpm_event_trigger_def(void)
 
   if(dst.type == FORMAT_1_RIC_EVENT_TRIGGER  ){
     // Normally the period is not free, need to check in the specs
-    dst.kpm_ric_event_trigger_format_1.report_period_ms = (rand()%4294967295) + 1 ;
+    dst.kpm_ric_event_trigger_format_1.report_period_ms = (rand()% 10000) + 1; //(rand()%4294967295) + 1 ;
   } else {
     assert(0 != 0 && "unknown type");
   }

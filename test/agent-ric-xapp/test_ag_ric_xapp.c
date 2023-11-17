@@ -622,7 +622,6 @@ int main(int argc, char *argv[])
   assert(rc_sub.ad != NULL && "Memory exhausted");
   rc_sub.ad[0] = fill_rnd_rc_action_def();
 
-
   sm_ans_xapp_t h_5 = report_sm_xapp_api(&nodes.n[0].id, SM_RC_ID, &rc_sub, sm_cb_rc);
   assert(h_5.success);
 
@@ -648,7 +647,6 @@ int main(int argc, char *argv[])
 
   int const rc = pthread_join(t, NULL);
   assert(rc == 0);
-
 
   printf("Test communicating E2-Agent, Near-RIC and xApp run SUCCESSFULLY\n");
 }

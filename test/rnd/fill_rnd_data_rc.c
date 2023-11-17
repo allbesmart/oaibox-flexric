@@ -1848,7 +1848,7 @@ e2sm_rc_ind_msg_t fill_rnd_rc_ind_msg(void)
   
   dst.format = rand()% END_E2SM_RC_IND_MSG;
 
-  if( dst.format == FORMAT_1_E2SM_RC_IND_MSG){
+  if(dst.format == FORMAT_1_E2SM_RC_IND_MSG){
     dst.frmt_1 = fill_rnd_ind_msg_frmt_1();
   } else if(dst.format == FORMAT_2_E2SM_RC_IND_MSG){
     dst.frmt_2 = fill_rnd_ind_msg_frmt_2();

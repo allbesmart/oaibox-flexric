@@ -188,10 +188,10 @@ sm_io_ag_ran_t init_sm_io_ag_ran(void)
   sm_io_ag_ran_t dst = {0};
 
   // READ: Indication
-  dst.read_ind_tbl[MAC_STATS_V0 ] =  read_ind_mac;
-  dst.read_ind_tbl[RLC_STATS_V0] =   read_ind_rlc;
-  dst.read_ind_tbl[PDCP_STATS_V0] =   read_ind_pdcp;
-  dst.read_ind_tbl[SLICE_STATS_V0] =   read_ind_slice;
+  dst.read_ind_tbl[MAC_STATS_V0 ] = read_ind_mac;
+  dst.read_ind_tbl[RLC_STATS_V0] =  read_ind_rlc;
+  dst.read_ind_tbl[PDCP_STATS_V0] =  read_ind_pdcp;
+  dst.read_ind_tbl[SLICE_STATS_V0] = read_ind_slice;
   dst.read_ind_tbl[TC_STATS_V0] =   read_ind_tc;
   dst.read_ind_tbl[GTP_STATS_V0] =   read_ind_gtp;
   dst.read_ind_tbl[KPM_STATS_V3_0] =   read_ind_kpm;

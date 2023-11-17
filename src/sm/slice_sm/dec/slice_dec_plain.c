@@ -379,7 +379,6 @@ size_t fill_ue_slice_conf(ue_slice_conf_t* slc, uint8_t const* it)
 
 slice_ind_msg_t slice_dec_ind_msg_plain(size_t len, uint8_t const ind_msg[len])
 {
-
   slice_ind_msg_t ind = {0};
 
   uint8_t const* it = ind_msg;

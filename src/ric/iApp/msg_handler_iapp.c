@@ -320,7 +320,7 @@ e2ap_msg_t e2ap_handle_e42_ric_subscription_delete_request_iapp(e42_iapp_t* iapp
 
   fwd_ric_subscription_request_delete_gen(iapp->ric_if.type, &n.e2_node_id, &dst, notify_msg_iapp_api);
 
-  printf("[iApp]: RIC_SUBSCRIPTION_DELETE_REQUEST sent ric_req_id %d \n",n.ric_id.ric_req_id);
+  printf("[iApp]: RIC_SUBSCRIPTION_DELETE_REQUEST tx RIC_REQ_ID %d \n",n.ric_id.ric_req_id);
 
   e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};
   return ans;

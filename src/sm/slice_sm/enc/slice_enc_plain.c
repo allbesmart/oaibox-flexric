@@ -339,11 +339,6 @@ size_t fill_edf(uint8_t* it, edf_slice_t* edf)
   it += sizeof(edf->len_over);
   sz += sizeof(edf->len_over);
 
-  if(edf->len_over > 0){
-    edf->over = calloc(edf->len_over, sizeof(uint32_t));
-    assert(edf->over != NULL && "Memory exhausted");
-  }
-
   for(size_t i = 0; i < edf->len_over; ++i){
     memcpy(it, &edf->over[i], sizeof(uint32_t));
     it += sizeof(edf->over[i]);
@@ -420,9 +415,6 @@ size_t fill_ul_dl_slice_conf(uint8_t* it, ul_dl_slice_conf_t const* conf)
   memcpy(it, &conf->len_sched_name, sizeof(conf->len_sched_name)); 
   it += sizeof(conf->len_sched_name);
   size_t sz = sizeof(conf->len_sched_name);
-
-  //printf(" conf->len_sched_name = %d\n", conf->len_sched_name );
-  //fflush(stdout);
 
   memcpy(it, conf->sched_name, conf->len_sched_name);
   it += conf->len_sched_name;

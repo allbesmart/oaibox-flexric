@@ -36,6 +36,7 @@ void read_ind_slice(void* read)
   slice_ind_data_t* slice = (slice_ind_data_t*)read;
   fill_slice_ind_data(slice);
   cp.msg = cp_slice_ind_msg(&slice->msg);
+  assert(eq_slice_ind_msg(&cp.msg, &slice->msg) );
 }
 
 static 

@@ -93,7 +93,7 @@ elseif (CMAKE_C_COMPILER_ID STREQUAL "GNU")
     message(FATAL_ERROR "Due to bug in gcc 11.3.0 when implementing C11 _Generics, it does not compile FlexRIC.
     Alternatively use gcc-10, gcc-12 or gcc-13 e.g., sudo update-alternatives --config gcc ")
   elseif(${SANITIZER} STREQUAL "ADDRESS")
-    if(NOT CMAKE_C_COMPILER_VERSION STREQUAL "10.5.0")
+    if(NOT CMAKE_C_COMPILER_VERSION STREQUAL "10.4.0")
       message(FATAL_ERROR "ASan not supported by newer versions of gcc when using nested functions needed e.g., defer.
       Change the compiler to gcc-10 using e.g., sudo update-alternatives --config gcc")
     endif()
@@ -241,7 +241,7 @@ set(SM_ENCODING_KPM "ASN" CACHE STRING "The KPM SM encoding to use")
 set_property(CACHE SM_ENCODING_KPM PROPERTY STRINGS "PLAIN" "ASN" "FLATBUFFERS")
 message(STATUS "Selected KPM SM_ENCODING: ${SM_ENCODING_KPM}")
 
-set(KPM_VERSION "KPM_V2_01" CACHE STRING "The KPM SM version to use")
+set(KPM_VERSION "KPM_V2_03" CACHE STRING "The KPM SM version to use")
 set_property(CACHE SM_ENCODING_KPM PROPERTY STRINGS  "KPM_V2_01" "KPM_V2_03" "KPM_V3_00")
 message(STATUS "Selected KPM Version: ${KPM_VERSION}")
 

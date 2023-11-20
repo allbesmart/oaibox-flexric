@@ -36,7 +36,7 @@ e2_setup_failure_t generate_setup_failure_v1(near_ric_t* ric, const e2_setup_req
   assert(req != NULL);
   assert(0 != 0 && "Not implemented");
   e2_setup_failure_t dst = {0};
-  return ans;
+  return dst;
 }
 
 #elif defined(E2AP_V2) || defined(E2AP_V3)

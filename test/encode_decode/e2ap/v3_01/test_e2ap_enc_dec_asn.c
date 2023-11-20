@@ -468,7 +468,7 @@ void test_setup_request()
   ran_func_item[0].rev = 0;
 
   const char def[] = "This is the possible definition";
-  ran_func_item[0].def = copy_str_to_ba(def);
+  ran_func_item[0].defn = copy_str_to_ba(def);
 
   const char oid[] = "1.3.6.1.4.1.53148.1.3.2.2";
   ran_func_item[0].oid = copy_str_to_ba(oid);
@@ -668,7 +668,7 @@ void test_service_update()
   ran_function_t* added = calloc(len_added, sizeof(ran_function_t ));
   added->id = 42;
   added->rev = 0;
-  added->def = ba;
+  added->defn = ba;
 
   ran_function_t* modified = NULL;
   const size_t len_modified = 0;
@@ -819,10 +819,10 @@ void fill_ran_function(ran_function_t* rf)
   const char* def = "Definition";
   size_t const sz = strlen(def);
 
-  rf->def.len = sz;
-  rf->def.buf = malloc(sz);
-  assert(rf->def.buf != NULL && "Memory exhauested"); 
-  memcpy(rf->def.buf, def, sz);
+  rf->defn.len = sz;
+  rf->defn.buf = malloc(sz);
+  assert(rf->defn.buf != NULL && "Memory exhauested"); 
+  memcpy(rf->defn.buf, def, sz);
 
   rf->id = rand()%1024;  
   rf->rev = rand()%8; 

@@ -81,7 +81,7 @@ ran_function_t copy_ran_function(const RANfunction_Item_t* src)
   memset(&dst, 0, sizeof(ran_function_t));
   dst.id = src->ranFunctionID;
   dst.rev = src->ranFunctionRevision;
-  dst.def = copy_ostring_to_ba(src->ranFunctionDefinition);
+  dst.defn = copy_ostring_to_ba(src->ranFunctionDefinition);
   if(src->ranFunctionOID != NULL){
     dst.oid = calloc(1, sizeof(byte_array_t)); 
     *dst.oid = copy_ostring_to_ba(*src->ranFunctionOID);
@@ -1376,7 +1376,7 @@ e2ap_msg_t e2ap_dec_setup_request(const E2AP_PDU_t* pdu)
         assert(src->ranFunctionRevision > -1 && src->ranFunctionRevision <= MAX_RAN_FUNC_REV);
         dst->rev = src->ranFunctionRevision;
 
-        dst->def = copy_ostring_to_ba(src->ranFunctionDefinition); 
+        dst->defn = copy_ostring_to_ba(src->ranFunctionDefinition); 
 
         if(src->ranFunctionOID != NULL){
           dst->oid = malloc(sizeof(byte_array_t));
@@ -2107,7 +2107,7 @@ e2ap_msg_t e2ap_dec_e42_setup_request(const struct E2AP_PDU* pdu)
     assert(src->ranFunctionRevision > -1 && src->ranFunctionRevision <= MAX_RAN_FUNC_REV);
     dst->rev = src->ranFunctionRevision;
 
-    dst->def = copy_ostring_to_ba(src->ranFunctionDefinition); 
+    dst->defn = copy_ostring_to_ba(src->ranFunctionDefinition); 
 
     if(src->ranFunctionOID != NULL){
       dst->oid = malloc(sizeof(byte_array_t));
@@ -2227,7 +2227,7 @@ e2ap_msg_t e2ap_dec_e42_setup_response(const struct E2AP_PDU* pdu)
       assert(src->ranFunctionRevision > -1 && src->ranFunctionRevision <= MAX_RAN_FUNC_REV);
       dst_ie->rev = src->ranFunctionRevision;
 
-      dst_ie->def = copy_ostring_to_ba(src->ranFunctionDefinition); 
+      dst_ie->defn = copy_ostring_to_ba(src->ranFunctionDefinition); 
 
       if(src->ranFunctionOID != NULL){
         dst_ie->oid = malloc(sizeof(byte_array_t));

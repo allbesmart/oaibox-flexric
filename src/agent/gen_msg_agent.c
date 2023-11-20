@@ -50,8 +50,8 @@ e2_setup_request_t gen_setup_request_v1(e2_agent_t* ag)
 
     sm_e2_setup_data_t def = sm->proc.on_e2_setup(sm);
     // Pass memory ownership
-    ran_func[i].def.len = def.len_rfd;
-    ran_func[i].def.buf = def.ran_fun_def;
+    ran_func[i].defn.len = def.len_rfd;
+    ran_func[i].defn.buf = def.ran_fun_def;
 
     ran_func[i].id = sm->info.id();
     ran_func[i].rev = sm->info.rev();
@@ -91,8 +91,8 @@ e2_setup_request_t gen_setup_request_v2(e2_agent_t* ag)
 
     sm_e2_setup_data_t def = sm->proc.on_e2_setup(sm);
     // Pass memory ownership
-    ran_func[i].def.len = def.len_rfd;
-    ran_func[i].def.buf = def.ran_fun_def;
+    ran_func[i].defn.len = def.len_rfd;
+    ran_func[i].defn.buf = def.ran_fun_def;
 
     ran_func[i].id = sm->info.id();
     ran_func[i].rev = sm->info.rev();

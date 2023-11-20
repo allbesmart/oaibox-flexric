@@ -90,8 +90,8 @@ e42_setup_request_t generate_e42_setup_request(e42_xapp_t* xapp)
 
     sm_e2_setup_data_t def = sm->proc.on_e2_setup(sm);
     // Pass memory ownership
-    ran_func[i].def.len = def.len_rfd;
-    ran_func[i].def.buf = def.ran_fun_def;
+    ran_func[i].defn.len = def.len_rfd;
+    ran_func[i].defn.buf = def.ran_fun_def;
 
     ran_func[i].id = sm->info.id();
     ran_func[i].rev = sm->info.rev();

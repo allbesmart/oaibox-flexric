@@ -409,9 +409,9 @@ void test_setup_rquest()
   ran_func_item[0].id = 32;
   ran_func_item[0].rev = 0;
   const char* def = "This is the possible deficniotn";
-  ran_func_item[0].def.buf = malloc(strlen(def));
-  memcpy(ran_func_item[0].def.buf, def, strlen(def)); 
-  ran_func_item[0].def.len = strlen(def); 
+  ran_func_item[0].defn.buf = malloc(strlen(def));
+  memcpy(ran_func_item[0].defn.buf, def, strlen(def)); 
+  ran_func_item[0].defn.len = strlen(def); 
 
 
   e2_node_component_config_update_t* comp_conf_update = NULL;
@@ -564,7 +564,7 @@ void test_service_update()
   ran_function_t* added = calloc(len_added, sizeof(ran_function_t ));
   added->id = 42;
   added->rev = 0;
-  added->def = ba;
+  added->defn = ba;
 
   ran_function_t* modified = NULL;
   const size_t len_modified = 0;
@@ -711,10 +711,10 @@ void fill_ran_function(ran_function_t* rf)
   const char* def = "Definition";
   size_t const sz = strlen(def);
 
-  rf->def.len = sz;
-  rf->def.buf = malloc(sz);
-  assert(rf->def.buf != NULL && "Memory exhauested"); 
-  memcpy(rf->def.buf, def, sz);
+  rf->defn.len = sz;
+  rf->defn.buf = malloc(sz);
+  assert(rf->defn.buf != NULL && "Memory exhauested"); 
+  memcpy(rf->defn.buf, def, sz);
 
   rf->id = rand()%1024;  
   rf->rev = rand()%8; 

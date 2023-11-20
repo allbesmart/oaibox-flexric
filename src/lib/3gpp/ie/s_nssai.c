@@ -23,6 +23,7 @@
 
 #include <assert.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 bool eq_s_nssai_e2sm(const s_nssai_e2sm_t* m0, const s_nssai_e2sm_t* m1)
 {

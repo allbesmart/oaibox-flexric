@@ -86,7 +86,7 @@ ran_function_t copy_ran_function(const RANfunction_Item_t* src)
   ran_function_t dst = {0};
   dst.id = src->ranFunctionID;
   dst.rev = src->ranFunctionRevision;
-  dst.def = copy_ostring_to_ba(src->ranFunctionDefinition);
+  dst.defn = copy_ostring_to_ba(src->ranFunctionDefinition);
   dst.oid = copy_ostring_to_ba(src->ranFunctionOID);
 
   return dst;
@@ -1509,7 +1509,7 @@ e2ap_msg_t e2ap_dec_setup_request(const E2AP_PDU_t* pdu)
         assert(src->ranFunctionRevision > -1 && src->ranFunctionRevision <= MAX_RAN_FUNC_REV);
         dst->rev = src->ranFunctionRevision;
 
-        dst->def = copy_ostring_to_ba(src->ranFunctionDefinition); 
+        dst->defn = copy_ostring_to_ba(src->ranFunctionDefinition); 
         dst->oid = copy_ostring_to_ba(src->ranFunctionOID); 
       }
     } else if (proto_id == ProtocolIE_ID_id_E2nodeComponentConfigAddition) {
@@ -2451,7 +2451,7 @@ e2ap_msg_t e2ap_dec_e42_setup_request(const struct E2AP_PDU* pdu)
     assert(src->ranFunctionRevision > -1 && src->ranFunctionRevision <= MAX_RAN_FUNC_REV);
     dst->rev = src->ranFunctionRevision;
 
-    dst->def = copy_ostring_to_ba(src->ranFunctionDefinition); 
+    dst->defn = copy_ostring_to_ba(src->ranFunctionDefinition); 
     dst->oid = copy_ostring_to_ba(src->ranFunctionOID);
   }
 
@@ -2567,7 +2567,7 @@ e2ap_msg_t e2ap_dec_e42_setup_response(const struct E2AP_PDU* pdu)
       assert(src->ranFunctionRevision > -1 && src->ranFunctionRevision <= MAX_RAN_FUNC_REV);
       dst_ie->rev = src->ranFunctionRevision;
 
-      dst_ie->def = copy_ostring_to_ba(src->ranFunctionDefinition); 
+      dst_ie->defn = copy_ostring_to_ba(src->ranFunctionDefinition); 
       dst_ie->oid = copy_ostring_to_ba(src->ranFunctionOID);
     }
   }

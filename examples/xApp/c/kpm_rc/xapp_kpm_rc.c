@@ -141,7 +141,7 @@ kpm_act_def_format_4_t gen_act_def_frmt_4(const char* action)
   assert(dst.matching_cond_lst[0].test_info_lst.test_cond != NULL && "Memory exhausted");
   *dst.matching_cond_lst[0].test_info_lst.test_cond = GREATERTHAN_TEST_COND;
 
-  dst.matching_cond_lst[0].test_info_lst.test_cond_value = calloc(1, sizeof(test_cond_value_e)); 
+  dst.matching_cond_lst[0].test_info_lst.test_cond_value = calloc(1, sizeof(test_cond_value_t)); 
   assert(dst.matching_cond_lst[0].test_info_lst.test_cond_value != NULL && "Memory exhausted"); 
   dst.matching_cond_lst[0].test_info_lst.test_cond_value->type = INTEGER_TEST_COND_VALUE;
   dst.matching_cond_lst[0].test_info_lst.test_cond_value->int_value = malloc(sizeof(int64_t));

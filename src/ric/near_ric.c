@@ -854,7 +854,7 @@ void fwd_ric_subscription_request_delete(near_ric_t* ric, global_e2_node_id_t co
     void* first = assoc_front(tree);
     void* end  = assoc_end(tree);
     if(find_if(tree, first, end, &ev, eq_pending_event_ric ) != end){
-      printf("[NEAR-RIC]: SUBSCRIPTION REQUEST DELETE RAN FUNC ID %d RIC REQ ID %d MSG ALREADY PENDING\n", sdr->ric_id.ran_func_id, sdr->ric_id.ric_req_id);
+      printf("[NEAR-RIC]: SUBSCRIPTION REQUEST DELETE RAN FUNC ID %d RIC_REQ_ID %d MSG ALREADY PENDING\n", sdr->ric_id.ran_func_id, sdr->ric_id.ric_req_id);
       return;
     }
 
@@ -868,7 +868,7 @@ void fwd_ric_subscription_request_delete(near_ric_t* ric, global_e2_node_id_t co
 
   e2ap_send_bytes_ric(&ric->ep, id, ba_msg);
 
-  printf("[NEAR-RIC]: SUBSCRIPTION DELETE REQUEST tx RAN FUNC ID %d  RIC REQ ID %d \n", sdr->ric_id.ran_func_id, sdr->ric_id.ric_req_id);
+  printf("[NEAR-RIC]: SUBSCRIPTION DELETE REQUEST tx RAN FUNC ID %d RIC_REQ_ID %d \n", sdr->ric_id.ran_func_id, sdr->ric_id.ric_req_id);
 }
 
 uint16_t fwd_ric_control_request(near_ric_t* ric, global_e2_node_id_t const* id, ric_control_request_t const* cr,  void (*f)(e2ap_msg_t const* msg))

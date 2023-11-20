@@ -161,6 +161,10 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
               
               break;
             }
+            case ID_MEAS_TYPE: 
+                printf(" ID_MEAS_TYPE \n");
+                assert(0!=0 && "Bug here?");
+                break;
           
             default:
               assert(false && "Measurement Type not yet implemented");
@@ -249,7 +253,7 @@ kpm_act_def_format_4_t gen_act_def_frmt_4(const char** action)
   assert(dst.matching_cond_lst[0].test_info_lst.test_cond != NULL && "Memory exhausted");
   *dst.matching_cond_lst[0].test_info_lst.test_cond = EQUAL_TEST_COND;
 
-  dst.matching_cond_lst[0].test_info_lst.test_cond_value = calloc(1, sizeof(test_cond_value_e));
+  dst.matching_cond_lst[0].test_info_lst.test_cond_value = calloc(1, sizeof(test_cond_value_t));
   assert(dst.matching_cond_lst[0].test_info_lst.test_cond_value != NULL && "Memory exhausted");
   dst.matching_cond_lst[0].test_info_lst.test_cond_value->type =  INTEGER_TEST_COND_VALUE;
   dst.matching_cond_lst[0].test_info_lst.test_cond_value->int_value = malloc(sizeof(int64_t));

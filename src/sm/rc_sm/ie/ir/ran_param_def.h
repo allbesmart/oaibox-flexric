@@ -3,33 +3,8 @@
 
 #include <stdint.h>
 #include "../../../../util/byte_array.h"
+#include "ran_param_type.h"
 
-typedef struct ran_param_def_s ran_param_def_t;
-
-typedef struct {
-  // RAN Parameter ID
-  // Mandatory
-  // 9.3.8
-  uint32_t ran_param_id;
-
-  // RAN Parameter Name
-  // Mandatory
-  // 9.3.9
-  byte_array_t ran_param_name;
-
-  // RAN Parameter Definition
-  // Optional
-  // 9.3.51
-  ran_param_def_t* ran_param_def;
-
-} ran_param_lst_struct_t;
-
-typedef struct {
-  // [1-65535]
-  size_t sz_ran_param;
-  ran_param_lst_struct_t* ran_param;
-
-} ran_param_type_t;
 
 typedef enum {
   LIST_RAN_PARAMETER_DEF_TYPE,
@@ -56,5 +31,8 @@ typedef struct ran_param_def_s{
 void free_ran_param_def(ran_param_def_t* src);
 
 bool eq_ran_param_def(ran_param_def_t const* m0, ran_param_def_t const* m1);
+
+ran_param_def_t cp_ran_param_def(ran_param_def_t const* src);
+
 
 #endif

@@ -369,7 +369,7 @@ lst_ran_param_t fill_rnd_lst_ran_param(void)
   // Mandatory
   // 9.3.8
   //1.. 4294967295
-  dst.ran_param_id = rand() + 1;
+  dst.ran_param_id = (rand()% 4294967295) + 1;
 
   // RAN Parameter Structure
   // Mandatory
@@ -655,7 +655,7 @@ param_report_def_t fill_rnd_param_report_def(void)
   // Mandatory
   // 9.3.8
   // [1 - 4294967295]
-  dst.ran_param_id = rand() + 1; 
+  dst.ran_param_id = (rand() %  4294967295) + 1; 
 
   // RAN Parameter Definition
   // Optional
@@ -709,7 +709,7 @@ param_report_def_t fill_rnd_param_report_def(void)
       // RAN Parameter ID
       // Mandatory
       // 9.3.8
-      dst.ran_param_def->strct->ran_param[i].ran_param_id = rand() + 1; 
+      dst.ran_param_def->strct->ran_param[i].ran_param_id = (rand() % 4294967295) + 1; 
 
       // RAN Parameter Name
       // Mandatory
@@ -760,7 +760,7 @@ ran_param_val_type_t fill_rnd_ran_param_val_type()
 {
   ran_param_val_type_t dst = {0}; 
 
-  dst.type =  STRUCTURE_RAN_PARAMETER_VAL_TYPE; //rand() % END_RAN_PARAMETER_VAL_TYPE;
+  dst.type = rand() % END_RAN_PARAMETER_VAL_TYPE; //  STRUCTURE_RAN_PARAMETER_VAL_TYPE; //
 
   recursion_fill_rnd_ran_param_val_type += 1; 
   if(recursion_fill_rnd_ran_param_val_type > 4){
@@ -935,7 +935,7 @@ ran_param_ins_ind_t fill_rnd_ran_param_ins_ind(void)
   // Mandatory
   // 9.3.8
   // [1.. 429496729 ]
-  dst.ran_param_id = rand() + 1; 
+  dst.ran_param_id = (rand() %  4294967295) + 1; 
 
   // RAN Parameter Definition
   // Optional
@@ -1825,7 +1825,7 @@ ran_param_req_t fill_rnd_ran_param_req(void)
   // Mandatory
   // 9.3.8
   // 1 4294967295,
-  dst.ran_param_id = rand() + 1;
+  dst.ran_param_id = (rand() %  4294967295) + 1; 
 
   // RAN Parameter Value Type
   // Mandatory
@@ -1956,7 +1956,7 @@ e2sm_rc_cpid_t fill_rnd_rc_cpid(void)
   // Mandatory
   // 9.3.18
   // [ 1 - 4294967295]
-  dst.ric_cpid = rand() + 1; 
+  dst.ric_cpid = (rand()% 4294967295) + 1; 
 
   return dst;
 }

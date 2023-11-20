@@ -68,7 +68,11 @@ param_report_def_t cp_param_report_def(param_report_def_t const* src)
   // RAN Parameter Definition
   // Optional
   // 9.3.51
-  assert(src->ran_param_def == NULL && "Not implemented");
+  if(src->ran_param_def != NULL ){ 
+    dst.ran_param_def = calloc(1, sizeof(ran_param_def_t));
+    assert(dst.ran_param_def != NULL && "Memory exhausted");
+    *dst.ran_param_def = cp_ran_param_def(src->ran_param_def);
+  }
 
   return dst;
 }

@@ -177,7 +177,6 @@ void check_subscription(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-//  sm_ag_if_wr_subs_t sub = {.type = RAN_CTRL_SUBS_V1_03};
   rc_sub_data_t rc = fill_rnd_rc_subscription();
   defer({ free_rc_sub_data(&rc); });
 

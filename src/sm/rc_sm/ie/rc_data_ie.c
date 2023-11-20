@@ -819,8 +819,10 @@ bool eq_rc_sub_data(rc_sub_data_t const* m0, rc_sub_data_t const* m1)
     return false;
 
   for(size_t i = 0; i < m0->sz_ad; ++i){
-    if(eq_e2sm_rc_action_def(&m0->ad[i], &m1->ad[i]) == false)
+    if(eq_e2sm_rc_action_def(&m0->ad[i], &m1->ad[i]) == false){
+      assert(0 != 0 && "debug");
       return false;
+    }
   }
 
   return true;

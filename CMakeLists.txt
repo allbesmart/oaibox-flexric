@@ -152,7 +152,7 @@ endif()
 message(STATUS "Selected xApp dir : ${XAPP_DB_DIR}")
 
 
-option(CODE_COVERAGE "Code coverage" OFF)
+option(CODE_COVERAGE "Code coverage" ON)
 if(CODE_COVERAGE)
   add_compile_options("-fprofile-arcs;-ftest-coverage")
   add_link_options("-lgcov;-coverage")

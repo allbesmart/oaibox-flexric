@@ -170,8 +170,7 @@ sm_ind_data_t on_indication_rc_sm_ag(sm_agent_t const* sm_agent, void* ind_data)
 
   // Liberate the memory if previously allocated by the RAN. It sucks
   rc_ind_data_t* ind = (rc_ind_data_t*)ind_data; 
-  defer({ free_rc_ind_data(ind); });
-  defer({ free(ind); });
+  defer({ free_rc_ind_data(ind);  free(ind); });
 
   // Fill Indication Header
   byte_array_t ba_hdr = rc_enc_ind_hdr(&sm->enc, &ind->hdr);

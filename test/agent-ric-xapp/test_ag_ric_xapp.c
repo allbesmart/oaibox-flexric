@@ -178,8 +178,8 @@ static
 void* emulate_rrc_msg(void* ptr)
 {
   uint32_t* ric_id = (uint32_t*)ptr; 
-  for(size_t i = 0; i < 100; ++i){
-    usleep(rand()%500);
+  for(size_t i = 0; i < 1000; ++i){
+    usleep(rand()%50);
     rc_ind_data_t* d = calloc(1, sizeof(rc_ind_data_t)); 
     assert(d != NULL && "Memory exhausted");
     *d = fill_rnd_rc_ind_data();
@@ -211,179 +211,8 @@ sm_ag_if_ans_t write_subs_rc(void const* data)
   return ans;
 }
 
-
-
-
-
-
-
-/*
-static
-void read_e2_setup_agent(sm_ag_if_rd_e2setup_t* e2ap)
-{
-  assert(e2ap != NULL);
-  assert(e2ap->type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0 || e2ap->type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0);
-  if(e2ap->type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0 ){
-    e2ap->kpm.ran_func_def = fill_rnd_kpm_ran_func_def(); 
-  } else if(e2ap->type == RAN_CTRL_V1_3_AGENT_IF_E2_SETUP_ANS_V0 ){
-    e2ap->rc.ran_func_def = fill_rc_ran_func_def();
-  } else {
-    assert(0 != 0 && "Unknown type");
-  }
-}
-
-static
-void read_RAN(sm_ag_if_rd_t* ag_if)
-{
-  assert(ag_if != NULL);
-
-  assert(ag_if->type == INDICATION_MSG_AGENT_IF_ANS_V0 ||
-        ag_if->type == E2_SETUP_AGENT_IF_ANS_V0);
-
-  if(ag_if->type == E2_SETUP_AGENT_IF_ANS_V0)
-    return read_e2_setup_agent(&ag_if->e2ap);
-
- sm_ag_if_rd_ind_t* data = &ag_if->ind;
-
-  assert(data->type == MAC_STATS_V0 || 
-        data->type == RLC_STATS_V0 ||  
-        data->type == PDCP_STATS_V0 || 
-        data->type == SLICE_STATS_V0 || 
-        data->type == KPM_STATS_V3_0 ||
-        data->type == GTP_STATS_V0);
-
-  if(data->type == MAC_STATS_V0 ){
-    fill_mac_ind_data(&data->mac);
-  } else if(data->type == RLC_STATS_V0) {
-    fill_rlc_ind_data(&data->rlc);
-  } else if (data->type == PDCP_STATS_V0){
-    fill_pdcp_ind_data(&data->pdcp);
-  } else if(data->type == SLICE_STATS_V0){
-    fill_slice_ind_data(&data->slice);
-  } else if(data->type == GTP_STATS_V0){
-    fill_gtp_ind_data(&data->gtp);
-  } else if(data->type == KPM_STATS_V3_0){
-    assert(data->kpm.act_def != NULL && "Which action should be sent to KPM?"); 
-    data->kpm.ind.hdr = fill_rnd_kpm_ind_hdr();
-    data->kpm.ind.msg = fill_rnd_kpm_ind_msg();
-  } else {
-    assert("Invalid data type");
-  }
-}
-
-static
-sm_ag_if_ans_t write_RAN_ctrl( sm_ag_if_wr_ctrl_t const* data)
-{
-  assert(data != NULL);
-
-  if(data->type == MAC_CTRL_REQ_V0){
-    //printf("Control message called in the RAN \n");
-    sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
-    ans.ctrl_out.type = MAC_AGENT_IF_CTRL_ANS_V0;
-    ans.ctrl_out.mac.ans = MAC_CTRL_OUT_OK;
-    return ans;
-  } else if(data->type == SLICE_CTRL_REQ_V0 ){
-
-    slice_ctrl_req_data_t const* slice_req_ctrl = &data->slice_req_ctrl;
-    slice_ctrl_msg_t const* msg = &slice_req_ctrl->msg;
-
-    if(msg->type == SLICE_CTRL_SM_V0_ADD){
-        printf("[E2 Agent]: SLICE CONTROL ADD rx\n");
-    } else if (msg->type == SLICE_CTRL_SM_V0_DEL){
-        printf("[E2 Agent]: SLICE CONTROL DEL rx\n");
-    } else if (msg->type == SLICE_CTRL_SM_V0_UE_SLICE_ASSOC){
-        printf("[E2 Agent]: SLICE CONTROL ASSOC rx\n");
-    } else {
-      assert(0!=0 && "Unknown msg_type!");
-    }
-
-    sm_ag_if_ans_t ans = {.type =  CTRL_OUTCOME_SM_AG_IF_ANS_V0};
-    ans.ctrl_out.type = SLICE_AGENT_IF_CTRL_ANS_V0;
-    return ans;
-
-  } else if(data->type == RAN_CONTROL_CTRL_V1_03){
-    rc_ctrl_req_data_t const* rc_ctrl = &data->rc_ctrl;
-    (void)rc_ctrl;
-
-    sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
-    ans.ctrl_out.type = RAN_CTRL_V1_3_AGENT_IF_CTRL_ANS_V0;
-    ans.ctrl_out.rc = fill_rnd_rc_ctrl_out();
-    return ans;
-
-  } else  {
-    assert(0 != 0 && "Not supported function ");
-  }
-  sm_ag_if_ans_t ans = {.type = CTRL_OUTCOME_SM_AG_IF_ANS_V0};
-  return ans;
-}
-
-static
-void* emulate_rrc_msg(void* ptr)
-{
-  
-  uint32_t* ric_id = (uint32_t*)ptr; 
-  for(size_t i = 0; i < 5; ++i){
-    usleep(rand()%4000);
-    rc_ind_data_t* d = calloc(1, sizeof(rc_ind_data_t)); 
-    assert(d != NULL && "Memory exhausted");
-    *d = fill_rnd_rc_ind_data();
-    async_event_agent_api(*ric_id, d);
-    printf("Event for RIC Req ID %u generated\n", *ric_id);
-  }
-
-  free(ptr);
-  return NULL;
-}
-
-static
-pthread_t t_ran_ctrl;
-
-static
-void write_RAN_subs_rc(wr_rc_sub_data_t const* wr_rc)
-{
-  assert(wr_rc != NULL);
-
-  printf("ric req id %d \n", wr_rc->ric_req_id);
-
-  uint32_t* ptr = malloc(sizeof(uint32_t));
-  assert(ptr != NULL);
-  *ptr = wr_rc->ric_req_id;
-
-  int rc = pthread_create(&t_ran_ctrl, NULL, emulate_rrc_msg, ptr);
-  assert(rc == 0);
-}
-
-static
-sm_ag_if_ans_t write_RAN_subs(sm_ag_if_wr_subs_t const* subs)
-{
-  assert(subs != NULL);
-  
-  if(subs->type == RAN_CTRL_SUBS_V1_03){
-    write_RAN_subs_rc(&subs->wr_rc);
-  } else {
-    assert(0!=0 && "Unknown type");
-  }
-
-  sm_ag_if_ans_t ans = {0};
-  return ans;
-}
-
-static
-sm_ag_if_ans_t write_RAN(sm_ag_if_wr_t const* ag_wr)
-{
-  assert(ag_wr != NULL);
-  assert(ag_wr->type == CONTROL_SM_AG_IF_WR
-        || ag_wr->type == SUBSCRIPTION_SM_AG_IF_WR);
-
-  if(ag_wr->type == CONTROL_SM_AG_IF_WR){
-    return write_RAN_ctrl(&ag_wr->ctrl);
-  } //else if(ag_wr->type == SUBSCRIPTION_SM_AG_IF_WR){
-  return write_RAN_subs(&ag_wr->subs);
-}
-
-*/
-
-
+static 
+int cnt_mac = 0;
 static
 void sm_cb_mac(sm_ag_if_rd_t const* rd)
 {
@@ -391,10 +220,15 @@ void sm_cb_mac(sm_ag_if_rd_t const* rd)
   assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
   assert(rd->ind.type == MAC_STATS_V0); 
 
-  int64_t now = time_now_us();
-  printf("MAC ind_msg latency = %ld μs\n", now - rd->ind.mac.msg.tstamp);
+  if(cnt_mac % 128 == 0){
+    int64_t now = time_now_us();
+    printf("MAC ind_msg latency = %ld μs\n", now - rd->ind.mac.msg.tstamp);
+  }
+  ++cnt_mac;
 }
 
+static 
+int cnt_rlc = 0;
 static
 void sm_cb_rlc(sm_ag_if_rd_t const* rd)
 {
@@ -402,11 +236,16 @@ void sm_cb_rlc(sm_ag_if_rd_t const* rd)
   assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
   assert(rd->ind.type == RLC_STATS_V0); 
 
+  if(cnt_rlc % 128 == 0){
   int64_t now = time_now_us();
-
   printf("RLC ind_msg latency = %ld μs\n", now - rd->ind.rlc.msg.tstamp);
+  }
+  ++cnt_rlc; 
 }
 
+
+static 
+int cnt_gtp = 0;
 static
 void sm_cb_gtp(sm_ag_if_rd_t const* rd)
 {
@@ -414,8 +253,11 @@ void sm_cb_gtp(sm_ag_if_rd_t const* rd)
   assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
   assert(rd->ind.type == GTP_STATS_V0); 
 
+  if(cnt_gtp % 128 == 0){
   int64_t now = time_now_us();
   printf("GTP ind_msg latency = %ld μs\n", now - rd->ind.gtp.msg.tstamp);
+  }
+  ++cnt_gtp;
 }
 
 static

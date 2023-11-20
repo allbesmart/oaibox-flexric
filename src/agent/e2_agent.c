@@ -215,12 +215,19 @@ bool ind_event(e2_agent_t* ag, int fd, ind_event_t** i_ev)
 }
 
 static inline
-bool aind_event(e2_agent_t* ag, int fd, aind_event_t* ai_ev)
+bool aind_event(e2_agent_t* ag, int fd, arr_aind_event_t* dst)
 {
   if(fd != ag->io.pipe.r)
     return false;
 
-  pop_tsq(&ag->aind, ai_ev, sizeof(aind_event_t));
+  const size_t sz = size_tsq(&ag->aind);
+  assert(sz > 0 && "Aperiodic Event detected but the queue is empty!");
+  dst->len = sz;
+  dst->arr = calloc(sz, sizeof(aind_event_t));
+  assert(dst->arr != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < sz; ++i)
+    pop_tsq(&ag->aind, &dst->arr[i], sizeof(aind_event_t));
 
   return true;
 }
@@ -245,12 +252,24 @@ bool pend_event(e2_agent_t* ag, int fd, pending_event_t** p_ev)
 }
 
 static
-void consume_fd(int fd)
+void consume_fd_sync(int fd)
 {
   assert(fd > 0);
   uint64_t read_buf = 0;
   ssize_t const bytes = read(fd,&read_buf, sizeof(read_buf));
+  //assert(bytes == -1);
   assert(bytes <= (ssize_t)sizeof(read_buf));
+}
+
+static
+int consume_fd_async(int fd)
+{
+  assert(fd > 0);
+  uint32_t read_buf = 0;
+  ssize_t const bytes = read(fd,&read_buf, sizeof(read_buf));
+  //assert(bytes == 4);
+  //printf("Consumed %u \n", read_buf);
+  return bytes;
 }
 
 static
@@ -324,20 +343,26 @@ void e2_event_loop_agent(e2_agent_t* ag)
         }
       case APERIODIC_INDICATION_EVENT:
         {
-          sm_agent_t const* sm = e.ai_ev.sm;
-          void* ind_data = e.ai_ev.ind_data;
-          sm_ind_data_t data = sm->proc.on_indication(sm, ind_data); // , &e.i_ev->ric_id);
+          arr_aind_event_t* aind = &e.ai_ev;  
+          assert(aind->len > 0 && aind->arr != NULL);
+          defer({ free(aind->arr); });
+          for(size_t i = 0; i < aind->len; ++i){
 
-          ric_indication_t ind = generate_aindication(ag, &data, &e.ai_ev);
-          defer({ e2ap_free_indication(&ind); } );
+            sm_agent_t const* sm = aind->arr[i].sm;
+            void* ind_data = aind->arr[i].ind_data; 
+            sm_ind_data_t data = sm->proc.on_indication(sm, ind_data); // , &e.i_ev->ric_id);
 
-          byte_array_t ba = e2ap_enc_indication_ag(&ag->ap, &ind); 
-          defer({ free_byte_array(ba); } );
-          
-          e2ap_send_bytes_agent(&ag->ep, ba);
+            ric_indication_t ind = generate_aindication(ag, &data, &aind->arr[i]);
+            defer({ e2ap_free_indication(&ind); } );
 
-          consume_fd(ag->io.pipe.r);
+            byte_array_t ba = e2ap_enc_indication_ag(&ag->ap, &ind); 
+            defer({ free_byte_array(ba); } );
 
+            e2ap_send_bytes_agent(&ag->ep, ba);
+
+            int rc = consume_fd_async(ag->io.pipe.r); 
+            assert(rc != 1 && "No bytes in the pipe but message in the queue! ");
+          }
           break;
         }
       case INDICATION_EVENT:
@@ -354,7 +379,7 @@ void e2_event_loop_agent(e2_agent_t* ag)
 
           e2ap_send_bytes_agent(&ag->ep, ba);
 
-          consume_fd(e.fd);
+          consume_fd_sync(e.fd);
 
           break;
         }
@@ -372,7 +397,7 @@ void e2_event_loop_agent(e2_agent_t* ag)
 
           e2ap_send_bytes_agent(&ag->ep, ba);
 
-          consume_fd(e.fd);
+          consume_fd_sync(e.fd);
 
           break;
         }
@@ -541,7 +566,7 @@ void e2_async_event_agent(e2_agent_t* ag, uint32_t ric_req_id, void* ind_data)
   int const num_char = 32;
   char str[num_char];
   memset(str, '\0', num_char);
-  rc = snprintf(str, num_char ,"%u\n", ric_req_id );
+  rc = snprintf(str, num_char ,"%u", ric_req_id );
   assert(rc > 0 && rc < num_char -1);
 
   rc = write(ag->io.pipe.w, str, rc);

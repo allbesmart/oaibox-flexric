@@ -135,7 +135,6 @@ set(NUM_THREADS_RIC "2" CACHE STRING "Number of threads in the RIC's task manage
 ########
 ### xApp 
 ########
-
 set(XAPP_DB "SQLITE3_XAPP" CACHE STRING "xApp DB")
 set_property(CACHE XAPP_DB PROPERTY STRINGS "SQLITE3_XAPP" "NONE_XAPP")
 message(STATUS "Selected xApp DB : ${XAPP_DB}")
@@ -151,6 +150,12 @@ endif()
 
 message(STATUS "Selected xApp dir : ${XAPP_DB_DIR}")
 
+option(XAPP_MULTILANGUAGE "xApp Multilanguage" ON)
+message(STATUS "xApp multilanguage support e.g., python : ${XAPP_MULTILANGUAGE}")
+
+########
+### Coverage 
+########
 
 option(CODE_COVERAGE "Code coverage" ON)
 if(CODE_COVERAGE)
@@ -161,12 +166,20 @@ if(CODE_COVERAGE)
 
 endif()
 
+########
+### Profiler 
+########
+
 option(CODE_PROFILER "Code Profiler" OFF)
 if( CODE_PROFILER )
   add_compile_options("-pg")
   add_link_options("-pg")
   message(STATUS "Code Profiler ON. Example usage: gprof test/test_near_ric gmon.out > prof.txt && vim prof.txt")
 endif()
+
+########
+### Include What You Use (IWYU)
+########
 
 option(INCL_WHAT_YOU_USE "Include what you use tool: iwyu" OFF)
 if(INCL_WHAT_YOU_USE)
@@ -308,12 +321,6 @@ add_subdirectory(examples)
 if (UNIT_TEST)
   add_subdirectory(test)
 endif ()
-
-
-
-# Build SWIG interface
-#add_subdirectory(src/xApp/swig)
-
 
 ###
 # Install the Service models

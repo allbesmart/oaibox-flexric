@@ -185,7 +185,6 @@ xapp_ric_id_xpct_t find_xapp_map_ric_id(map_ric_id_t* map, uint16_t ric_req_id)
 
   xapp_ric_id_xpct_t ans = {.has_value = false};
 
-  //lock_guard(&map->mtx);
   int rc = pthread_rwlock_rdlock(&map->rw);
   assert(rc == 0);
 

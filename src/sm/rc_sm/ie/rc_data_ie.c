@@ -946,6 +946,7 @@ rc_ctrl_req_data_t cp_rc_ctrl_req_data(rc_ctrl_req_data_t const* src)
   dst.hdr = cp_e2sm_rc_ctrl_hdr(&src->hdr);
   dst.msg = cp_e2sm_rc_ctrl_msg(&src->msg);
 
+  assert( eq_rc_ctrl_req_data(src, &dst) == true);
   return dst;
 }
 

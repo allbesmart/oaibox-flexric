@@ -181,7 +181,7 @@ e2sm_rc_ev_trg_frmt_2_t fill_rnd_rc_event_trigger_frmt_2(void)
   //  Mandatory
   //  9.3.15
   //  INTEGER (1.. 65535, …)
-  dst.call_proc_type_id = rand();
+  dst.call_proc_type_id = (rand()% 65535) + 1;
 
   // Call Breakpoint ID
   // Mandatory
@@ -364,12 +364,35 @@ static
 lst_ran_param_t fill_rnd_lst_ran_param(void)
 {
   lst_ran_param_t dst = {0};
+  // Bug in the standard. RAN Parameter List 9.3.13 
+  // has a mandatory ie RAN Parameter ID 9.3.8 
+  // and a mandatory ie RAN Parameter Structure 9.3.12
+  // However, the ASN  
+  // RANParameter-LIST ::= SEQUENCE {
+  // list-of-ranParameter  SEQUENCE (SIZE(1..maxnoofItemsinList)) OF RANParameter-STRUCTURE, 
+  // ..
+  // }
+  //
+  // Misses RAN Parameter ID and only has RAN Parameter Structure
 
   // RAN Parameter ID
   // Mandatory
   // 9.3.8
   //1.. 4294967295
-  dst.ran_param_id = (rand()% 4294967295) + 1;
+  // Let's ignore the english written standard and believe the ASN.1 is the correct
+  //  uint32_t ran_param_id;
+
+  // RAN Parameter Structure
+  // Mandatory
+  // 9.3.12
+  //ran_param_struct_t ran_param_struct;
+
+
+  // RAN Parameter ID
+  // Mandatory
+  // 9.3.8
+  //1.. 4294967295
+  //dst.ran_param_id = (rand() % 4096) + 1;
 
   // RAN Parameter Structure
   // Mandatory
@@ -800,7 +823,7 @@ seq_ran_param_t fill_rnd_seq_ran_param(void)
   //Mandatory
   //9.3.8
   // [1 - 4294967295]
-  dst.ran_param_id = (rand()% 4098) +1 ;
+  dst.ran_param_id = (rand()% 4096) +1 ;
 
   // RAN Parameter Value Type
   // 9.3.11

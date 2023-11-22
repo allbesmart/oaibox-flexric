@@ -352,7 +352,11 @@ void e2_event_loop_agent(e2_agent_t* ag)
             void* ind_data = aind->arr[i].ind_data; 
             exp_ind_data_t exp = sm->proc.on_indication(sm, ind_data); // , &e.i_ev->ric_id);
             // Condition not matched e.g., No UE matches condition 
-            if(exp.has_value == false) break;  
+            if(exp.has_value == false) {
+              int rc = consume_fd_async(ag->io.pipe.r); 
+              assert(rc != 1 && "No bytes in the pipe but message in the queue! ");
+              continue;  
+            }
 
             ric_indication_t ind = generate_aindication(ag, &exp.data, &aind->arr[i]);
             defer({ e2ap_free_indication(&ind); } );
@@ -374,7 +378,7 @@ void e2_event_loop_agent(e2_agent_t* ag)
           exp_ind_data_t exp = sm->proc.on_indication(sm, act_def); // , &e.i_ev->ric_id);
           // Condition not matched e.g., No UE matches condition 
           if(exp.has_value == false){
-            printf("Condition not matched\n");
+            printf("Condition not matched e.g., No UE matches condition \n");
             consume_fd_sync(e.fd);
             break;  
           }

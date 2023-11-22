@@ -247,8 +247,20 @@ e2sm_rc_ctrl_msg_frmt_1_t gen_rc_ctrl_msg_frmt_1_qos_flow_map()
   rpl->lst_ran_param = calloc(1, sizeof(lst_ran_param_t));
   assert(rpl->lst_ran_param != NULL && "Memory exhausted");
 
-  // QoS Flow Item
-  rpl->lst_ran_param[0].ran_param_id = QOS_FLOW_ITEM_8_4_2_2; 
+ // QoS Flow Item
+ // Bug in the standard. RAN Parameter List 9.3.13
+ // has a mandatory ie RAN Parameter ID 9.3.8
+ // and a mandatory ie RAN Parameter Structure 9.3.12
+ // However, the ASN
+ // RANParameter-LIST ::= SEQUENCE {
+ // list-of-ranParameter  SEQUENCE (SIZE(1..maxnoofItemsinList)) OF RANParameter-STRUCTURE,
+ // ..
+ // }
+ //
+ // Misses RAN Parameter ID and only has RAN Parameter Structure
+
+  // rpl->lst_ran_param[0].ran_param_id = QOS_FLOW_ITEM_8_4_2_2; 
+  
   rpl->lst_ran_param[0].ran_param_struct.sz_ran_param_struct = 2;
   rpl->lst_ran_param[0].ran_param_struct.ran_param_struct = calloc(2, sizeof(seq_ran_param_t));
   assert(rpl->lst_ran_param[0].ran_param_struct.ran_param_struct != NULL && "Memory exhausted");

@@ -74,7 +74,7 @@ exp_ind_data_t on_indication_gtp_sm_ag(sm_agent_t const* sm_agent, void* act_def
 
   sm_gtp_agent_t* sm = (sm_gtp_agent_t*)sm_agent;
 
-  exp_ind_data_t ret = {.has_value = false};
+  exp_ind_data_t ret = {.has_value = true};
 
   // Fill Indication Header
   gtp_ind_hdr_t hdr = {.dummy = 0 };

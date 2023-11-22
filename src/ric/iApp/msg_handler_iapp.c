@@ -246,6 +246,7 @@ e2ap_msg_t e2ap_handle_ric_indication_iapp(e42_iapp_t* iapp, const e2ap_msg_t* m
   ric_indication_t const* src = &msg->u_msgs.ric_ind;
 
   xapp_ric_id_xpct_t xpctd = find_xapp_map_ric_id(&iapp->map_ric_id, src->ric_id.ric_req_id);
+
   if(xpctd.has_value == false){
     printf("RIC Indication message arrived for RIC REQ ID %d but no xApp associated\n", src->ric_id.ric_req_id);
     e2ap_msg_t none = {.type = NONE_E2_MSG_TYPE};

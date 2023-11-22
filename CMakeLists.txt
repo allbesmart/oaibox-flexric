@@ -343,6 +343,12 @@ install(TARGETS rc_sm DESTINATION ${CMAKE_INSTALL_LIBDIR}/flexric)
 ###
 
 install(FILES flexric.conf DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/flexric)
+
+###
+# CTest 
+###
+
+set(CTEST_PARALLEL_LEVEL 4)
 enable_testing()
 
 ###

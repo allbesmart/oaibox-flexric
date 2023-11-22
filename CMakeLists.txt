@@ -47,8 +47,9 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
 endif()
 
-#set(COMPILER "GCC" CACHE STRING "Compiler selection")
-#set_property(CACHE COMPILER PROPERTY STRINGS "GCC" "CLANG")
+if($default_build_type STREQUAL "Release")
+   add_compile_options("-O3;-march=native;-flto")
+endif()
 
 ########
 ### SANITIZER 
@@ -254,7 +255,7 @@ set(SM_ENCODING_KPM "ASN" CACHE STRING "The KPM SM encoding to use")
 set_property(CACHE SM_ENCODING_KPM PROPERTY STRINGS "PLAIN" "ASN" "FLATBUFFERS")
 message(STATUS "Selected KPM SM_ENCODING: ${SM_ENCODING_KPM}")
 
-set(KPM_VERSION "KPM_V3_00" CACHE STRING "The KPM SM version to use")
+set(KPM_VERSION "KPM_V2_03" CACHE STRING "The KPM SM version to use")
 set_property(CACHE SM_ENCODING_KPM PROPERTY STRINGS  "KPM_V2_01" "KPM_V2_03" "KPM_V3_00")
 message(STATUS "Selected KPM Version: ${KPM_VERSION}")
 

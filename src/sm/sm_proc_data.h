@@ -68,6 +68,14 @@ typedef struct{
 
 void free_sm_ind_data(sm_ind_data_t*);
 
+// Expected, similar to std::expected
+typedef struct{
+ sm_ind_data_t data;
+ bool has_value;
+} exp_ind_data_t;
+
+void free_exp_ind_data( exp_ind_data_t*);
+
 //////
 //
 /////

@@ -59,6 +59,12 @@ void free_sm_ind_data(sm_ind_data_t* data)
   }
 }
 
+void free_exp_ind_data(exp_ind_data_t* exp)
+{
+  assert(exp != NULL);
+  free_sm_ind_data(&exp->data);
+}
+
 void free_sm_ctrl_req_data(sm_ctrl_req_data_t* data)
 {
   assert(data != NULL);

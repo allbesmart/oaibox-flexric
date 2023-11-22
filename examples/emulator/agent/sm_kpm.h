@@ -7,7 +7,7 @@ void init_kpm_sm(void);
 
 void free_kpm_sm(void);
 
-void read_kpm_sm(void*);
+bool read_kpm_sm(void*);
 
 void read_kpm_setup_sm(void*);
 

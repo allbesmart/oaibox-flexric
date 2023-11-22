@@ -54,7 +54,7 @@ static
 rc_e2_setup_t cp_e2_setup; 
 
 static
-void read_ind_rc(void* read)
+bool read_ind_rc(void* read)
 {
   assert(read != NULL);
 
@@ -64,6 +64,7 @@ void read_ind_rc(void* read)
   cp_ind = cp_rc_ind_data(&rc->ind);
 
   assert(eq_rc_ind_data(&rc->ind, &cp_ind) == true);
+  return true;
 }
 
 static
@@ -202,11 +203,12 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   *d = fill_rnd_rc_ind_data();
   cp_ind = cp_rc_ind_data(d);
 
-  sm_ind_data_t sm_data = ag->proc.on_indication(ag, d);
-  defer({ free_sm_ind_data(&sm_data); }); 
+  exp_ind_data_t exp = ag->proc.on_indication(ag, d);
+  assert(exp.has_value == true);
+  defer({ free_exp_ind_data(&exp); }); 
   defer({ free_rc_ind_data(&cp_ind); });
 
-  sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
+  sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &exp.data);
   assert(msg.type == RAN_CTRL_STATS_V1_03);
   defer({ free_rc_ind_data(&msg.rc.ind); });
 

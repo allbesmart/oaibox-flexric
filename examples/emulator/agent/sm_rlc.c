@@ -13,13 +13,14 @@ void free_rlc_sm(void)
 
 
 
-void read_rlc_sm(void* data)
+bool read_rlc_sm(void* data)
 {
   assert(data != NULL);
 //  assert(data->type ==  RLC_STATS_V0);
 
   rlc_ind_data_t* rlc = (rlc_ind_data_t*)data;
   fill_rlc_ind_data(rlc);
+  return true;
 }
 
 void read_rlc_setup_sm(void* data)

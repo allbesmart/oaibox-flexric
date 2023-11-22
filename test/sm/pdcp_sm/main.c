@@ -42,7 +42,7 @@ pdcp_ind_data_t cp;
 ////
 
 static
-void read_ind_pdcp(void* read)
+bool read_ind_pdcp(void* read)
 {
   assert(read != NULL);
 //  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
@@ -53,6 +53,7 @@ void read_ind_pdcp(void* read)
   fill_pdcp_ind_data(ind);
   cp.hdr = cp_pdcp_ind_hdr(&ind->hdr);
   cp.msg = cp_pdcp_ind_msg(&ind->msg);
+  return true;
 }
 
 /*
@@ -116,10 +117,11 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ind_data_t sm_data = ag->proc.on_indication(ag, NULL);
-  defer({free_sm_ind_data(&sm_data);}); 
+  exp_ind_data_t exp = ag->proc.on_indication(ag, NULL);
+  assert(exp.has_value == true);
+  defer({free_exp_ind_data(&exp);}); 
 
-  sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
+  sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &exp.data);
 
   assert(msg.type == PDCP_STATS_V0);
   pdcp_ind_data_t* data = &msg.pdcp;

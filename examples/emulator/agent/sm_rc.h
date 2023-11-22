@@ -7,7 +7,7 @@ void init_rc_sm(void);
 
 void free_rc_sm(void);
 
-void read_rc_sm(void *);
+bool read_rc_sm(void *);
 
 void read_rc_setup_sm(void* data);
 

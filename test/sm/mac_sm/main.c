@@ -38,7 +38,7 @@ mac_ind_data_t cp;
 ////
 
 static
-void read_ind_mac(void* read)
+bool read_ind_mac(void* read)
 {
   assert(read != NULL);
 //  assert(read->type == INDICATION_MSG_AGENT_IF_ANS_V0);
@@ -49,6 +49,7 @@ void read_ind_mac(void* read)
   fill_mac_ind_data(ind);
   cp.hdr = cp_mac_ind_hdr(&ind->hdr);
   cp.msg = cp_mac_ind_msg(&ind->msg);
+  return true;
 }
 
 
@@ -101,8 +102,9 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ind_data_t sm_data = ag->proc.on_indication(ag, NULL);
-  sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
+  exp_ind_data_t exp = ag->proc.on_indication(ag, NULL);
+  assert(exp.has_value == true);
+  sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &exp.data);
 
   assert(msg.type == MAC_STATS_V0);
   mac_ind_data_t* data = &msg.mac;
@@ -114,7 +116,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   free_mac_ind_hdr(&data->hdr);
   free_mac_ind_msg(&data->msg);
 
-  free_sm_ind_data(&sm_data); 
+  free_exp_ind_data(&exp); 
 }
 
 

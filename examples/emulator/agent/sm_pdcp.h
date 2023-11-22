@@ -7,7 +7,7 @@ void init_pdcp_sm(void);
 
 void free_pdcp_sm(void);
 
-void read_pdcp_sm(void*);
+bool read_pdcp_sm(void*);
 
 void read_pdcp_setup_sm(void* data);
 

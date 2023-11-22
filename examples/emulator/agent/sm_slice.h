@@ -7,7 +7,7 @@ void init_slice_sm(void);
 
 void free_slice_sm(void);
 
-void read_slice_sm(void*);
+bool read_slice_sm(void*);
 
 void read_slice_setup_sm(void* data);
 

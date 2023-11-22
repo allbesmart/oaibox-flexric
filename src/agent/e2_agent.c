@@ -350,9 +350,11 @@ void e2_event_loop_agent(e2_agent_t* ag)
 
             sm_agent_t const* sm = aind->arr[i].sm;
             void* ind_data = aind->arr[i].ind_data; 
-            sm_ind_data_t data = sm->proc.on_indication(sm, ind_data); // , &e.i_ev->ric_id);
+            exp_ind_data_t exp = sm->proc.on_indication(sm, ind_data); // , &e.i_ev->ric_id);
+            // Condition not matched e.g., No UE matches condition 
+            if(exp.has_value == false) break;  
 
-            ric_indication_t ind = generate_aindication(ag, &data, &aind->arr[i]);
+            ric_indication_t ind = generate_aindication(ag, &exp.data, &aind->arr[i]);
             defer({ e2ap_free_indication(&ind); } );
 
             byte_array_t ba = e2ap_enc_indication_ag(&ag->ap, &ind); 
@@ -369,9 +371,14 @@ void e2_event_loop_agent(e2_agent_t* ag)
         {
           sm_agent_t const* sm = e.i_ev->sm;
           void* act_def = e.i_ev->act_def; 
-          sm_ind_data_t data = sm->proc.on_indication(sm, act_def); // , &e.i_ev->ric_id);
-
-          ric_indication_t ind = generate_indication(ag, &data, e.i_ev);
+          exp_ind_data_t exp = sm->proc.on_indication(sm, act_def); // , &e.i_ev->ric_id);
+          // Condition not matched e.g., No UE matches condition 
+          if(exp.has_value == false){
+            printf("Condition not matched\n");
+            consume_fd_sync(e.fd);
+            break;  
+          }
+          ric_indication_t ind = generate_indication(ag, &exp.data, e.i_ev);
           defer({ e2ap_free_indication(&ind); } );
 
           byte_array_t ba = e2ap_enc_indication_ag(&ag->ap, &ind); 

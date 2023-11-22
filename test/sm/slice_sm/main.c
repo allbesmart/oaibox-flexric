@@ -29,7 +29,7 @@ slice_ctrl_req_data_t cp_ctrl;
 ////
 
 static
-void read_ind_slice(void* read)
+bool read_ind_slice(void* read)
 {
   assert(read != NULL);
 
@@ -37,6 +37,7 @@ void read_ind_slice(void* read)
   fill_slice_ind_data(slice);
   cp.msg = cp_slice_ind_msg(&slice->msg);
   assert(eq_slice_ind_msg(&cp.msg, &slice->msg) );
+  return true;
 }
 
 static 
@@ -99,10 +100,10 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ag != NULL);
   assert(ric != NULL);
 
-  sm_ind_data_t sm_data = ag->proc.on_indication(ag, NULL);
-  defer({ free_sm_ind_data(&sm_data); }); 
+  exp_ind_data_t exp = ag->proc.on_indication(ag, NULL);
+  defer({ free_exp_ind_data(&exp); }); 
 
-  sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &sm_data);
+  sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &exp.data);
 
   slice_ind_data_t* data = &msg.slice;
   assert(msg.type == SLICE_STATS_V0);

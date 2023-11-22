@@ -79,7 +79,7 @@ subscribe_timer_t on_subscription_kpm_sm_ag(sm_agent_t const* sm_agent, const sm
 }
 
 static 
-sm_ind_data_t on_indication_kpm_sm_ag(sm_agent_t const* sm_agent, void* act_def_v)
+exp_ind_data_t on_indication_kpm_sm_ag(sm_agent_t const* sm_agent, void* act_def_v)
 {
   assert(sm_agent != NULL);
   assert(act_def_v != NULL && "Action Definition data needed for this SM");
@@ -87,26 +87,28 @@ sm_ind_data_t on_indication_kpm_sm_ag(sm_agent_t const* sm_agent, void* act_def_
 
   kpm_act_def_t* act_def = act_def_v;
 
-  sm_ind_data_t ret = {0};
+  exp_ind_data_t ret = {.has_value = true};
 
   // Fill Indication Message and Header
   kpm_rd_ind_data_t kpm = {0}; 
-  kpm.act_def = act_def;
-  sm->base.io.read_ind(&kpm); 
-  // Free memory allocated by the RAN. Sucks
+// Free memory allocated by the RAN. Sucks
   defer({ free_kpm_ind_data(&kpm.ind); });
 
+  kpm.act_def = act_def;
+  if(sm->base.io.read_ind(&kpm) == false)
+    return (exp_ind_data_t){.has_value = false }; 
+
   byte_array_t ba_hdr = kpm_enc_ind_hdr(&sm->enc, &kpm.ind.hdr);
-  ret.ind_hdr = ba_hdr.buf;
-  ret.len_hdr = ba_hdr.len;
+  ret.data.ind_hdr = ba_hdr.buf;
+  ret.data.len_hdr = ba_hdr.len;
 
   byte_array_t ba = kpm_enc_ind_msg(&sm->enc, &kpm.ind.msg);
-  ret.ind_msg = ba.buf;
-  ret.len_msg = ba.len;
+  ret.data.ind_msg = ba.buf;
+  ret.data.len_msg = ba.len;
 
   // we do not have Call Process ID
-  ret.call_process_id = NULL;
-  ret.len_cpid = 0;
+  ret.data.call_process_id = NULL;
+  ret.data.len_cpid = 0;
 
   return ret;
 }

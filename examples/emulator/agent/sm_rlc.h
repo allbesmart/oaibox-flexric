@@ -7,7 +7,7 @@ void init_rlc_sm(void);
 
 void free_rlc_sm(void);
 
-void read_rlc_sm(void*);
+bool read_rlc_sm(void*);
 
 void read_rlc_setup_sm(void* data);
 

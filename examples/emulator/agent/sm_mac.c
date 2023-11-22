@@ -14,13 +14,14 @@ void free_mac_sm(void)
 
 
 
-void read_mac_sm(void* data)
+bool read_mac_sm(void* data)
 {
   assert(data != NULL);
 //  assert(data->type == MAC_STATS_V0);
 
   mac_ind_data_t* mac = (mac_ind_data_t*)data;
   fill_mac_ind_data(mac);
+  return true;
 }
 
 void read_mac_setup_sm(void* data)

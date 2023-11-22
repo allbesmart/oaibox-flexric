@@ -52,33 +52,35 @@ subscribe_timer_t on_subscription_slice_sm_ag(sm_agent_t const* sm_agent, const 
 
 
 static
-sm_ind_data_t on_indication_slice_sm_ag(sm_agent_t const* sm_agent, void* act_def)
+exp_ind_data_t on_indication_slice_sm_ag(sm_agent_t const* sm_agent, void* act_def)
 {
   //printf("on_indication SLICE called \n");
   assert(sm_agent != NULL);
   assert(act_def == NULL && "Subscription data not needed for this SM");
   sm_slice_agent_t* sm = (sm_slice_agent_t*)sm_agent;
 
-  sm_ind_data_t ret = {0};
+  exp_ind_data_t ret = {.has_value = true};
 
   // Fill Indication Header
   slice_ind_hdr_t hdr = {.dummy = 0 };
   byte_array_t ba_hdr = slice_enc_ind_hdr(&sm->enc, &hdr );
-  ret.ind_hdr = ba_hdr.buf;
-  ret.len_hdr = ba_hdr.len;
+  ret.data.ind_hdr = ba_hdr.buf;
+  ret.data.len_hdr = ba_hdr.len;
 
   slice_ind_data_t slice = {0};
-  sm->base.io.read_ind(&slice);
-  // Liberate the memory if previously allocated by the RAN. It sucks
+// Liberate the memory if previously allocated by the RAN. It sucks
   defer({ free_slice_ind_data(&slice); });
 
+  if(sm->base.io.read_ind(&slice) == false)
+    return (exp_ind_data_t){.has_value = false};
+
   byte_array_t ba = slice_enc_ind_msg(&sm->enc, &slice.msg);
-  ret.ind_msg = ba.buf;
-  ret.len_msg = ba.len;
+  ret.data.ind_msg = ba.buf;
+  ret.data.len_msg = ba.len;
 
   // Fill Call Process ID
-  ret.call_process_id = NULL;
-  ret.len_cpid = 0;
+  ret.data.call_process_id = NULL;
+  ret.data.len_cpid = 0;
 
   return ret;
 }

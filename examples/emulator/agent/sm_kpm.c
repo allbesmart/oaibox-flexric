@@ -259,8 +259,8 @@ kpm_ric_ind_hdr_format_1_t fill_rnd_kpm_ind_hdr_frm_1(void)
   return hdr_frm_1;
 }
 
-
-
+static
+int dummy_cnt = 0;
 // Dummy function. It emulates a function where the UE fullfills (or not)
 // the condition
 static
@@ -272,6 +272,10 @@ bool ue_fullfills_predicate(test_cond_e cond, int64_t value)
       || cond == PRESENT_TEST_COND
       );
   assert(value > -1 && "Assuming this for testing");
+
+  dummy_cnt++; 
+  if(dummy_cnt > 32 && dummy_cnt < 32*10)
+    return false;
 
   return rand()%2;
 }
@@ -477,15 +481,12 @@ void init_kpm_sm(void)
   init_lst_measurements();
 }
 
-
 void free_kpm_sm(void)
 {
   free_lst_measurements();
 }
 
-
-
-void read_kpm_sm(void* data)
+bool read_kpm_sm(void* data)
 {
   assert(data != NULL);
 
@@ -496,6 +497,12 @@ void read_kpm_sm(void* data)
     kpm_act_def_format_4_t const* frm_4 = &kpm->act_def->frm_4 ;  // 8.2.1.2.4
     // Matching UEs 
     seq_arr_t match_ues = matching_ues(frm_4->matching_cond_lst, frm_4->matching_cond_lst_len);
+    // If no UEs match the condition, do not send data to the nearRT-RIC
+    if(seq_size(&match_ues) == 0){
+      seq_arr_free(&match_ues, free_ue_id_e2sm_wrapper);
+      return false;
+    }
+
     // Subscription Information
     kpm_ind_msg_format_3_t info = subscription_info(&match_ues, &frm_4->action_def_format_1); 
 
@@ -513,6 +520,7 @@ void read_kpm_sm(void* data)
      kpm->ind.hdr = fill_rnd_kpm_ind_hdr(); 
      kpm->ind.msg = fill_rnd_kpm_ind_msg(); 
   }
+  return true;
 }
 
 void read_kpm_setup_sm(void* e2ap)

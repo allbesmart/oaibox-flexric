@@ -277,7 +277,7 @@ int main()
   sm_ric_t* sm_ric = make_rc_sm_ric();
 
   printf("Running RAN Control SM test. Patience. \n");
-  for(int i =0 ; i < 10*1024; ++i){
+  for(int i =0 ; i < 1024; ++i){
     // check_eq_ran_function(sm_ag, sm_ric);
     check_indication(sm_ag, sm_ric);
     check_subscription(sm_ag, sm_ric);

@@ -235,13 +235,12 @@ int main(int argc, char *argv[])
   sm_io_ag_ran_t io = init_sm_io_ag_ran();
 
   fr_args_t args = init_fr_args(argc, argv);
+  // Init the RIC
+  init_near_ric_api(&args);
+
   // Parse arguments
   init_agent_api( mcc, mnc, mnc_digit_len, nb_id, cu_du_id, ran_type, io, &args);
   sleep(1);
-
-  // Init the RIC
-  init_near_ric_api(&args);
-  sleep(3);
 
   e2_nodes_api_t e2_nodes = e2_nodes_near_ric_api();
   assert(e2_nodes.len > 0 && "No E2 Nodes connected");

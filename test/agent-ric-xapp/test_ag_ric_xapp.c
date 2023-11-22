@@ -395,16 +395,14 @@ int main(int argc, char *argv[])
 
   fr_args_t args = init_fr_args(argc, argv);  // Parse arguments
   
+  // Init the RIC
+  init_near_ric_api(&args);
+
   init_agent_api(mcc, mnc, mnc_digit_len, nb_id, cu_du_id, ran_type, io, &args);
   sleep(1);
 
-  // Init the RIC
-  init_near_ric_api(&args);
-  sleep(2);
-
   //Init the xApp
   init_xapp_api(&args);
-  sleep(1);
 
   e2_node_arr_t nodes = e2_nodes_xapp_api();
   defer({ free_e2_node_arr(&nodes); });
@@ -475,7 +473,7 @@ int main(int argc, char *argv[])
   sm_ans_xapp_t h_5 = report_sm_xapp_api(&nodes.n[0].id, SM_RC_ID, &rc_sub, sm_cb_rc);
   assert(h_5.success);
 
-  sleep(5);
+  sleep(3);
   
   rm_report_sm_xapp_api(h_1.u.handle);
   rm_report_sm_xapp_api(h_2.u.handle);

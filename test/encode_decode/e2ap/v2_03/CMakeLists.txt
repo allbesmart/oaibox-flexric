@@ -21,6 +21,12 @@ if(E2AP_ENCODING STREQUAL "ASN")
   target_include_directories(test_e2ap_enc_dec_asn PRIVATE "../../../../src/lib/e2ap/v2_03/ie/asn/")
   #  target_include_directories(test_e2ap_enc_dec_asn PRIVATE "../../../src/lib/ap/ie/asn/")
 
+  #####
+  ### CTest 
+  ####
+  enable_testing()
+  add_test(Unit_test_e2ap_v2 test_e2ap_enc_dec_asn)
+
 
 ###########################
 # E2AP Flatbuffers Encoding

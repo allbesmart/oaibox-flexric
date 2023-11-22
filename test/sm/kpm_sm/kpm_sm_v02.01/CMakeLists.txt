@@ -22,3 +22,4 @@ target_link_libraries(test_kpm_sm PUBLIC kpm_sm_static -pthread -lm)
 
 enable_testing()
 add_test(Unit_test_KPM test_kpm_sm)
+

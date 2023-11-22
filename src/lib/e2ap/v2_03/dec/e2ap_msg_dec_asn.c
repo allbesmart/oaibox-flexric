@@ -80,41 +80,6 @@ byte_array_t copy_bs_to_ba(BIT_STRING_t src)
   return dst;
 }
 
-/*
-typedef struct {
-  uint32_t nd_id;
-  uint32_t unused;
-} pair_gnb_id_t;
-
-static inline
-pair_gnb_id_t cp_BS_to_gnb_id(BIT_STRING_t src)
-{
-  assert(src.size < 5 && "Max. 32 bits permited [22..32]");
-  assert(src.size == 3 || src.size == 4);
-
-  assert(src.bits_unused < 8);
-
-  pair_gnb_id_t dst = {0};
-
-  if(src.size == 3){
-    assert(src.bits_unused < 3 && "Min. 22 bits");
-    uint32_t const b0 = ((uint32_t)(src.buf[0]) << (16 - src.bits_unused) ); 
-    uint32_t const b1 = ((uint32_t)(src.buf[1]) << (8 - src.bits_unused) ); 
-    uint32_t const b2 = ((uint32_t)(src.buf[2]) >> src.bits_unused); 
-    dst.nd_id = b0 | b1 | b2;
-  } else { //src.size == 4
-    uint32_t const b0 = ((uint32_t)(src.buf[0]) << (24 - src.bits_unused) ); 
-    uint32_t const b1 = ((uint32_t)(src.buf[1]) << (16 - src.bits_unused) ); 
-    uint32_t const b2 = ((uint32_t)(src.buf[2]) << (8 - src.bits_unused) ); 
-    uint32_t const b3 = ((uint32_t)(src.buf[3]) >> src.bits_unused); 
-    dst.nd_id = b0 | b1 | b2 | b3;
-  }
-
-  dst.unused = src.bits_unused + (src.size == 3 ? 8 : 0);
-  return dst;
-}
-*/
-
 static inline
 ran_function_t copy_ran_function(const RANfunction_Item_t* src)
 {
@@ -173,7 +138,6 @@ e2ap_node_comp_id_t e2ap_dec_node_component_id(e2ap_node_comp_interface_type_e i
     case E2nodeComponentID_PR_e2nodeComponentInterfaceTypeE1:
       assert(interface_type == E1_E2AP_NODE_COMP_INTERFACE_TYPE);
       assert(cid->choice.e2nodeComponentInterfaceTypeE1 != NULL);
-      
       dst.type = E1_E2AP_NODE_COMP_INTERFACE_TYPE; 
       asn_INTEGER2ulong(&cid->choice.e2nodeComponentInterfaceTypeE1->gNB_CU_CP_ID, &dst.e1_gnb_cu_up_id);
       break;
@@ -529,9 +493,7 @@ e2ap_msg_t e2ap_dec_e42_subscription_request(const struct E2AP_PDU* pdu)
     GlobalE2node_gNB_ID_t *e2gnb = node_src->value.choice.GlobalE2node_ID.choice.gNB;
     assert(e2gnb->global_gNB_ID.gnb_id.present == GNB_ID_Choice_PR_gnb_ID);
     PLMNID_TO_MCC_MNC(&e2gnb->global_gNB_ID.plmn_id, id->plmn.mcc, id->plmn.mnc, id->plmn.mnc_digit_len);
-    
     id->nb_id = cp_bit_string_to_gnb_id(e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID);
-    //BIT_STRING_TO_MACRO_GNB_ID(&, id->nb_id);
 
     if (e2gnb->gNB_CU_UP_ID) {
   // This is an abuse but the standard does not define how to 
@@ -764,6 +726,7 @@ e2ap_msg_t e2ap_dec_subscription_response(const E2AP_PDU_t* pdu)
 e2ap_msg_t e2ap_dec_subscription_failure(const E2AP_PDU_t* pdu)
 {
   assert(pdu != NULL);
+
   e2ap_msg_t ret = {.type = RIC_SUBSCRIPTION_FAILURE};
 
   ric_subscription_failure_t* sf = &ret.u_msgs.ric_sub_fail;
@@ -1231,7 +1194,7 @@ e2ap_msg_t e2ap_dec_e42_control_request(const struct E2AP_PDU* pdu)
       assert(ric_ctrl->value.present == E42RICcontrolRequest_IEs__value_PR_RICcallProcessID);
       assert(ctrl->call_process_id == NULL); 
       ctrl->call_process_id = malloc(sizeof(*ctrl->call_process_id));
-      assert(ctrl->call_process_id);
+      assert(ctrl->call_process_id != NULL && "Memory exhausted");
       *ctrl->call_process_id = copy_ostring_to_ba(ric_ctrl->value.choice.RICcallProcessID);
     } else if (id == ProtocolIE_ID_id_RICcontrolHeader) {
       // RIC Control Header. Mandatory
@@ -1495,7 +1458,6 @@ e2ap_msg_t e2ap_dec_setup_request(const E2AP_PDU_t* pdu)
     GlobalE2node_gNB_ID_t *e2gnb = setup_rid->value.choice.GlobalE2node_ID.choice.gNB;
     assert(e2gnb->global_gNB_ID.gnb_id.present == GNB_ID_Choice_PR_gnb_ID);
     PLMNID_TO_MCC_MNC(&e2gnb->global_gNB_ID.plmn_id, sr->id.plmn.mcc, sr->id.plmn.mnc, sr->id.plmn.mnc_digit_len);
-   
     sr->id.nb_id = cp_bit_string_to_gnb_id(e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID);
 
     if (e2gnb->gNB_CU_UP_ID) {
@@ -1695,7 +1657,9 @@ e2ap_msg_t e2ap_dec_setup_response_success(const E2AP_PDU_t* pdu)
 
       sr->len_rej = ran_rej->value.choice.RANfunctionsID_List.list.count; 
       assert(sr->rejected == NULL);
-      sr->rejected = calloc( sr->len_rej, sizeof(rejected_ran_function_t));
+      sr->rejected = calloc(sr->len_rej, sizeof(rejected_ran_function_t));
+      assert(sr->rejected != NULL && "Memory exhausted");
+
       RANfunctionIDcause_ItemIEs_t** arr = (RANfunctionIDcause_ItemIEs_t**)ran_rej->value.choice.RANfunctionsID_List.list.array; 
       for(size_t i =0; i < sr->len_rej; ++i){
         assert(arr[i]->id == ProtocolIE_ID_id_RANfunctionID_Item); 
@@ -1888,6 +1852,7 @@ e2ap_msg_t e2ap_dec_setup_failure(const E2AP_PDU_t* pdu)
       assert(src->criticality == Criticality_ignore);
       assert(sf->time_to_wait_ms == NULL);
       sf->time_to_wait_ms = calloc(1,sizeof(e2ap_time_to_wait_e));
+      assert(sf->time_to_wait_ms != NULL && "Memory exhausted");
       *sf->time_to_wait_ms = src->value.choice.TimeToWait;
     } else if (src->value.present == E2setupFailureIEs__value_PR_CriticalityDiagnostics){
       //Criticality Diagnostics. Optional
@@ -2462,7 +2427,6 @@ e2ap_msg_t e2ap_dec_e42_setup_response(const struct E2AP_PDU* pdu)
       PLMNID_TO_MCC_MNC(&e2gnb->global_gNB_ID.plmn_id, dst->id.plmn.mcc, dst->id.plmn.mnc, dst->id.plmn.mnc_digit_len);
       //BIT_STRING_TO_MACRO_GNB_ID(&e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID, dst->id.nb_id);
       dst->id.nb_id = cp_bit_string_to_gnb_id(e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID);
-
 
       if (e2gnb->gNB_CU_UP_ID) {
         // This is an abuse but the standard does not define how to 

@@ -545,7 +545,7 @@ struct E2AP_PDU* e2ap_enc_subscription_response_asn_pdu(const ric_subscription_r
     // RIC Action ID. Mandatory
     RICaction_Admitted_ItemIEs_t *ai = calloc(1,sizeof(RICaction_Admitted_ItemIEs_t));
     ai->id = ProtocolIE_ID_id_RICaction_Admitted_Item;
-    ai->criticality = Criticality_reject;
+    ai->criticality = Criticality_ignore;
     ai->value.present = RICaction_Admitted_ItemIEs__value_PR_RICaction_Admitted_Item;
     const ric_action_admitted_t* src = &sr->admitted[i];
     ai->value.choice.RICaction_Admitted_Item.ricActionID = src->ric_act_id; 
@@ -863,7 +863,7 @@ E2AP_PDU_t* e2ap_enc_indication_asn_pdu(const ric_indication_t* ind )
   pdu->present = E2AP_PDU_PR_initiatingMessage;
   pdu->choice.initiatingMessage = calloc(1,sizeof(InitiatingMessage_t));
   pdu->choice.initiatingMessage->procedureCode = ProcedureCode_id_RICindication;
-  pdu->choice.initiatingMessage->criticality = Criticality_reject;
+  pdu->choice.initiatingMessage->criticality = Criticality_ignore;
   pdu->choice.initiatingMessage->value.present = InitiatingMessage__value_PR_RICindication; 
 
   RICindication_t* out = &pdu->choice.initiatingMessage->value.choice.RICindication;

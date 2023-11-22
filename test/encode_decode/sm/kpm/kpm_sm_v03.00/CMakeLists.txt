@@ -27,3 +27,9 @@ target_link_libraries(test_enc_dec_kpm_sm
 
 target_compile_options(test_enc_dec_kpm_sm PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter)
 
+#####
+### CTest 
+####
+enable_testing()
+add_test(Unit_test_enc_dec_kpm_sm_v03.00 test_enc_dec_kpm_sm)
+

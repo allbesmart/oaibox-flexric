@@ -46,3 +46,7 @@ target_link_libraries(test_near_ric
 target_compile_options(test_near_ric PRIVATE "-DASN_DISABLE_JER_SUPPORT" "-DASN_DISABLE_OER_SUPPORT")
 target_include_directories(test_near_ric PRIVATE ${KPM_ASN_DIR} )
 
+
+enable_testing()
+add_test(Unit_test_near_ric test_near_ric)
+

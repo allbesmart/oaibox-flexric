@@ -42,6 +42,13 @@ if(E2AP_ENCODING STREQUAL "ASN")
     -ldl
     )
 
+#####
+## Ctest
+#####
+enable_testing()
+add_test(Unit_test_ag_ric_xapp test_ag_ric_xapp)
+set_tests_properties(Unit_test_ag_ric_xapp PROPERTIES DEPENDS "Unit_test_near_ric")
+
 else()
   message(FATAL_ERROR "Only E2AP_ENCODING allowed ")
 endif()

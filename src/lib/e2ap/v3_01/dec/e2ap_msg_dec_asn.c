@@ -119,11 +119,12 @@ static
 e2ap_node_comp_id_t e2ap_dec_node_component_id(e2ap_node_comp_interface_type_e interface_type, const E2nodeComponentID_t* cid)
 {
   e2ap_node_comp_id_t dst = {0};
+
   switch(cid->present) {
     case E2nodeComponentID_PR_e2nodeComponentInterfaceTypeNG:
       assert(interface_type == NG_E2AP_NODE_COMP_INTERFACE_TYPE);
       assert(cid->choice.e2nodeComponentInterfaceTypeNG != NULL);
-      
+
       dst.type = NG_E2AP_NODE_COMP_INTERFACE_TYPE;
       dst.ng_amf_name = copy_ostring_to_ba(cid->choice.e2nodeComponentInterfaceTypeNG->amf_name);
       break;
@@ -137,7 +138,6 @@ e2ap_node_comp_id_t e2ap_dec_node_component_id(e2ap_node_comp_interface_type_e i
     case E2nodeComponentID_PR_e2nodeComponentInterfaceTypeE1:
       assert(interface_type == E1_E2AP_NODE_COMP_INTERFACE_TYPE);
       assert(cid->choice.e2nodeComponentInterfaceTypeE1 != NULL);
-
       dst.type = E1_E2AP_NODE_COMP_INTERFACE_TYPE; 
       asn_INTEGER2ulong(&cid->choice.e2nodeComponentInterfaceTypeE1->gNB_CU_UP_ID, &dst.e1_gnb_cu_up_id);
       break;
@@ -299,11 +299,11 @@ cause_t copy_cause(Cause_t src)
       dst.present = CAUSE_RICSERVICE;
       dst.ricService = src.choice.ricService;
       break;
-    //case Cause_PR_e2Node:
-    //  assert(src.choice.e2Node == 0);
-    //  dst.present = CAUSE_E2NODE;
-    //  dst.e2Node = src.choice.e2Node;
-    //  break;
+    case Cause_PR_e2Node:
+      assert(src.choice.e2Node == 0);
+      dst.present = CAUSE_E2NODE;
+      dst.e2Node = src.choice.e2Node;
+      break;
     case Cause_PR_transport:
       assert(src.choice.transport < 2);
       dst.present = CAUSE_TRANSPORT;
@@ -493,12 +493,12 @@ e2ap_msg_t e2ap_dec_e42_subscription_request(const struct E2AP_PDU* pdu)
     GlobalE2node_gNB_ID_t *e2gnb = node_src->value.choice.GlobalE2node_ID.choice.gNB;
     assert(e2gnb->global_gNB_ID.gnb_id.present == GNB_ID_Choice_PR_gnb_ID);
     PLMNID_TO_MCC_MNC(&e2gnb->global_gNB_ID.plmn_id, id->plmn.mcc, id->plmn.mnc, id->plmn.mnc_digit_len);
-    //BIT_STRING_TO_MACRO_GNB_ID(& );
     id->nb_id = cp_bit_string_to_gnb_id(e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID);
 
     if (e2gnb->gNB_CU_UP_ID) {
   // This is an abuse but the standard does not define how to 
   // differentiate between ngran_gNB_CU and ngran_gNB
+  // Here we do not know if it is a real CUUP or a CU. Assuming CU
       //id->type = ngran_gNB_CUUP;
       id->type = ngran_gNB_CU;
       id->cu_du_id = calloc(1, sizeof(uint64_t));
@@ -518,7 +518,7 @@ e2ap_msg_t e2ap_dec_e42_subscription_request(const struct E2AP_PDU* pdu)
     GlobalE2node_eNB_ID_t *e2enb = node_src->value.choice.GlobalE2node_ID.choice.eNB;
     assert(e2enb->global_eNB_ID.eNB_ID.present == ENB_ID_PR_macro_eNB_ID);
     PLMNID_TO_MCC_MNC(&e2enb->global_eNB_ID.pLMN_Identity, id->plmn.mcc, id->plmn.mnc, id->plmn.mnc_digit_len);
-    // ToDo: Consider unused bits
+    // ToDo: consider unused bits
     BIT_STRING_TO_MACRO_ENB_ID(&e2enb->global_eNB_ID.eNB_ID.choice.macro_eNB_ID, id->nb_id.nb_id);
   }
 
@@ -952,7 +952,7 @@ e2ap_msg_t e2ap_dec_indication(const E2AP_PDU_t* pdu)
       assert(ric_ind->criticality == Criticality_reject);
       assert(ric_ind->value.present == RICindication_IEs__value_PR_RICindicationSN); 
       assert(ind->sn == NULL);
-      ind->sn =  malloc(sizeof(uint16_t));
+      ind->sn = malloc(sizeof(uint16_t));
       assert(ric_ind->value.choice.RICindicationSN < MAX_RIC_INDICATION_SN );
       *ind->sn = ric_ind->value.choice.RICindicationSN; 
     } else if (id == ProtocolIE_ID_id_RICindicationType){
@@ -966,11 +966,13 @@ e2ap_msg_t e2ap_dec_indication(const E2AP_PDU_t* pdu)
       assert(ric_ind->id == ProtocolIE_ID_id_RICindicationHeader);
       assert(ric_ind->criticality == Criticality_reject);
       assert(ric_ind->value.present == RICindication_IEs__value_PR_RICindicationHeader);
+      assert(ind->hdr.len == 0 && ind->hdr.buf == NULL);
       ind->hdr = copy_ostring_to_ba(ric_ind->value.choice.RICindicationHeader);
     } else if (id == ProtocolIE_ID_id_RICindicationMessage){
       // RIC indication message. Mandatory
       assert(ric_ind->criticality == Criticality_reject);
       assert(ric_ind->value.present == RICindication_IEs__value_PR_RICindicationMessage); 
+      assert(ind->msg.len == 0 && ind->msg.buf == NULL);
       ind->msg = copy_ostring_to_ba(ric_ind->value.choice.RICindicationMessage);
     } else { // if (id == ProtocolIE_ID_id_RICcallProcessID)
       // RIC call process id. Optional
@@ -1041,6 +1043,7 @@ e2ap_msg_t e2ap_dec_control_request(const E2AP_PDU_t* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == RICcontrolRequest_IEs__value_PR_RICcallProcessID);
+      assert(ctrl->call_process_id == NULL);
       ctrl->call_process_id = malloc(sizeof(*ctrl->call_process_id));
       assert(ctrl->call_process_id);
       *ctrl->call_process_id = copy_ostring_to_ba(ric_ctrl->value.choice.RICcallProcessID);
@@ -1050,6 +1053,7 @@ e2ap_msg_t e2ap_dec_control_request(const E2AP_PDU_t* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == RICcontrolRequest_IEs__value_PR_RICcontrolHeader);
+      assert(ctrl->hdr.len == 0 && ctrl->hdr.buf == NULL);
       ctrl->hdr = copy_ostring_to_ba(ric_ctrl->value.choice.RICcontrolHeader);
     } else if (id == ProtocolIE_ID_id_RICcontrolMessage) {
       // RIC Control Message. Mandatory
@@ -1057,6 +1061,7 @@ e2ap_msg_t e2ap_dec_control_request(const E2AP_PDU_t* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == RICcontrolRequest_IEs__value_PR_RICcontrolMessage);
+      assert(ctrl->msg.len == 0 && ctrl->msg.buf == NULL);
       ctrl->msg = copy_ostring_to_ba(ric_ctrl->value.choice.RICcontrolMessage);
     } else { // if (id == ProtocolIE_ID_id_RICcontrolAckRequest)
       // RIC Control Ack Request. Optional
@@ -1064,6 +1069,7 @@ e2ap_msg_t e2ap_dec_control_request(const E2AP_PDU_t* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == RICcontrolRequest_IEs__value_PR_RICcontrolAckRequest);
+      assert(ctrl->ack_req == NULL);
       ctrl->ack_req = malloc(sizeof(*ctrl->ack_req));
       assert(ctrl->ack_req);
       assert(ric_ctrl->value.choice.RICcontrolAckRequest < 3);
@@ -1121,10 +1127,11 @@ e2ap_msg_t e2ap_dec_e42_control_request(const struct E2AP_PDU* pdu)
     PLMNID_TO_MCC_MNC(&e2gnb->global_gNB_ID.plmn_id, id->plmn.mcc, id->plmn.mnc, id->plmn.mnc_digit_len);
     //BIT_STRING_TO_MACRO_GNB_ID(&e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID, id->nb_id);
     id->nb_id = cp_bit_string_to_gnb_id(e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID);
-   
+
     if (e2gnb->gNB_CU_UP_ID) {
   // This is an abuse but the standard does not define how to 
   // differentiate between ngran_gNB_CU and ngran_gNB
+  // Here we do not know if it is a real CUUP or a CU. Assuming CU
       //id->type = ngran_gNB_CUUP;
       id->type = ngran_gNB_CU;
       id->cu_du_id = calloc(1, sizeof(uint64_t));
@@ -1144,7 +1151,7 @@ e2ap_msg_t e2ap_dec_e42_control_request(const struct E2AP_PDU* pdu)
     GlobalE2node_eNB_ID_t *e2enb = node_src->value.choice.GlobalE2node_ID.choice.eNB;
     assert(e2enb->global_eNB_ID.eNB_ID.present == ENB_ID_PR_macro_eNB_ID);
     PLMNID_TO_MCC_MNC(&e2enb->global_eNB_ID.pLMN_Identity, id->plmn.mcc, id->plmn.mnc, id->plmn.mnc_digit_len);
-    // ToDo: consider unused bits 
+    // ToDo: consider the unused bits
     BIT_STRING_TO_MACRO_ENB_ID(&e2enb->global_eNB_ID.eNB_ID.choice.macro_eNB_ID, id->nb_id.nb_id);
   }
 
@@ -1185,7 +1192,7 @@ e2ap_msg_t e2ap_dec_e42_control_request(const struct E2AP_PDU* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == E42RICcontrolRequest_IEs__value_PR_RICcallProcessID);
-      assert(ctrl->call_process_id == NULL);
+      assert(ctrl->call_process_id == NULL); 
       ctrl->call_process_id = malloc(sizeof(*ctrl->call_process_id));
       assert(ctrl->call_process_id != NULL && "Memory exhausted");
       *ctrl->call_process_id = copy_ostring_to_ba(ric_ctrl->value.choice.RICcallProcessID);
@@ -1195,6 +1202,7 @@ e2ap_msg_t e2ap_dec_e42_control_request(const struct E2AP_PDU* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == E42RICcontrolRequest_IEs__value_PR_RICcontrolHeader);
+      assert(ctrl->hdr.len == 0 && ctrl->hdr.buf == NULL); 
       ctrl->hdr = copy_ostring_to_ba(ric_ctrl->value.choice.RICcontrolHeader);
     } else if (id == ProtocolIE_ID_id_RICcontrolMessage) {
       // RIC Control Message. Mandatory
@@ -1202,6 +1210,7 @@ e2ap_msg_t e2ap_dec_e42_control_request(const struct E2AP_PDU* pdu)
       // interoperatibility for the moment
       //assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == E42RICcontrolRequest_IEs__value_PR_RICcontrolMessage);
+      assert(ctrl->msg.len == 0 && ctrl->msg.buf == NULL); 
       ctrl->msg = copy_ostring_to_ba(ric_ctrl->value.choice.RICcontrolMessage);
     } else { // if (id == ProtocolIE_ID_id_RICcontrolAckRequest)
       // RIC Control Ack Request. Optional
@@ -1262,12 +1271,12 @@ e2ap_msg_t e2ap_dec_control_ack(const E2AP_PDU_t* pdu)
         || id ==  ProtocolIE_ID_id_RICcontrolOutcome);
   //RIC Call process ID. Optional
     if(id == ProtocolIE_ID_id_RICcallProcessID){
-     assert(ric_ctrl->criticality == Criticality_reject);
-     assert(ric_ctrl->value.present == RICcontrolAcknowledge_IEs__value_PR_RICcallProcessID);
-     assert(ctrl->call_process_id == NULL);
+      assert(ric_ctrl->criticality == Criticality_reject);
+      assert(ric_ctrl->value.present == RICcontrolAcknowledge_IEs__value_PR_RICcallProcessID);
+      assert(ctrl->call_process_id == NULL);
       ctrl->call_process_id = malloc(sizeof(byte_array_t));
       *ctrl->call_process_id = copy_ostring_to_ba(ric_ctrl->value.choice.RICcallProcessID); 
-  //RIC Control Outcome. Mandatory
+   //RIC Control Outcome. Mandatory
     } else { // id == ProtocolIE_ID_id_RICcontrolOutcome
       assert(ric_ctrl->criticality == Criticality_reject);
       assert(ric_ctrl->value.present == RICcontrolAcknowledge_IEs__value_PR_RICcontrolOutcome);
@@ -1449,13 +1458,13 @@ e2ap_msg_t e2ap_dec_setup_request(const E2AP_PDU_t* pdu)
     GlobalE2node_gNB_ID_t *e2gnb = setup_rid->value.choice.GlobalE2node_ID.choice.gNB;
     assert(e2gnb->global_gNB_ID.gnb_id.present == GNB_ID_Choice_PR_gnb_ID);
     PLMNID_TO_MCC_MNC(&e2gnb->global_gNB_ID.plmn_id, sr->id.plmn.mcc, sr->id.plmn.mnc, sr->id.plmn.mnc_digit_len);
-    //BIT_STRING_TO_MACRO_GNB_ID(&e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID,sr->id.nb_id);
     sr->id.nb_id = cp_bit_string_to_gnb_id(e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID);
 
     if (e2gnb->gNB_CU_UP_ID) {
   // This is an abuse but the standard does not define how to 
   // differentiate between ngran_gNB_CU and ngran_gNB
-      //sr->id.type = ngran_gNB_CUUP;
+  // Here we do not know if it is a real CUUP or a CU. Assuming CU
+//      sr->id.type = ngran_gNB_CUUP;
       sr->id.type = ngran_gNB_CU;
       sr->id.cu_du_id = calloc(1, sizeof(uint64_t));
       assert(sr->id.cu_du_id != NULL && "memory exhausted");
@@ -1474,7 +1483,7 @@ e2ap_msg_t e2ap_dec_setup_request(const E2AP_PDU_t* pdu)
     GlobalE2node_eNB_ID_t *e2enb = setup_rid->value.choice.GlobalE2node_ID.choice.eNB;
     assert(e2enb->global_eNB_ID.eNB_ID.present == ENB_ID_PR_macro_eNB_ID);
     PLMNID_TO_MCC_MNC(&e2enb->global_eNB_ID.pLMN_Identity, sr->id.plmn.mcc, sr->id.plmn.mnc, sr->id.plmn.mnc_digit_len);
-    // ToDo: consider unused bits
+    // ToDo: Take care of unused bits
     BIT_STRING_TO_MACRO_ENB_ID(&e2enb->global_eNB_ID.eNB_ID.choice.macro_eNB_ID, sr->id.nb_id.nb_id);
   }
 
@@ -1493,7 +1502,6 @@ e2ap_msg_t e2ap_dec_setup_request(const E2AP_PDU_t* pdu)
 
       assert(ran_list->value.choice.RANfunctions_List.list.count < MAX_NUM_RAN_FUNC_ID);
       sr->len_rf = ran_list->value.choice.RANfunctions_List.list.count;
-
       assert(sr->ran_func_item == NULL);
       sr->ran_func_item = calloc(sr->len_rf, sizeof(ran_function_t));
       assert(sr->ran_func_item != NULL && "Memory exhausted");
@@ -1517,8 +1525,7 @@ e2ap_msg_t e2ap_dec_setup_request(const E2AP_PDU_t* pdu)
       assert(comp_add->criticality == Criticality_reject);
       assert(comp_add->value.present == E2setupRequestIEs__value_PR_E2nodeComponentConfigAddition_List); 
       sr->len_cca = comp_add->value.choice.E2nodeComponentConfigAddition_List.list.count;
-      assert(sr->len_cca > 0 && sr->len_cca < 1024);
-      assert(sr->comp_conf_add == NULL);
+      assert(sr->len_cca > 0 && sr->len_cca < 1024 && sr->comp_conf_add == NULL);
       sr->comp_conf_add = calloc(sr->len_cca, sizeof(e2ap_node_component_config_add_t));
       assert(sr->comp_conf_add != NULL);
       
@@ -1630,7 +1637,7 @@ e2ap_msg_t e2ap_dec_setup_response_success(const E2AP_PDU_t* pdu)
 
       assert(ran_func->value.choice.RANfunctionsID_List.list.count < MAX_NUM_RAN_FUNC_ID);
       sr->len_acc = ran_func->value.choice.RANfunctionsID_List.list.count; 
-
+      assert(sr->accepted == NULL);
       sr->accepted = calloc(sr->len_acc, sizeof(accepted_ran_function_t));
       const RANfunctionID_ItemIEs_t** arr = (const RANfunctionID_ItemIEs_t**)ran_func->value.choice.RANfunctionsID_List.list.array; 
       for(size_t i =0; i < sr->len_acc; ++i){
@@ -1825,15 +1832,15 @@ e2ap_msg_t e2ap_dec_setup_failure(const E2AP_PDU_t* pdu)
 
   // Cause. Mandatory
   const E2setupFailureIEs_t* cause = out->protocolIEs.list.array[1]; 
-  assert(cause->id  == ProtocolIE_ID_id_E2connectionSetupFailed);
+  assert(cause->id  == ProtocolIE_ID_id_Cause	); //  ProtocolIE_ID_id_E2connectionSetupFailed);
   assert(cause->criticality == Criticality_ignore);
-  assert(cause->value.present == ProtocolIE_ID_id_Cause);
+  assert(cause->value.present == E2setupFailureIEs__value_PR_Cause);
   sf->cause = copy_cause(cause->value.choice.Cause);
 
   int elm_id = out->protocolIEs.list.count - 1;
   assert(elm_id > -1 && elm_id < 4);
 
-  while(elm_id != 1){
+  while(elm_id > 1){
     const E2setupFailureIEs_t* src = out->protocolIEs.list.array[elm_id];
     assert(src->value.present == E2setupFailureIEs__value_PR_TimeToWait
         || src->value.present == E2setupFailureIEs__value_PR_CriticalityDiagnostics
@@ -1858,6 +1865,7 @@ e2ap_msg_t e2ap_dec_setup_failure(const E2AP_PDU_t* pdu)
       assert(src->criticality == Criticality_ignore);
       assert(sf->tl_info == NULL);
       sf->tl_info = calloc(1, sizeof(transport_layer_information_t));
+      assert(sf->tl_info != NULL && "Memory exhausted");
       sf->tl_info->address = copy_bs_to_ba(src->value.choice.TNLinformation.tnlAddress);
       if(src->value.choice.TNLinformation.tnlPort != NULL){
         sf->tl_info->port = calloc(1, sizeof(byte_array_t));
@@ -2518,8 +2526,9 @@ e2ap_msg_t e2ap_dec_e42_setup_response(const struct E2AP_PDU* pdu)
       dst->id.nb_id = cp_bit_string_to_gnb_id(e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID);
 
       if (e2gnb->gNB_CU_UP_ID) {
-  // This is an abuse but the standard does not define how to 
-  // differentiate between ngran_gNB_CU and ngran_gNB
+        // This is an abuse but the standard does not define how to 
+        // differentiate between ngran_gNB_CU and ngran_gNB
+        // Here we do not know if it is a real CUUP or a CU. Assuming CU
         //dst->id.type = ngran_gNB_CUUP;
         dst->id.type = ngran_gNB_CU;
         dst->id.cu_du_id = calloc(1, sizeof(uint64_t));
@@ -2755,6 +2764,10 @@ E2AP_PDU_t* e2ap_create_pdu(const uint8_t* buffer, int buffer_len)
   //printf("rval.code = %d\n", rval.code);
   //fprintf(stdout, "length of data %ld\n", rval.consumed);
   assert(rval.code == RC_OK && "Are you sending data in ATS_ALIGEND_BASIC_PER syntax?");
+
+  //xer_fprint(stdout, &asn_DEF_E2AP_PDU, pdu);
+  //fflush(stdout);
+
   return pdu;
 }
 

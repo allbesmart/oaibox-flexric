@@ -8,6 +8,4 @@ else()
   message(FATAL_ERROR "Unknown KPM version")
 endif()
 
-
-
-
+enable_testing() 

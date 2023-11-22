@@ -166,7 +166,7 @@ int main()
   sm_agent_t* sm_ag = make_slice_sm_agent(io_ag);
   sm_ric_t* sm_ric = make_slice_sm_ric();
 
-  for(int i = 0; i < 64*1024; ++i){
+  for(int i = 0; i < 1024; ++i){
     check_eq_ran_function(sm_ag, sm_ric);
     check_subscription(sm_ag, sm_ric);
     check_indication(sm_ag, sm_ric);

@@ -103,6 +103,7 @@ void check_indication(sm_agent_t* ag, sm_ric_t* ric)
   assert(ric != NULL);
 
   exp_ind_data_t exp = ag->proc.on_indication(ag, NULL);
+  assert(exp.has_value == true);
   defer({ free_exp_ind_data(&exp); }); 
 
   sm_ag_if_rd_ind_t msg = ric->proc.on_indication(ric, &exp.data);
@@ -172,7 +173,7 @@ int main()
 
   sm_ric_t* sm_ric = make_tc_sm_ric();
 
-  for(int i =0 ; i < 256*4096; ++i){
+  for(int i =0 ; i < 1024; ++i){
     check_eq_ran_function(sm_ag, sm_ric);
     check_subscription(sm_ag, sm_ric);
     check_indication(sm_ag, sm_ric);

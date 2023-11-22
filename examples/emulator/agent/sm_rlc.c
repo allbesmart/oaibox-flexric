@@ -1,6 +1,18 @@
 #include "sm_rlc.h"
 #include "../../../test/rnd/fill_rnd_data_rlc.h"
 
+void init_rlc_sm(void)
+{
+  // No allocation needed
+}
+
+void free_rlc_sm(void)
+{
+  // No allocation needed
+}
+
+
+
 void read_rlc_sm(void* data)
 {
   assert(data != NULL);

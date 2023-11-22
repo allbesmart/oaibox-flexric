@@ -3,6 +3,10 @@
 
 #include "../../../src/agent/e2_agent_api.h"
 
+void init_gtp_sm(void);
+
+void free_gtp_sm(void);
+
 void read_gtp_sm(void*);
 
 void read_gtp_setup_sm(void*);

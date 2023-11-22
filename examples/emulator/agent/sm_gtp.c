@@ -2,6 +2,16 @@
 #include "../../../test/rnd/fill_rnd_data_gtp.h"
 #include <assert.h>
 
+void init_gtp_sm(void)
+{
+  // No data allocated
+}
+
+void free_gtp_sm(void)
+{
+  // No data allocated
+}
+
 void read_gtp_sm(void * data)
 {
   assert(data != NULL);

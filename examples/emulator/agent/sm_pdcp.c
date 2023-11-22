@@ -2,6 +2,18 @@
 #include "../../../test/rnd/fill_rnd_data_pdcp.h"
 #include <assert.h>
 
+void init_pdcp_sm(void)
+{
+  // No allocation needed
+}
+
+void free_pdcp_sm(void)
+{
+  // No allocation needed
+}
+
+
+
 void read_pdcp_sm(void* data)
 {
   assert(data != NULL);

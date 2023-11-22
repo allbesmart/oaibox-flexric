@@ -3,6 +3,18 @@
 #include <assert.h>
 #include <stdio.h>
 
+void init_slice_sm(void)
+{
+  // No allocation needed
+}
+
+void free_slice_sm(void)
+{
+  // No allocation needed
+}
+
+
+
 void read_slice_sm(void* data)
 {
   assert(data != NULL);

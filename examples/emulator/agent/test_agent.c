@@ -97,7 +97,21 @@ void init_write_subs(write_subs_fp (*write_subs_tbl)[SM_AGENT_IF_WRITE_SUBS_V0_E
 }
 
 static
-sm_io_ag_ran_t init_io_ag()
+void init_sm(void)
+{
+  init_gtp_sm();
+  init_kpm_sm();
+  init_mac_sm();
+  init_pdcp_sm();
+  init_rc_sm();
+  init_rlc_sm();
+  init_slice_sm();
+  init_tc_sm();
+
+}
+
+static
+sm_io_ag_ran_t init_io_ag(void)
 {
   sm_io_ag_ran_t io = {0};
   init_read_ind_tbl(&io.read_ind_tbl);
@@ -108,8 +122,18 @@ sm_io_ag_ran_t init_io_ag()
   init_write_ctrl(&io.write_ctrl_tbl);
   init_write_subs(&io.write_subs_tbl);
 
+  init_sm();
+
+
   return io;
 }
+
+static
+void free_io_ag(void)
+{
+  free_kpm_sm();
+}
+
 
 /*
 static
@@ -189,6 +213,8 @@ int main(int argc, char *argv[])
   while(1){
     poll(NULL, 0, 1000);
   }
+
+  free_io_ag();
 
   return EXIT_SUCCESS;
 }

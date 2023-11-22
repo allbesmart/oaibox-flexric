@@ -13,6 +13,9 @@ add_library(test_agent_obj OBJECT
   ../../../test/rnd/fill_rnd_data_slice.c                  
   ../../../test/rnd/fill_rnd_data_e2_setup_req.c
   ../../../src/util/time_now_us.c
+  ../../../src/util/alg_ds/ds/assoc_container/assoc_ht_open_address.c
+  ../../../src/util/alg_ds/ds/seq_container/seq_arr.c
+  ../../../src/util/alg_ds/alg/murmur_hash_32.c
   read_setup_ran.c
   sm_gtp.c
   sm_kpm.c
@@ -38,7 +41,7 @@ add_executable(emu_agent_gnb
 target_link_libraries(emu_agent_gnb
                       PUBLIC
                       e2_agent
-                      ${FlatCC} 
+                                            ${FlatCC} 
                       -pthread
                       -lsctp
                       -ldl

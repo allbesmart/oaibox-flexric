@@ -2,6 +2,18 @@
 #include "../../../test/rnd/fill_rnd_data_mac.h"
 #include <assert.h>
 
+void init_mac_sm(void)
+{
+  // No allocation needed
+}
+
+void free_mac_sm(void)
+{
+  // No allocation needed
+}
+
+
+
 void read_mac_sm(void* data)
 {
   assert(data != NULL);

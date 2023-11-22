@@ -240,18 +240,10 @@ byte_array_t kpm_enc_ind_msg_asn(kpm_ind_msg_t const* ind_msg)
   }
 
 
-  xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage, &pdu);
-  fflush(stdout);
+  //xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage, &pdu);
+  //fflush(stdout);
 
   byte_array_t const ba = encode(&pdu, E2SM_KPM_INDICATION_MESSAGE_ENUM);
-
-  /*
-  {.buf = malloc(2048), .len = 2048};
-  const enum asn_transfer_syntax syntax = ATS_ALIGNED_BASIC_PER;
-  asn_enc_rval_t er = asn_encode_to_buffer(NULL, syntax, &asn_DEF_E2SM_KPM_IndicationMessage, pdu, ba.buf, ba.len);
-  assert(er.encoded > -1 && (size_t)er.encoded <= ba.len);
-  ba.len = er.encoded;
-*/
 
   ASN_STRUCT_FREE_CONTENTS_ONLY(asn_DEF_E2SM_KPM_IndicationMessage, &pdu);
 

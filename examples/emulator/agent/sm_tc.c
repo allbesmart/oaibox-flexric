@@ -2,6 +2,16 @@
 #include "../../../test/rnd/fill_rnd_data_tc.h"
 #include <assert.h>
 
+void init_tc_sm(void)
+{
+  // No allocation needed
+}
+
+void free_tc_sm(void)
+{
+  // No allocation needed
+}
+
 void read_tc_sm(void* data)
 {
   assert(data != NULL);

@@ -48,12 +48,11 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
   kpm_ind_msg_format_3_t const* msg_frm_3 = &ind->msg.frm_3;
   
 
-  int64_t now = time_now_us();
-
+  int64_t const now = time_now_us();
+  static int counter = 1;
   {
     lock_guard(&mtx);
 
-    static int counter = 1;
     printf("\n%7d KPM ind_msg latency = %ld [μs]\n", counter, now - hdr_frm_1->collectStartTime);  // xApp <-> E2 Node
 
     // Reported list of measurements per UE
@@ -156,14 +155,13 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
               }
               
               default:
-                assert("Value not recognized");
+                assert(0 != 0 && "Value not recognized");
               }
               
               break;
             }
             case ID_MEAS_TYPE: 
                 printf(" ID_MEAS_TYPE \n");
-                assert(0!=0 && "Bug here?");
                 break;
           
             default:
@@ -235,6 +233,31 @@ kpm_act_def_format_1_t gen_act_def_frmt_1(const char** action)
 }
 
 static
+test_info_lst_t filter_predicate(test_cond_type_e type, test_cond_e cond, int value)
+{
+  test_info_lst_t dst = {0};
+
+  dst.test_cond_type = type;
+  // It can only be TRUE_TEST_COND_TYPE so it does not matter the type
+  dst.S_NSSAI = TRUE_TEST_COND_TYPE;
+
+  dst.test_cond = calloc(1, sizeof(test_cond_e));
+  assert(dst.test_cond != NULL && "Memory exhausted");
+  *dst.test_cond = cond;
+
+  dst.test_cond_value = calloc(1, sizeof(test_cond_value_t));
+  assert(dst.test_cond_value != NULL && "Memory exhausted");
+  dst.test_cond_value->type = INTEGER_TEST_COND_VALUE;
+
+  dst.test_cond_value->int_value = calloc(1, sizeof(int64_t));
+  assert(dst.test_cond_value->int_value != NULL && "Memory exhausted");
+  *dst.test_cond_value->int_value = value;
+
+  return dst;
+} 
+
+
+static
 kpm_act_def_format_4_t gen_act_def_frmt_4(const char** action)
 {
   kpm_act_def_format_4_t dst = {0};
@@ -246,19 +269,10 @@ kpm_act_def_format_4_t gen_act_def_frmt_4(const char** action)
   assert(dst.matching_cond_lst != NULL && "Memory exhausted");
 
   // Filter connected UEs by S-NSSAI criteria
-  dst.matching_cond_lst[0].test_info_lst.test_cond_type = S_NSSAI_TEST_COND_TYPE;
-  dst.matching_cond_lst[0].test_info_lst.S_NSSAI = TRUE_TEST_COND_TYPE;
-
-  dst.matching_cond_lst[0].test_info_lst.test_cond = calloc(1, sizeof(test_cond_e));
-  assert(dst.matching_cond_lst[0].test_info_lst.test_cond != NULL && "Memory exhausted");
-  *dst.matching_cond_lst[0].test_info_lst.test_cond = EQUAL_TEST_COND;
-
-  dst.matching_cond_lst[0].test_info_lst.test_cond_value = calloc(1, sizeof(test_cond_value_t));
-  assert(dst.matching_cond_lst[0].test_info_lst.test_cond_value != NULL && "Memory exhausted");
-  dst.matching_cond_lst[0].test_info_lst.test_cond_value->type =  INTEGER_TEST_COND_VALUE;
-  dst.matching_cond_lst[0].test_info_lst.test_cond_value->int_value = malloc(sizeof(int64_t));
-  assert(dst.matching_cond_lst[0].test_info_lst.test_cond_value->int_value != NULL && "Memory exhausted");
-  *dst.matching_cond_lst[0].test_info_lst.test_cond_value->int_value = 1;
+  test_cond_type_e const type = S_NSSAI_TEST_COND_TYPE;
+  test_cond_e const condition = EQUAL_TEST_COND;
+  int const value = 1;
+  dst.matching_cond_lst[0].test_info_lst = filter_predicate(type, condition, value);
 
   printf("[xApp]: Filter UEs by S-NSSAI criteria where SST = %lu\n", *dst.matching_cond_lst[0].test_info_lst.test_cond_value->int_value);
 
@@ -347,8 +361,6 @@ int main(int argc, char *argv[])
     default:
       assert(false && "NG-RAN Type not yet implemented");
     }
-
-
     
     const int KPM_ran_function = 2;
 
@@ -356,8 +368,7 @@ int main(int argc, char *argv[])
     assert(kpm_handle[i].success == true);
   }
 
-  sleep(100);
-
+  sleep(10);
 
   for(int i = 0; i < nodes.len; ++i){
     // Remove the handle previously returned

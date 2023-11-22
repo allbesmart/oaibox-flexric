@@ -7,6 +7,19 @@
 #include <pthread.h>
 #include <unistd.h>
 
+void init_rc_sm(void)
+{
+  // No allocation needed
+}
+
+void free_rc_sm(void)
+{
+  // No allocation needed
+}
+
+
+
+
 void read_rc_sm(void* data)
 {
   assert(data != NULL);

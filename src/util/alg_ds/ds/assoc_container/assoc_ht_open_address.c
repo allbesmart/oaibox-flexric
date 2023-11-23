@@ -77,6 +77,7 @@ uint32_t find_idx(assoc_ht_open_t* htab, const void* key, uint32_t hash)
   } while(start_idx != idx);
 
   assert(0!=0 && "Impossible code path. There must be a free entry.");
+  return 0;
 }
 
 static
@@ -211,6 +212,7 @@ hentry_t* find_entry(assoc_ht_open_t* htab, const void* key)
   } while(idx != start_idx);
 
   assert(0!=0 && "Impossible code path. There must be a free entry.");
+  return NULL;
 }
 
 void remove_value_htab(assoc_ht_open_t* htab, const void* key)

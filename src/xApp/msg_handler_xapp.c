@@ -545,11 +545,11 @@ e2ap_msg_t e2ap_handle_e42_subscription_delete_request_xapp(e42_xapp_t* xapp, co
 
   e2ap_send_bytes_xapp(&xapp->ep, ba_msg);
 
-  // A pending event is created along with a timer of 5000 ms,
+  // A pending event is created along with a timer of 10000 ms,
   // after which an event will be generated
   pending_event_xapp_t ev = {.ev = E42_RIC_SUBSCRIPTION_DELETE_REQUEST_PENDING_EVENT, 
                               .id = e42_sdr->sdr.ric_id,
-                              .wait_ms = 5000};
+                              .wait_ms = 10000};
   add_pending_event_xapp(xapp, &ev);
 
 
@@ -574,7 +574,7 @@ e2ap_msg_t e2ap_handle_e42_ric_control_request_xapp(e42_xapp_t* xapp, const e2ap
 
   pending_event_xapp_t ev = {.ev = E42_RIC_CONTROL_REQUEST_PENDING_EVENT,
     .id = cr->ctrl_req.ric_id,
-    .wait_ms = 5000};
+    .wait_ms = 10000};
   add_pending_event_xapp(xapp, &ev);
 
 

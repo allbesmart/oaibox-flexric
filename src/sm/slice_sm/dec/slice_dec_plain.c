@@ -44,26 +44,26 @@ slice_ind_hdr_t slice_dec_ind_hdr_plain(size_t len, uint8_t const ind_hdr[len])
   return ret;
 }
 
+/*
 static
 uint8_t* end;
 
 static 
 uint8_t* begin;
 
-
 static
 bool it_within_layout(uint8_t const* it)
 {
   return it >= begin && it < end;  
 }
-
+*/
 
 static inline
 size_t fill_static(static_slice_t* sta, uint8_t const* it)
 {
   assert(it != NULL);
   assert(sta != NULL);
-  assert(it_within_layout(it) == true);
+  //assert(it_within_layout(it) == true);
 
   memcpy(&sta->pos_high, it, sizeof(sta->pos_high));
   it += sizeof(sta->pos_high);
@@ -382,8 +382,8 @@ slice_ind_msg_t slice_dec_ind_msg_plain(size_t len, uint8_t const ind_msg[len])
   slice_ind_msg_t ind = {0};
 
   uint8_t const* it = ind_msg;
-  begin = (uint8_t*)it;
-  end = begin + len;
+  //begin = (uint8_t*)it;
+  //end = begin + len;
   size_t sz = fill_slice_conf(&ind.slice_conf, it);
   it += sz;
 
@@ -458,8 +458,8 @@ slice_ctrl_msg_t slice_dec_ctrl_msg_plain(size_t len, uint8_t const ctrl_msg[len
   slice_ctrl_msg_t ctrl = {0}; 
   
   uint8_t const* it = ctrl_msg; 
-  begin = (uint8_t*)ctrl_msg;
-  end = (uint8_t*)ctrl_msg + len;
+  //begin = (uint8_t*)ctrl_msg;
+  //end = (uint8_t*)ctrl_msg + len;
 
   memcpy(&ctrl.type, it, sizeof(ctrl.type));
   it += sizeof(ctrl.type);

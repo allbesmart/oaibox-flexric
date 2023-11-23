@@ -31,6 +31,9 @@
 #include <unistd.h>
 
 static
+uint64_t cnt_mac;
+
+static
 void sm_cb_mac(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
@@ -38,8 +41,13 @@ void sm_cb_mac(sm_ag_if_rd_t const* rd)
   assert(rd->ind.type == MAC_STATS_V0);
  
   int64_t now = time_now_us();
-  printf("MAC ind_msg latency = %ld \n", now - rd->ind.mac.msg.tstamp);
+  if(cnt_mac % 1024 == 0)
+    printf("MAC ind_msg latency = %ld μs\n", now - rd->ind.mac.msg.tstamp);
+  cnt_mac++;
 }
+
+static
+uint64_t cnt_rlc;
 
 static
 void sm_cb_rlc(sm_ag_if_rd_t const* rd)
@@ -51,8 +59,13 @@ void sm_cb_rlc(sm_ag_if_rd_t const* rd)
 
   int64_t now = time_now_us();
 
-  printf("RLC ind_msg latency = %ld \n", now - rd->ind.rlc.msg.tstamp);
+  if(cnt_rlc % 1024 == 0)
+    printf("RLC ind_msg latency = %ld μs\n", now - rd->ind.rlc.msg.tstamp);
+  cnt_rlc++;
 }
+
+static
+uint64_t cnt_pdcp;
 
 static
 void sm_cb_pdcp(sm_ag_if_rd_t const* rd)
@@ -64,8 +77,30 @@ void sm_cb_pdcp(sm_ag_if_rd_t const* rd)
 
   int64_t now = time_now_us();
 
-  printf("PDCP ind_msg latency = %ld \n", now - rd->ind.pdcp.msg.tstamp);
+  if(cnt_pdcp % 1024 == 0)
+    printf("PDCP ind_msg latency = %ld μs\n", now - rd->ind.pdcp.msg.tstamp);
+
+  cnt_pdcp++;
 }
+
+static
+uint64_t cnt_gtp;
+
+static
+void sm_cb_gtp(sm_ag_if_rd_t const* rd)
+{
+  assert(rd != NULL);
+  assert(rd->type ==INDICATION_MSG_AGENT_IF_ANS_V0);
+
+  assert(rd->ind.type == GTP_STATS_V0);
+
+  int64_t now = time_now_us();
+  if(cnt_gtp % 1024 == 0)
+    printf("GTP ind_msg latency = %ld μs\n", now - rd->ind.gtp.msg.tstamp);
+
+  cnt_gtp++;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -91,6 +126,10 @@ int main(int argc, char *argv[])
   // PDCP indication
   const char* i_2 = "1_ms";
   sm_ans_xapp_t* pdcp_handle = NULL;
+  // GTP indication
+  const char* i_3 = "1_ms";
+  sm_ans_xapp_t* gtp_handle = NULL;
+
 
   if(nodes.len > 0){
     mac_handle = calloc( nodes.len, sizeof(sm_ans_xapp_t) ); 
@@ -99,6 +138,8 @@ int main(int argc, char *argv[])
     assert(rlc_handle  != NULL);
     pdcp_handle = calloc( nodes.len, sizeof(sm_ans_xapp_t) ); 
     assert(pdcp_handle  != NULL);
+    gtp_handle = calloc( nodes.len, sizeof(sm_ans_xapp_t) ); 
+    assert(gtp_handle  != NULL);
   }
 
   for (int i = 0; i < nodes.len; i++) {
@@ -119,9 +160,17 @@ int main(int argc, char *argv[])
 
       pdcp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 144, (void*)i_2, sm_cb_pdcp);
       assert(pdcp_handle[i].success == true);
+
+      gtp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 148, (void*)i_3, sm_cb_gtp);
+      assert(gtp_handle[i].success == true);
+
     } else if(n->id.type ==  ngran_gNB_CU ){
       pdcp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 144, (void*)i_2, sm_cb_pdcp);
       assert(pdcp_handle[i].success == true);
+
+      gtp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 148, (void*)i_3, sm_cb_gtp);
+      assert(gtp_handle[i].success == true);
+
     } else if(n->id.type == ngran_gNB_DU){
       mac_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 142, (void*)i_0, sm_cb_mac);
       assert(mac_handle[i].success == true);
@@ -143,12 +192,15 @@ int main(int argc, char *argv[])
       rm_report_sm_xapp_api(rlc_handle[i].u.handle);
     if(pdcp_handle[i].u.handle != 0)
       rm_report_sm_xapp_api(pdcp_handle[i].u.handle);
+    if(gtp_handle[i].u.handle != 0)
+      rm_report_sm_xapp_api(gtp_handle[i].u.handle);
   }
 
   if(nodes.len > 0){
     free(mac_handle);
     free(rlc_handle);
     free(pdcp_handle);
+    free(gtp_handle);
   }
 
   //Stop the xApp

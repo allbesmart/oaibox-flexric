@@ -775,7 +775,7 @@ e2sm_rc_act_def_frmt_1_t fill_rnd_rc_action_def_frmt_1(void)
   return dst;
 }
 
-static
+static _Atomic
 int recursion_fill_rnd_ran_param_val_type = 0;
 
 static

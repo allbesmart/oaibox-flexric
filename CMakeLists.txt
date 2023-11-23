@@ -158,7 +158,7 @@ message(STATUS "xApp multilanguage support e.g., python : ${XAPP_MULTILANGUAGE}"
 ### Coverage 
 ########
 
-option(CODE_COVERAGE "Code coverage" ON)
+option(CODE_COVERAGE "Code coverage" OFF)
 if(CODE_COVERAGE)
   add_compile_options("-fprofile-arcs;-ftest-coverage")
   add_link_options("-lgcov;-coverage")

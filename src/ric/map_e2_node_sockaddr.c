@@ -119,7 +119,6 @@ sctp_info_t* rm_map_e2_node_sad(map_e2_node_sockaddr_t* m, global_e2_node_id_t* 
 
   lock_guard(&m->mtx);
 
-
   sctp_info_t* s = bi_map_extract_left(&m->map, id, sizeof(global_e2_node_id_t));
   return s;
 

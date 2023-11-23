@@ -378,7 +378,7 @@ void e2_event_loop_agent(e2_agent_t* ag)
           exp_ind_data_t exp = sm->proc.on_indication(sm, act_def); // , &e.i_ev->ric_id);
           // Condition not matched e.g., No UE matches condition 
           if(exp.has_value == false){
-            printf("Condition not matched e.g., No UE matches condition \n");
+            printf("[E2 AGENT]: Condition not matched e.g., No UE matches condition. Emulator triggers this condition for testing, but not the RAN \n");
             consume_fd_sync(e.fd);
             break;  
           }
@@ -415,6 +415,7 @@ void e2_event_loop_agent(e2_agent_t* ag)
       case SCTP_CONNECTION_SHUTDOWN_EVENT: 
         {
           notification_handle_ag(ag, &e.msg);
+          free_sctp_msg(&e.msg);
           break;
         }
       case CHECK_STOP_TOKEN_EVENT:

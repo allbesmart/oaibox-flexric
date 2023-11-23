@@ -8,70 +8,34 @@
 #include <stdio.h>
 #include <pthread.h>
 
-
 static
-kpm_ind_msg_format_1_t fill_rnd_int_data(void)
+meas_record_lst_t fill_rnd_int_data(void)
 {
-  kpm_ind_msg_format_1_t dst = {0}; 
+  meas_record_lst_t dst = {0}; 
 
-  size_t const num_drbs = 2;
+  dst.value = INTEGER_MEAS_VALUE;
+  dst.int_val = rand()%1024;
 
-  dst.meas_data_lst_len = num_drbs;
-  dst.meas_data_lst = calloc(num_drbs, sizeof(meas_data_lst_t));
-  assert(dst.meas_data_lst != NULL && "Memory exhausted");
-
-  for(size_t i = 0; i < num_drbs; ++i){
-    // Only 1 supported. It could change according to granularity period 
-    dst.meas_data_lst[i].meas_record_len = 1;
-    dst.meas_data_lst[i].meas_record_lst = calloc(1, sizeof(meas_record_lst_t));
-    assert(dst.meas_data_lst[i].meas_record_lst != NULL && "Memory exhausted");
-    dst.meas_data_lst[i].meas_record_lst[0].value = INTEGER_MEAS_VALUE;
-    dst.meas_data_lst[i].meas_record_lst[0].int_val = rand()%1024;
-
-    //printf("measurement record value int %d \n", dst.meas_data_lst[i].meas_record_lst[0].int_val);                                                            //
-  }
-
-  // Optional
-  dst.meas_info_lst_len = 0; // [0, 65535]
-  dst.meas_info_lst = NULL;    // OPTIONAL, meas_info_lst_len can be zero
-
-  // Optional
-  dst.gran_period_ms = NULL;  // 8.3.8  -  OPTIONAL
+  //printf("measurement record value int %d \n", dst.meas_data_lst[i].meas_record_lst[0].int_val);                                                            //
 
   return dst;
 }
 
 static
-kpm_ind_msg_format_1_t fill_rnd_float_data(void)
+meas_record_lst_t fill_rnd_float_data(void)
 {
-  kpm_ind_msg_format_1_t dst = {0}; 
+  meas_record_lst_t dst = {0}; 
 
-  dst.meas_data_lst_len = 1;
-  dst.meas_data_lst = calloc(dst.meas_data_lst_len, sizeof(meas_data_lst_t));
-  assert(dst.meas_data_lst != NULL && "Memory exhausted");
-
-  for(size_t i = 0; i <  dst.meas_data_lst_len; ++i){
-    // Only 1 supported. It could change according to granularity period 
-    dst.meas_data_lst[i].meas_record_len = 1;
-    dst.meas_data_lst[i].meas_record_lst = calloc(1, sizeof(meas_record_lst_t));
-    assert(dst.meas_data_lst[i].meas_record_lst != NULL && "Memory exhausted");
-    dst.meas_data_lst[i].meas_record_lst[0].value = REAL_MEAS_VALUE;
-    dst.meas_data_lst[i].meas_record_lst[0].real_val = 5.0 + rand()%1024 /(double)((rand()%2048) + 1);
-    // printf("measurement record value %f \n", dst.meas_data_lst[i].meas_record_lst[0].real_val);                                                            //
-  }
-
-  // Optional
-  dst.meas_info_lst_len = 0; // [0, 65535]
-  dst.meas_info_lst = NULL;    // OPTIONAL, meas_info_lst_len can be zero
-
-  // Optional
-  dst.gran_period_ms = NULL;  // 8.3.8  -  OPTIONAL
+  // Only 1 supported. It could change according to granularity period 
+  dst.value = REAL_MEAS_VALUE;
+  dst.real_val = 5.0 + rand()%1024 /(double)((rand()%2048) + 1);
+  // printf("measurement record value %f \n", dst.meas_data_lst[i].meas_record_lst[0].real_val); 
 
   return dst;
 }
 
 static
-kpm_ind_msg_format_1_t fill_DRB_PdcpSduVolumeDL(ue_id_e2sm_t const* ue)
+ meas_record_lst_t fill_DRB_PdcpSduVolumeDL(ue_id_e2sm_t const* ue)
 {
   assert(ue != NULL);
   //printf(" fill_DRB_PdcpSduVolumeDL\n");
@@ -79,7 +43,7 @@ kpm_ind_msg_format_1_t fill_DRB_PdcpSduVolumeDL(ue_id_e2sm_t const* ue)
 }
 
 static
-kpm_ind_msg_format_1_t fill_DRB_PdcpSduVolumeUL(ue_id_e2sm_t const* ue)
+ meas_record_lst_t fill_DRB_PdcpSduVolumeUL(ue_id_e2sm_t const* ue)
 {
   assert(ue != NULL);
   //printf(" fill_DRB_PdcpSduVolumeUL\n");
@@ -87,7 +51,7 @@ kpm_ind_msg_format_1_t fill_DRB_PdcpSduVolumeUL(ue_id_e2sm_t const* ue)
 }
 
 static
-kpm_ind_msg_format_1_t fill_DRB_RlcSduDelayDl(ue_id_e2sm_t const* ue)
+ meas_record_lst_t fill_DRB_RlcSduDelayDl(ue_id_e2sm_t const* ue)
 {
   assert(ue != NULL);
   //printf("fill_DRB_RlcSduDelayDl \n");
@@ -95,7 +59,7 @@ kpm_ind_msg_format_1_t fill_DRB_RlcSduDelayDl(ue_id_e2sm_t const* ue)
 }
 
 static
-kpm_ind_msg_format_1_t fill_DRB_UEThpDl( ue_id_e2sm_t const* ue) 
+ meas_record_lst_t fill_DRB_UEThpDl( ue_id_e2sm_t const* ue) 
 {
   assert(ue != NULL);
   //printf(" fill_DRB_UEThpDl\n");
@@ -103,7 +67,7 @@ kpm_ind_msg_format_1_t fill_DRB_UEThpDl( ue_id_e2sm_t const* ue)
 }
 
 static
-kpm_ind_msg_format_1_t fill_DRB_UEThpUl(ue_id_e2sm_t const* ue )
+ meas_record_lst_t fill_DRB_UEThpUl(ue_id_e2sm_t const* ue )
 {
   assert(ue != NULL);
   //printf(" fill_DRB_UEThpUl\n");
@@ -111,7 +75,7 @@ kpm_ind_msg_format_1_t fill_DRB_UEThpUl(ue_id_e2sm_t const* ue )
 }
 
 static
-kpm_ind_msg_format_1_t fill_RRU_PrbTotDl(ue_id_e2sm_t const* ue)
+ meas_record_lst_t fill_RRU_PrbTotDl(ue_id_e2sm_t const* ue)
 {
   assert(ue != NULL);
   //printf(" fill_RRU_PrbTotDl\n");
@@ -119,7 +83,7 @@ kpm_ind_msg_format_1_t fill_RRU_PrbTotDl(ue_id_e2sm_t const* ue)
 }
 
 static
-kpm_ind_msg_format_1_t fill_RRU_PrbTotUl(ue_id_e2sm_t const* ue)
+ meas_record_lst_t fill_RRU_PrbTotUl(ue_id_e2sm_t const* ue)
 {
   assert(ue != NULL);
   //printf(" fill_RRU_PrbTotUl\n");
@@ -129,7 +93,7 @@ kpm_ind_msg_format_1_t fill_RRU_PrbTotUl(ue_id_e2sm_t const* ue)
 static
 assoc_ht_open_t ht;
 
-typedef kpm_ind_msg_format_1_t (*kpm_fp)(ue_id_e2sm_t const* ue);
+typedef meas_record_lst_t (*kpm_fp)(ue_id_e2sm_t const* ue);
 
 typedef struct{ 
   const char* key; 
@@ -274,8 +238,10 @@ bool ue_fullfills_predicate(test_cond_e cond, int64_t value)
   assert(value > -1 && "Assuming this for testing");
 
   dummy_cnt++; 
-  if(dummy_cnt > 32 && dummy_cnt < 32*10)
+  if(dummy_cnt > 32 && dummy_cnt < 4*32){
+    //printf("[KPM-SM]: Emulating no UEs matching condition\n");
     return false;
+  }
 
   return rand()%2;
 }
@@ -430,6 +396,43 @@ seq_arr_t matching_ues(matching_condition_format_4_lst_t const* cond, size_t len
 }
 
 static
+kpm_ind_msg_format_1_t collect_measurements(ue_id_e2sm_t const* ue, meas_info_format_1_lst_t const* lst, size_t len)
+{
+  assert(ue != NULL);
+  assert(lst != NULL);
+  assert(len > 0 && len < 65536);
+
+  kpm_ind_msg_format_1_t dst = {0}; 
+  // Value depending on the (period subscription) / (granularity period)
+  // currently only 1 supported
+  dst.meas_data_lst_len = 1;
+  dst.meas_data_lst = calloc(dst.meas_data_lst_len, sizeof(meas_data_lst_t));
+  assert(dst.meas_data_lst != NULL && "Memory exhausted");
+
+  dst.meas_data_lst[0].meas_record_len = len; 
+  dst.meas_data_lst[0].meas_record_lst = calloc(len, sizeof(meas_record_lst_t));
+  assert(dst.meas_data_lst[0].meas_record_lst != NULL && "Memory exhausted");
+
+  dst.meas_info_lst_len = len;
+  dst.meas_info_lst = calloc(len, sizeof(meas_info_format_1_lst_t));
+  assert(dst.meas_info_lst != NULL && "Memory exhausted");
+
+  for(size_t i = 0; i < len; ++i) {
+    assert(lst[i].meas_type.type == NAME_MEAS_TYPE && "Only NAME supported"); 
+    dst.meas_info_lst[i] = cp_meas_info_format_1_lst(&lst[i]);
+
+    const void* key = lst[i].meas_type.name.buf;
+    // Get the value pointer from the key i.e., the function to be called
+    // for the key that represents a measurement e.g., fill_DRB_PdcpSduVolumeDL
+    void* value = assoc_ht_open_value(&ht, &key);
+    assert(value != NULL && "Not registered name used as key");
+    // Get the measurement (e.g., DRB_PdcpSduVolumeDL) for the UE
+    dst.meas_data_lst[0].meas_record_lst[i] = (*(kpm_fp*)value)(ue); 
+  }
+  return dst;
+}
+
+static
 kpm_ind_msg_format_3_t subscription_info(seq_arr_t const* ues, kpm_act_def_format_1_t const* act_def)
 {
   assert(act_def != NULL);
@@ -446,19 +449,9 @@ kpm_ind_msg_format_3_t subscription_info(seq_arr_t const* ues, kpm_act_def_forma
   void* it = seq_front((seq_arr_t*)ues);
   for(size_t i = 0; i < sz; ++i){
     ue_id_e2sm_t const* ue = (ue_id_e2sm_t const*)it;
-    assert(act_def->meas_info_lst_len == 1 && "Only 1 supported");
 
-    meas_info_format_1_lst_t const* info_lst = &act_def->meas_info_lst[0];
-    assert(info_lst->meas_type.type == NAME_MEAS_TYPE && "Only NAME supported"); 
-    // Ignore for the moment label info lst
-    // assert(info_lst->label_info_lst_len == 0 && "Only 0 supportted");
-    const void* key = info_lst->meas_type.name.buf;
-    // Get the value pointer from the key 
-    void* value = assoc_ht_open_value(&ht, &key);
-    assert(value != NULL && "Not registered name used as key");
-    
     dst.meas_report_per_ue[i].ue_meas_report_lst = cp_ue_id_e2sm(ue);
-    dst.meas_report_per_ue[i].ind_msg_format_1 = (*(kpm_fp*)value)(ue); 
+    dst.meas_report_per_ue[i].ind_msg_format_1 = collect_measurements(ue, act_def->meas_info_lst, act_def->meas_info_lst_len);
 
     // We ignore the remaining fields from act_def by the moment
     // for simplicity

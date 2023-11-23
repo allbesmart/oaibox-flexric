@@ -41,7 +41,8 @@ add_executable(emu_agent_gnb
 target_link_libraries(emu_agent_gnb
                       PUBLIC
                       e2_agent
-                                            ${FlatCC} 
+                      kpm_sm_static 
+                      ${FlatCC} 
                       -pthread
                       -lsctp
                       -ldl
@@ -71,6 +72,7 @@ add_executable(emu_agent_gnb_cu
 target_link_libraries(emu_agent_gnb_cu
                         PUBLIC
                         e2_agent
+                        kpm_sm_static 
                         ${FlatCC}
                         -pthread
                         -lsctp
@@ -99,6 +101,7 @@ add_executable(emu_agent_gnb_du
 target_link_libraries(emu_agent_gnb_du
                         PUBLIC
                         e2_agent
+                        kpm_sm_static 
                         ${FlatCC}
                         -pthread
                         -lsctp
@@ -126,6 +129,7 @@ add_executable(emu_agent_enb
 target_link_libraries(emu_agent_enb
                         PUBLIC
                         e2_agent
+                        kpm_sm_static 
                         ${FlatCC}
                         -pthread
                         -lsctp

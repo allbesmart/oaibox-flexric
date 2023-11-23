@@ -119,7 +119,7 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
                 }
                 else
                 {
-                  printf("Measurement Name not yet implemented\n");
+                  printf("Measurement Name not yet implemented %s\n", meas_info_name_str);
                   //assert(false && "Measurement Name not yet implemented");
                 }
 
@@ -147,7 +147,7 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
                 }
                 else
                 {
-                  printf("Measurement Name not yet implemented\n");
+                  printf("Measurement Name not yet implemented %s\n", meas_info_name_str);
                   //assert(false && "Measurement Name not yet implemented");
                 }
 

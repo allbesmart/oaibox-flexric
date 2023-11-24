@@ -1,8 +1,10 @@
 # FlexRIC
 
-This repository contains [O-RAN Alliance](https://www.o-ran.org/) compliant E2 node Agent emulators, a NearRT-RIC, xApps written in C/C++ and Python, as well as
-patches to 5G/4G OpenAirInterface and 4G srsRAN. It implements various service models (NG/GTP, PDCP, RLC, MAC, KPM v2, SC, TC) and a built-in emulation. Depending on the service model, different encoding schemes have been developed (ASN.1, flatbuffer, plain). The indication data received in the xApp uses as persistence mechanism an sqlite3 database for enabling offline processing applications
-(e.g., ML/AI). 
+This repository contains [O-RAN Alliance](https://www.o-ran.org/) compliant E2 Node Agent emulators, a nearRT-RIC, and xApps written in C/C++ and Python.
+It implements various service models (O-RAN standard KPM v2.01, KPM v2.03, KPM v3.01 and RC v1.03, as well as customized NG/GTP, PDCP, RLC, MAC, SC and TC). 
+Depending on the service model, different encoding schemes have been developed (ASN.1, flatbuffer, plain). 
+The indication data received in the xApp uses as persistence mechanism an sqlite3 database for enabling offline processing applications (e.g., ML/AI). 
+Moreover it supports E2AP v1/v2 and v3 for all the SMs.
 
 If you want to know more about FlexRIC and its original architecture, you can find more details at: Robert Schmidt, Mikel Irazabal, and Navid Nikaein. 2021.
 FlexRIC: an SDK for next-generation SD-RANs. In Proceedings of the 17th International Conference on emerging Networking EXperiments and Technologies (CoNEXT
@@ -13,13 +15,14 @@ Below is the list of features available in this version divided per component an
 
 |      | OAI-4g |OAI-5g| SRS-4g | E2 Agent emulator | Near RT-RIC | xApp c/c++ SDK | xApp python SDK| O-RAN standardized|
 |:-----|:-------|:-----|:-------|:------------------|:------------|:------------------|:---------------|:--------------|
+| KPM  | Y      | Y    | Y      | Y                 | Y | Y  | N              | Y |
+| RC   | Y      | Y    | N      | Y                 | Y | Y  | N              | Y |
 | MAC  | Y      | Y    | Y      | Y                 | Y | Y  | Y              | N |
 | RLC  | Y      | Y    | Y      | Y                 | Y | Y  | Y              | N | 
 | PDCP | Y      | Y    | Y      | Y                 | Y | Y  | Y              | N | 
 | SLICE| Y      | N    | Y      | Y                 | Y | Y  | Y              | N |
 | TC   | N      | N    | N      | Y                 | Y | Y  | N              | N |
 | GTP  | N      | N    | N      | Y                 | Y | Y  | N              | N |
-| KPM  | N      | N    | N      | Y                 | Y | Y  | N              | Y |
 
 ## 1. Installation
 
@@ -68,7 +71,7 @@ sudo apt install libsctp-dev python3.8 cmake-curses-gui libpcre2-dev python-dev
 * Build 
 
   ```bash
-  $ cd flexric && mkdir build && cd build && cmake .. && make 
+  $ cd flexric && mkdir build && cd build && cmake .. && make -j8 
   ```
 
 * Install
@@ -80,23 +83,24 @@ sudo apt install libsctp-dev python3.8 cmake-curses-gui libpcre2-dev python-dev
   By default the service model libraries will be installed in the path /usr/local/lib/flexric while the
   configuration file in /usr/local/etc/flexric. 
 
+  Check that everything went fine running the tests:
+  ```bash
+  ctest() 
+  ```
+ 
+
 1.4 Test (optional step)
 
 There are some tests you can run. Precisely:
-* Service Model unit test. See directory `build/test/sm`
-* 3 nodes test. See directory `build/examples/xApp/c/monitor`. This test simulates an scenario with  an E2 node's, a nearRT-RIC and an xApp. Data is randomly filled. Example running in 3 terminals.
+* 3 nodes test. See directory `build/examples/xApp/c/monitor`. This test simulates an scenario with an E2 node, a nearRT-RIC and an xApp. Data is randomly filled. Example running in 3 terminals.
     ```bash
     # terminal 1: start E2 Node agent
     ./build/examples/emulator/agent/agent_1
     # terminal 2: start nearRT-RIC
     ./build/examples/ric/nearRT-RIC
     # terminal 3
-    build/examples/xApp/c/monitor/xapp_mac_rlc_pdcp_moni
+    build/examples/xApp/c/monitor/xapp_gtp_mac_rlc_pdcp_moni
     ```
-* All-in-one test. See directory `build/test/agent-ric-xapp`
-
-Most of the tests can be triggered using `ctest`. From the build directory launch `ctest` to start the tests.
-
 ## 2. Usage/deployment
 
 Before starting the nearRT-RIC, check that the IP address where your nearRT-RIC will be listening is the desired one at `/usr/local/lib/flexric/flexric.conf`.
@@ -138,12 +142,13 @@ DB_PATH = /tmp/
 DB_NAME = xapp_db2
 ```
 
-Next, you can fetch some statistics from the E2 Agents using python xApps via `$ python3 build/examples/xApp/python3/xapp_gtp_moni.py`, while in other window you can start a second xApp developed in c `$ build/examples/xApp/c/monitor/xapp_monitor_all`
+Next, you can fetch some statistics from the E2 Agents using python xApps via `$ python3 build/examples/xApp/python3/xapp_gtp_moni.py`, while in other window you can start a second xApp developed in c `$ build/examples/xApp/c/monitor/xapp_kpm_moni`
 
 You can also start wireshark and see how E2AP messages are flowing. 
 At this point, FlexRIC is working correctly in your computer and you have already tested the multi-agent, multi-xApp and multi-language capabilities. 
 
-The latency that you observe in your monitor xApp is the latency from the E2 Agent to the nearRT-RIC and xApp. In modern computers the latency should be less than 200 microseconds or 50x faster than the O-RAN specified maximum nearRT-RIC latency of 10 ms.
+The latency that you observe in your monitor xApp is the latency from the E2 Agent to the nearRT-RIC and xApp. In modern computers the latency should be less than 200 microseconds or 50x faster than the O-RAN specified minimum nearRT-RIC latency i.e., (10 ms - 1 sec) range.
+Therefore, FlexRIC is well suited for use cases with ultra low-latency requirements.
 Additionally, all the data received in the xApp is also written to /tmp/xapp_db in case that offline data processing is wanted (e.g., Machine
 Learning/Artificial Intelligence applications). Please, check the example folder for other working xApp use cases.
 
@@ -151,43 +156,20 @@ Learning/Artificial Intelligence applications). Please, check the example folder
 
 ### 3.1 Integration with OpenAirInterface 4G/5G RAN
 
-We will use the patch provided in flexric repository
-```bash
-$ git clone https://gitlab.eurecom.fr/oai/openairinterface5g.git oai
-$ cd oai/
-$ git checkout 2022.41
-$ git am path/to/flexric/multiRAT/oai/oai.patch --whitespace=nowarn
-$ source oaienv
-$ cd cmake_targets
-$ ./build_oai -I -w USRP -i  #For OAI first time installation
-$ ./build_oai --eNB --gNB -c -C -w USRP --ninja
-```
+Follow the instructions https://gitlab.eurecom.fr/oai/openairinterface5g/-/tree/develop/openair2/E2AP?ref_type=heads
 
-Prepare you favourite hot/cold beverage as the compilation of OAI may take 10 minutes. 
-Example configuration files using a B210 USRP are provided to facilitate the integration.
+### 3.2 Integration with srsRAN 4G/5G RAN
 
-In this release MAC, RLC, PDCP SMs are operative for 5G/4G and slicing for 4G 
+Follow the instructions https://docs.srsran.com/projects/project/en/latest/tutorials/source/flexric/source/index.html 
 
-### 3.2 Integration with srsRAN 4G RAN
+### 3.3 Integration with Keysight RICtest 
 
-Install srsRAN from source <https://docs.srsran.com/en/latest/general/source/1_installation.html#installation-from-source> and follow their instructions.
+The nearRT-RIC has been successfully tested with Keysight's RICtest RAN emulator https://www.keysight.com/us/en/product/P8828S/rictest-ran-intelligent-controller-test-solutions.html, 
+as demonstrated at O-RAN PlugFest 2023. Specifically, the nearRT-RIC with the xApp XXXXX where tested.
 
+### 3.4 (opt) Synchronize clock
 
-```bash
-cd path/to/srsran
-git checkout release_21_10
-git am path/to/flexric/multiRAT/srsran/srsenb.patch --whitespace=nowarn
-mkdir build && cmake .. && make -j8 
-cd srsenb/src/
-sudo ./srsenb
-```
-
-In this release MAC, RLC, PDCP and partially Slicing are supported SMs.
-
-
-### 3.3 (opt) Synchronize clock
-
-Before running the various components (RAN/flexric), you probably want to align the machines' clock. At this aim, you can use `ptp4l` in all the machines
+Before running the various components (RAN/nearRT-RIC/xApps), you probably want to align the machines' clock. For this aim, you can use `ptp4l` in all the machines
 involved (if you have for example deployed the various components on different hosts)
 
 ```bash
@@ -205,16 +187,12 @@ sudo phc2sys -m -s InterfaceName -w
 
 ![alt text](fig/3.png)
 
-### 3.4 Start the processes
+### 3.5 Start the processes
 
-* Start some eNodeB/gNodeB
+* Start some gNodeB
 
-  Below an example with 5G or 4G OAI gNodeB/eNodeB
+  Below an example with 5G OAI gNodeB
   ```bash
-  # eNB
-  $ cd oai/cmake_targets/ran_build/build
-  $ sudo ./lte-softmodem -O path/to/flexric/multiRAT/oai/enb.band7.tm1.25PRB.usrpb210.replay.conf
-
   # gNB
   $ cd oai/cmake_targets/ran_build/build
   $ sudo ./nr-softmodem -O path/to/flexric/multiRAT/oai/gnb.sa.band78.fr1.106PRB.usrpb210.conf --sa -E --continuous-tx
@@ -228,16 +206,21 @@ sudo phc2sys -m -s InterfaceName -w
 
 * Start different xApps
 
-  e.g, start the monitoring xApp with `build/examples/xApp/c/monitor/xapp_mac_rlc_pdcp_moni`. The monitoring sequence diagram is represented below: 
+  e.g, start the kpm monitoring xApp via `$ ./build/examples/xApp/c/monitor/kpm_moni`. The controlling sequence diagram is represented below:
 
   ![alt text](fig/4.png)
 
 
-  e.g, start the slicing control xApp via `$ python3 build/examples/xApp/python3/xapp_slice_moni_ctrl.py`. The controlling sequence diagram is represented below:
+## 4. O-RAN OSC nearRT-RIC
 
-  ![alt text](fig/5.png)
+FlexRIC's E2 Agent (and OAI RAN that is embedded on it) has also been successfully tested using O-RAN's OSC nearRT-RIC H Release as shown at https://openairinterface.org/news/openairinterface-will-showcase-3-demos-at-the-o-ran-f2f-meeting-in-phoenix/ and https://openairinterface.org/joint-osc-oai-workshop-end-to-end-open-source-reference-designs-for-o-ran/ 
 
-## 4. Support/further resources
+Follow OSC nearRT-RIC installation guide. The xApp can be found at https://github.com/mirazabal/kpm_rc-xapp. Please, note that we do not give support for the OSC nearRT-RIC.  
+
+XXXXXXX
+Robert videos
+
+## 5. Support/further resources
 
 * Mailing list: if you need help, you can subscribe to the mailing list `techs@mosaic-5g.io` that you can find at
   https://gitlab.eurecom.fr/mosaic5g/mosaic5g/-/wikis/mailing-lists
@@ -246,6 +229,6 @@ sudo phc2sys -m -s InterfaceName -w
 * [ppt](https://gitlab.eurecom.fr/mosaic5g/flexric/-/wikis/home) presentation with a gentle introduction to flexric 
 * [Original FlexRIC paper ACM CoNEXT 2021](https://bit.ly/3uOXuCV)
 
-## 5. Roadmap
+## 6. Roadmap
 
 Check https://gitlab.eurecom.fr/mosaic5g/flexric/-/milestones

@@ -13,7 +13,7 @@ extern "C" {
 // 6.2.3.12   S-NSSAI
 
 typedef struct {
-    uint8_t	  sST;
+  uint8_t	  sST;
 	uint32_t  *sD;	/* OPTIONAL, 24 bits are occupied */
 } s_nssai_e2sm_t;
 

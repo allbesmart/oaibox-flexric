@@ -16,7 +16,6 @@ add_library(test_agent_obj OBJECT
   ../../../src/util/alg_ds/ds/assoc_container/assoc_ht_open_address.c
   ../../../src/util/alg_ds/ds/seq_container/seq_arr.c
   ../../../src/util/alg_ds/alg/murmur_hash_32.c
-  read_setup_ran.c
   sm_gtp.c
   sm_kpm.c
   sm_mac.c
@@ -35,6 +34,7 @@ target_compile_definitions(test_agent_obj PRIVATE ${E2AP_VERSION}  ${KPM_VERSION
 
 add_executable(emu_agent_gnb
   test_agent.c
+  read_setup_ran.c
   $<TARGET_OBJECTS:test_agent_obj>
   )
 
@@ -66,6 +66,7 @@ target_compile_definitions(emu_agent_gnb PRIVATE TEST_AGENT_GNB
 
 add_executable(emu_agent_gnb_cu
   test_agent.c
+  read_setup_ran.c
   $<TARGET_OBJECTS:test_agent_obj>
   )
 
@@ -95,6 +96,7 @@ target_compile_definitions(emu_agent_gnb_cu PRIVATE ${E2AP_VERSION}  ${KPM_VERSI
 
 add_executable(emu_agent_gnb_du
   test_agent.c
+  read_setup_ran.c
   $<TARGET_OBJECTS:test_agent_obj>
   )
 
@@ -123,6 +125,7 @@ target_compile_definitions(emu_agent_gnb_du PRIVATE ${E2AP_VERSION}  ${KPM_VERSI
 
 add_executable(emu_agent_enb
   test_agent.c
+  read_setup_ran.c
   $<TARGET_OBJECTS:test_agent_obj>
   )
 

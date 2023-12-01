@@ -315,7 +315,7 @@ void publish_ind_msg(near_ric_t* ric,  uint16_t ran_func_id, sm_ag_if_rd_ind_t* 
   else
     printf("[E2AP]: E2 SETUP-REQUEST rx from PLMN %3d.%*d Node ID %d RAN type %s CU/DU ID %ld\n", plmn->mcc, plmn->mnc_digit_len, plmn->mnc, req->id.nb_id.nb_id, ran_type, *req->id.cu_du_id);
   // Add the E2 Node into the iApp
-  add_e2_node_iapp_api((global_e2_node_id_t*)&req->id, req->len_rf, req->ran_func_item);
+  add_e2_node_iapp_api((global_e2_node_id_t*)&req->id, req->len_rf, req->ran_func_item, req->len_cca, req->comp_conf_add);
 
   e2ap_msg_t ans = {.type = E2_SETUP_RESPONSE };
   ans.u_msgs.e2_stp_resp = generate_setup_response(&ric->ap.version.type, ric, req); 

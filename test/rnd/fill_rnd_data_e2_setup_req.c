@@ -30,9 +30,9 @@
 
 #elif defined(E2AP_V2) || defined(E2AP_V3) 
 
-e2ap_node_component_config_add_t fill_e2ap_node_component_config_add(void)
+e2ap_node_component_config_add_t fill_ngap_e2ap_node_component_config_add(void)
 {
-  e2ap_node_component_config_add_t dst = {0}; 
+  e2ap_node_component_config_add_t dst = {0};
 
   // Mandatory
   // 9.2.26
@@ -54,8 +54,59 @@ e2ap_node_component_config_add_t fill_e2ap_node_component_config_add(void)
   return dst;
 }
 
+// F1AP
+e2ap_node_component_config_add_t fill_f1ap_e2ap_node_component_config_add(void)
+{
+  e2ap_node_component_config_add_t dst = {0};
+
+  // Mandatory
+  // 9.2.26
+  dst.e2_node_comp_interface_type = F1_E2AP_NODE_COMP_INTERFACE_TYPE;
+  // Bug!! Optional in the standard, mandatory in ASN.1
+  // 9.2.32
+  dst.e2_node_comp_id.type = F1_E2AP_NODE_COMP_INTERFACE_TYPE;
+
+  const char ng_msg[] = "Dummy message";
+  dst.e2_node_comp_id.ng_amf_name = cp_str_to_ba(ng_msg);
+
+  // Mandatory
+  // 9.2.27
+  const char req[] = "F1AP Request Message sent";
+  const char res[] = "F1AP Response Message reveived";
+
+  dst.e2_node_comp_conf.request = cp_str_to_ba(req);
+  dst.e2_node_comp_conf.response = cp_str_to_ba(res);
+  return dst;
+}
+// E1AP
+e2ap_node_component_config_add_t fill_e1ap_e2ap_node_component_config_add(void)
+{
+  e2ap_node_component_config_add_t dst = {0};
+
+  // Mandatory
+  // 9.2.26
+  dst.e2_node_comp_interface_type = E1_E2AP_NODE_COMP_INTERFACE_TYPE;
+  // Bug!! Optional in the standard, mandatory in ASN.1
+  // 9.2.32
+  dst.e2_node_comp_id.type = E1_E2AP_NODE_COMP_INTERFACE_TYPE;
+
+  const char ng_msg[] = "Dummy message";
+  dst.e2_node_comp_id.ng_amf_name = cp_str_to_ba(ng_msg);
+
+  // Mandatory
+  // 9.2.27
+  const char req[] = "E1AP Request Message sent";
+  const char res[] = "E1AP Response Message reveived";
+
+  dst.e2_node_comp_conf.request = cp_str_to_ba(req);
+  dst.e2_node_comp_conf.response = cp_str_to_ba(res);
+  return dst;
+}
+
+
 #else
 static_assert(0!=0, "Unknown E2AP version");
 #endif
+
 
 

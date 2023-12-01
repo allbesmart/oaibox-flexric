@@ -300,15 +300,14 @@ void free_e42_iapp(e42_iapp_t* iapp)
   free(iapp);
 }
 
-
-void add_e2_node_iapp(e42_iapp_t* i, global_e2_node_id_t* id, size_t len, ran_function_t const ran_func[len])
+void add_e2_node_iapp(e42_iapp_t* i, global_e2_node_id_t* id, size_t len, ran_function_t const ran_func[len], size_t len_cca, e2ap_node_component_config_add_t const* cca)
 {
   assert(i != NULL);
   assert(id != NULL);
   assert(len > 0);
   assert(ran_func != NULL);
 
-  add_reg_e2_node(&i->e2_nodes,id, len, ran_func);
+  add_reg_e2_node(&i->e2_nodes,id, len, ran_func, len_cca, cca);
 }
 
 void rm_e2_node_iapp(e42_iapp_t* i, global_e2_node_id_t* id)

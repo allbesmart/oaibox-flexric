@@ -941,7 +941,7 @@ void test_e42_setup_response()
     n->cca = calloc(1, sizeof(e2ap_node_component_config_add_t));
     assert(n->cca != NULL && "Memory exhausted");
     for(size_t j = 0; j < n->len_cca; ++j){
-      n->cca[0] = fill_e2ap_node_component_config_add();
+      n->cca[0] = fill_ngap_e2ap_node_component_config_add();
     }
 
     uint32_t const r = (rand()%8) + 1;

@@ -1493,9 +1493,8 @@ E2AP_PDU_t* e2ap_enc_setup_request_asn_pdu(const e2_setup_request_t* sr)
     GlobalE2node_gNB_ID_t *e2gnb = calloc(1, sizeof(GlobalE2node_gNB_ID_t));
     assert(e2gnb != NULL && "Memory exhasued");
     e2gnb->global_gNB_ID.gnb_id.present = GNB_ID_Choice_PR_gnb_ID;
-  // This is an abuse but the standard does not define how to 
-  // differentiate between ngran_gNB_CU and ngran_gNB
-    if (sr->id.type == ngran_gNB_CU || sr->id.type == ngran_gNB_CUUP) {
+    // CU and CUCP do not have here a flag. They are identified through e2ap_node_component_config_add_t 
+    if (sr->id.type == ngran_gNB_CUUP) {
       GNB_CU_UP_ID_t *e2gnb_cu_up_id = calloc(1, sizeof(GNB_CU_UP_ID_t));
       assert(e2gnb_cu_up_id != NULL && "Memory exhasued");
       asn_uint642INTEGER(e2gnb_cu_up_id, *sr->id.cu_du_id);
@@ -2969,9 +2968,8 @@ struct E2AP_PDU* e2ap_enc_e42_subscription_request_asn_pdu(const e42_ric_subscri
     GlobalE2node_gNB_ID_t *e2gnb = calloc(1, sizeof(GlobalE2node_gNB_ID_t));
     assert(e2gnb != NULL && "Memory exhasued");
     e2gnb->global_gNB_ID.gnb_id.present = GNB_ID_Choice_PR_gnb_ID;
-  // This is an abuse but the standard does not define how to 
-  // differentiate between ngran_gNB_CU and ngran_gNB
-    if (e42_sr->id.type == ngran_gNB_CU || e42_sr->id.type == ngran_gNB_CUUP) {
+    // CU and CUCP do not have here a flag. They are identified through e2ap_node_component_config_add_t 
+    if (e42_sr->id.type == ngran_gNB_CUUP) {
       GNB_CU_UP_ID_t *e2gnb_cu_up_id = calloc(1, sizeof(GNB_CU_UP_ID_t));
       assert(e2gnb_cu_up_id != NULL && "Memory exhasued");
       asn_uint642INTEGER(e2gnb_cu_up_id, *e42_sr->id.cu_du_id);
@@ -3188,9 +3186,8 @@ struct E2AP_PDU* e2ap_enc_e42_setup_response_asn_pdu(const e42_setup_response_t*
       GlobalE2node_gNB_ID_t *e2gnb = calloc(1, sizeof(GlobalE2node_gNB_ID_t));
       assert(e2gnb != NULL && "Memory exhasued");
       e2gnb->global_gNB_ID.gnb_id.present = GNB_ID_Choice_PR_gnb_ID;
-  // This is an abuse but the standard does not define how to 
-  // differentiate between ngran_gNB_CU and ngran_gNB
-      if ( src_id->type == ngran_gNB_CU || src_id->type == ngran_gNB_CUUP) {
+    // CU and CUCP do not have here a flag. They are identified through e2ap_node_component_config_add_t 
+      if (src_id->type == ngran_gNB_CUUP) {
         GNB_CU_UP_ID_t *e2gnb_cu_up_id = calloc(1, sizeof(GNB_CU_UP_ID_t));
         assert(e2gnb_cu_up_id != NULL && "Memory exhasued");
         asn_uint642INTEGER(e2gnb_cu_up_id, *src_id->cu_du_id);
@@ -3406,9 +3403,8 @@ E2AP_PDU_t* e2ap_enc_e42_control_request_asn_pdu(const e42_ric_control_request_t
     GlobalE2node_gNB_ID_t *e2gnb = calloc(1, sizeof(GlobalE2node_gNB_ID_t));
     assert(e2gnb != NULL && "Memory exhasued");
     e2gnb->global_gNB_ID.gnb_id.present = GNB_ID_Choice_PR_gnb_ID;
-  // This is an abuse but the standard does not define how to 
-  // differentiate between ngran_gNB_CU and ngran_gNB
-    if (e42_ric_req->id.type == ngran_gNB_CU || e42_ric_req->id.type == ngran_gNB_CUUP) {
+    // CU and CUCP do not have here a flag. They are identified through e2ap_node_component_config_add_t 
+    if (e42_ric_req->id.type == ngran_gNB_CUUP) {
       GNB_CU_UP_ID_t *e2gnb_cu_up_id = calloc(1, sizeof(GNB_CU_UP_ID_t));
       assert(e2gnb_cu_up_id != NULL && "Memory exhasued");
       asn_uint642INTEGER(e2gnb_cu_up_id, *e42_ric_req->id.cu_du_id);

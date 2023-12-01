@@ -21,7 +21,7 @@ extern "C" {
 
 /* RICcontrolFailure */
 typedef struct RICcontrolFailure {
-	ProtocolIE_Container_2149P13_t	 protocolIEs;
+	ProtocolIE_Container_2148P13_t	 protocolIEs;
 	/*
 	 * This type is extensible,
 	 * possible extensions are below.

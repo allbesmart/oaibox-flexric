@@ -3176,7 +3176,7 @@ struct E2AP_PDU* e2ap_enc_e42_setup_response_asn_pdu(const e42_setup_response_t*
     conn_list->value.present = E42setupResponseIEs__value_PR_E2nodeConnected_List;
 
     // Global E2 Node ID. Mandatory
-  E2nodeConnected_ItemIEs_t* conn_item = calloc(1, sizeof(E2nodeConnected_ItemIEs_t));
+    E2nodeConnected_ItemIEs_t* conn_item = calloc(1, sizeof(E2nodeConnected_ItemIEs_t));
     assert(conn_item != NULL && "memory exhausted");
     conn_item->id = ProtocolIE_ID_id_GlobalE2node_ID;
     conn_item->criticality = Criticality_reject;
@@ -3226,6 +3226,27 @@ struct E2AP_PDU* e2ap_enc_e42_setup_response_asn_pdu(const e42_setup_response_t*
       rc = ASN_SEQUENCE_ADD(&conn_list->value.choice.E2nodeConnected_List.protocolIEs.list, conn_item);
       assert(rc == 0);
     }
+
+    // Component Configuration Addition
+    // E2 Node Component Configuration Addition List
+    // Mandatory
+    // [1 - 256] uint8_t. should be fine
+    assert(sr->nodes[i].len_cca > 0);
+    E2nodeConnected_ItemIEs_t* con_lst = calloc(1, sizeof(E2nodeConnected_ItemIEs_t));
+    assert(con_lst != NULL && "Memory exhausted");
+    con_lst->id = ProtocolIE_ID_id_E2nodeComponentConfigAddition;
+    con_lst->criticality = Criticality_reject;
+    con_lst->value.present = E2nodeConnected_ItemIEs__value_PR_E2nodeComponentConfigAddition_List;
+
+    for(size_t j = 0; j < sr->nodes[i].len_cca; ++j){
+      // E2 Node Component Configuration Addition Ack Item
+      E2nodeComponentConfigAddition_ItemIEs_t* comp_addition_item_ie = e2ap_enc_node_component_conf_addition(&sr->nodes[i].cca[j]);
+      rc = ASN_SEQUENCE_ADD(&con_lst->value.choice.E2nodeComponentConfigAddition_List.list, comp_addition_item_ie);
+      assert(rc == 0);
+    }
+
+    rc = ASN_SEQUENCE_ADD(&conn_list->value.choice.E2nodeConnected_List.protocolIEs.list, con_lst);
+    assert(rc == 0);
 
     // RAN functions
     E2nodeConnected_ItemIEs_t* conn_rf = calloc(1, sizeof(E2nodeConnected_ItemIEs_t));

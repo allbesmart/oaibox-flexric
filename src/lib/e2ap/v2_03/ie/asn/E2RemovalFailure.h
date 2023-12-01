@@ -21,7 +21,7 @@ extern "C" {
 
 /* E2RemovalFailure */
 typedef struct E2RemovalFailure {
-	ProtocolIE_Container_2149P35_t	 protocolIEs;
+	ProtocolIE_Container_2148P35_t	 protocolIEs;
 	/*
 	 * This type is extensible,
 	 * possible extensions are below.

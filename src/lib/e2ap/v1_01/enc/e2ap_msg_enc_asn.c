@@ -2734,7 +2734,7 @@ struct E2AP_PDU* e2ap_enc_e42_setup_response_asn_pdu(const e42_setup_response_t*
     conn_list->value.present = E42setupResponseIEs__value_PR_E2nodeConnected_List;
 
     // Global E2 Node ID. Mandatory
-  E2nodeConnected_ItemIEs_t* conn_item = calloc(1, sizeof(E2nodeConnected_ItemIEs_t));
+    E2nodeConnected_ItemIEs_t* conn_item = calloc(1, sizeof(E2nodeConnected_ItemIEs_t));
     assert(conn_item != NULL && "memory exhausted");
     conn_item->id = ProtocolIE_ID_id_GlobalE2node_ID;
     conn_item->criticality = Criticality_reject;

@@ -24,9 +24,11 @@
 
 #include <E2AP-PDU.h>
 
+#include "../../../rnd/fill_rnd_data_e2_setup_req.h"
 #include "../src/lib/e2ap/e2ap_msg_enc_generic_wrapper.h"
 #include "../src/lib/e2ap/e2ap_msg_dec_generic_wrapper.h"
 #include "../src/lib/e2ap/e2ap_msg_free_wrapper.h"
+
 
 static
 byte_array_t copy_str_to_ba(const char* str)
@@ -925,6 +927,7 @@ void test_e42_setup_response()
     .len_e2_nodes_conn = (rand()%4)+1,
   };
 
+
   if(sr_begin.len_e2_nodes_conn > 0 ){
     sr_begin.nodes = calloc(sr_begin.len_e2_nodes_conn, sizeof( e2_node_connected_t ) );
     assert(sr_begin.nodes != NULL && "Memory exhausted");
@@ -933,6 +936,13 @@ void test_e42_setup_response()
   for(size_t i = 0; i < sr_begin.len_e2_nodes_conn; ++i){
     e2_node_connected_t* n = &sr_begin.nodes[i];
     n->id = id; 
+
+    n->len_cca = 1; 
+    n->cca = calloc(1, sizeof(e2ap_node_component_config_add_t));
+    assert(n->cca != NULL && "Memory exhausted");
+    for(size_t j = 0; j < n->len_cca; ++j){
+      n->cca[0] = fill_e2ap_node_component_config_add();
+    }
 
     uint32_t const r = (rand()%8) + 1;
 

@@ -21,7 +21,7 @@ extern "C" {
 
 /* RICsubscriptionDeleteResponse */
 typedef struct RICsubscriptionDeleteResponse {
-	ProtocolIE_Container_2690P6_t	 protocolIEs;
+	ProtocolIE_Container_2691P6_t	 protocolIEs;
 	/*
 	 * This type is extensible,
 	 * possible extensions are below.

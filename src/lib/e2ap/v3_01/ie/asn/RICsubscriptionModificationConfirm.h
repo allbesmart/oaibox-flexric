@@ -21,7 +21,7 @@ extern "C" {
 
 /* RICsubscriptionModificationConfirm */
 typedef struct RICsubscriptionModificationConfirm {
-	ProtocolIE_Container_2690P13_t	 protocolIEs;
+	ProtocolIE_Container_2691P13_t	 protocolIEs;
 	/*
 	 * This type is extensible,
 	 * possible extensions are below.

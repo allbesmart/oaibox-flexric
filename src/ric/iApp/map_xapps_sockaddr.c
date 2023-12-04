@@ -163,7 +163,8 @@ void rm_map_xapps_sad(map_xapps_sockaddr_t* m, uint16_t xapp_id)
   int rc = pthread_rwlock_wrlock(&m->rw);
   assert(rc == 0);
 
-  sctp_info_t* s = bi_map_extract_left(&m->bimap, &xapp_id, sizeof(uint16_t) );
+  void (*free_sctp_info)(void*) = NULL;
+  sctp_info_t* s = bi_map_extract_left(&m->bimap, &xapp_id, sizeof(uint16_t), free_sctp_info);
   free(s);
 
 //  lock_guard(&m->mtx);

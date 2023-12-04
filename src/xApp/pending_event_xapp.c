@@ -177,7 +177,8 @@ int* rm_pending_event_ev(pending_event_xapp_ds_t* p, pending_event_xapp_t* ev )
     //printf("Pending event size before remove = %ld \n", sz);
 
     // It returns the void* of key1. the void* of the key2 is freed
-    fd = bi_map_extract_right(&p->pending, ev , sizeof(*ev));
+    void (*free_pending_event_xapp)(void*) = NULL; 
+    fd = bi_map_extract_right(&p->pending, ev , sizeof(*ev), free_pending_event_xapp);
     assert(sz == bi_map_size(&p->pending) + 1 );
   }
   assert(fd != NULL && *fd > 0);
@@ -193,7 +194,9 @@ void rm_pending_event_fd(pending_event_xapp_ds_t* p, int fd)
   {
     lock_guard(&p->pend_mtx);
     // It returns the void* of key2. the void* of the key1 is freed
-    ev = bi_map_extract_left(&p->pending, &fd, sizeof(int));
+    
+    void (*free_fd)(void*) = NULL; 
+    ev = bi_map_extract_left(&p->pending, &fd, sizeof(int), free_fd);
   }
   assert(ev != NULL);
   free(ev);

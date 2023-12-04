@@ -79,7 +79,7 @@ e2_setup_request_t gen_setup_request_v2(e2_agent_t* ag)
   // ToDO: Transaction ID needs to be considered within the pending messages
   e2_setup_request_t sr = {
     .trans_id = ag->trans_id_setup_req++,
-    .id = ag->global_e2_node_id,
+    .id = cp_global_e2_node_id(&ag->global_e2_node_id),
     .ran_func_item = ran_func,
     .len_rf = len_rf,
   };

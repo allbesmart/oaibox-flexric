@@ -297,6 +297,8 @@ void e2ap_free_setup_request(e2_setup_request_t* sr)
 {
   assert(sr != NULL);
 
+  free_global_e2_node_id(&sr->id);
+
   for(size_t i = 0; i < sr->len_rf; ++i){
     ran_function_t* dst = &sr->ran_func_item[i];
     free_byte_array(dst->defn);

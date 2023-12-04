@@ -41,12 +41,26 @@ void free_ran_function_pointer(void* rf_p)
 }
 */
 
+
 static inline
 void free_e2ap_node_component_config_add_it(void* it)
 {
   assert(it != NULL);
   e2ap_node_component_config_add_t* cca  = (e2ap_node_component_config_add_t*)it;
   free_e2ap_node_component_config_add(cca);
+}
+
+void free_pair_rf_cca(pair_rf_cca_t* src)
+{
+  assert(src != NULL);
+
+  seq_arr_t* ran_func = &src->ran_func;
+  seq_free_func f = free_ran_function_wrapper; 
+  seq_arr_free(ran_func, f);
+
+  seq_arr_t* cca = &src->comp_conf_add;
+  seq_free_func f2 = free_e2ap_node_component_config_add_it; 
+  seq_arr_free(cca, f2);
 }
 
 static inline
@@ -61,17 +75,10 @@ void free_e2_nodes(void* key, void* value)
 
   // Value
   pair_rf_cca_t* pair = (pair_rf_cca_t*)value;
-
-  seq_arr_t* ran_func = &pair->ran_func;
-  seq_free_func f = free_ran_function_wrapper; 
-  seq_arr_free(ran_func, f);
-
-  seq_arr_t* cca = &pair->comp_conf_add;
-  seq_free_func f2 = free_e2ap_node_component_config_add_it; 
-  seq_arr_free(cca, f2);
-
+  free_pair_rf_cca(pair);
   free(pair);
 }
+
 
 void init_reg_e2_node(reg_e2_nodes_t* i)
 {
@@ -142,7 +149,8 @@ void add_reg_e2_node(reg_e2_nodes_t* i, global_e2_node_id_t const* id, size_t le
 //    free(old_arr);
 //  }
 
-  assoc_insert(&i->node_to_rf, id, sizeof(global_e2_node_id_t), rf_cca);
+  global_e2_node_id_t cp_id = cp_global_e2_node_id(id); 
+  assoc_insert(&i->node_to_rf, &cp_id, sizeof(global_e2_node_id_t), rf_cca);
 
 //  void* it_n = assoc_front(&i->node_to_rf);
 //  seq_arr_t* arr_tmp = assoc_value(&i->node_to_rf, it_n); 
@@ -244,39 +252,46 @@ e2_node_arr_t generate_e2_node_arr(reg_e2_nodes_t* n)
   void* it = assoc_front(&t);
   void* end = assoc_end(&t);
   while(it != end){
+    
+    e2_node_connected_t* dst = &ans.n[i];
+
     global_e2_node_id_t* tmp_id = assoc_key(&t, it);        
-    ans.n[i].id = cp_global_e2_node_id(tmp_id);
+    dst->id = cp_global_e2_node_id(tmp_id);
 
     pair_rf_cca_t* rf_cca = assoc_value(&t, it);
 
-    seq_arr_t* cca_arr = &rf_cca->comp_conf_add; 
-    assert(cca_arr->elt_size == sizeof(e2ap_node_component_config_add_t));
-    const size_t sz_cca = seq_size(cca_arr);
-    assert(sz_cca > 0 && sz_cca < 256);
-    ans.n[i].len_cca = sz_cca;
-    if(sz_cca > 0){
-      ans.n[i].cca = calloc(sz_cca, sizeof(e2ap_node_component_config_add_t));
-      assert(ans.n[i].cca != NULL && "memory exhausted");
-    }
-    for(size_t j = 0; j < sz_cca; ++j){
-      e2ap_node_component_config_add_t* c = (e2ap_node_component_config_add_t*)seq_at(cca_arr, j);
-      ans.n[i].cca[j] = cp_e2ap_node_component_config_add(c);
-    }
+    {
+      seq_arr_t* cca_arr = &rf_cca->comp_conf_add; 
+      assert(cca_arr->elt_size == sizeof(e2ap_node_component_config_add_t));
+      const size_t sz_cca = seq_size(cca_arr);
+      assert(sz_cca > 0 && sz_cca < 256);
+      dst->len_cca = sz_cca;
+      if(sz_cca > 0){
+        dst->cca = calloc(sz_cca, sizeof(e2ap_node_component_config_add_t));
+        assert(dst->cca != NULL && "memory exhausted");
+      }
+      for(size_t j = 0; j < sz_cca; ++j){
+        e2ap_node_component_config_add_t* c = (e2ap_node_component_config_add_t*)seq_at(cca_arr, j);
+        dst->cca[j] = cp_e2ap_node_component_config_add(c);
+      }
 
-    seq_arr_t* rf_arr = &rf_cca->ran_func; 
-    //seq_arr_t* tmp_arr = assoc_value(&t, it);
-    assert(rf_arr->elt_size == sizeof(ran_function_t));
-
-    const size_t sz = seq_size(rf_arr);
-    ans.n[i].len_rf = sz;
-    if(sz > 0){
-      ans.n[i].ack_rf = calloc(sz, sizeof(ran_function_t));
-      assert(ans.n[i].ack_rf != NULL && "memory exhausted");
     }
+    {
+      seq_arr_t* rf_arr = &rf_cca->ran_func; 
+      //seq_arr_t* tmp_arr = assoc_value(&t, it);
+      assert(rf_arr->elt_size == sizeof(ran_function_t));
 
-    for(size_t j = 0; j < sz; ++j){
-      ran_function_t* r = (ran_function_t*)seq_at(rf_arr, j);
-      ans.n[i].ack_rf[j] = cp_ran_function(r);
+      const size_t sz = seq_size(rf_arr);
+      dst->len_rf = sz;
+      if(sz > 0){
+        dst->ack_rf = calloc(sz, sizeof(ran_function_t));
+        assert(dst->ack_rf != NULL && "memory exhausted");
+      }
+
+      for(size_t j = 0; j < sz; ++j){
+        ran_function_t* r = (ran_function_t*)seq_at(rf_arr, j);
+        dst->ack_rf[j] = cp_ran_function(r);
+      }
     }
 
     i += 1;
@@ -301,9 +316,8 @@ void rm_reg_e2_node(reg_e2_nodes_t* n, global_e2_node_id_t const* id)
     it = find_if(&n->node_to_rf, it, end, id, eq_global_e2_node_id_wrapper );
     assert(it != end && "Not registed e2 Node passed");
 
-    pair_rf_cca_t* arr = assoc_extract(&n->node_to_rf, (global_e2_node_id_t*)id);;
-
-    free_e2_nodes((void*)id , arr);
+    // Remove the iterator, calling the free function passed when init the rb  
+    assoc_rb_tree_free_it(&n->node_to_rf, it);
   }
 }
 

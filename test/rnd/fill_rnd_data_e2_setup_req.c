@@ -66,8 +66,7 @@ e2ap_node_component_config_add_t fill_f1ap_e2ap_node_component_config_add(void)
   // 9.2.32
   dst.e2_node_comp_id.type = F1_E2AP_NODE_COMP_INTERFACE_TYPE;
 
-  const char ng_msg[] = "Dummy message";
-  dst.e2_node_comp_id.ng_amf_name = cp_str_to_ba(ng_msg);
+  dst.e2_node_comp_id.f1_gnb_du_id = 1023;
 
   // Mandatory
   // 9.2.27
@@ -90,8 +89,7 @@ e2ap_node_component_config_add_t fill_e1ap_e2ap_node_component_config_add(void)
   // 9.2.32
   dst.e2_node_comp_id.type = E1_E2AP_NODE_COMP_INTERFACE_TYPE;
 
-  const char ng_msg[] = "Dummy message";
-  dst.e2_node_comp_id.ng_amf_name = cp_str_to_ba(ng_msg);
+  dst.e2_node_comp_id.e1_gnb_cu_up_id = 1025;
 
   // Mandatory
   // 9.2.27
@@ -103,10 +101,7 @@ e2ap_node_component_config_add_t fill_e1ap_e2ap_node_component_config_add(void)
   return dst;
 }
 
-
 #else
 static_assert(0!=0, "Unknown E2AP version");
 #endif
-
-
 

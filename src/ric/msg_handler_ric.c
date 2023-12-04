@@ -73,7 +73,8 @@ void stop_pending_event(near_ric_t* ric, pending_event_ric_t* ev )
 
   int rc = pthread_mutex_lock(&ric->pend_mtx);
   assert(rc == 0);
-  int* fd = bi_map_extract_right(&ric->pending, ev, sizeof(*ev));
+  void (*free_pending_event)(void*) = NULL; 
+  int* fd = bi_map_extract_right(&ric->pending, ev, sizeof(*ev), free_pending_event);
   rc = pthread_mutex_unlock(&ric->pend_mtx);
   assert(rc == 0);
 

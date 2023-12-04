@@ -162,7 +162,8 @@ void rm_map_ric_id(map_ric_id_t* map, xapp_ric_id_t const* ric_id)
   // right: key2:  xapp_ric_id_t | value: e2_node_ric_id_t  
 
   // It returns the void* of key1. the void* of the key2 is freed
-  e2_node_ric_id_t* n = (e2_node_ric_id_t*)bi_map_extract_right(&map->bimap, (void*)ric_id, sizeof(xapp_ric_id_t) );
+  void (*free_xapp_ric_id)(void*) = NULL;
+  e2_node_ric_id_t* n = (e2_node_ric_id_t*)bi_map_extract_right(&map->bimap, (void*)ric_id, sizeof(xapp_ric_id_t), free_xapp_ric_id);
 
   //printf("Removing xapp_ric_id xapp %d ric_req_id %d node ric id %d \n", ric_id->xapp_id, ric_id->ric_id.ric_req_id,  n->ric_id.ric_req_id);
 

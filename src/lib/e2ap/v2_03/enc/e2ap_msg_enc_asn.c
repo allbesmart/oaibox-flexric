@@ -1549,7 +1549,7 @@ E2AP_PDU_t* e2ap_enc_setup_request_asn_pdu(const e2_setup_request_t* sr)
   }
 
   // E2 Node Component Configuration Addition List
-  // Mandatory
+  // Mandatory [1-256]
   assert(sr->len_cca > 0);
   E2setupRequestIEs_t* ca_list = calloc(1, sizeof(E2setupRequestIEs_t));
   ca_list->id = ProtocolIE_ID_id_E2nodeComponentConfigAddition;

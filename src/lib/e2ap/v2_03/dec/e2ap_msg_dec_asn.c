@@ -1461,11 +1461,7 @@ e2ap_msg_t e2ap_dec_setup_request(const E2AP_PDU_t* pdu)
     sr->id.nb_id = cp_bit_string_to_gnb_id(e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID);
 
     if (e2gnb->gNB_CU_UP_ID) {
-  // This is an abuse but the standard does not define how to 
-  // differentiate between ngran_gNB_CU and ngran_gNB
-  // Here we do not know if it is a real CUUP or a CU. Assuming CU
-//      sr->id.type = ngran_gNB_CUUP;
-      sr->id.type = ngran_gNB_CU;
+      sr->id.type = ngran_gNB_CUUP;
       sr->id.cu_du_id = calloc(1, sizeof(uint64_t));
       assert(sr->id.cu_du_id != NULL && "memory exhausted");
       asn_INTEGER2ulong(e2gnb->gNB_CU_UP_ID, sr->id.cu_du_id);
@@ -2476,6 +2472,22 @@ e2ap_msg_t e2ap_dec_e42_setup_response(const struct E2AP_PDU* pdu)
         dst->cca[i] = e2ap_dec_node_component_conf_addition(arr_cca[i]);
     }
 
+    // Abuse of the standard/interpretation. Since CUCP and CU do not have a flag, assume that
+    // CU = NGAP + F1AP
+    // CUCP = NGAP + F1AP + E1AP
+    if(dst->id.type == ngran_gNB){
+      if(dst->len_cca == 2){
+        assert(dst->cca[0].e2_node_comp_interface_type == NG_E2AP_NODE_COMP_INTERFACE_TYPE
+            && dst->cca[1].e2_node_comp_interface_type == F1_E2AP_NODE_COMP_INTERFACE_TYPE);
+        dst->id.type = ngran_gNB_CU;
+      } else if(dst->len_cca == 3){
+        assert(dst->cca[0].e2_node_comp_interface_type == NG_E2AP_NODE_COMP_INTERFACE_TYPE
+            && dst->cca[1].e2_node_comp_interface_type == F1_E2AP_NODE_COMP_INTERFACE_TYPE
+            && dst->cca[2].e2_node_comp_interface_type == E1_E2AP_NODE_COMP_INTERFACE_TYPE);
+        dst->id.type = ngran_gNB_CUCP;
+      }
+    }
+
     // RAN functions
     E2nodeConnected_ItemIEs_t const* src_ran = conn_list->value.choice.E2nodeConnected_List.protocolIEs.list.array[2];
     assert(src_ran->id == ProtocolIE_ID_id_RANfunctionsAdded);
@@ -2503,6 +2515,8 @@ e2ap_msg_t e2ap_dec_e42_setup_response(const struct E2AP_PDU* pdu)
       dst_ie->defn = copy_ostring_to_ba(src->ranFunctionDefinition); 
       dst_ie->oid = copy_ostring_to_ba(src->ranFunctionOID);
     }
+
+
   }
   return ret;
 }

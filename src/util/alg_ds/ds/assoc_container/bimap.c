@@ -86,7 +86,7 @@ void bi_map_insert(bi_map_t* map, void const* key1, size_t key_sz1, void const* 
 }
 
 // It returns the void* of key2. the void* of the key1 is freed
-void* bi_map_extract_left(bi_map_t* map, void* key1, size_t key1_sz)
+void* bi_map_extract_left(bi_map_t* map, void* key1, size_t key1_sz, free_fp_key f)
 {
   assert(map != NULL);
   assert(key1 != NULL);
@@ -95,11 +95,13 @@ void* bi_map_extract_left(bi_map_t* map, void* key1, size_t key1_sz)
   void* key2 = assoc_extract(&map->left, key1);
   void* key3 = assoc_extract(&map->right, key2);
 
-  // I do not like this trick. The memory should also be the same
   int cmp = map->left.comp(key1, key3);
+  // I do not like this trick. The memory should also be the same
   //int cmp = memcmp(key1, key3, map->right.key_sz);
   assert(cmp == 0);
 
+  if(f != NULL)
+    f(key3);
   free(key3);
 
   size_t sz_1 = assoc_size(&map->left);
@@ -111,7 +113,7 @@ void* bi_map_extract_left(bi_map_t* map, void* key1, size_t key1_sz)
 }
 
 // It returns the void* of key1. the void* of the key2 is freed
-void* bi_map_extract_right(bi_map_t* map, void* key2, size_t key2_sz)
+void* bi_map_extract_right(bi_map_t* map, void* key2, size_t key2_sz, free_fp_key f)
 {
   assert(map != NULL);
   assert(key2 != NULL);
@@ -121,12 +123,12 @@ void* bi_map_extract_right(bi_map_t* map, void* key2, size_t key2_sz)
   void* key3 = assoc_extract(&map->left, key1);
 
   int cmp = map->right.comp(key2, key3);
-//  int cmp = memcmp(key2, key3, map->right.key_sz);
   assert(cmp == 0);
 
   assert(map->right.free_func != NULL);
-//  map->right.free_func(key1, key3); 
 
+  if(f != NULL)
+    f(key3);
   free(key3);
 
   size_t sz_1 = assoc_size(&map->left);

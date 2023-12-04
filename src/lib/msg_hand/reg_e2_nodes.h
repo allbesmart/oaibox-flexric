@@ -35,6 +35,8 @@ typedef struct{
   seq_arr_t comp_conf_add; // e2ap_node_component_config_add_t
 } pair_rf_cca_t;
 
+void free_pair_rf_cca(pair_rf_cca_t* src);  
+
 typedef struct{
   // key:global_e2_node_id_t | value: pair_rf_cca_t* of seq_arr_t of ran_function_t and 
   assoc_rb_tree_t node_to_rf;  

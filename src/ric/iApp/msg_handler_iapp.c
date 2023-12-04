@@ -291,13 +291,16 @@ bool valid_global_e2_node(e42_iapp_t* iapp, global_e2_node_id_t const* id )
   assert(id != NULL);
 
   e2_node_arr_t nodes = generate_e2_node_arr(&iapp->e2_nodes); 
-  defer( {  free_e2_node_arr(&nodes);  }  );
+ // defer( { free_e2_node_arr(&nodes);  }  );
 
   for(size_t i = 0; i < nodes.len; ++i){
-   if( eq_global_e2_node_id(&nodes.n[i].id, id) == true)
+   if( eq_global_e2_node_id(&nodes.n[i].id, id) == true){
+      free_e2_node_arr(&nodes); 
      return true; 
+   }
   }
-
+  
+  free_e2_node_arr(&nodes); 
   return false;
 }
 

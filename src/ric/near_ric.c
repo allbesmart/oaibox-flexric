@@ -540,8 +540,6 @@ void free_near_ric(near_ric_t* ric)
 
   stop_iapp_api();
 
-
-
   free(ric);
 }
 

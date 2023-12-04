@@ -64,12 +64,10 @@ void free_e2_node_connected(e2_node_connected_t* src)
   }
   free(src->cca);
 
-
   for(size_t i = 0; i < src->len_rf; ++i){
     ran_function_t* rf = &src->ack_rf[i]; 
     free_ran_function(rf);
   }
-
   free(src->ack_rf);
 }
 

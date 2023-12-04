@@ -82,7 +82,8 @@ bool stop_ind_event(e2_agent_t* ag, ric_gen_id_t id)
     ind_ev->sm->free_act_def(ind_ev->sm, ind_ev->act_def);
   //
 
-  int* fd = bi_map_extract_right(&ag->ind_event, &tmp, sizeof(tmp));
+  void (*free_ind_event)(void*) = NULL;
+  int* fd = bi_map_extract_right(&ag->ind_event, &tmp, sizeof(tmp), free_ind_event);
   assert(*fd > -1);
   //printf("fd value in stopping pending event = %d \n", *fd);
  
@@ -310,7 +311,9 @@ static
 void stop_pending_event(e2_agent_t* ag, pending_event_t event)
 {
   assert(ag != NULL);
-  int* fd = bi_map_extract_right(&ag->pending, &event, sizeof(event));
+
+  void (*free_pending_event)(void*)=NULL;
+  int* fd = bi_map_extract_right(&ag->pending, &event, sizeof(event), free_pending_event);
   assert(*fd > 0);
   //printf("[E2-AGENT]: stopping pending\n");
   //event = %d \n", *fd);

@@ -77,6 +77,12 @@ void read_setup_ran(void* data)
     dst->cca[1] = fill_f1ap_e2ap_node_component_config_add();
     // E1AP
     dst->cca[2] = fill_e1ap_e2ap_node_component_config_add();
+  } else if(n == ngran_eNB){
+    dst->len_cca = 1;
+    dst->cca = calloc(1, sizeof(e2ap_node_component_config_add_t));
+    assert(dst->cca != NULL);
+    // S1AP
+    dst->cca[0] = fill_s1ap_e2ap_node_component_config_add();
   } else {
     assert(0 != 0 && "Not implemented");
   }

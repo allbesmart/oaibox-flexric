@@ -101,6 +101,33 @@ e2ap_node_component_config_add_t fill_e1ap_e2ap_node_component_config_add(void)
   return dst;
 }
 
+// S1AP
+e2ap_node_component_config_add_t fill_s1ap_e2ap_node_component_config_add(void)
+{
+  e2ap_node_component_config_add_t dst = {0};
+
+  // Mandatory
+  // 9.2.26
+  dst.e2_node_comp_interface_type = S1_E2AP_NODE_COMP_INTERFACE_TYPE;
+  // Bug!! Optional in the standard, mandatory in ASN.1
+  // 9.2.32
+  dst.e2_node_comp_id.type = S1_E2AP_NODE_COMP_INTERFACE_TYPE;
+
+  const char str[] = "S1 NAME";
+  dst.e2_node_comp_id.s1_mme_name = cp_str_to_ba(str);
+
+  // Mandatory
+  // 9.2.27
+  const char req[] = "S1AP Request Message sent";
+  const char res[] = "S1AP Response Message reveived";
+
+  dst.e2_node_comp_conf.request = cp_str_to_ba(req);
+  dst.e2_node_comp_conf.response = cp_str_to_ba(res);
+  return dst;
+}
+
+
+
 #else
 static_assert(0!=0, "Unknown E2AP version");
 #endif

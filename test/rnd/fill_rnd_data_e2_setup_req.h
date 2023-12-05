@@ -31,6 +31,8 @@ e2ap_node_component_config_add_t fill_f1ap_e2ap_node_component_config_add(void);
   
 e2ap_node_component_config_add_t fill_e1ap_e2ap_node_component_config_add(void);
 
+e2ap_node_component_config_add_t fill_s1ap_e2ap_node_component_config_add(void);
+
 #else
 static_assert(0!=0, "Unknown E2AP version");
 #endif

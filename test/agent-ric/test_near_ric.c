@@ -131,21 +131,21 @@ bool read_ind_rc(void* ind)
   return true;
 }
 
+#ifdef E2AP_V1
+#elif defined(E2AP_V2) || defined(E2AP_V3)
 static
 void read_e2_setup_ran(void* data)
 {
   assert(data != NULL);
-#ifdef E2AP_V1
 
-#elif defined(E2AP_V2) || defined(E2AP_V3)
-    arr_node_component_config_add_t* dst = (arr_node_component_config_add_t*)data;
-    dst->len_cca = 1;
-    dst->cca = calloc(1, sizeof(e2ap_node_component_config_add_t));
-    assert(dst->cca != NULL);
-    // NGAP
-    dst->cca[0] = fill_ngap_e2ap_node_component_config_add();
-#endif
+  arr_node_component_config_add_t* dst = (arr_node_component_config_add_t*)data;
+  dst->len_cca = 1;
+  dst->cca = calloc(1, sizeof(e2ap_node_component_config_add_t));
+  assert(dst->cca != NULL);
+  // NGAP
+  dst->cca[0] = fill_ngap_e2ap_node_component_config_add();
 }
+#endif
 
 static
 sm_ag_if_ans_t write_ctrl_rc(void const* ctrl)

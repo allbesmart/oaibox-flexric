@@ -30,10 +30,11 @@
 void read_setup_ran(void* data)
 {
   assert(data != NULL);
-  arr_node_component_config_add_t* dst = (arr_node_component_config_add_t*)data;
 #ifdef E2AP_V1
 
 #elif defined(E2AP_V2) || defined(E2AP_V3)
+
+  arr_node_component_config_add_t* dst = (arr_node_component_config_add_t*)data;
   // Value assigned by CMakeLists.txt
   ngran_node_t const n = TEST_AGENT_RAN_TYPE;
   if(n == ngran_gNB){

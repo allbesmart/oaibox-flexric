@@ -89,7 +89,11 @@ void start_e42_iapp(e42_iapp_t* iapp);
 
 void free_e42_iapp(e42_iapp_t* iapp);
 
+#ifdef E2AP_V1
+void add_e2_node_iapp_v1(e42_iapp_t* i, global_e2_node_id_t* id, size_t len, ran_function_t const ran_func[len]);
+#else
 void add_e2_node_iapp(e42_iapp_t* i, global_e2_node_id_t* id, size_t len, ran_function_t const ran_func[len], size_t len_cca, e2ap_node_component_config_add_t const* cca);
+#endif
 
 void rm_e2_node_iapp(e42_iapp_t* i, global_e2_node_id_t* id);
 

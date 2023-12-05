@@ -361,7 +361,14 @@ e2ap_msg_t e2ap_handle_e42_setup_response_xapp(e42_xapp_t* xapp, const e2ap_msg_
     global_e2_node_id_t const* id = &sr->nodes[i].id;
     const size_t len = sr->nodes[i].len_rf;
     ran_function_t* rf = sr->nodes[i].ack_rf; 
+#ifdef E2AP_V1
+    add_reg_e2_node_v1(&xapp->e2_nodes, id, len, rf);
+#elif defined(E2AP_V2) || defined(E2AP_V3)
     add_reg_e2_node(&xapp->e2_nodes, id, len, rf, sr->nodes[i].len_cca, sr->nodes[i].cca);
+#else
+    static_assert(0 !=0, "Unknown E2AP version");
+#endif
+
   }
 
   printf("[xApp]: Registered E2 Nodes = %ld \n", sz_reg_e2_node(&xapp->e2_nodes) );

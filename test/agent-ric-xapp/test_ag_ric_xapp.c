@@ -66,10 +66,10 @@ static
 void read_e2_setup_ran(void* data)
 {
   assert(data != NULL);
-  arr_node_component_config_add_t* dst = (arr_node_component_config_add_t*)data;
 #ifdef E2AP_V1
 
 #elif defined(E2AP_V2) || defined(E2AP_V3)
+    arr_node_component_config_add_t* dst = (arr_node_component_config_add_t*)data;
     dst->len_cca = 1;
     dst->cca = calloc(1, sizeof(e2ap_node_component_config_add_t));
     assert(dst->cca != NULL);

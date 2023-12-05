@@ -31,17 +31,8 @@
 #include <assert.h>
 #include <pthread.h>
 
-/*
-static
-void free_ran_function_pointer(void* rf_p)
-{
-  assert(rf_p != NULL);
-  ran_function_t* rf  = *(ran_function_t**)rf_p;
-  free_ran_function_wrapper(rf);
-}
-*/
-
-
+#ifdef E2AP_V1
+#elif defined (E2AP_V2) || defined(E2AP_V3)
 static inline
 void free_e2ap_node_component_config_add_it(void* it)
 {
@@ -49,6 +40,8 @@ void free_e2ap_node_component_config_add_it(void* it)
   e2ap_node_component_config_add_t* cca  = (e2ap_node_component_config_add_t*)it;
   free_e2ap_node_component_config_add(cca);
 }
+#endif
+
 
 void free_pair_rf_cca(pair_rf_cca_t* src)
 {
@@ -58,9 +51,12 @@ void free_pair_rf_cca(pair_rf_cca_t* src)
   seq_free_func f = free_ran_function_wrapper; 
   seq_arr_free(ran_func, f);
 
+#ifdef E2AP_V1
+#elif defined (E2AP_V2) || defined(E2AP_V3)
   seq_arr_t* cca = &src->comp_conf_add;
   seq_free_func f2 = free_e2ap_node_component_config_add_it; 
   seq_arr_free(cca, f2);
+#endif
 }
 
 static inline
@@ -104,13 +100,47 @@ void free_reg_e2_node(reg_e2_nodes_t* i)
   assert(rc == 0);
 }
 
+#ifdef E2AP_V1
+void add_reg_e2_node_v1(reg_e2_nodes_t* i, global_e2_node_id_t const* id, size_t len_rf, ran_function_t const* ran_func)
+{
+  assert(i != NULL);
+  assert(id != NULL);
+  assert(len_rf > 0);
+  assert(ran_func != NULL);
+
+  pair_rf_cca_t* rf_cca = calloc(1, sizeof(pair_rf_cca_t));
+  assert(rf_cca != NULL && "memory exhausted");
+
+  // RAN Function
+  seq_arr_t* arr_rf = &rf_cca->ran_func; 
+  seq_init(arr_rf, sizeof(ran_function_t));
+
+  for(size_t i = 0; i < len_rf; ++i){
+    ran_function_t tmp = cp_ran_function(&ran_func[i]);
+    seq_push_back(arr_rf, &tmp, sizeof(ran_function_t));
+  }
+
+  lock_guard(&i->mtx);
+
+  if(assoc_size(&i->node_to_rf) > 0){
+    void* it_node = assoc_front(&i->node_to_rf);
+    void* end_node = assoc_end(&i->node_to_rf);
+
+    it_node = find_if(&i->node_to_rf, it_node, end_node, id, eq_global_e2_node_id_wrapper );
+    assert(it_node == end_node && "Trying to add an already existing E2 Node");
+  }
+
+  global_e2_node_id_t cp_id = cp_global_e2_node_id(id); 
+  assoc_insert(&i->node_to_rf, &cp_id, sizeof(global_e2_node_id_t), rf_cca);
+}
+#elif defined (E2AP_V2) || defined(E2AP_V3)
 void add_reg_e2_node(reg_e2_nodes_t* i, global_e2_node_id_t const* id, size_t len_rf, ran_function_t const* ran_func, size_t len_cca, e2ap_node_component_config_add_t const* cca)
 {
   assert(i != NULL);
   assert(id != NULL);
   assert(len_rf > 0);
-  assert(len_cca > 0);
   assert(ran_func != NULL);
+  assert(len_cca > 0);
   assert(cca != NULL);
 
   pair_rf_cca_t* rf_cca = calloc(1, sizeof(pair_rf_cca_t));
@@ -157,6 +187,8 @@ void add_reg_e2_node(reg_e2_nodes_t* i, global_e2_node_id_t const* id, size_t le
 //  assert(seq_size(arr_tmp) == 2 && "Only for current test valid");
 }
 
+#endif
+
 size_t sz_reg_e2_node(reg_e2_nodes_t* n)
 {
   assert(n != NULL);
@@ -197,6 +229,8 @@ assoc_rb_tree_t cp_reg_e2_node(reg_e2_nodes_t* n)
       seq_push_back(dst_rf, &cp, sizeof(ran_function_t));
     }
 
+#ifdef E2AP_V1
+#elif defined (E2AP_V2) || defined(E2AP_V3)
     seq_init(&new_rf_cca->comp_conf_add, sizeof(e2ap_node_component_config_add_t));
     seq_arr_t* src_cca = &rf_cca->comp_conf_add;
     seq_arr_t* dst_cca = &new_rf_cca->comp_conf_add;
@@ -206,6 +240,8 @@ assoc_rb_tree_t cp_reg_e2_node(reg_e2_nodes_t* n)
       e2ap_node_component_config_add_t cp = cp_e2ap_node_component_config_add(cca);
       seq_push_back(dst_cca, &cp, sizeof(e2ap_node_component_config_add_t));
     }
+#endif
+
 
 /*
     seq_arr_t* arr = assoc_value(&n->node_to_rf, it);
@@ -260,6 +296,8 @@ e2_node_arr_t generate_e2_node_arr(reg_e2_nodes_t* n)
 
     pair_rf_cca_t* rf_cca = assoc_value(&t, it);
 
+#ifdef E2AP_V1
+#elif defined(E2AP_V2) || defined(E2AP_V3)
     {
       seq_arr_t* cca_arr = &rf_cca->comp_conf_add; 
       assert(cca_arr->elt_size == sizeof(e2ap_node_component_config_add_t));
@@ -276,6 +314,10 @@ e2_node_arr_t generate_e2_node_arr(reg_e2_nodes_t* n)
       }
 
     }
+#else
+    static_assert(0 != 0, "Unknown E2AP version");
+#endif
+
     {
       seq_arr_t* rf_arr = &rf_cca->ran_func; 
       //seq_arr_t* tmp_arr = assoc_value(&t, it);

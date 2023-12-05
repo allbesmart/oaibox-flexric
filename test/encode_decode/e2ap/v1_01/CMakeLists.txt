@@ -8,7 +8,7 @@ if(E2AP_ENCODING STREQUAL "ASN")
 # E2AP ASN Encoding
 ####################
 
-  add_executable(test_e2ap_encode_asn test_e2ap_encode_asn.c)
+  add_executable(test_e2ap_encode_asn test_e2ap_encode_asn.c ../../../rnd/fill_rnd_data_e2_setup_req.c )
   target_link_libraries(test_e2ap_encode_asn
                         PUBLIC 
                         e2_agent

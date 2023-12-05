@@ -25,6 +25,7 @@
 
 #include <E2AP-PDU.h>
 
+#include "../../../rnd/fill_rnd_data_e2_setup_req.h"
 #include "../src/lib/e2ap/e2ap_msg_enc_generic_wrapper.h"
 #include "../src/lib/e2ap/e2ap_msg_dec_generic_wrapper.h"
 #include "../src/lib/e2ap/e2ap_msg_free_wrapper.h"
@@ -911,6 +912,13 @@ void test_e42_setup_response()
     e2_node_connected_t* n = &sr_begin.nodes[i];
     n->id = id; 
 
+    n->len_cca = 1; 
+    n->cca = calloc(1, sizeof(e2ap_node_component_config_add_t));
+    assert(n->cca != NULL && "Memory exhausted");
+    for(size_t j = 0; j < n->len_cca; ++j){
+      n->cca[0] = fill_ngap_e2ap_node_component_config_add();
+    }
+
     uint32_t const r = (rand()%8) + 1;
 
     n->len_rf = r;
@@ -931,7 +939,7 @@ void test_e42_setup_response()
   E2AP_PDU_t* pdu = e2ap_create_pdu(ba.buf, ba.len);
   free_byte_array(ba);
   assert(pdu != NULL);
-  e2ap_msg_t msg =  e2ap_dec_e42_setup_response(pdu);
+  e2ap_msg_t msg = e2ap_dec_e42_setup_response(pdu);
   free_pdu(pdu); 
   assert(msg.type == E42_SETUP_RESPONSE); 
   e42_setup_response_t * sr_end = &msg.u_msgs.e42_stp_resp;

@@ -900,7 +900,6 @@ void test_e42_setup_request()
   e2ap_free_e42_setup_request(sr_end);
 }
 
-
 void test_e42_setup_response()
 {
   time_t t;

@@ -786,7 +786,7 @@ E2AP_PDU_t* e2ap_enc_subscription_delete_failure_asn_pdu(const ric_subscription_
   // Message Type. Mandatory
   E2AP_PDU_t* pdu = calloc(1,sizeof(E2AP_PDU_t));
   pdu->present = E2AP_PDU_PR_unsuccessfulOutcome;
-  pdu->choice.unsuccessfulOutcome = calloc(1, sizeof(SuccessfulOutcome_t));
+  pdu->choice.unsuccessfulOutcome = calloc(1, sizeof(UnsuccessfulOutcome_t));
   pdu->choice.unsuccessfulOutcome->procedureCode = ProcedureCode_id_RICsubscriptionDelete;
   pdu->choice.unsuccessfulOutcome->criticality = Criticality_reject;
   pdu->choice.unsuccessfulOutcome->value.present = UnsuccessfulOutcome__value_PR_RICsubscriptionDeleteFailure;
@@ -1063,8 +1063,11 @@ E2AP_PDU_t* e2ap_enc_control_ack_asn_pdu(const ric_control_acknowledge_t* ca)
 {
   // Message Type. Mandatory.
   E2AP_PDU_t* pdu = calloc(1, sizeof(E2AP_PDU_t));
+  assert(pdu != NULL && "Memory exhausted");
+
   pdu->present = E2AP_PDU_PR_successfulOutcome;
   pdu->choice.successfulOutcome = calloc(1,sizeof(SuccessfulOutcome_t));
+  assert(pdu->choice.successfulOutcome != NULL && "Memory exhausted");
   pdu->choice.successfulOutcome->procedureCode = ProcedureCode_id_RICcontrol;
   pdu->choice.successfulOutcome->criticality = Criticality_reject;
   pdu->choice.successfulOutcome->value.present = SuccessfulOutcome__value_PR_RICcontrolAcknowledge; 
@@ -1073,6 +1076,7 @@ E2AP_PDU_t* e2ap_enc_control_ack_asn_pdu(const ric_control_acknowledge_t* ca)
 
   //RIC Request ID. Mandatory
   RICcontrolAcknowledge_IEs_t* sub_req = calloc(1,sizeof(RICcontrolAcknowledge_IEs_t)); 
+  assert(sub_req != NULL && "Memory exhausted");
   sub_req->id = ProtocolIE_ID_id_RICrequestID;
   sub_req->criticality = Criticality_reject;
   sub_req->value.present = RICcontrolAcknowledge_IEs__value_PR_RICrequestID;
@@ -1083,6 +1087,7 @@ E2AP_PDU_t* e2ap_enc_control_ack_asn_pdu(const ric_control_acknowledge_t* ca)
 
   //RAN Function ID. Mandatory
   RICcontrolAcknowledge_IEs_t* ran_id = calloc(1,sizeof(RICcontrolAcknowledge_IEs_t)); 
+  assert(ran_id != NULL && "Memory exhausted");
   ran_id->id =  ProtocolIE_ID_id_RANfunctionID;
   ran_id->criticality = Criticality_reject;
   ran_id->value.present = RICcontrolAcknowledge_IEs__value_PR_RANfunctionID;
@@ -1094,6 +1099,7 @@ E2AP_PDU_t* e2ap_enc_control_ack_asn_pdu(const ric_control_acknowledge_t* ca)
   if (ca->call_process_id != NULL ) {
     assert(ca->call_process_id->buf  != NULL && ca->call_process_id->len > 0);
     RICcontrolAcknowledge_IEs_t * ric_proc = calloc(1,sizeof(RICcontrolAcknowledge_IEs_t));
+    assert(ric_proc != NULL && "Memory exhausted");
     ric_proc->id = ProtocolIE_ID_id_RICcallProcessID;
     ric_proc->criticality = Criticality_reject;
     ric_proc->value.present = RICcontrolAcknowledge_IEs__value_PR_RICcallProcessID;
@@ -1201,7 +1207,7 @@ E2AP_PDU_t* e2ap_enc_control_failure_asn_pdu( const ric_control_failure_t* cf)
   //Cause. Mandatory
   RICcontrolFailure_IEs_t* ric_cause = calloc(1,sizeof(RICcontrolFailure_IEs_t)); 
   ric_cause->id = ProtocolIE_ID_id_Cause; 
-  ric_cause->criticality = Criticality_reject;
+  ric_cause->criticality = Criticality_ignore;
   ric_cause->value.present = RICcontrolFailure_IEs__value_PR_Cause; 
   ric_cause->value.choice.Cause = copy_cause(cf->cause); 
   rc = ASN_SEQUENCE_ADD(&out->protocolIEs.list, ric_cause);
@@ -1344,15 +1350,13 @@ E2AP_PDU_t* e2ap_enc_setup_request_asn_pdu(const e2_setup_request_t* sr)
     GlobalE2node_gNB_ID_t *e2gnb = calloc(1, sizeof(GlobalE2node_gNB_ID_t));
     assert(e2gnb != NULL && "Memory exhasued");
     e2gnb->global_gNB_ID.gnb_id.present = GNB_ID_Choice_PR_gnb_ID;
-  // This is an abuse but the standard does not define how to 
-  // differentiate between ngran_gNB_CU and ngran_gNB
-    if (sr->id.type == ngran_gNB_CU || sr->id.type == ngran_gNB_CUUP) {
+    // CU and CUCP do not have here a flag. They are identified through e2ap_node_component_config_add_t 
+    if (sr->id.type == ngran_gNB_CUUP) {
       GNB_CU_UP_ID_t *e2gnb_cu_up_id = calloc(1, sizeof(GNB_CU_UP_ID_t));
       assert(e2gnb_cu_up_id != NULL && "Memory exhasued");
       asn_uint642INTEGER(e2gnb_cu_up_id, *sr->id.cu_du_id);
       e2gnb->gNB_CU_UP_ID = e2gnb_cu_up_id;
-    }
-    else if (sr->id.type == ngran_gNB_DU) {
+    } else if (sr->id.type == ngran_gNB_DU) {
       GNB_DU_ID_t *e2gnb_du_id = calloc(1, sizeof(GNB_DU_ID_t));
       assert(e2gnb_du_id != NULL && "Memory exhasued");
       asn_uint642INTEGER(e2gnb_du_id, *sr->id.cu_du_id);
@@ -1673,7 +1677,8 @@ E2AP_PDU_t* e2ap_enc_reset_request_asn_pdu(const e2ap_reset_request_t* rr)
   // Message Type. Mandatory
   E2AP_PDU_t* pdu = calloc(1, sizeof(E2AP_PDU_t));
   pdu->present = E2AP_PDU_PR_initiatingMessage; 
-  pdu->choice.initiatingMessage = calloc(1,sizeof(UnsuccessfulOutcome_t));
+  pdu->choice.initiatingMessage = calloc(1,sizeof(InitiatingMessage_t));
+  assert(pdu->choice.initiatingMessage != NULL && "Memory exhausted");
   pdu->choice.initiatingMessage->procedureCode = ProcedureCode_id_Reset; 
   pdu->choice.initiatingMessage->criticality = Criticality_reject;
   pdu->choice.initiatingMessage->value.present = InitiatingMessage__value_PR_ResetRequest; 
@@ -2527,9 +2532,8 @@ struct E2AP_PDU* e2ap_enc_e42_subscription_request_asn_pdu(const e42_ric_subscri
     GlobalE2node_gNB_ID_t *e2gnb = calloc(1, sizeof(GlobalE2node_gNB_ID_t));
     assert(e2gnb != NULL && "Memory exhasued");
     e2gnb->global_gNB_ID.gnb_id.present = GNB_ID_Choice_PR_gnb_ID;
-  // This is an abuse but the standard does not define how to 
-  // differentiate between ngran_gNB_CU and ngran_gNB
-    if (e42_sr->id.type == ngran_gNB_CU || e42_sr->id.type == ngran_gNB_CUUP) {
+    // CU and CUCP do not have here a flag. They are identified through e2ap_node_component_config_add_t 
+    if (e42_sr->id.type == ngran_gNB_CUUP) {
       GNB_CU_UP_ID_t *e2gnb_cu_up_id = calloc(1, sizeof(GNB_CU_UP_ID_t));
       assert(e2gnb_cu_up_id != NULL && "Memory exhasued");
       asn_uint642INTEGER(e2gnb_cu_up_id, *e42_sr->id.cu_du_id);
@@ -2746,9 +2750,8 @@ struct E2AP_PDU* e2ap_enc_e42_setup_response_asn_pdu(const e42_setup_response_t*
       GlobalE2node_gNB_ID_t *e2gnb = calloc(1, sizeof(GlobalE2node_gNB_ID_t));
       assert(e2gnb != NULL && "Memory exhasued");
       e2gnb->global_gNB_ID.gnb_id.present = GNB_ID_Choice_PR_gnb_ID;
-  // This is an abuse but the standard does not define how to 
-  // differentiate between ngran_gNB_CU and ngran_gNB
-      if (src_id->type == ngran_gNB_CU || src_id->type == ngran_gNB_CUUP) {
+    // CU and CUCP do not have here a flag. They are identified through e2ap_node_component_config_add_t 
+      if (src_id->type == ngran_gNB_CUUP) {
         GNB_CU_UP_ID_t *e2gnb_cu_up_id = calloc(1, sizeof(GNB_CU_UP_ID_t));
         assert(e2gnb_cu_up_id != NULL && "Memory exhasued");
         asn_uint642INTEGER(e2gnb_cu_up_id, *src_id->cu_du_id);
@@ -2785,7 +2788,7 @@ struct E2AP_PDU* e2ap_enc_e42_setup_response_asn_pdu(const e42_setup_response_t*
       rc = ASN_SEQUENCE_ADD(&conn_list->value.choice.E2nodeConnected_List.protocolIEs.list, conn_item);
       assert(rc == 0);
     }
-
+  // V1 has no Component Configuration Addition. How to detect CU CUCP and gNB remains a mistery
     // RAN functions
     E2nodeConnected_ItemIEs_t* conn_rf = calloc(1, sizeof(E2nodeConnected_ItemIEs_t));
     assert(conn_rf != NULL && "memory exhausted");
@@ -2944,9 +2947,8 @@ E2AP_PDU_t* e2ap_enc_e42_control_request_asn_pdu(const e42_ric_control_request_t
     GlobalE2node_gNB_ID_t *e2gnb = calloc(1, sizeof(GlobalE2node_gNB_ID_t));
     assert(e2gnb != NULL && "Memory exhasued");
     e2gnb->global_gNB_ID.gnb_id.present = GNB_ID_Choice_PR_gnb_ID;
-  // This is an abuse but the standard does not define how to 
-  // differentiate between ngran_gNB_CU and ngran_gNB
-    if (e42_ric_req->id.type == ngran_gNB_CU || e42_ric_req->id.type == ngran_gNB_CUUP) {
+    // CU and CUCP do not have here a flag. They are identified through e2ap_node_component_config_add_t 
+    if (e42_ric_req->id.type == ngran_gNB_CUUP) {
       GNB_CU_UP_ID_t *e2gnb_cu_up_id = calloc(1, sizeof(GNB_CU_UP_ID_t));
       assert(e2gnb_cu_up_id != NULL && "Memory exhasued");
       asn_uint642INTEGER(e2gnb_cu_up_id, *e42_ric_req->id.cu_du_id);

@@ -26,6 +26,7 @@
 
 #include <E2AP-PDU.h>
 
+#include "../../../rnd/fill_rnd_data_e2_setup_req.h"
 #include "../src/lib/e2ap/e2ap_msg_enc_generic_wrapper.h"
 #include "../src/lib/e2ap/e2ap_msg_dec_generic_wrapper.h"
 #include "../src/lib/e2ap/e2ap_msg_free_wrapper.h"
@@ -758,20 +759,6 @@ void test_e42_setup_request()
     fill_ran_function(rf);
   }
 
-
-/*
-  byte_array_t ba = e2ap_enc_e42_setup_request_asn(&sr_begin);
-  assert(ba.buf != NULL && ba.len > 0);
-  E2AP_PDU_t* pdu = e2ap_create_pdu(ba.buf, ba.len);
-  assert(pdu != NULL);
-//  const e2_msg_type_t msg_type =  e2ap_get_msg_type(pdu);  
-//  printf("Decoding message type = %d \n", msg_type);
-  e2ap_msg_t msg =  e2ap_dec_e42_setup_request(pdu);
-*/
-
-
-
-
   E2AP_PDU_t* pdu = e2ap_enc_e42_setup_request_asn_pdu(&sr_begin);
   e2ap_msg_t msg = e2ap_dec_e42_setup_request(pdu);
   free_pdu(pdu); 
@@ -818,7 +805,14 @@ void test_e42_setup_response()
     e2_node_connected_t* n = &sr_begin.nodes[i];
     n->id = id; 
 
-    uint32_t r = rand()%8;
+    n->len_cca = 1; 
+    n->cca = calloc(1, sizeof(e2ap_node_component_config_add_t));
+    assert(n->cca != NULL && "Memory exhausted");
+    for(size_t j = 0; j < n->len_cca; ++j){
+      n->cca[0] = fill_ngap_e2ap_node_component_config_add();
+    }
+
+    uint32_t const r = rand()%8;
 
     n->len_rf = r;
     if(r > 0){

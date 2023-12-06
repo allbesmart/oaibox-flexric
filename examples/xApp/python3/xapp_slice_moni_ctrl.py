@@ -331,7 +331,6 @@ assoc_ue_slice = {
     ]
 }
 
-
 def fill_slice_ctrl_msg(ctrl_type, ctrl_msg):
     msg = ric.slice_ctrl_msg_t()
     if (ctrl_type == "ADDMOD"):

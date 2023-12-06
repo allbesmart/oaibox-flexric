@@ -441,12 +441,12 @@ void control_slice_sm(global_e2_node_id_t* id, slice_ctrl_msg_t* ctrl)
     assert(0!=0 && "not foreseen case");
   }
 
-  sm_ag_if_wr_t wr;
-  wr.type = CONTROL_SM_AG_IF_WR;
-  wr.ctrl.type = SLICE_CTRL_REQ_V0;
-  wr.ctrl.slice_req_ctrl.msg = cp_slice_ctrl_msg(ctrl);
-
-  control_sm_xapp_api(id, SM_SLICE_ID,  &wr);
+  //sm_ag_if_wr_t wr;
+  //wr.type = CONTROL_SM_AG_IF_WR;
+  //wr.ctrl.type = SLICE_CTRL_REQ_V0;
+  //wr.ctrl.slice_req_ctrl.msg = 
+  slice_ctrl_req_data_t cp = {.msg = cp_slice_ctrl_msg(ctrl)};  
+  control_sm_xapp_api(id, SM_SLICE_ID, &cp);
 }
 
 //////////////////////////////////////

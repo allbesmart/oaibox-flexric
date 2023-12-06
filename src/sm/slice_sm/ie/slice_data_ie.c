@@ -945,7 +945,7 @@ slice_ind_data_t cp_slice_ind_data(slice_ind_data_t const* src)
   slice_ind_data_t dst = {0};
   dst.hdr = cp_slice_ind_hdr(&src->hdr);
   dst.msg = cp_slice_ind_msg(&src->msg);
-  assert(dst.msg.slice_conf.dl.slices[0].params.u.edf.over[0] == 16);
+  //assert(dst.msg.slice_conf.dl.slices[0].params.u.edf.over[0] == 16);
 
   if(src->proc_id != NULL){
     dst.proc_id = malloc(sizeof(slice_call_proc_id_t));

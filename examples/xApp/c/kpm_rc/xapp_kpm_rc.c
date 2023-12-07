@@ -302,10 +302,6 @@ e2sm_rc_ctrl_msg_t gen_rc_ctrl_msg(void)
 }
 
 
-
-
-
-
 int main(int argc, char *argv[])
 {
   fr_args_t args = init_fr_args(argc, argv);
@@ -337,20 +333,24 @@ int main(int argc, char *argv[])
   uint64_t period_ms = 100;
   kpm_sub.ev_trg_def = gen_ev_trig(period_ms);
 
-  // KPM Action Definition
-  kpm_sub.sz_ad = 1;
-  kpm_sub.ad = calloc(1, sizeof(kpm_act_def_t));
-  assert(kpm_sub.ad != NULL && "Memory exhausted");
-  const char act[] = "DRB.RlcSduDelayDl";
-  *kpm_sub.ad = gen_act_def(act); 
-
   const int KPM_ran_function = 2;
 
   for(size_t i =0; i < nodes.len; ++i){ 
+    // KPM Action Definition
+    kpm_sub.sz_ad = 1;
+    kpm_sub.ad = calloc(1, sizeof(kpm_act_def_t));
+    assert(kpm_sub.ad != NULL && "Memory exhausted");
+
+    ngran_node_t const t = nodes.n[i].id.type;
+    bool du_or_gnb = t == ngran_gNB || t == ngran_gNB_DU;      
+    const char* act = du_or_gnb ? "DRB.RlcSduDelayDl" : "DRB.PdcpSduVolumeDL";
+    *kpm_sub.ad = gen_act_def(act); 
+
     h[i] = report_sm_xapp_api(&nodes.n[i].id, KPM_ran_function, &kpm_sub, sm_cb_kpm);
     assert(h[i].success == true);
+
+    free_kpm_sub_data(&kpm_sub); 
   } 
-  free_kpm_sub_data(&kpm_sub); 
 
   //////////// 
   // END KPM 
@@ -367,8 +367,6 @@ int main(int argc, char *argv[])
   //  defer({ free_rc_sub_data(&rc_sub); });
   //  sm_ans_xapp_t h_2 = report_sm_xapp_api(&nodes.n[0].id, RC_ran_function, &rc_sub, sm_cb_rc);
   //  assert(h_2.success == true);
-
-
   
   // RC Control 
   rc_ctrl_req_data_t rc_ctrl = {0};
@@ -379,12 +377,12 @@ int main(int argc, char *argv[])
   const int RC_ran_function = 3;
 
   for(size_t i =0; i < nodes.len; ++i){ 
-    control_sm_xapp_api(&nodes.n[i].id, RC_ran_function, &rc_ctrl);
+    ngran_node_t const t = nodes.n[i].id.type;
+    if(t == ngran_gNB || t == ngran_gNB_CU)
+      control_sm_xapp_api(&nodes.n[i].id, RC_ran_function, &rc_ctrl);
   }
   free_rc_ctrl_req_data(&rc_ctrl);
 
-  // free_rc_ctrl_req_data(&rc_ctrl); 
-//
   //////////// 
   // END RC 
   //////////// 

@@ -10,6 +10,7 @@ endif()
 set(E2_IAPP_SRC 
             asio_iapp.c
             e2ap_iapp.c
+            e2_node_ric_id.c
             e42_iapp.c
             e42_iapp_api.c
             endpoint_iapp.c
@@ -55,9 +56,7 @@ endif()
 #  target_compile_definitions(e42_iapp PRIVATE IAPP_EMULATOR)
 #endif()
 
-
-
-target_compile_definitions(e42_iapp PRIVATE ${E2AP_ENCODING})
+target_compile_definitions(e42_iapp PRIVATE ${E2AP_ENCODING} ${E2AP_VERSION} ${KPM_VERSION} )
 
 target_link_libraries(e42_iapp
                       PUBLIC 

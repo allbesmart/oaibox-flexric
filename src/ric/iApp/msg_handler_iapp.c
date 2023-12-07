@@ -52,9 +52,11 @@ bool check_valid_msg_type(e2_msg_type_t msg_type )
       || msg_type == RIC_SUBSCRIPTION_DELETE_RESPONSE;
 }
 
-void init_handle_msg_iapp(handle_msg_fp_iapp (*handle_msg)[31])
+void init_handle_msg_iapp(size_t len, handle_msg_fp_iapp (*handle_msg)[len])
 {
-  memset((*handle_msg), 0, sizeof(handle_msg_fp_iapp)*31);
+  assert(len == NONE_E2_MSG_TYPE );
+
+  memset((*handle_msg), 0, sizeof(handle_msg_fp_iapp)*len);
 
   (*handle_msg)[RIC_SUBSCRIPTION_RESPONSE] = e2ap_handle_subscription_response_iapp;
   (*handle_msg)[E42_SETUP_REQUEST] = e2ap_handle_e42_setup_request_iapp;
@@ -89,7 +91,10 @@ e2ap_msg_t e2ap_handle_subscription_response_iapp(e42_iapp_t* iapp, const e2ap_m
 
   ric_subscription_response_t const* src = &msg->u_msgs.ric_sub_resp; 
 
-  xapp_ric_id_t x = find_xapp_map_ric_id(&iapp->map_ric_id, src->ric_id.ric_req_id);
+  xapp_ric_id_xpct_t const xpctd = find_xapp_map_ric_id(&iapp->map_ric_id, src->ric_id.ric_req_id);
+  assert(xpctd.has_value == true && "RIC Req Id not found!"); 
+  xapp_ric_id_t const x = xpctd.xapp_ric_id; 
+
   assert(src->ric_id.ran_func_id == x.ric_id.ran_func_id);
   assert(src->ric_id.ric_inst_id == x.ric_id.ric_inst_id);
 
@@ -100,9 +105,9 @@ e2ap_msg_t e2ap_handle_subscription_response_iapp(e42_iapp_t* iapp, const e2ap_m
   dst->ric_id.ric_req_id = x.ric_id.ric_req_id;
 
   sctp_msg_t sctp_msg = {0}; 
-  defer({ free_sctp_msg(&sctp_msg); } );
   sctp_msg.info = find_map_xapps_sad(&iapp->ep.xapps, x.xapp_id);
   sctp_msg.ba = e2ap_msg_enc_iapp(&iapp->ap, &ans); 
+  defer({ free_sctp_msg(&sctp_msg); } );
        
   e2ap_send_sctp_msg_iapp(&iapp->ep, &sctp_msg);
 
@@ -118,7 +123,18 @@ e2ap_msg_t e2ap_handle_subscription_delete_response_iapp(e42_iapp_t* iapp, const
 
   ric_subscription_delete_response_t const* src = &msg->u_msgs.ric_sub_del_resp; 
 
-  xapp_ric_id_t x = find_xapp_map_ric_id(&iapp->map_ric_id, src->ric_id.ric_req_id);
+  xapp_ric_id_xpct_t const xpctd = find_xapp_map_ric_id(&iapp->map_ric_id, src->ric_id.ric_req_id);
+  if(xpctd.has_value == false){
+    printf("[iApp]: SUBSCRIPTION DELETE RESPONSE rx RAN_FUNC_ID %d RIC REQ ID %d but no xApp associated\n",  src->ric_id.ran_func_id, src->ric_id.ric_req_id);
+    e2ap_msg_t none = {.type = NONE_E2_MSG_TYPE};
+    return none;
+  }
+ 
+  assert(xpctd.has_value == true && "RIC Req Id not found!"); 
+
+
+  xapp_ric_id_t const x = xpctd.xapp_ric_id; 
+
   assert(src->ric_id.ran_func_id == x.ric_id.ran_func_id);
   assert(src->ric_id.ric_inst_id == x.ric_id.ric_inst_id);
 
@@ -128,13 +144,15 @@ e2ap_msg_t e2ap_handle_subscription_delete_response_iapp(e42_iapp_t* iapp, const
   dst->ric_id = x.ric_id;
 
   sctp_msg_t sctp_msg = {0};
-  defer({ free_sctp_msg(&sctp_msg); } );
   sctp_msg.info = find_map_xapps_sad(&iapp->ep.xapps, x.xapp_id);
   sctp_msg.ba = e2ap_msg_enc_iapp(&iapp->ap, &ans); 
+  defer({ free_sctp_msg(&sctp_msg); } );
        
   e2ap_send_sctp_msg_iapp(&iapp->ep, &sctp_msg);
 
-  printf("[iApp]: RIC_SUBSCRIPTION_DELETE_RESPONSE sent \n");
+  printf("[iApp]: RIC_SUBSCRIPTION_DELETE_RESPONSE tx RAN_FUNC_ID %d RIC_REQ_ID %d \n", x.ric_id.ran_func_id, x.ric_id.ric_req_id);
+
+  rm_map_ric_id(&iapp->map_ric_id, &x);
 
   e2ap_msg_t none = {.type = NONE_E2_MSG_TYPE};
   return none;
@@ -148,7 +166,10 @@ e2ap_msg_t e2ap_handle_e42_ric_control_ack_iapp(e42_iapp_t* iapp, const e2ap_msg
 
   ric_control_acknowledge_t const* src = &msg->u_msgs.ric_ctrl_ack; 
 
-  xapp_ric_id_t x = find_xapp_map_ric_id(&iapp->map_ric_id, src->ric_id.ric_req_id);
+  xapp_ric_id_xpct_t const xpctd = find_xapp_map_ric_id(&iapp->map_ric_id, src->ric_id.ric_req_id);
+  assert(xpctd.has_value == true && "RIC Req Id not found!"); 
+  xapp_ric_id_t const x = xpctd.xapp_ric_id; 
+
   assert(src->ric_id.ran_func_id == x.ric_id.ran_func_id);
   assert(src->ric_id.ric_inst_id == x.ric_id.ric_inst_id);
 
@@ -156,16 +177,21 @@ e2ap_msg_t e2ap_handle_e42_ric_control_ack_iapp(e42_iapp_t* iapp, const e2ap_msg
   defer( { e2ap_msg_free_iapp(&iapp->ap, &ans); } );
   ric_control_acknowledge_t* dst = &ans.u_msgs.ric_ctrl_ack;
   dst->ric_id = x.ric_id;
+
+#ifdef E2AP_V1
   dst->status = src->status; 
+#endif
+
+  sctp_msg_t sctp_msg = {0};
+  sctp_msg.info = find_map_xapps_sad(&iapp->ep.xapps, x.xapp_id);
+  sctp_msg.ba = e2ap_msg_enc_iapp(&iapp->ap, &ans); 
+  defer({ free_sctp_msg(&sctp_msg); } );
+       
+  e2ap_send_sctp_msg_iapp(&iapp->ep, &sctp_msg);
 
   printf("[iApp]: RIC_CONTROL_ACKNOWLEDGE tx\n");
 
-  sctp_msg_t sctp_msg = {0};
-  defer({ free_sctp_msg(&sctp_msg); } );
-  sctp_msg.info = find_map_xapps_sad(&iapp->ep.xapps, x.xapp_id);
-  sctp_msg.ba = e2ap_msg_enc_iapp(&iapp->ap, &ans); 
-       
-  e2ap_send_sctp_msg_iapp(&iapp->ep, &sctp_msg);
+  rm_map_ric_id(&iapp->map_ric_id, &x);
 
   e2ap_msg_t none = {.type = NONE_E2_MSG_TYPE};
   return none;
@@ -201,13 +227,12 @@ e2ap_msg_t e2ap_handle_e42_setup_request_iapp(e42_iapp_t* iapp, const e2ap_msg_t
   assert(msg->type == E42_SETUP_REQUEST); 
   const e42_setup_request_t* req = &msg->u_msgs.e42_stp_req;
 
-  printf("[iApp]: E42 SETUP-REQUEST received\n");
+  printf("[iApp]: E42 SETUP-REQUEST rx\n");
 
   e2ap_msg_t ans = {.type = E42_SETUP_RESPONSE };
   ans.u_msgs.e42_stp_resp = generate_setup_response(iapp, req); 
 
-  printf("[iApp]: E42 SETUP-RESPONSE sent\n");
-  fflush(stdout);
+  printf("[iApp]: E42 SETUP-RESPONSE tx\n");
 
   return ans;
 }
@@ -220,7 +245,16 @@ e2ap_msg_t e2ap_handle_ric_indication_iapp(e42_iapp_t* iapp, const e2ap_msg_t* m
 
   ric_indication_t const* src = &msg->u_msgs.ric_ind;
 
-  xapp_ric_id_t x = find_xapp_map_ric_id(&iapp->map_ric_id, src->ric_id.ric_req_id);
+  xapp_ric_id_xpct_t xpctd = find_xapp_map_ric_id(&iapp->map_ric_id, src->ric_id.ric_req_id);
+
+  if(xpctd.has_value == false){
+    printf("RIC Indication message arrived for RIC REQ ID %d but no xApp associated\n", src->ric_id.ric_req_id);
+    e2ap_msg_t none = {.type = NONE_E2_MSG_TYPE};
+    return none;
+  }
+  
+  xapp_ric_id_t const x = xpctd.xapp_ric_id; 
+
   assert(src->ric_id.ran_func_id == x.ric_id.ran_func_id);
   assert(src->ric_id.ric_inst_id == x.ric_id.ric_inst_id);
 
@@ -232,9 +266,9 @@ e2ap_msg_t e2ap_handle_ric_indication_iapp(e42_iapp_t* iapp, const e2ap_msg_t* m
   dst->ric_id.ric_req_id = x.ric_id.ric_req_id;
 
   sctp_msg_t sctp_msg = {0}; 
-  defer({ free_sctp_msg(&sctp_msg); } );
   sctp_msg.info = find_map_xapps_sad(&iapp->ep.xapps, x.xapp_id);
   sctp_msg.ba = e2ap_msg_enc_iapp(&iapp->ap, &ans); 
+  defer({ free_sctp_msg(&sctp_msg); } );
 
   e2ap_send_sctp_msg_iapp(&iapp->ep, &sctp_msg);
 
@@ -257,13 +291,16 @@ bool valid_global_e2_node(e42_iapp_t* iapp, global_e2_node_id_t const* id )
   assert(id != NULL);
 
   e2_node_arr_t nodes = generate_e2_node_arr(&iapp->e2_nodes); 
-  defer( {  free_e2_node_arr(&nodes);  }  );
+ // defer( { free_e2_node_arr(&nodes);  }  );
 
   for(size_t i = 0; i < nodes.len; ++i){
-   if( eq_global_e2_node_id(&nodes.n[i].id, id) == true)
+   if( eq_global_e2_node_id(&nodes.n[i].id, id) == true){
+      free_e2_node_arr(&nodes); 
      return true; 
+   }
   }
-
+  
+  free_e2_node_arr(&nodes); 
   return false;
 }
 
@@ -279,14 +316,15 @@ e2ap_msg_t e2ap_handle_e42_ric_subscription_delete_request_iapp(e42_iapp_t* iapp
                       .xapp_id = src->xapp_id 
                     };
 
-  e2_node_ric_req_t n = find_ric_req_map_ric_id(&iapp->map_ric_id, &x);
+  e2_node_ric_id_t n = find_ric_req_map_ric_id(&iapp->map_ric_id, &x);
+  assert(n.ric_req_type == SUBSCRIPTION_RIC_REQUEST_TYPE);
 
   ric_subscription_delete_request_t dst = cp_ric_subscription_delete_request(&src->sdr);
-  dst.ric_id.ric_req_id = n.ric_req_id;
+  dst.ric_id.ric_req_id = n.ric_id.ric_req_id;
 
   fwd_ric_subscription_request_delete_gen(iapp->ric_if.type, &n.e2_node_id, &dst, notify_msg_iapp_api);
 
-  printf("[iApp]: RIC_SUBSCRIPTION_DELETE_REQUEST sent \n");
+  printf("[iApp]: RIC_SUBSCRIPTION_DELETE_REQUEST tx RIC_REQ_ID %d \n",n.ric_id.ric_req_id);
 
   e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};
   return ans;
@@ -307,18 +345,25 @@ e2ap_msg_t e2ap_handle_e42_ric_subscription_request_iapp(e42_iapp_t* iapp, const
   xapp_ric_id_t xapp_ric_id = {.ric_id = e42_sr->sr.ric_id,
                                 .xapp_id = e42_sr->xapp_id };
 
-  printf("[iApp]: SUBSCRIPTION-REQUEST xapp_ric_id->ric_id.ran_func_id %d  \n", xapp_ric_id.ric_id.ran_func_id );
 
   // I do not like the mtx here but there is a data race if not
-  lock_guard(&iapp->map_ric_id.mtx); 
+  int rc = pthread_rwlock_wrlock(&iapp->map_ric_id.rw); 
+  assert(rc == 0);
 
   uint16_t const new_ric_id = fwd_ric_subscription_request_gen(iapp->ric_if.type, &e42_sr->id, &e42_sr->sr, notify_msg_iapp_api);
 
-  e2_node_ric_req_t n = { .ric_req_id =  new_ric_id,
-                          .e2_node_id = cp_global_e2_node_id(&e42_sr->id) }; 
+  e2_node_ric_id_t n = { .ric_id = e42_sr->sr.ric_id, //  new_ric_id,
+                          .e2_node_id = cp_global_e2_node_id(&e42_sr->id), 
+                          .ric_req_type = SUBSCRIPTION_RIC_REQUEST_TYPE }; 
+
+  n.ric_id.ric_req_id = new_ric_id;
 
 
   add_map_ric_id(&iapp->map_ric_id, &n, &xapp_ric_id);
+  rc = pthread_rwlock_unlock(&iapp->map_ric_id.rw); 
+  assert(rc == 0);
+
+  printf("[iApp]: SUBSCRIPTION-REQUEST RAN_FUNC_ID %d RIC_REQ_ID %d tx \n", xapp_ric_id.ric_id.ran_func_id, xapp_ric_id.ric_id.ric_req_id);
 
   e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};
   return ans; 
@@ -340,25 +385,25 @@ e2ap_msg_t e2ap_handle_e42_ric_control_request_iapp(e42_iapp_t* iapp, const e2ap
                                 .xapp_id = e42_cr->xapp_id};
 
   // I do not like the mtx here but there is a data race if not
-  lock_guard(&iapp->map_ric_id.mtx); 
+  int rc = pthread_rwlock_wrlock(&iapp->map_ric_id.rw); 
+  assert(rc == 0);
 
   uint16_t new_ric_id = fwd_ric_control_request_gen(iapp->ric_if.type, &e42_cr->id, &e42_cr->ctrl_req, notify_msg_iapp_api);
 
-  e2_node_ric_req_t n = { .ric_req_id =  new_ric_id,
-                          .e2_node_id = cp_global_e2_node_id(&e42_cr->id) }; 
-
+  e2_node_ric_id_t n = { .ric_id = e42_cr->ctrl_req.ric_id, //  new_ric_id,
+                          .e2_node_id = cp_global_e2_node_id(&e42_cr->id),
+                          .ric_req_type = CONTROL_RIC_REQUEST_TYPE }; 
+  n.ric_id.ric_req_id = new_ric_id;
 
   add_map_ric_id(&iapp->map_ric_id, &n, &xapp_ric_id);
+  rc = pthread_rwlock_unlock(&iapp->map_ric_id.rw); 
+  assert(rc == 0);
 
   printf("[iApp]: E42_RIC_CONTROL_REQUEST rx\n");
 
   e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};
   return ans; 
 }
-
-
-
-
 
 e2ap_msg_t e2ap_msg_handle_iapp(e42_iapp_t* iapp, const e2ap_msg_t* msg)
 {
@@ -368,8 +413,6 @@ e2ap_msg_t e2ap_msg_handle_iapp(e42_iapp_t* iapp, const e2ap_msg_t* msg)
   assert(iapp->handle_msg[ msg_type ] != NULL);
   return iapp->handle_msg[msg_type](iapp, msg); 
 }
-
-
 
 e2ap_msg_t e2ap_handle_subscription_delete_request_iapp(e42_iapp_t* iapp, const e2ap_msg_t* msg)
 {
@@ -382,7 +425,6 @@ e2ap_msg_t e2ap_handle_subscription_delete_request_iapp(e42_iapp_t* iapp, const 
   e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};
   return ans;
 }
-
   
 // The purpose of the RIC Control procedure is to initiate or resume a specific functionality in the E2 Node.
 e2ap_msg_t e2ap_handle_control_request_iapp(e42_iapp_t* iapp, const e2ap_msg_t* msg)
@@ -393,7 +435,7 @@ e2ap_msg_t e2ap_handle_control_request_iapp(e42_iapp_t* iapp, const e2ap_msg_t* 
 
   assert(0!=0 && "Should not come here...");
 
-  printf("[E2-AGENT]: CONTROL ACKNOWLEDGE sent\n");
+  printf("[E2-AGENT]: CONTROL ACKNOWLEDGE tx\n");
   e2ap_msg_t ans = {.type = RIC_CONTROL_ACKNOWLEDGE};
 
   return ans; 

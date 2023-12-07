@@ -7,7 +7,7 @@ PROJECT(XAPP_SDK)
 CMAKE_POLICY(SET CMP0078 NEW) 
 CMAKE_POLICY(SET CMP0086 NEW) 
 
-FIND_PACKAGE(SWIG 4.0 REQUIRED)
+FIND_PACKAGE(SWIG 4.1 REQUIRED)
 FIND_PACKAGE(Python3 REQUIRED)
 #find_package (Python3 COMPONENTS Interpreter Development)
 
@@ -19,10 +19,10 @@ INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 #SET(CMAKE_SWIG_FLAGS "")
-
 #SET(CMAKE BUILD TYPE Debug)
 
 SET_PROPERTY(SOURCE swig_wrapper.i PROPERTY CPLUSPLUS ON)
+
 
 
 SET(XAPP_TARGET_LANGUAGE "PYTHON_LANG" CACHE STRING "xApp target language.")
@@ -51,13 +51,16 @@ endif()
 
 
 
+
+
 SWIG_ADD_LIBRARY(xapp_sdk LANGUAGE ${XAPP_LANG} SOURCES 
                                                  swig_wrapper.i 
                                                  swig_wrapper.cpp
-                                                 ../../lib/ap/e2ap_types/common/e2ap_plmn.c
-                                                 ../../lib/ap/e2ap_types/common/e2ap_ran_function.c 
-                                                 ../../lib/ap/e2ap_types/common/e2ap_global_node_id.c
-                                                 ../../sm/kpm_sm_v2.02/ie/kpm_data_ie.c
+                                                 # This dependency sucks!
+                                                 $<TARGET_OBJECTS:e2ap_ran_func_obj>
+                                                 $<TARGET_OBJECTS:e2ap_plmn_obj>
+                                                 $<TARGET_OBJECTS:e2ap_global_node_id_obj>
+                                                 #../../sm/kpm_sm_v03.00/ie/kpm_data_ie.c
                                                  ../../sm/mac_sm/ie/mac_data_ie.c 
                                                  ../../sm/rlc_sm/ie/rlc_data_ie.c
                                                  ../../sm/pdcp_sm/ie/pdcp_data_ie.c
@@ -69,6 +72,8 @@ SWIG_ADD_LIBRARY(xapp_sdk LANGUAGE ${XAPP_LANG} SOURCES
                                                  )
 
 
+set_property(TARGET xapp_sdk PROPERTY SWIG_COMPILE_DEFINITIONS ${E2AP_VERSION})
+
 #PYTHON compilation
 if(XAPP_TARGET_LANGUAGE STREQUAL "PYTHON_LANG")
   ADD_COMPILE_DEFINITIONS(XAPP_LANG_PYTHON)
@@ -79,7 +84,8 @@ if(XAPP_TARGET_LANGUAGE STREQUAL "PYTHON_LANG")
    add_custom_command(TARGET xapp_sdk POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_BINARY_DIR}/xapp_sdk.py" "${CMAKE_BINARY_DIR}/examples/xApp/python3/xapp_sdk.py" )
 
    add_custom_command(TARGET xapp_sdk POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
-     "${CMAKE_SOURCE_DIR}/examples/xApp/python3/xapp_mac_rlc_pdcp_moni.py" "${CMAKE_BINARY_DIR}/examples/xApp/python3/xapp_mac_rlc_pdcp_moni.py" )
+     "${CMAKE_SOURCE_DIR}/examples/xApp/python3/xapp_mac_rlc_pdcp_gtp_moni.py"
+     "${CMAKE_BINARY_DIR}/examples/xApp/python3/xapp_mac_rlc_pdcp_gtp_moni.py" )
 
    add_custom_command(TARGET xapp_sdk POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
      "${CMAKE_SOURCE_DIR}/examples/xApp/python3/xapp_slice_moni_ctrl.py" "${CMAKE_BINARY_DIR}/examples/xApp/python3/xapp_slice_moni_ctrl.py" )
@@ -87,8 +93,8 @@ if(XAPP_TARGET_LANGUAGE STREQUAL "PYTHON_LANG")
    add_custom_command(TARGET xapp_sdk POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${CMAKE_SOURCE_DIR}/examples/xApp/python3/watch_slice_stats" "${CMAKE_BINARY_DIR}/examples/xApp/python3/watch_slice_stats" )
 
-   add_custom_command(TARGET xapp_sdk POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${CMAKE_SOURCE_DIR}/examples/xApp/python3/xapp_gtp_moni.py" "${CMAKE_BINARY_DIR}/examples/xApp/python3/xapp_gtp_moni.py" )
+  #add_custom_command(TARGET xapp_sdk POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
+  #  "${CMAKE_SOURCE_DIR}/examples/xApp/python3/xapp_gtp_moni.py" "${CMAKE_BINARY_DIR}/examples/xApp/python3/xapp_gtp_moni.py" )
 # I do not like this solution at all but it is not my code ...
 target_compile_options(xapp_sdk PRIVATE -Wno-missing-field-initializers -Wno-unused-parameter )
 
@@ -123,5 +129,5 @@ SWIG_LINK_LIBRARIES(xapp_sdk
                     -lsctp
                     -lpthread)
 
-
+target_compile_definitions(xapp_sdk PUBLIC ${E2AP_ENCODING} ${E2AP_VERSION})
 

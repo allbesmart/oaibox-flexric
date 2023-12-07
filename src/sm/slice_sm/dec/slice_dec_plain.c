@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
 static inline
 size_t next_pow2(size_t x)
 {
@@ -18,6 +19,7 @@ size_t next_pow2(size_t x)
 	
 	return x + 1;
 }
+*/
 
 slice_event_trigger_t slice_dec_event_trigger_plain(size_t len, uint8_t const ev_tr[len])
 {
@@ -42,26 +44,26 @@ slice_ind_hdr_t slice_dec_ind_hdr_plain(size_t len, uint8_t const ind_hdr[len])
   return ret;
 }
 
+/*
 static
 uint8_t* end;
 
 static 
 uint8_t* begin;
 
-
 static
 bool it_within_layout(uint8_t const* it)
 {
   return it >= begin && it < end;  
 }
-
+*/
 
 static inline
 size_t fill_static(static_slice_t* sta, uint8_t const* it)
 {
   assert(it != NULL);
   assert(sta != NULL);
-  assert(it_within_layout(it) == true);
+  //assert(it_within_layout(it) == true);
 
   memcpy(&sta->pos_high, it, sizeof(sta->pos_high));
   it += sizeof(sta->pos_high);
@@ -251,11 +253,10 @@ size_t fill_slice(fr_slice_t* slc, uint8_t const* it)
   if(slc->len_label > 0){
     slc->label = calloc(1, slc->len_label + 1);
     assert(slc->label && "Memory exhausted");
+    memcpy(slc->label, it, slc->len_label);
+    it += slc->len_label;
+    sz += slc->len_label;
   }
-
-  memcpy(slc->label, it, slc->len_label);
-  it += slc->len_label;
-  sz += slc->len_label;
 
   memcpy(&slc->len_sched, it, sizeof(slc->len_sched));
   it += sizeof(slc->len_sched);
@@ -264,11 +265,10 @@ size_t fill_slice(fr_slice_t* slc, uint8_t const* it)
   if(slc->len_sched > 0){
     slc->sched = calloc(1, slc->len_sched + 1);
     assert(slc->sched != NULL && "Memory exhausted");
+    memcpy(slc->sched, it, slc->len_sched);
+    it += slc->len_sched;
+    sz += slc->len_sched;
   }
-
-  memcpy(slc->sched, it, slc->len_sched);
-  it += slc->len_sched;
-  sz += slc->len_sched;
 
   sz += fill_params(&slc->params, it);
 
@@ -291,11 +291,10 @@ size_t fill_ul_dl_slice_conf(ul_dl_slice_conf_t* conf, uint8_t const* it)
   if(conf->len_sched_name > 0){
     conf->sched_name = calloc(1, conf->len_sched_name + 1);
     assert(conf->sched_name != NULL && "Memory exhausted");
+    memcpy(conf->sched_name, it, conf->len_sched_name);
+    it += conf->len_sched_name;
+    sz += conf->len_sched_name;
   }
-
-  memcpy(conf->sched_name, it, conf->len_sched_name);
-  it += conf->len_sched_name;
-  sz += conf->len_sched_name;
 
   memcpy(&conf->len_slices, it, sizeof(conf->len_slices));
   it += sizeof(conf->len_slices);
@@ -380,12 +379,11 @@ size_t fill_ue_slice_conf(ue_slice_conf_t* slc, uint8_t const* it)
 
 slice_ind_msg_t slice_dec_ind_msg_plain(size_t len, uint8_t const ind_msg[len])
 {
-
   slice_ind_msg_t ind = {0};
 
   uint8_t const* it = ind_msg;
-  begin = (uint8_t*)it;
-  end = begin + len;
+  //begin = (uint8_t*)it;
+  //end = begin + len;
   size_t sz = fill_slice_conf(&ind.slice_conf, it);
   it += sz;
 
@@ -460,8 +458,8 @@ slice_ctrl_msg_t slice_dec_ctrl_msg_plain(size_t len, uint8_t const ctrl_msg[len
   slice_ctrl_msg_t ctrl = {0}; 
   
   uint8_t const* it = ctrl_msg; 
-  begin = (uint8_t*)ctrl_msg;
-  end = (uint8_t*)ctrl_msg + len;
+  //begin = (uint8_t*)ctrl_msg;
+  //end = (uint8_t*)ctrl_msg + len;
 
   memcpy(&ctrl.type, it, sizeof(ctrl.type));
   it += sizeof(ctrl.type);

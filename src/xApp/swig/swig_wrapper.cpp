@@ -11,9 +11,7 @@
 #include "../../sm/rlc_sm/rlc_sm_id.h"
 #include "../../sm/pdcp_sm/pdcp_sm_id.h"
 #include "../../sm/gtp_sm/gtp_sm_id.h"
-
 #include "../../sm/slice_sm/slice_sm_id.h"
-
 #include "../../util/conf_file.h"
 
 
@@ -27,6 +25,24 @@
 
 static
 bool initialized = false;
+
+
+static
+const char* convert_period(Interval  inter_arg)
+{
+  if(inter_arg == Interval::ms_1 ){
+    return "1_ms";
+  } else if (inter_arg == Interval::ms_2) {
+    return "2_ms";
+  } else if(inter_arg == Interval::ms_5) {
+    return "5_ms";
+  } else if(inter_arg == Interval::ms_10) {
+    return "10_ms";
+  } else {
+    assert(0 != 0 && "Unknown type");
+  }
+
+}
 
 void init()
 {
@@ -49,7 +65,6 @@ bool try_stop()
 std::vector<E2Node> conn_e2_nodes(void)
 {
   e2_node_arr_t arr = e2_nodes_xapp_api();
-   
 
   std::vector<E2Node> x; //(arr.len);
 
@@ -82,10 +97,11 @@ static
 void sm_cb_mac(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == MAC_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == MAC_STATS_V0);
   assert(hndlr_mac_cb != NULL);
 
-  mac_ind_data_t const* data = &rd->mac_stats; 
+  mac_ind_data_t const* data = &rd->ind.mac; 
 
   swig_mac_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -115,20 +131,9 @@ int report_mac_sm(global_e2_node_id_t* id, Interval inter_arg, mac_cb* handler)
 
   hndlr_mac_cb = handler;
 
-  inter_xapp_e i;
-  if(inter_arg == Interval::ms_1 ){
-    i = ms_1;
-  } else if (inter_arg == Interval::ms_2) {
-    i = ms_2;
-  } else if(inter_arg == Interval::ms_5) {
-    i = ms_5;
-  } else if(inter_arg == Interval::ms_10) {
-    i = ms_10;
-  } else {
-    assert(0 != 0 && "Unknown type");
-  }
-
-  sm_ans_xapp_t ans = report_sm_xapp_api(id , SM_MAC_ID, i, sm_cb_mac);
+  const char* period = convert_period(inter_arg);
+  
+  sm_ans_xapp_t ans = report_sm_xapp_api(id, SM_MAC_ID, (void*)period, sm_cb_mac);
   assert(ans.success == true); 
   return ans.u.handle;
 }
@@ -166,10 +171,11 @@ static
 void sm_cb_rlc(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == RLC_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == RLC_STATS_V0);
   assert(hndlr_rlc_cb != NULL);
 
-  rlc_ind_data_t const* data = &rd->rlc_stats; 
+  rlc_ind_data_t const* data = &rd->ind.rlc; 
 
   swig_rlc_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -200,20 +206,9 @@ int report_rlc_sm(global_e2_node_id_t* id, Interval inter_arg, rlc_cb* handler)
 
   hndlr_rlc_cb = handler;
 
-  inter_xapp_e i;
-  if(inter_arg == Interval::ms_1 ){
-    i = ms_1;
-  } else if (inter_arg == Interval::ms_2) {
-    i = ms_2;
-  } else if(inter_arg == Interval::ms_5) {
-    i = ms_5;
-  } else if(inter_arg == Interval::ms_10) {
-    i = ms_10;
-  } else {
-    assert(0 != 0 && "Unknown type");
-  }
+  const char* period = convert_period(inter_arg);
 
-  sm_ans_xapp_t ans = report_sm_xapp_api(id , SM_RLC_ID, i, sm_cb_rlc);
+  sm_ans_xapp_t ans = report_sm_xapp_api(id, SM_RLC_ID, (void*)period, sm_cb_rlc);
   assert(ans.success == true); 
   return ans.u.handle;
 }
@@ -247,10 +242,11 @@ static
 void sm_cb_pdcp(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == PDCP_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == PDCP_STATS_V0);
   assert(hndlr_pdcp_cb != NULL);
 
-  pdcp_ind_data_t const* data = &rd->pdcp_stats; 
+  pdcp_ind_data_t const* data = &rd->ind.pdcp; 
 
   swig_pdcp_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -280,20 +276,8 @@ int report_pdcp_sm(global_e2_node_id_t* id, Interval inter_arg, pdcp_cb* handler
 
   hndlr_pdcp_cb = handler;
 
-  inter_xapp_e i;
-  if(inter_arg == Interval::ms_1 ){
-    i = ms_1;
-  } else if (inter_arg == Interval::ms_2) {
-    i = ms_2;
-  } else if(inter_arg == Interval::ms_5) {
-    i = ms_5;
-  } else if(inter_arg == Interval::ms_10) {
-    i = ms_10;
-  } else {
-    assert(0 != 0 && "Unknown type");
-  }
-
-  sm_ans_xapp_t ans = report_sm_xapp_api(id , SM_PDCP_ID, i, sm_cb_pdcp);
+  const char* period = convert_period(inter_arg);
+  sm_ans_xapp_t ans = report_sm_xapp_api(id , SM_PDCP_ID, (void*)period, sm_cb_pdcp);
   assert(ans.success == true); 
   return ans.u.handle;
 }
@@ -325,10 +309,11 @@ static
 void sm_cb_slice(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == SLICE_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == SLICE_STATS_V0);
   assert(hndlr_slice_cb != NULL);
 
-  slice_ind_data_t const* data = &rd->slice_stats;
+  slice_ind_data_t const* data = &rd->ind.slice;
 
   swig_slice_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -375,20 +360,8 @@ int report_slice_sm(global_e2_node_id_t* id, Interval inter_arg, slice_cb* handl
 
   hndlr_slice_cb = handler;
 
-  inter_xapp_e i;
-  if(inter_arg == Interval::ms_1 ){
-    i = ms_1;
-  } else if (inter_arg == Interval::ms_2) {
-    i = ms_2;
-  } else if(inter_arg == Interval::ms_5) {
-    i = ms_5;
-  } else if(inter_arg == Interval::ms_10) {
-    i = ms_10;
-  } else {
-    assert(0 != 0 && "Unknown type");
-  }
-
-  sm_ans_xapp_t ans = report_sm_xapp_api(id , SM_SLICE_ID, i, sm_cb_slice);
+  const char* period = convert_period(inter_arg);
+  sm_ans_xapp_t ans = report_sm_xapp_api(id, SM_SLICE_ID, (void*)period, sm_cb_slice);
   assert(ans.success == true);
   return ans.u.handle;
 }
@@ -468,11 +441,12 @@ void control_slice_sm(global_e2_node_id_t* id, slice_ctrl_msg_t* ctrl)
     assert(0!=0 && "not foreseen case");
   }
 
-  sm_ag_if_wr_t wr;
-  wr.type = SLICE_CTRL_REQ_V0;
-  wr.slice_req_ctrl.msg = cp_slice_ctrl_msg(ctrl);
-
-  control_sm_xapp_api(id, SM_SLICE_ID,  &wr);
+  //sm_ag_if_wr_t wr;
+  //wr.type = CONTROL_SM_AG_IF_WR;
+  //wr.ctrl.type = SLICE_CTRL_REQ_V0;
+  //wr.ctrl.slice_req_ctrl.msg = 
+  slice_ctrl_req_data_t cp = {.msg = cp_slice_ctrl_msg(ctrl)};  
+  control_sm_xapp_api(id, SM_SLICE_ID, &cp);
 }
 
 //////////////////////////////////////
@@ -486,10 +460,11 @@ static
 void sm_cb_gtp(sm_ag_if_rd_t const* rd)
 {
   assert(rd != NULL);
-  assert(rd->type == GTP_STATS_V0);
+  assert(rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);
+  assert(rd->ind.type == GTP_STATS_V0);
   assert(hndlr_gtp_cb != NULL);
 
-  gtp_ind_data_t const* data = &rd->gtp_stats; 
+  gtp_ind_data_t const* data = &rd->ind.gtp; 
 
   swig_gtp_ind_msg_t ind;
   ind.tstamp = data->msg.tstamp;
@@ -519,20 +494,8 @@ int report_gtp_sm(global_e2_node_id_t* id, Interval inter_arg, gtp_cb* handler)
 
   hndlr_gtp_cb = handler;
 
-  inter_xapp_e i;
-  if(inter_arg == Interval::ms_1 ){
-    i = ms_1;
-  } else if (inter_arg == Interval::ms_2) {
-    i = ms_2;
-  } else if(inter_arg == Interval::ms_5) {
-    i = ms_5;
-  } else if(inter_arg == Interval::ms_10) {
-    i = ms_10;
-  } else {
-    assert(0 != 0 && "Unknown type");
-  }
-
-  sm_ans_xapp_t ans = report_sm_xapp_api(id , SM_GTP_ID, i, sm_cb_gtp);
+  const char* period = convert_period(inter_arg);
+  sm_ans_xapp_t ans = report_sm_xapp_api(id, SM_GTP_ID, (void*)period, sm_cb_gtp);
   assert(ans.success == true); 
   return ans.u.handle;
 }

@@ -34,9 +34,9 @@ byte_array_t slice_enc_ind_hdr_plain(slice_ind_hdr_t const* ind_hdr)
   byte_array_t ba = {0};
 
   ba.len = sizeof(slice_ind_hdr_t);
-  ba.buf = malloc(sizeof(slice_ind_msg_t));
+  ba.buf = calloc(ba.len , sizeof(uint8_t));
   assert(ba.buf != NULL && "memory exhausted");
-  memcpy(ba.buf, ind_hdr, sizeof(slice_ind_hdr_t));
+  memcpy(ba.buf, ind_hdr,ba.len);
 
   return ba;
 }
@@ -339,11 +339,6 @@ size_t fill_edf(uint8_t* it, edf_slice_t* edf)
   it += sizeof(edf->len_over);
   sz += sizeof(edf->len_over);
 
-  if(edf->len_over > 0){
-    edf->over = calloc(edf->len_over, sizeof(uint32_t));
-    assert(edf->over != NULL && "Memory exhausted");
-  }
-
   for(size_t i = 0; i < edf->len_over; ++i){
     memcpy(it, &edf->over[i], sizeof(uint32_t));
     it += sizeof(edf->over[i]);
@@ -420,9 +415,6 @@ size_t fill_ul_dl_slice_conf(uint8_t* it, ul_dl_slice_conf_t const* conf)
   memcpy(it, &conf->len_sched_name, sizeof(conf->len_sched_name)); 
   it += sizeof(conf->len_sched_name);
   size_t sz = sizeof(conf->len_sched_name);
-
-  //printf(" conf->len_sched_name = %d\n", conf->len_sched_name );
-  //fflush(stdout);
 
   memcpy(it, conf->sched_name, conf->len_sched_name);
   it += conf->len_sched_name;
@@ -535,11 +527,10 @@ byte_array_t slice_enc_ctrl_hdr_plain(slice_ctrl_hdr_t const* ctrl_hdr)
   assert(ctrl_hdr != NULL);
 
   byte_array_t ba = {0};
-
   ba.len = sizeof(slice_ind_hdr_t);
-  ba.buf = malloc(sizeof(slice_ind_msg_t));
+  ba.buf = calloc(ba.len, sizeof(uint8_t));
   assert(ba.buf != NULL && "memory exhausted");
-  memcpy(ba.buf, ctrl_hdr, sizeof(slice_ctrl_hdr_t));
+  memcpy(ba.buf, ctrl_hdr, ba.len);
 
   return ba;
 }

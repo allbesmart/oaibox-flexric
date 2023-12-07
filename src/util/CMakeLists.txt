@@ -1,3 +1,13 @@
+# From a very bad design of conversion taken from OAI, it only gets worse with time...
+if(E2AP_VERSION STREQUAL "E2AP_V1")
+  include_directories("../lib/e2ap/v1_01/ie/asn")
+elseif(E2AP_VERSION STREQUAL "E2AP_V2")
+  include_directories("../lib/e2ap/v2_03/ie/asn")
+elseif(E2AP_VERSION STREQUAL "E2AP_V3")
+  include_directories("../lib/e2ap/v3_01/ie/asn")
+else()
+  message(FATAL_ERROR "E2AP V2 and V3 not implemented")
+endif()
 
 add_library(e2ap_ds_obj OBJECT 
                         byte_array.c 
@@ -6,7 +16,9 @@ add_library(e2ap_ds_obj OBJECT
                         alg_ds/ds/assoc_container/assoc_rb_tree.c
                         alg_ds/ds/assoc_container/bimap.c
                         alg_ds/ds/assoc_container/assoc_reg.c
-                        alg_ds/ds/ts_queue/ts_queue.c
+                        alg_ds/ds/tsn_queue/tsn_queue.c
+                        alg_ds/ds/tsq/tsq.c
+                        alg_ds/ds/task_man/task_manager.c
                         )
 
 add_library(e2ap_alg_obj OBJECT 
@@ -27,14 +39,18 @@ add_library(e2_conf_obj OBJECT
                         conf_file.c
                         )
 
+add_library(e2_conv_obj OBJECT 
+                        conversions.c
+                        )
+
+
+
 
 add_library(e2_time_obj OBJECT 
                         time_now_us.c
                         )
 
 add_library(e2_ngran_obj OBJECT
-                         ngran_type.c
+                         ngran_types.c
                          )
-
-
 

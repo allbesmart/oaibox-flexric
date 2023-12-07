@@ -19,13 +19,13 @@
  *      contact@openairinterface.org
  */
 
-
-
 #ifndef PENDING_EVENT_RIC_H
 #define PENDING_EVENT_RIC_H
 
-#include "lib/pending_events.h"
-#include "lib/ap/e2ap_types/common/ric_gen_id.h"
+#include "pending_events.h"
+
+#include <stdbool.h>
+#include "e2ap/ric_gen_id_wrapper.h"
 
 typedef struct
 {
@@ -35,6 +35,7 @@ typedef struct
 
 int cmp_pending_event_ric(void const* p_v1, void const* p_v2);
 
+bool eq_pending_event_ric(void const* p_v1, void const* p_v2); 
 
 #endif
 

@@ -22,9 +22,9 @@
 #ifndef DATABASE_XAPP_H
 #define DATABASE_XAPP_H 
 
-#include "../../lib/ap/e2ap_types/common/e2ap_global_node_id.h"
+#include "../../lib/e2ap/e2ap_global_node_id_wrapper.h"
 #include "../../sm/agent_if/read/sm_ag_if_rd.h"
-#include "../../util/alg_ds/ds/ts_queue/ts_queue.h"
+#include "../../util/alg_ds/ds/tsn_queue/tsn_queue.h"
 
 #include <pthread.h>
 
@@ -41,7 +41,7 @@ typedef struct{
 #endif
 
   pthread_t p;
-  tsq_t q;
+  tsnq_t q;
 } db_xapp_t;
 
 void init_db_xapp(db_xapp_t* db, char const* db_filename);

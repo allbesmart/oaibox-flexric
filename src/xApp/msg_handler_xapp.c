@@ -35,7 +35,7 @@
 #include "msg_generator_xapp.h"
 #include "e2ap_xapp.h"
 
-#include "lib/ap/free/e2ap_msg_free.h"
+#include "lib/e2ap/e2ap_msg_free_wrapper.h"
 #include "lib/pending_events.h"
 
 #include "../sm/rlc_sm/rlc_sm_id.h"
@@ -90,22 +90,23 @@ void rm_pending_event_xapp(e42_xapp_t* xapp, pending_event_xapp_t* ev)
   defer({ free(fd); } );
 }
 
-void init_handle_msg_xapp(e2ap_handle_msg_fp_xapp (*handle_msg)[31])
+void init_handle_msg_xapp(size_t len, e2ap_handle_msg_fp_xapp (*handle_msg)[len])
 {
-  memset((*handle_msg), 0, sizeof(e2ap_handle_msg_fp_xapp)*31);
-  (*handle_msg)[RIC_SUBSCRIPTION_RESPONSE] =  e2ap_handle_subscription_response_xapp;
-  (*handle_msg)[RIC_SUBSCRIPTION_FAILURE] =  e2ap_handle_subscription_failure_xapp;
-  (*handle_msg)[RIC_SUBSCRIPTION_DELETE_RESPONSE] =  e2ap_handle_subscription_delete_response_xapp;
-  (*handle_msg)[RIC_SUBSCRIPTION_DELETE_FAILURE] =  e2ap_handle_subscription_delete_failure_xapp;
-  (*handle_msg)[RIC_INDICATION] =  e2ap_handle_indication_xapp;
-  (*handle_msg)[RIC_CONTROL_ACKNOWLEDGE] =  e2ap_handle_control_ack_xapp;
-  (*handle_msg)[RIC_CONTROL_FAILURE] =  e2ap_handle_control_failure_xapp;
-  (*handle_msg)[E2AP_ERROR_INDICATION] =  e2ap_handle_error_indication_xapp;
+  assert(len == NONE_E2_MSG_TYPE);
+  memset((*handle_msg), 0, sizeof(e2ap_handle_msg_fp_xapp)*len);
+  (*handle_msg)[RIC_SUBSCRIPTION_RESPONSE] = e2ap_handle_subscription_response_xapp;
+  (*handle_msg)[RIC_SUBSCRIPTION_FAILURE] = e2ap_handle_subscription_failure_xapp;
+  (*handle_msg)[RIC_SUBSCRIPTION_DELETE_RESPONSE] = e2ap_handle_subscription_delete_response_xapp;
+  (*handle_msg)[RIC_SUBSCRIPTION_DELETE_FAILURE] = e2ap_handle_subscription_delete_failure_xapp;
+  (*handle_msg)[RIC_INDICATION] = e2ap_handle_indication_xapp;
+  (*handle_msg)[RIC_CONTROL_ACKNOWLEDGE] = e2ap_handle_control_ack_xapp;
+  (*handle_msg)[RIC_CONTROL_FAILURE] = e2ap_handle_control_failure_xapp;
+  (*handle_msg)[E2AP_ERROR_INDICATION] = e2ap_handle_error_indication_xapp;
 
   // Different from RIC 
   (*handle_msg)[E42_SETUP_REQUEST] = e2ap_handle_e42_setup_request_xapp;
-  (*handle_msg)[E42_SETUP_RESPONSE] =  e2ap_handle_e42_setup_response_xapp;
-  (*handle_msg)[E2_SETUP_FAILURE] =  e2ap_handle_setup_failure_xapp;
+  (*handle_msg)[E42_SETUP_RESPONSE] = e2ap_handle_e42_setup_response_xapp;
+  (*handle_msg)[E2_SETUP_FAILURE] = e2ap_handle_setup_failure_xapp;
 
   (*handle_msg)[E42_RIC_SUBSCRIPTION_REQUEST] = e2ap_handle_e42_ric_subscription_request_xapp;
 //  (*handle_msg)[RIC_SUBSCRIPTION_DELETE_REQUEST] = e2ap_handle_subscription_delete_request_xapp;
@@ -113,14 +114,12 @@ void init_handle_msg_xapp(e2ap_handle_msg_fp_xapp (*handle_msg)[31])
 
   (*handle_msg)[E42_RIC_CONTROL_REQUEST] = e2ap_handle_e42_ric_control_request_xapp;
 
-  (*handle_msg)[E2AP_RESET_REQUEST] =  e2ap_handle_reset_request_xapp;
-  (*handle_msg)[E2AP_RESET_RESPONSE] =  e2ap_handle_reset_response_xapp;
-  (*handle_msg)[RIC_SERVICE_UPDATE] =  e2ap_handle_service_update_xapp;
-  (*handle_msg)[E2_NODE_CONFIGURATION_UPDATE] =  e2ap_handle_node_configuration_update_xapp;
-  (*handle_msg)[E2_CONNECTION_UPDATE_ACKNOWLEDGE] =  e2ap_handle_connection_update_ack_xapp;
-  (*handle_msg)[E2_CONNECTION_UPDATE_FAILURE] =  e2ap_handle_connection_update_failure_xapp;
-
-
+  (*handle_msg)[E2AP_RESET_REQUEST] = e2ap_handle_reset_request_xapp;
+  (*handle_msg)[E2AP_RESET_RESPONSE] = e2ap_handle_reset_response_xapp;
+  (*handle_msg)[RIC_SERVICE_UPDATE] = e2ap_handle_service_update_xapp;
+  (*handle_msg)[E2_NODE_CONFIGURATION_UPDATE] = e2ap_handle_node_configuration_update_xapp;
+  (*handle_msg)[E2_CONNECTION_UPDATE_ACKNOWLEDGE] = e2ap_handle_connection_update_ack_xapp;
+  (*handle_msg)[E2_CONNECTION_UPDATE_FAILURE] = e2ap_handle_connection_update_failure_xapp;
 }
 
 e2ap_msg_t e2ap_msg_handle_xapp(e42_xapp_t* xapp, const e2ap_msg_t* msg)
@@ -149,10 +148,10 @@ e2ap_msg_t e2ap_msg_handle_xapp(e42_xapp_t* xapp, const e2ap_msg_t* msg)
   act_proc_ans_t rv = find_act_proc(&xapp->act_proc, resp->ric_id.ric_req_id);
   assert(rv.ok == true && "ric_req_id not registered in the registry");
 
-  printf("[xApp]: SUBSCRIPTION RESPONSE received\n");
+  printf("[xApp]: SUBSCRIPTION RESPONSE rx\n");
 
   pending_event_xapp_t ev = {.ev = E42_RIC_SUBSCRIPTION_REQUEST_PENDING_EVENT,
-                              .id = rv.val.id};
+                             .id = rv.val.id};
   // Remove pending event  
   rm_pending_event_xapp(xapp, &ev);
 
@@ -163,7 +162,7 @@ e2ap_msg_t e2ap_msg_handle_xapp(e42_xapp_t* xapp, const e2ap_msg_t* msg)
   return ans;
 }
 
-//E2 -> RIC 
+// E2 -> RIC 
  e2ap_msg_t e2ap_handle_subscription_failure_xapp(e42_xapp_t* xapp, const e2ap_msg_t* msg)
 {
   assert(xapp != NULL);
@@ -187,7 +186,7 @@ e2ap_msg_t e2ap_msg_handle_xapp(e42_xapp_t* xapp, const e2ap_msg_t* msg)
   act_proc_ans_t rv = find_act_proc(&xapp->act_proc, resp->ric_id.ric_req_id);
   assert(rv.ok == true && "ric_req_id not registered in the registry");
 
-  printf("[xApp]: E42 SUBSCRIPTION DELETE RESPONSE received\n");
+  printf("[xApp]: E42 SUBSCRIPTION DELETE RESPONSE rx\n");
 
   pending_event_xapp_t ev = {.ev = E42_RIC_SUBSCRIPTION_DELETE_REQUEST_PENDING_EVENT, .id = rv.val.id };
 
@@ -250,9 +249,12 @@ sm_ind_data_t ind_sm_payload(ric_indication_t const* src)
 
   sm_ind_data_t ind_data = ind_sm_payload(src);
 
-  msg_dispatch_t msg_disp = {0};
-  msg_disp.rd = sm->proc.on_indication(sm,&ind_data);
-  assert(msg_disp.rd.type == MAC_STATS_V0 || msg_disp.rd.type == RLC_STATS_V0 || msg_disp.rd.type == PDCP_STATS_V0 || msg_disp.rd.type == SLICE_STATS_V0 || msg_disp.rd.type == KPM_STATS_V0 || msg_disp.rd.type == GTP_STATS_V0);
+  msg_dispatch_t msg_disp = {.rd.type = INDICATION_MSG_AGENT_IF_ANS_V0 };
+  msg_disp.rd.ind = sm->proc.on_indication(sm, &ind_data);
+  assert(msg_disp.rd.ind.type == MAC_STATS_V0 || msg_disp.rd.ind.type == RLC_STATS_V0 
+      || msg_disp.rd.ind.type == PDCP_STATS_V0 || msg_disp.rd.ind.type == SLICE_STATS_V0 
+      || msg_disp.rd.ind.type == KPM_STATS_V3_0 || msg_disp.rd.ind.type == GTP_STATS_V0
+      || msg_disp.rd.ind.type == RAN_CTRL_STATS_V1_03);
   
   act_proc_ans_t ans = find_act_proc(&xapp->act_proc, src->ric_id.ric_req_id);
 
@@ -263,13 +265,12 @@ sm_ind_data_t ind_sm_payload(ric_indication_t const* src)
   } else {
    
    // Write to SQL DB
-   write_db_xapp(&xapp->db, &ans.val.e2_node ,&msg_disp.rd);
+   write_db_xapp(&xapp->db, &ans.val.e2_node, &msg_disp.rd);
 
     // Write to the callback. Should I send the E2 Node info to the cb??
     msg_disp.sm_cb = ans.val.sm_cb;
     send_msg_dispatcher(&xapp->msg_disp, &msg_disp );
-  }
-  
+ }
 
   e2ap_msg_t ret = {.type = NONE_E2_MSG_TYPE };
   return ret;
@@ -283,14 +284,13 @@ sm_ind_data_t ind_sm_payload(ric_indication_t const* src)
   assert(msg->type == RIC_CONTROL_ACKNOWLEDGE);
 
   ric_control_acknowledge_t const* ack = &msg->u_msgs.ric_ctrl_ack;
+#ifdef E2AP_V1 
   assert( ack->status == RIC_CONTROL_STATUS_SUCCESS && "Only success supported ") ;
-
+#endif
   act_proc_ans_t rv = find_act_proc(&xapp->act_proc, ack->ric_id.ric_req_id);
-  printf("ric_req_id = %d \n", ack->ric_id.ric_req_id );
   assert(rv.ok == true && "ric_req_id not registered in the registry");
 
-  printf("[xApp]: CONTROL ACK received\n");
-
+  printf("[xApp]: CONTROL ACK rx\n");
 
   // A pending event is created along with a timer of 5000 ms,
   // after which an event will be generated
@@ -301,6 +301,9 @@ sm_ind_data_t ind_sm_payload(ric_indication_t const* src)
 
   // Unblock UI thread  
   signal_sync_ui(&xapp->sync);
+
+  // If the answer of control_ack is needed 
+  // use the field ack->control_outcome 
 
   e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};
   return ans;
@@ -333,30 +336,42 @@ e2ap_msg_t e2ap_handle_setup_response_xapp(e42_xapp_t* xapp, const e2ap_msg_t* m
   return ans; 
 }
 
-
-
 e2ap_msg_t e2ap_handle_e42_setup_response_xapp(e42_xapp_t* xapp, const e2ap_msg_t* msg)
 {
   assert(xapp != NULL);
   assert(msg != NULL);
   assert(msg->type == E42_SETUP_RESPONSE);
+
+  lock_guard(&xapp->conn_mtx);
+
+  if(xapp->connected == true){
+    e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};
+    return ans; 
+  }
   assert(xapp->connected == false);
 
   e42_setup_response_t const* sr = &msg->u_msgs.e42_stp_resp;
 
-  printf("[xApp]: E42 SETUP-RESPONSE received\n");
+  printf("[xApp]: E42 SETUP-RESPONSE rx \n");
 
   *(uint16_t*)&xapp->id = sr->xapp_id;
   printf("[xApp]: xApp ID = %u \n", sr->xapp_id);
 
   for(size_t i = 0; i < sr->len_e2_nodes_conn; ++i){
-    global_e2_node_id_t const id = cp_global_e2_node_id(&sr->nodes[i].id);
+    global_e2_node_id_t const* id = &sr->nodes[i].id;
     const size_t len = sr->nodes[i].len_rf;
     ran_function_t* rf = sr->nodes[i].ack_rf; 
-    add_reg_e2_node(&xapp->e2_nodes, &id, len, rf);
+#ifdef E2AP_V1
+    add_reg_e2_node_v1(&xapp->e2_nodes, id, len, rf);
+#elif defined(E2AP_V2) || defined(E2AP_V3)
+    add_reg_e2_node(&xapp->e2_nodes, id, len, rf, sr->nodes[i].len_cca, sr->nodes[i].cca);
+#else
+    static_assert(0 !=0, "Unknown E2AP version");
+#endif
+
   }
 
-  printf("Registered E2 Nodes = %ld \n",   sz_reg_e2_node(&xapp->e2_nodes) );
+  printf("[xApp]: Registered E2 Nodes = %ld \n", sz_reg_e2_node(&xapp->e2_nodes) );
 
   // Stop the timer
   pending_event_xapp_t ev = {.ev = E42_SETUP_REQUEST_PENDING_EVENT };
@@ -480,12 +495,12 @@ e2ap_msg_t e2ap_handle_e42_setup_request_xapp(struct e42_xapp_s* xapp, const str
 
   e2ap_send_bytes_xapp(&xapp->ep, ba);
 
-  printf("[xApp]: E42 SETUP-REQUEST sent\n");
+  printf("[xApp]: E42 SETUP-REQUEST tx\n");
 
-  // A pending event is created along with a timer of 3000 ms,
+  // A pending event is created along with a timer of 1000 ms,
   // after which an event will be triggered
   pending_event_xapp_t x_ev = {.ev = E42_SETUP_REQUEST_PENDING_EVENT,
-                                .wait_ms = 3000,
+                                .wait_ms = 1000,
                                .id = {0} }; 
   add_pending_event_xapp(xapp, &x_ev);
 
@@ -504,16 +519,18 @@ e2ap_msg_t e2ap_handle_e42_ric_subscription_request_xapp(struct e42_xapp_s* xapp
   byte_array_t ba_msg = e2ap_enc_e42_subscription_request_xapp(&xapp->ap,(e42_ric_subscription_request_t*)e42_sr);
   defer({ free_byte_array(ba_msg) ;}; );
 
-  e2ap_send_bytes_xapp(&xapp->ep, ba_msg);
-
-  printf("[xApp]: RIC SUBSCRIPTION REQUEST sent\n");
-
   // A pending event is created along with a timer of 5000 ms,
-  // after which an event will be triggered
+  // after which an event will be triggered. The answer needs to arrive before 
+  // the timer expires
   pending_event_xapp_t ev = {.ev = E42_RIC_SUBSCRIPTION_REQUEST_PENDING_EVENT, 
                               .id = e42_sr->sr.ric_id,
                               .wait_ms = 5000};
   add_pending_event_xapp(xapp, &ev);
+
+
+  e2ap_send_bytes_xapp(&xapp->ep, ba_msg);
+
+  printf("[xApp]: E42 RIC SUBSCRIPTION REQUEST tx RAN_FUNC_ID %d RIC_REQ_ID %d \n",e42_sr->sr.ric_id.ran_func_id, e42_sr->sr.ric_id.ric_req_id );
 
   e2ap_msg_t ans = {.type = NONE_E2_MSG_TYPE};
   return ans;
@@ -521,27 +538,25 @@ e2ap_msg_t e2ap_handle_e42_ric_subscription_request_xapp(struct e42_xapp_s* xapp
 
  
 
-e2ap_msg_t  e2ap_handle_e42_subscription_delete_request_xapp(e42_xapp_t* xapp, const e2ap_msg_t* msg)
+e2ap_msg_t e2ap_handle_e42_subscription_delete_request_xapp(e42_xapp_t* xapp, const e2ap_msg_t* msg)
 {
   assert(xapp != NULL);
   assert(msg != NULL);
   assert(msg->type == E42_RIC_SUBSCRIPTION_DELETE_REQUEST);
 
   const e42_ric_subscription_delete_request_t* e42_sdr = &msg->u_msgs.e42_ric_sub_del_req;
-  printf("E42 RIC_SUBSCRIPTION_DELETE_REQUEST  sdr->ric_id.ran_func_id %d  sdr->ric_id.ric_req_id %d \n", e42_sdr->sdr.ric_id.ran_func_id, e42_sdr->sdr.ric_id.ric_req_id);
+  printf("[xApp]: E42 RIC_SUBSCRIPTION_DELETE_REQUEST tx RAN_FUNC_ID %d RIC_REQ_ID %d \n", e42_sdr->sdr.ric_id.ran_func_id, e42_sdr->sdr.ric_id.ric_req_id);
 
   byte_array_t ba_msg = e2ap_enc_e42_ric_subscription_delete_xapp(&xapp->ap,( e42_ric_subscription_delete_request_t* ) e42_sdr);
   defer({ free_byte_array(ba_msg) ;}; );
 
   e2ap_send_bytes_xapp(&xapp->ep, ba_msg);
 
-  printf("[xApp]: E42 SUBSCRIPTION-DELETE sent \n");
-
-  // A pending event is created along with a timer of 5000 ms,
+  // A pending event is created along with a timer of 10000 ms,
   // after which an event will be generated
   pending_event_xapp_t ev = {.ev = E42_RIC_SUBSCRIPTION_DELETE_REQUEST_PENDING_EVENT, 
                               .id = e42_sdr->sdr.ric_id,
-                              .wait_ms = 5000};
+                              .wait_ms = 10000};
   add_pending_event_xapp(xapp, &ev);
 
 
@@ -557,16 +572,16 @@ e2ap_msg_t e2ap_handle_e42_ric_control_request_xapp(e42_xapp_t* xapp, const e2ap
 
   const e42_ric_control_request_t* cr = &msg->u_msgs.e42_ric_ctrl_req;
 
-    byte_array_t ba_msg = e2ap_enc_e42_control_request_xapp(&xapp->ap,(  e42_ric_control_request_t* ) cr);
+  byte_array_t ba_msg = e2ap_enc_e42_control_request_xapp(&xapp->ap,(  e42_ric_control_request_t* ) cr);
   defer({ free_byte_array(ba_msg) ;}; );
 
   e2ap_send_bytes_xapp(&xapp->ep, ba_msg);
 
-  printf("[xApp]: CONTROL-REQUEST sent \n");
+  printf("[xApp]: CONTROL-REQUEST tx \n");
 
   pending_event_xapp_t ev = {.ev = E42_RIC_CONTROL_REQUEST_PENDING_EVENT,
-                              .id = cr->ctrl_req.ric_id,
-                               .wait_ms = 5000};
+    .id = cr->ctrl_req.ric_id,
+    .wait_ms = 10000};
   add_pending_event_xapp(xapp, &ev);
 
 

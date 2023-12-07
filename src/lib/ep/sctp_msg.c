@@ -27,6 +27,10 @@ void free_sctp_msg(sctp_msg_t* rcv)
 
  if(rcv->type == SCTP_MSG_PAYLOAD)
   free_byte_array(rcv->ba);
+ else if(rcv->type == SCTP_MSG_NOTIFICATION)
+   free(rcv->notif);
+ else 
+   assert(0!=0 && "Unknown type");
 }
 
 

@@ -28,10 +28,9 @@
 
 byte_array_t copy_byte_array(byte_array_t src)
 {
-  byte_array_t dst;
-  memset(&dst,0,sizeof(byte_array_t));
+  byte_array_t dst = {0};
   dst.buf = malloc(src.len);
-  memcpy(dst.buf,src.buf,src.len);
+  memcpy(dst.buf, src.buf, src.len);
   dst.len = src.len;
   return dst;
 }
@@ -58,4 +57,21 @@ bool eq_byte_array(const byte_array_t* m0, const byte_array_t* m1)
 
   return true;
 }
+
+byte_array_t cp_str_to_ba(const char* str)
+{
+  assert(str != NULL);
+  
+  const size_t sz = strlen(str);
+
+  byte_array_t dst = {.len = sz};
+
+  dst.buf = calloc(sz,sizeof(uint8_t));
+  assert(dst.buf != NULL && "Memory exhausted");
+
+  memcpy(dst.buf, str, sz);
+
+  return dst;
+}
+
 

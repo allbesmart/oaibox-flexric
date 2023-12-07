@@ -1,9 +1,9 @@
 add_subdirectory(iApp)
 
 if(BUILDING_LIBRARY STREQUAL "STATIC")
-  set(RIC_BLD_LIB  "STATIC")
+  set(RIC_BLD_LIB "STATIC")
 elseif(BUILDING_LIBRARY STREQUAL "DYNAMIC")
-  set(RIC_BLD_LIB  "SHARED")
+  set(RIC_BLD_LIB "SHARED")
 else()
   message(FATAL_ERROR "Unknown type")
 endif()
@@ -35,6 +35,8 @@ set(RIC_SRC
             iApps/stdout.c
             iApps/influx.c
             iApps/string_parser.c
+            generate_setup_response.c
+            generate_setup_failure.c
             plugin_ric.c
             map_e2_node_sockaddr.c
             not_handler_ric.c
@@ -44,6 +46,7 @@ set(RIC_SRC
             $<TARGET_OBJECTS:msg_hand_obj> 
             $<TARGET_OBJECTS:e2ap_ds_obj>
             $<TARGET_OBJECTS:e2ap_alg_obj>
+            $<TARGET_OBJECTS:e2_conv_obj>
             $<TARGET_OBJECTS:e2_conf_obj>
             $<TARGET_OBJECTS:e2_time_obj>
             $<TARGET_OBJECTS:e2ap_msg_enc_obj>
@@ -56,14 +59,13 @@ set(RIC_SRC
 
 if(E2AP_ENCODING STREQUAL "ASN")
   add_library(near_ric 
-            ${RIC_BLD_LIB}# STATIC or SHARED
             ${RIC_SRC}
             $<TARGET_OBJECTS:e42_iapp>
             $<TARGET_OBJECTS:e2ap_asn1_obj>
+            $<TARGET_OBJECTS:3gpp_derived_ie_obj>
             )
 
   add_library(near_ric_test 
-            ${RIC_BLD_LIB}# STATIC or SHARED
             ${RIC_SRC}
             $<TARGET_OBJECTS:e42_iapp>
             $<TARGET_OBJECTS:e2ap_asn1_obj>
@@ -89,8 +91,14 @@ if(INCL_WHAT_YOU_USE)
   set_property(TARGET near_ric PROPERTY C_INCLUDE_WHAT_YOU_USE ${iwyu_path})
 endif()
 
+target_compile_definitions(near_ric PUBLIC ${E2AP_ENCODING} ${E2AP_VERSION}  ${KPM_VERSION} )
 
-target_compile_definitions(near_ric PRIVATE ${E2AP_ENCODING})
-
-target_compile_definitions(near_ric_test PRIVATE ${E2AP_ENCODING})
+target_compile_definitions(near_ric_test PUBLIC ${E2AP_ENCODING} ${E2AP_VERSION} ${KPM_VERSION} )
 target_compile_definitions(near_ric_test PRIVATE TEST_AGENT_RIC)
+
+########
+### nearRT-RIC Task Manager 
+########
+target_compile_definitions(near_ric PRIVATE TASK_MAN_NUMBER_THREADS=${NUM_THREADS_RIC})
+target_compile_definitions(near_ric_test PRIVATE TASK_MAN_NUMBER_THREADS=${NUM_THREADS_RIC})
+

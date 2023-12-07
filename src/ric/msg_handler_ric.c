@@ -303,20 +303,25 @@ void publish_ind_msg(near_ric_t* ric,  uint16_t ran_func_id, sm_ag_if_rd_ind_t* 
   assert(msg->type == E2_SETUP_REQUEST); 
 
   const e2_setup_request_t* req = &msg->u_msgs.e2_stp_req;
-/*
-  e2ap_msg_t ans = {.type = E2_SETUP_FAILURE };
-  ans.u_msgs.e2_stp_fail = generate_setup_failure(&ric->ap.version.type, ric, req); 
-*/
 
-  
+  //  Working E2_SETUP_FAILURE 
+  //  e2ap_msg_t ans = {.type = E2_SETUP_FAILURE };
+  //  ans.u_msgs.e2_stp_fail = generate_setup_failure(&ric->ap.version.type, ric, req); 
+
   const e2ap_plmn_t* plmn = &req->id.plmn;
-  const char* ran_type = get_ngran_name(req->id.type);
+  char* ran_type = get_ngran_name(req->id.type);
+
+#if defined(E2AP_V2) || defined(E2AP_V3)
+  if(req->id.type == ngran_gNB && req->len_cca == 2)
+    ran_type = "ngran_gNB_CU";
+#endif
+
   if (NODE_IS_MONOLITHIC(req->id.type))
     printf("[E2AP]: E2 SETUP-REQUEST rx from PLMN %3d.%*d Node ID %d RAN type %s\n", plmn->mcc, plmn->mnc_digit_len, plmn->mnc, req->id.nb_id.nb_id, ran_type);
   else
-    printf("[E2AP]: E2 SETUP-REQUEST rx from PLMN %3d.%*d Node ID %d RAN type %s CU/DU ID %ld\n", plmn->mcc, plmn->mnc_digit_len, plmn->mnc, req->id.nb_id.nb_id, ran_type, *req->id.cu_du_id);
+    printf("[E2AP]: E2 SETUP-REQUEST rx from PLMN %3d.%*d Node ID %d RAN type %s ID %ld\n", plmn->mcc, plmn->mnc_digit_len, plmn->mnc, req->id.nb_id.nb_id, ran_type, *req->id.cu_du_id);
+
   // Add the E2 Node into the iApp
- 
 #ifdef E2AP_V1
   add_e2_node_iapp_api_v1((global_e2_node_id_t*)&req->id, req->len_rf, req->ran_func_item);
 #else

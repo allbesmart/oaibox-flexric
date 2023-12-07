@@ -32,18 +32,18 @@ RUN cd swig && ./autogen.sh && ./configure --prefix=/usr/ && make && make instal
 WORKDIR /
 
 #asn1
-RUN git clone https://github.com/vlm/asn1c.git /asn1c
-RUN cd asn1c && \
-    autoreconf -iv && \
-    ./configure && \
-    make && \
-    make install
+#RUN git clone https://github.com/vlm/asn1c.git /asn1c
+#RUN cd asn1c && \
+#    autoreconf -iv && \
+#    ./configure && \
+#    make && \
+#    make install
 
 
 #flexric
 RUN git clone https://gitlab.eurecom.fr/mosaic5g/flexric /flexric
 WORKDIR /flexric
-RUN git checkout 1bc84a0e3a992517d767150933bd086c3126f4ae
+RUN git checkout dev
 RUN mkdir build && \
     cd build && \
     cmake .. && make && make install

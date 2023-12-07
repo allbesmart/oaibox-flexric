@@ -112,6 +112,14 @@ There are some tests you can run. Precisely:
 ./build/examples/xApp/c/monitor/xapp_gtp_mac_rlc_pdcp_moni
 ```
 
+1.5 Docker (optional step)
+
+We build regularly FlexRIC using docker files for Ubuntu20 and Ubuntu22. You can find the Dockerfile at 
+
+```bash
+cd test/docker/
+```
+
 ## 2. Usage/deployment
 
 Before starting the nearRT-RIC, check that the IP address where your nearRT-RIC will be listening is the desired one at `/usr/local/lib/flexric/flexric.conf`.
@@ -153,7 +161,7 @@ DB_PATH = /tmp/
 DB_NAME = xapp_db2
 ```
 
-Next, you can fetch some statistics from the E2 Agents using python xApps via `$ python3 build/examples/xApp/python3/xapp_gtp_moni.py`, while in other window you can start a second xApp developed in c `$ ./build/examples/xApp/c/monitor/xapp_kpm_moni`
+Next, you can fetch some statistics from the E2 Agents using python xApps via `$ python3 build/examples/xApp/python3/xapp_mac_rlc_pdcp_gtp_moni.py`, while in other window you can start a second xApp developed in c `$ ./build/examples/xApp/c/monitor/xapp_kpm_moni`
 
 You can also start wireshark and see how E2AP messages are flowing. 
 At this point, FlexRIC is working correctly in your computer and you have already tested the multi-agent, multi-xApp and multi-language capabilities. 
@@ -161,7 +169,8 @@ At this point, FlexRIC is working correctly in your computer and you have alread
 The latency that you observe in your monitor xApp is the latency from the E2 Agent to the nearRT-RIC and xApp. In modern computers the latency should be less than 200 microseconds or 50x faster than the O-RAN specified minimum nearRT-RIC latency i.e., (10 ms - 1 sec) range.
 Therefore, FlexRIC is well suited for use cases with ultra low-latency requirements.
 Additionally, all the data received in the xApp is also written to /tmp/xapp_db in case that offline data processing is wanted (e.g., Machine
-Learning/Artificial Intelligence applications). Please, check the example folder for other working xApp use cases.
+Learning/Artificial Intelligence applications). You browse the data using e.g., sqlitebrowser. 
+Please, check the example folder for other working xApp use cases.
 
 ## 3. Integration with RAN and example of deployment
 
@@ -223,7 +232,9 @@ sudo phc2sys -m -s InterfaceName -w
   ![alt text](fig/4.png)
 
 
-## 4. O-RAN OSC nearRT-RIC
+## 4. Integration with other nearRT-RICs 
+
+### 4.1 O-RAN OSC nearRT-RIC
 
 FlexRIC's E2 Agent (and OAI RAN that is embedded on it) has also been successfully tested using O-RAN's OSC nearRT-RIC H Release as shown at https://openairinterface.org/news/openairinterface-will-showcase-3-demos-at-the-o-ran-f2f-meeting-in-phoenix/ and https://openairinterface.org/joint-osc-oai-workshop-end-to-end-open-source-reference-designs-for-o-ran/ 
 

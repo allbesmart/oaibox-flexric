@@ -27,18 +27,9 @@ WORKDIR /opt
 
 #swig
 RUN git clone https://github.com/swig/swig.git /opt/swig
-RUN cd swig && ./autogen.sh && ./configure --prefix=/usr/ && make && make install
+RUN cd swig && git checkout release-4.1 && ./autogen.sh && ./configure --prefix=/usr/ && make -j8 && make install
 
 WORKDIR /
-
-#asn1
-#RUN git clone https://github.com/vlm/asn1c.git /asn1c
-#RUN cd asn1c && \
-#    autoreconf -iv && \
-#    ./configure && \
-#    make && \
-#    make install
-
 
 #flexric
 RUN git clone https://gitlab.eurecom.fr/mosaic5g/flexric /flexric
@@ -46,7 +37,7 @@ WORKDIR /flexric
 RUN git checkout dev
 RUN mkdir build && \
     cd build && \
-    cmake .. && make && make install
+    cmake .. && make -j8 && make install
 
 WORKDIR /flexric
 CMD ["sh", "-c", "/flexric/build/examples/ric/nearRT-RIC > /usr/local/etc/flexric/flexric-remote.log 2>&1"]

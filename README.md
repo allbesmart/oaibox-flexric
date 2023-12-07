@@ -153,7 +153,7 @@ DB_PATH = /tmp/
 DB_NAME = xapp_db2
 ```
 
-Next, you can fetch some statistics from the E2 Agents using python xApps via `$ python3 build/examples/xApp/python3/xapp_gtp_moni.py`, while in other window you can start a second xApp developed in c `$ build/examples/xApp/c/monitor/xapp_kpm_moni`
+Next, you can fetch some statistics from the E2 Agents using python xApps via `$ python3 build/examples/xApp/python3/xapp_gtp_moni.py`, while in other window you can start a second xApp developed in c `$ ./build/examples/xApp/c/monitor/xapp_kpm_moni`
 
 You can also start wireshark and see how E2AP messages are flowing. 
 At this point, FlexRIC is working correctly in your computer and you have already tested the multi-agent, multi-xApp and multi-language capabilities. 
@@ -177,7 +177,7 @@ Follow the instructions https://docs.srsran.com/projects/project/en/latest/tutor
 ### 3.3 Integration with Keysight RICtest 
 
 The nearRT-RIC has been successfully tested with Keysight's RICtest RAN emulator https://www.keysight.com/us/en/product/P8828S/rictest-ran-intelligent-controller-test-solutions.html, 
-as demonstrated at O-RAN PlugFest Fall 2023. Specifically, the nearRT-RIC with the xApp XXXXX were tested.
+as demonstrated at O-RAN PlugFest Fall 2023. Specifically, the nearRT-RIC with the xApp `flexric/examples/xApp/c/keysight/xapp_keysight_kpm_rc.c` were tested.
 
 ### 3.4 (opt) Synchronize clock
 

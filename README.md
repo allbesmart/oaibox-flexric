@@ -49,23 +49,31 @@ Below is the list of features available in this version divided per component an
 
 - Flatbuffer encoding(optional). 
   
-  We also provide a flatbuffers encoding/decoding scheme as alternative to ASN.1. In case that you want to use it  follow the
+  We also provide a flatbuffers encoding/decoding scheme as alternative to ASN.1. In case you want to use it, follow the
   instructions at https://github.com/dvidelabs/flatcc and provide the path for the lib and include when selecting it at `ccmake ..` from the build directory 
 
 1.2 Download the required dependencies. 
 
 Below an example of how to install it in ubuntu
 ```bash
-sudo apt install libsctp-dev python3.8 cmake-curses-gui libpcre2-dev python-dev
+sudo apt install libsctp-dev python3.8 cmake-curses-gui libpcre2-dev python3-dev
 ```
 
 1.3 Clone the FlexRIC project, build and install it. 
 
 * Download the code
 
+  Check the [release page](https://gitlab.eurecom.fr/mosaic5g/flexric/-/releases) and read the release notes for deciding which release you want to install. You
+  can download directly the code from the web or use git in the following way:
+
   ```bash
   # i.e.: 
   $ git clone https://gitlab.eurecom.fr/mosaic5g/flexric.git 
+  # i.e. git checkout v1.0.0
+  # There are rolling updates on `dev` branch that we consider unstable before releasing and tagging into master branch.
+  # You can play with new features on dev branch checking it out with $git checkout dev instead of the command below
+  $ git checkout <here put the release tag>
+  
   ```
 
 * Build 
@@ -122,8 +130,8 @@ cd test/docker/
 
 ## 2. Usage/deployment
 
-Before starting the nearRT-RIC, check that the IP address where your nearRT-RIC will be listening is the desired one at `/usr/local/lib/flexric/flexric.conf`.
-The default configuration assumes that all the components are located in localhost. 
+Before starting the nearRT-RIC, check that the IP address where your nearRT-RIC will be listening is the desired one at `/usr/local/etc/flexric/flexric.conf`.
+Infact the default configuration assumes all the components are located in the same localhost. 
 
 Start the nearRT-RIC with:
 ```bash
@@ -133,12 +141,12 @@ $ ./build/examples/ric/nearRT-RIC
 Start one or multiple E2 node Agent emulators using default configuration
 ```bash
 $ ./build/examples/emulator/agent/emu_agent_gnb_cu
-$ ./build/examples/emulator/agent/emu_agnet_gnb_du
+$ ./build/examples/emulator/agent/emu_agent_gnb_du
 ```
 or a customized one, i.e.:
 ```bash
 $ ./build/examples/emulator/agent/emu_agent_gnb_cu -c ~/flexric1.conf &
-$ ./build/examples/emulator/agent/emu_agnet_gnb_du -c ~/flexric2.conf &
+$ ./build/examples/emulator/agent/emu_agent_gnb_du -c ~/flexric2.conf &
 ```
 where, for example, flexric1.conf is: 
 ```
@@ -163,7 +171,6 @@ DB_NAME = xapp_db2
 
 Next, you can fetch some statistics from the E2 Agents using python xApps via `$ python3 build/examples/xApp/python3/xapp_mac_rlc_pdcp_gtp_moni.py`, while in other window you can start a second xApp developed in c `$ ./build/examples/xApp/c/monitor/xapp_kpm_moni`
 
-You can also start wireshark and see how E2AP messages are flowing. 
 At this point, FlexRIC is working correctly in your computer and you have already tested the multi-agent, multi-xApp and multi-language capabilities. 
 
 The latency that you observe in your monitor xApp is the latency from the E2 Agent to the nearRT-RIC and xApp. In modern computers the latency should be less than 200 microseconds or 50x faster than the O-RAN specified minimum nearRT-RIC latency i.e., (10 ms - 1 sec) range.
@@ -244,11 +251,10 @@ Recorded presentation at Phoenix, October 2023 (4th minute): https://zoom.us/rec
 
 ## 5. Support/further resources
 
-* Mailing list: if you need help, you can subscribe to the mailing list `techs@mosaic-5g.io` that you can find at
-  https://gitlab.eurecom.fr/mosaic5g/mosaic5g/-/wikis/mailing-lists
-* demo: [here](DEMO.md) you can find a demo 
-* [wiki page](https://gitlab.eurecom.fr/mosaic5g/flexric/-/wikis/home)
-* [ppt](https://gitlab.eurecom.fr/mosaic5g/flexric/-/wikis/home) presentation with a gentle introduction to flexric 
+* Mailing list: if you need help or have some questions, you can subscribe to the mailing list `techs@mosaic-5g.io` that you can find at
+  https://gitlab.eurecom.fr/mosaic5g/mosaic5g/-/wikis/mailing-lists. The emails are archived and available publicly. 
+* [Demo](DEMO.md) for flexric in July 2022
+* [The Wiki space](https://gitlab.eurecom.fr/mosaic5g/flexric/-/wikis/home) contains tutorials and presentations
 * [Original FlexRIC paper ACM CoNEXT 2021](https://bit.ly/3uOXuCV)
 
 ## 6. OAM Project Group & Roadmap
@@ -257,4 +263,4 @@ Check https://openairinterface.org/projects/oam-project-group/
 
 ## 7. FlexRIC Milestone
 
-Check https://gitlab.eurecom.fr/mosaic5g/flexric/-/milestones
+Check on https://gitlab.eurecom.fr/mosaic5g/flexric/-/milestones and in https://openairinterface.org/mosaic5g/

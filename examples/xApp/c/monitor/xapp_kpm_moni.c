@@ -348,7 +348,7 @@ int main(int argc, char *argv[])
       *kpm_sub.ad = gen_act_def(act_gnb);
       break;
     case ngran_eNB: ;
-      const char *act_enb[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", "DRB.RlcSduDelayDl", "DRB.UEThpDl", "DRB.UEThpUl", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 28.552
+      const char *act_enb[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 32.425
       *kpm_sub.ad = gen_act_def(act_enb);
       break;
     case ngran_gNB_CU: ;

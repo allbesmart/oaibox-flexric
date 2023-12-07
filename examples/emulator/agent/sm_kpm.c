@@ -162,7 +162,33 @@ void init_lst_measurements(void)
   assert(assoc_size(&ht) == nelem);
 }
 
+static
+gnb_cu_up_e2sm_t fill_rnd_gnb_cu_up_data(void)
+{
+  gnb_cu_up_e2sm_t gnb_cu_up = {0};
 
+  // 6.2.3.20
+  gnb_cu_up.gnb_cu_cp_ue_e1ap = rand();
+
+  // 6.2.3.25, OPTIONAL
+  gnb_cu_up.ran_ue_id = NULL;
+
+  return gnb_cu_up;
+}
+
+static
+gnb_du_e2sm_t fill_rnd_gnb_du_data(void)
+{
+  gnb_du_e2sm_t gnb_du = {0};
+
+  // 6.2.3.21
+  gnb_du.gnb_cu_ue_f1ap = rand();
+
+  // 6.2.3.25, OPTIONAL
+  gnb_du.ran_ue_id = NULL;
+
+  return gnb_du;
+}
 
 static 
 gnb_e2sm_t fill_rnd_gnb_data(void)
@@ -182,6 +208,17 @@ gnb_e2sm_t fill_rnd_gnb_data(void)
   gnb.guami.amf_set_id = (rand() % 2^10) + 0;
   gnb.guami.amf_ptr = (rand() % 2^6) + 0;
 
+  // gNB-CU UE F1AP ID List
+  // C-ifCUDUseparated 
+  if (TEST_AGENT_RAN_TYPE == ngran_gNB_CU){
+    gnb.gnb_cu_ue_f1ap_lst_len = 1;
+    gnb.gnb_cu_ue_f1ap_lst = calloc(gnb.gnb_cu_ue_f1ap_lst_len, sizeof(uint32_t));
+    assert(gnb.gnb_cu_ue_f1ap_lst != NULL && "Memory exhausted");
+
+    gnb.gnb_cu_ue_f1ap_lst[0] = rand();
+  }
+  
+
   return gnb;
 }
 
@@ -190,8 +227,26 @@ ue_id_e2sm_t fill_rnd_ue_id_data(void)
 {
   ue_id_e2sm_t ue_id_data = {0};
 
-  ue_id_data.type = GNB_UE_ID_E2SM;
-  ue_id_data.gnb = fill_rnd_gnb_data();
+  if (TEST_AGENT_RAN_TYPE == ngran_gNB || TEST_AGENT_RAN_TYPE == ngran_gNB_CU){
+    ue_id_data.type = GNB_UE_ID_E2SM;
+    ue_id_data.gnb = fill_rnd_gnb_data();
+  }
+  else if (TEST_AGENT_RAN_TYPE == ngran_gNB_DU)
+  {
+    ue_id_data.type = GNB_DU_UE_ID_E2SM;
+    ue_id_data.gnb_du = fill_rnd_gnb_du_data();
+  }
+  else if (TEST_AGENT_RAN_TYPE == ngran_gNB_CUUP)
+  {
+    ue_id_data.type = GNB_CU_UP_UE_ID_E2SM;
+    ue_id_data.gnb_cu_up = fill_rnd_gnb_cu_up_data();
+  }
+  else
+  {
+    assert(false && "NG-RAN Type not yet implemented");
+  }
+
+  
 
   return ue_id_data;
 }

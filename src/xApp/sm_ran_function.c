@@ -30,11 +30,11 @@ sm_ran_function_t cp_sm_ran_function(sm_ran_function_t const* src)
   dst.id = src->id;
   dst.rev = src->rev;
 #ifdef E2AP_V1
-  byte_array_t* oid; // optional
+   // optional
   if(src->oid != NULL){
     dst.oid = calloc(1, sizeof(byte_array_t));
     assert(dst.oid != NULL && "Memory exhausted");
-    *dst.oid =  copy_byte_array(&src->oid);
+    *dst.oid = copy_byte_array(*src->oid);
   } 
 #elif defined(E2AP_V2) || defined(E2AP_V3) 
   dst.oid = copy_byte_array(src->oid);

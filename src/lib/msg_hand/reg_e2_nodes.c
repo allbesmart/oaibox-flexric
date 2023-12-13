@@ -347,6 +347,8 @@ sm_ran_function_t dec_ran_func(ran_function_t const* rf_c, plugin_ric_t const* p
   return dst;
 }
 
+#if defined(E2AP_V2) || defined(E2AP_V3)
+ 
 typedef struct{
   e2ap_node_component_config_add_t* cca;
   size_t len;
@@ -371,6 +373,8 @@ span_cca_t cp_cca(seq_arr_t* cca_arr)
   }
   return dst;
 }
+
+#endif
 
 e2_node_arr_t generate_e2_node_arr(reg_e2_nodes_t* n)
 { 

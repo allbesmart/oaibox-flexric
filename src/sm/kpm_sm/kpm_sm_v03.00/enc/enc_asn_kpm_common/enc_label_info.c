@@ -29,7 +29,8 @@ LabelInfoItem_t * kpm_enc_label_info_asn(const label_info_lst_t * label_info)
       assert(false && "not implemented");
     }
     if (label_info->fiveQI != NULL) {
-      assert(false && "not implemented");
+      label_info_asn->measLabel.fiveQI = calloc(1, sizeof(*label_info_asn->measLabel.fiveQI));
+      *label_info_asn->measLabel.fiveQI = *label_info->fiveQI;
     }
     if (label_info->qFI != NULL) {
       assert(false && "not implemented");

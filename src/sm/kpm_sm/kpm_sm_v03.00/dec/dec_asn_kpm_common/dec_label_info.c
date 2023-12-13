@@ -41,7 +41,8 @@ label_info_lst_t kpm_dec_label_info_asn(const MeasurementLabel_t * meas_label_as
         assert(false && "not implemented");
     }
     if (meas_label_asn->fiveQI != NULL) {
-        assert(false && "not implemented");
+        label_info.fiveQI = calloc(1, sizeof(uint8_t));
+        *label_info.fiveQI = *meas_label_asn->fiveQI;
     }
     if (meas_label_asn->qFI != NULL) {
         assert(false && "not implemented");

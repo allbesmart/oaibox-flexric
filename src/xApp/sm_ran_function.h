@@ -19,41 +19,28 @@
  *      contact@openairinterface.org
  */
 
+#ifndef SM_RAN_FUNCTION_MIR_H
+#define SM_RAN_FUNCTION_MIR_H
 
-
-#ifndef E2_PLUGIN_RIC_H
-#define E2_PLUGIN_RIC_H 
-
-#include <stddef.h>
 #include <stdint.h>
+#include "sm_ran_function_def.h"
 
-#include "util/alg_ds/ds/assoc_container/assoc_generic.h"
+typedef struct{
+  sm_ran_function_def_t defn;
+  uint16_t id;
+  uint16_t rev;
+#ifdef E2AP_V1
+  byte_array_t* oid; // optional
+#elif defined(E2AP_V2) || defined(E2AP_V3) 
+  byte_array_t oid; 
+#endif
+} sm_ran_function_t;
 
-#include "sm/sm_ric.h"
-#include "sm/sm_io.h"
+void free_sm_ran_function(sm_ran_function_t* src);
 
-typedef struct
-{
-  const char* dir_path;
+sm_ran_function_t cp_sm_ran_function(sm_ran_function_t const* src);
 
-  // Registered SMs
-  assoc_rb_tree_t sm_ds; // key: ran_func_id, value: sm_ric_t* 
-
-} plugin_ric_t;
-
-void init_plugin_ric(plugin_ric_t* p, const char* dir_path);
-
-void free_plugin_ric(plugin_ric_t* p);
-
-void load_plugin_ric(plugin_ric_t* p, const char* file_path);
-
-void unload_plugin_ric(plugin_ric_t* p, uint16_t key);
-
-sm_ric_t* sm_plugin_ric(plugin_ric_t* p, uint16_t key);
-
-size_t size_plugin_ric(plugin_ric_t* p);
-
-void tx_plugin_ric(plugin_ric_t* p, size_t len, char const file_path[len]);
+bool eq_sm_ran_function(sm_ran_function_t const* m0, sm_ran_function_t const* m1);
 
 #endif
 

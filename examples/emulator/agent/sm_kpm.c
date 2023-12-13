@@ -3,6 +3,7 @@
 #include "../../../src/util/time_now_us.h"
 #include "../../../src/util/alg_ds/alg/murmur_hash_32.h"
 #include "../../../src/util/alg_ds/ds/assoc_container/assoc_generic.h"
+#include "../../../src/util/e.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -571,13 +572,73 @@ bool read_kpm_sm(void* data)
   return true;
 }
 
+static
+ric_report_style_item_t fill_ric_report_style_item(void)  
+{
+  ric_report_style_item_t dst = {0}; 
+
+  // 8.3.3
+  dst.report_style_type = STYLE_4_RIC_SERVICE_REPORT; 
+  
+  // 8.3.4
+  const char style_name[] = "Dummy style name"; 
+  dst.report_style_name = cp_str_to_ba(style_name);
+  
+  // 8.3.5
+  dst.act_def_format_type = FORMAT_4_ACTION_DEFINITION;
+
+   // 3GPP TS 28.552
+  const char *act_gnb[] = {
+    "DRB.PdcpSduVolumeDL", 
+    "DRB.PdcpSduVolumeUL", 
+    "DRB.RlcSduDelayDl", 
+    "DRB.UEThpDl", 
+    "DRB.UEThpUl", 
+    "RRU.PrbTotDl", 
+    "RRU.PrbTotUl"
+  };
+
+  const size_t sz = sizeof(act_gnb) / sizeof(char *);
+  // [1, 65535]
+  dst.meas_info_for_action_lst_len = sz;
+  dst.meas_info_for_action_lst = ecalloc(sz, sizeof(meas_info_for_action_lst_t));
+
+  for(size_t i = 0; i < sz; ++i){
+    dst.meas_info_for_action_lst[i].name = cp_str_to_ba(act_gnb[i]); 
+  } 
+
+  // 8.3.5
+  dst.ind_hdr_format_type = FORMAT_1_INDICATION_HEADER;
+  dst.ind_msg_format_type = FORMAT_3_INDICATION_MESSAGE;
+
+  return dst;
+}
+
+static
+kpm_ran_function_def_t fill_kpm_ran_func_def(void)
+{
+  kpm_ran_function_def_t dst = {0}; 
+ 
+  // RAN Function name is already filled by the kpm_sm_agent.c
+  dst.sz_ric_event_trigger_style_list = 0;
+  dst.ric_event_trigger_style_list = 0;
+
+  dst.sz_ric_report_style_list = 1;
+  dst.ric_report_style_list = ecalloc(dst.sz_ric_report_style_list, sizeof(ric_report_style_item_t )); 
+
+  dst.ric_report_style_list[0] = fill_ric_report_style_item();
+
+  return dst;
+}
+
+
 void read_kpm_setup_sm(void* e2ap)
 {
   assert(e2ap != NULL);
-//  assert(e2ap->type == KPM_V3_0_AGENT_IF_E2_SETUP_ANS_V0);
 
   kpm_e2_setup_t* kpm = (kpm_e2_setup_t*)(e2ap);
-  kpm->ran_func_def = fill_rnd_kpm_ran_func_def(); 
+  // Let's fill the RAN Function Definition with currently supported measurements
+  kpm->ran_func_def = fill_kpm_ran_func_def(); 
 }
 
 sm_ag_if_ans_t write_ctrl_kpm_sm(void const* src)

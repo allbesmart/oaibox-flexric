@@ -361,10 +361,10 @@ void free_e42_xapp(e42_xapp_t* xapp)
   free(xapp);
 }
 
-e2_node_arr_t e2_nodes_xapp(e42_xapp_t* xapp)
+e2_node_arr_xapp_t e2_nodes_xapp(e42_xapp_t* xapp)
 {
   assert(xapp != NULL);
-  e2_node_arr_t ans = generate_e2_node_arr(&xapp->e2_nodes); 
+  e2_node_arr_xapp_t ans = generate_e2_node_arr_xapp(&xapp->e2_nodes, &xapp->plugin_ric); 
   return ans;
 }
 

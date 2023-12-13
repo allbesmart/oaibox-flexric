@@ -6,9 +6,9 @@
  * the OAI Public License, Version 1.1  (the "License"); you may not use this file
  * except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ *    
  *      http://www.openairinterface.org/?page_id=698
- *
+ *    
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,43 +17,37 @@
  *-------------------------------------------------------------------------------
  * For more information about the OpenAirInterface (OAI) Software Alliance:
  *      contact@openairinterface.org
- */
+ */   
 
+#ifndef E2_NODE_CONNECTED_XAPP_H
+#define E2_NODE_CONNECTED_XAPP_H
 
+#include <stdbool.h>
+#include "../lib/e2ap/e2ap_global_node_id_wrapper.h"
+#include "../lib/e2ap/e2ap_node_component_config_add_wrapper.h"
+#include "../lib/e2ap/e2ap_node_component_config_add_wrapper.h"
+#include "sm_ran_function.h"
 
-#ifndef E2_PLUGIN_RIC_H
-#define E2_PLUGIN_RIC_H 
+typedef struct{
+  global_e2_node_id_t id;
 
-#include <stddef.h>
-#include <stdint.h>
+#ifdef E2AP_V1
+#elif defined(E2AP_V2) || defined(E2AP_V3)
+  // [1-256]
+  uint8_t len_cca; // one less than in the standard, but should be OK
+  e2ap_node_component_config_add_t* cca;
+#endif
 
-#include "util/alg_ds/ds/assoc_container/assoc_generic.h"
+  // Decoded RAN Function ran_function_t
+  size_t len_rf;
+  sm_ran_function_t* rf;
+} e2_node_connected_xapp_t;
 
-#include "sm/sm_ric.h"
-#include "sm/sm_io.h"
+void free_e2_node_connected_xapp(e2_node_connected_xapp_t* src);
 
-typedef struct
-{
-  const char* dir_path;
+e2_node_connected_xapp_t cp_e2_node_connected_xapp(e2_node_connected_xapp_t const* src);
 
-  // Registered SMs
-  assoc_rb_tree_t sm_ds; // key: ran_func_id, value: sm_ric_t* 
-
-} plugin_ric_t;
-
-void init_plugin_ric(plugin_ric_t* p, const char* dir_path);
-
-void free_plugin_ric(plugin_ric_t* p);
-
-void load_plugin_ric(plugin_ric_t* p, const char* file_path);
-
-void unload_plugin_ric(plugin_ric_t* p, uint16_t key);
-
-sm_ric_t* sm_plugin_ric(plugin_ric_t* p, uint16_t key);
-
-size_t size_plugin_ric(plugin_ric_t* p);
-
-void tx_plugin_ric(plugin_ric_t* p, size_t len, char const file_path[len]);
+bool eq_e2_node_connected_xapp(e2_node_connected_xapp_t const* m0, e2_node_connected_xapp_t const* m1);
 
 #endif
 

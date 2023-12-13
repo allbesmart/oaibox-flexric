@@ -310,14 +310,13 @@ int main(int argc, char *argv[])
   init_xapp_api(&args);
   sleep(1);
 
-  e2_node_arr_t nodes = e2_nodes_xapp_api();
+  e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
   assert(nodes.len > 0);
 
   printf("[KPM RC]: Connected E2 nodes = %d\n", nodes.len);
 
   sm_ans_xapp_t* h = calloc(nodes.len, sizeof(sm_ans_xapp_t)); 
   assert(h != NULL && "Memory exhausted");
-
 
   pthread_mutexattr_t attr = {0};
   int rc = pthread_mutex_init(&mtx, &attr);
@@ -401,7 +400,7 @@ int main(int argc, char *argv[])
 
   free(h);
 
-  free_e2_node_arr(&nodes); 
+  free_e2_node_arr_xapp(&nodes); 
 
   rc = pthread_mutex_destroy(&mtx);
   assert(rc == 0);

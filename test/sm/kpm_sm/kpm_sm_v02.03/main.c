@@ -80,7 +80,7 @@ void read_e2_setup_kpm(void* data)
 
   kpm_e2_setup_t* kpm = (kpm_e2_setup_t*)data;
 
-  kpm->ran_func_def = fill_rnd_kpm_ran_func_def(); 
+//  kpm->ran_func_def = fill_rnd_kpm_ran_func_def(); 
   cp_e2_setup.ran_func_def = cp_kpm_ran_function_def(&kpm->ran_func_def);
 
   assert(eq_kpm_ran_function_def(&cp_e2_setup.ran_func_def, &kpm->ran_func_def) == true);

@@ -47,16 +47,14 @@ static
 void read_e2_setup_kpm(void* data)
 {
   assert(data != NULL);
-  kpm_e2_setup_t* kpm = (kpm_e2_setup_t*)data;
-  kpm->ran_func_def = fill_rnd_kpm_ran_func_def(); 
+  //kpm_e2_setup_t* kpm = (kpm_e2_setup_t*)data;
 }
 
 static
 void read_e2_setup_rc(void* data)
 {
   assert(data != NULL);
-  rc_e2_setup_t* rc = (rc_e2_setup_t*)data;
-  rc->ran_func_def = fill_rc_ran_func_def(); 
+  //rc_e2_setup_t* rc = (rc_e2_setup_t*)data;
 }
 
 static

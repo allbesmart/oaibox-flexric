@@ -58,8 +58,7 @@ target_compile_definitions(emu_agent_gnb PRIVATE TEST_AGENT_GNB
                                                  TEST_AGENT_CU_DU_ID=0
                                                  ) #
 
-                                               target_compile_definitions(emu_agent_gnb PRIVATE ${E2AP_VERSION}
-                                                 ${KPM_VERSION} )
+target_compile_definitions(emu_agent_gnb PRIVATE ${E2AP_VERSION} ${KPM_VERSION} NGRAN_GNB)
 
 #############################
 # E2 Agent gNB-CU
@@ -90,7 +89,7 @@ target_compile_definitions(emu_agent_gnb_cu PRIVATE TEST_AGENT_GNB_CU
                                                     TEST_AGENT_CU_DU_ID=21
                                                     ) #
 
-target_compile_definitions(emu_agent_gnb_cu PRIVATE ${E2AP_VERSION}  ${KPM_VERSION}  )
+target_compile_definitions(emu_agent_gnb_cu PRIVATE ${E2AP_VERSION} ${KPM_VERSION} NGRAN_GNB_CU )
 
 #############################
 # E2 Agent gNB-DU
@@ -121,7 +120,7 @@ target_compile_definitions(emu_agent_gnb_du PRIVATE TEST_AGENT_GNB_DU
                                                     TEST_AGENT_CU_DU_ID=22
                                                     ) #
 
-target_compile_definitions(emu_agent_gnb_du PRIVATE ${E2AP_VERSION}  ${KPM_VERSION}  )
+target_compile_definitions(emu_agent_gnb_du PRIVATE ${E2AP_VERSION}  ${KPM_VERSION} NGRAN_GNB_DU )
 #############################
 # E2 Agent eNB
 #############################
@@ -151,4 +150,4 @@ target_compile_definitions(emu_agent_enb PRIVATE TEST_AGENT_ENB
                                                  TEST_AGENT_CU_DU_ID=0
                                                  ) #
 
-target_compile_definitions(emu_agent_enb PRIVATE ${E2AP_VERSION} ${KPM_VERSION} )
+target_compile_definitions(emu_agent_enb PRIVATE ${E2AP_VERSION} ${KPM_VERSION} NGRAN_ENB)

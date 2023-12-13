@@ -556,7 +556,7 @@ bool read_kpm_sm(void* data)
     kpm_ind_msg_format_3_t info = subscription_info(&match_ues, &frm_4->action_def_format_1); 
 
     // Header
-    kpm->ind.hdr.type =  FORMAT_1_INDICATION_HEADER;
+    kpm->ind.hdr.type = FORMAT_1_INDICATION_HEADER;
     kpm->ind.hdr.kpm_ric_ind_hdr_format_1 = fill_rnd_kpm_ind_hdr_frm_1();
     // Message 
     // 7.8 Supported RIC Styles and E2SM IE Formats
@@ -587,24 +587,49 @@ ric_report_style_item_t fill_ric_report_style_item(void)
   // 8.3.5
   dst.act_def_format_type = FORMAT_4_ACTION_DEFINITION;
 
-   // 3GPP TS 28.552
-  const char *act_gnb[] = {
+
+#ifdef NGRAN_GNB
+  // 3GPP TS 28.552
+  const char* kpm_meas[] = {
     "DRB.PdcpSduVolumeDL", 
     "DRB.PdcpSduVolumeUL", 
     "DRB.RlcSduDelayDl", 
     "DRB.UEThpDl", 
     "DRB.UEThpUl", 
     "RRU.PrbTotDl", 
-    "RRU.PrbTotUl"
+    "RRU.PrbTotUl",
   };
+#elif defined NGRAN_GNB_CU 
+  const char* kpm_meas[] = {
+    "DRB.PdcpSduVolumeDL", 
+    "DRB.PdcpSduVolumeUL", 
+  };
+#elif defined NGRAN_GNB_DU   
+  const char* kpm_meas[] = {
+    "DRB.RlcSduDelayDl", 
+    "DRB.UEThpDl", 
+    "DRB.UEThpUl", 
+    "RRU.PrbTotDl", 
+    "RRU.PrbTotUl",
+  };
+#elif defined NGRAN_ENB 
+  const char* kpm_meas[] = {
+    "DRB.PdcpSduVolumeDL", 
+    "DRB.PdcpSduVolumeUL", 
+    "RRU.PrbTotDl", 
+    "RRU.PrbTotUl",
+  };
+#else
+  _Static_assert(0!=0, "Unknown node type");
+#endif 
 
-  const size_t sz = sizeof(act_gnb) / sizeof(char *);
+  const size_t sz = sizeof(kpm_meas) / sizeof(char *);
   // [1, 65535]
   dst.meas_info_for_action_lst_len = sz;
   dst.meas_info_for_action_lst = ecalloc(sz, sizeof(meas_info_for_action_lst_t));
 
   for(size_t i = 0; i < sz; ++i){
-    dst.meas_info_for_action_lst[i].name = cp_str_to_ba(act_gnb[i]); 
+    dst.meas_info_for_action_lst[i].name = cp_str_to_ba(kpm_meas[i]); 
   } 
 
   // 8.3.5

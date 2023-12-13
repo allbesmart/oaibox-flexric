@@ -301,6 +301,15 @@ e2sm_rc_ctrl_msg_t gen_rc_ctrl_msg(void)
   return dst;
 }
 
+static
+char* get_first_meas_value(sm_ran_function_t const* rf)
+{
+  assert(rf != NULL);
+  const char* buf = (const char*)rf->defn.kpm.ric_report_style_list[0].meas_info_for_action_lst[0].name.buf;
+  const size_t sz = rf->defn.kpm.ric_report_style_list[0].meas_info_for_action_lst[0].name.len;
+  return strndup(buf,sz);
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -340,15 +349,23 @@ int main(int argc, char *argv[])
     kpm_sub.ad = calloc(1, sizeof(kpm_act_def_t));
     assert(kpm_sub.ad != NULL && "Memory exhausted");
 
-    ngran_node_t const t = nodes.n[i].id.type;
-    bool du_or_gnb = t == ngran_gNB || t == ngran_gNB_DU;      
-    const char* act = du_or_gnb ? "DRB.RlcSduDelayDl" : "DRB.PdcpSduVolumeDL";
+    char* act = NULL;
+    for(size_t j = 0; j < nodes.n[i].len_rf; ++j){
+      sm_ran_function_t const* rf = nodes.n[i].rf;
+      if(rf[j].id == KPM_ran_function){
+        act = get_first_meas_value(&rf[j]);
+      }
+    }
+    assert(act != NULL);
+
     *kpm_sub.ad = gen_act_def(act); 
 
     h[i] = report_sm_xapp_api(&nodes.n[i].id, KPM_ran_function, &kpm_sub, sm_cb_kpm);
     assert(h[i].success == true);
 
     free_kpm_sub_data(&kpm_sub); 
+    if(act != NULL)
+      free(act);
   } 
 
   //////////// 

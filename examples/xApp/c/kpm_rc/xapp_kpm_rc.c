@@ -121,6 +121,31 @@ kpm_act_def_format_1_t gen_act_def_frmt_1(const char* action)
   return dst;
 }
 
+static
+test_info_lst_t filter_predicate(test_cond_type_e type, test_cond_e cond, int value)
+{
+  test_info_lst_t dst = {0};
+
+  dst.test_cond_type = type;
+  // It can only be TRUE_TEST_COND_TYPE so it does not matter the type
+  // but ugly ugly...
+  dst.S_NSSAI = TRUE_TEST_COND_TYPE;
+
+  dst.test_cond = calloc(1, sizeof(test_cond_e));
+  assert(dst.test_cond != NULL && "Memory exhausted");
+  *dst.test_cond = cond;
+
+  dst.test_cond_value = calloc(1, sizeof(test_cond_value_t));
+  assert(dst.test_cond_value != NULL && "Memory exhausted");
+  dst.test_cond_value->type = INTEGER_TEST_COND_VALUE;
+
+  dst.test_cond_value->int_value = calloc(1, sizeof(int64_t));
+  assert(dst.test_cond_value->int_value != NULL && "Memory exhausted");
+  *dst.test_cond_value->int_value = value;
+
+  return dst;
+} 
+
 #if defined KPM_V2_03 || KPM_V3_00
 static
 kpm_act_def_format_4_t gen_act_def_frmt_4(const char* action)
@@ -128,25 +153,16 @@ kpm_act_def_format_4_t gen_act_def_frmt_4(const char* action)
   kpm_act_def_format_4_t dst = {0};
 
   // [1, 32768]
-  dst.matching_cond_lst_len = 1;  
+  dst.matching_cond_lst_len = 1;
 
   dst.matching_cond_lst = calloc(dst.matching_cond_lst_len, sizeof(matching_condition_format_4_lst_t));
   assert(dst.matching_cond_lst != NULL && "Memory exhausted");
- 
-  // Hack. Subscribe to all UEs with CQI greater than 0 to get a list of all available UEs in the RAN
-  dst.matching_cond_lst[0].test_info_lst.test_cond_type = CQI_TEST_COND_TYPE;
-  dst.matching_cond_lst[0].test_info_lst.CQI = TRUE_TEST_COND_TYPE;
-  
-  dst.matching_cond_lst[0].test_info_lst.test_cond = calloc(1, sizeof(test_cond_e));
-  assert(dst.matching_cond_lst[0].test_info_lst.test_cond != NULL && "Memory exhausted");
-  *dst.matching_cond_lst[0].test_info_lst.test_cond = GREATERTHAN_TEST_COND;
 
-  dst.matching_cond_lst[0].test_info_lst.test_cond_value = calloc(1, sizeof(test_cond_value_t)); 
-  assert(dst.matching_cond_lst[0].test_info_lst.test_cond_value != NULL && "Memory exhausted"); 
-  dst.matching_cond_lst[0].test_info_lst.test_cond_value->type = INTEGER_TEST_COND_VALUE;
-  dst.matching_cond_lst[0].test_info_lst.test_cond_value->int_value = malloc(sizeof(int64_t));
-  assert(dst.matching_cond_lst[0].test_info_lst.test_cond_value->int_value != NULL && "Memory exhausted");
-  *dst.matching_cond_lst[0].test_info_lst.test_cond_value->int_value = 0; 
+  // Filter connected UEs by S-NSSAI criteria
+  test_cond_type_e const type = S_NSSAI_TEST_COND_TYPE; // CQI_TEST_COND_TYPE
+  test_cond_e const condition = EQUAL_TEST_COND; // GREATERTHAN_TEST_COND
+  int const value = 1;
+  dst.matching_cond_lst[0].test_info_lst = filter_predicate(type, condition, value);
 
   // Action definition Format 1 
   dst.action_def_format_1 = gen_act_def_frmt_1(action);  // 8.2.1.2.1

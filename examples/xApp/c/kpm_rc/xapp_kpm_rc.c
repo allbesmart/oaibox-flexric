@@ -372,7 +372,7 @@ int main(int argc, char *argv[])
         act = get_first_meas_value(&rf[j]);
       }
     }
-    assert(act != NULL);
+    assert(act != NULL && "No measurement list in KPM?");
 
     *kpm_sub.ad = gen_act_def(act); 
 

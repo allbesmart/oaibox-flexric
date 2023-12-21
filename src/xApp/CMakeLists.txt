@@ -37,6 +37,12 @@ set(XAPP_SRC
   sync_ui.c
   act_proc.c
   msg_dispatcher_xapp.c
+
+  e2_node_arr_xapp.c
+  e2_node_connected_xapp.c
+  sm_ran_function.c
+  sm_ran_function_def.c
+
   ../sm/agent_if/read/sm_ag_if_rd.c
  
   $<TARGET_OBJECTS:e2_conv_obj>
@@ -121,7 +127,7 @@ elseif(E2AP_ENCODING STREQUAL "FLATBUFFERS" )
 
 endif()
 
-target_compile_definitions(e42_xapp PUBLIC ${E2AP_ENCODING} ${E2AP_VERSION} ${XAPP_DB}  ${KPM_VERSION})
+target_compile_definitions(e42_xapp PUBLIC ${E2AP_ENCODING} ${E2AP_VERSION} ${XAPP_DB} ${KPM_VERSION})
 target_compile_definitions(e42_xapp_shared PUBLIC ${E2AP_ENCODING} ${E2AP_VERSION} ${XAPP_DB}  ${KPM_VERSION})
 
 add_definitions(-DXAPP_DB_DIR="${XAPP_DB_DIR}")

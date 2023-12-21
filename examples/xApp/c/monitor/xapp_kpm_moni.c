@@ -210,7 +210,7 @@ meas_info_format_1_lst_t gen_meas_info_format_1_lst(const char* action)
 }
 
 static
-kpm_act_def_format_1_t gen_act_def_frmt_1(const char** action)
+kpm_act_def_format_1_t gen_act_def_frmt_1(char** action)
 {
   kpm_act_def_format_1_t dst = {0};
 
@@ -258,7 +258,7 @@ test_info_lst_t filter_predicate(test_cond_type_e type, test_cond_e cond, int va
 
 
 static
-kpm_act_def_format_4_t gen_act_def_frmt_4(const char** action)
+kpm_act_def_format_4_t gen_act_def_frmt_4(char** action)
 {
   kpm_act_def_format_4_t dst = {0};
 
@@ -282,9 +282,8 @@ kpm_act_def_format_4_t gen_act_def_frmt_4(const char** action)
   return dst;
 }
 
-
 static
-kpm_act_def_t gen_act_def(const char** act)
+kpm_act_def_t gen_act_def(char** act)
 {
   kpm_act_def_t dst = {0};
 
@@ -292,6 +291,22 @@ kpm_act_def_t gen_act_def(const char** act)
   dst.frm_4 = gen_act_def_frmt_4(act);
   return dst;
 }
+
+static
+char** lst_kpm_measurement(kpm_ran_function_def_t const* src)
+{
+  assert(src != NULL);
+  const size_t sz = src->ric_report_style_list[0].meas_info_for_action_lst_len;
+  char** dst = calloc(sz + 1, sizeof(char*));
+  for(size_t i = 0; i < sz; ++i){
+    const size_t len = src->ric_report_style_list[0].meas_info_for_action_lst[i].name.len;
+    const uint8_t* buf = src->ric_report_style_list[0].meas_info_for_action_lst[i].name.buf;
+    dst[i] = calloc(len+1, sizeof(uint8_t));
+    memcpy(dst[i], buf, len);
+  }
+  return dst;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -301,8 +316,8 @@ int main(int argc, char *argv[])
   init_xapp_api(&args);
   sleep(1);
 
-  e2_node_arr_t nodes = e2_nodes_xapp_api();
-  defer({ free_e2_node_arr(&nodes); });
+  e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
+  defer({ free_e2_node_arr_xapp(&nodes); });
 
   assert(nodes.len > 0);
 
@@ -319,10 +334,17 @@ int main(int argc, char *argv[])
     assert(kpm_handle  != NULL);
   }
 
+  const int KPM_ran_function = 2;
+
   for (int i = 0; i < nodes.len; i++) {
-    e2_node_connected_t* n = &nodes.n[i];
-    for (size_t j = 0; j < n->len_rf; j++)
-      printf("Registered node %d ran func id = %d \n ", i, n->ack_rf[j].id);
+    e2_node_connected_xapp_t* n = &nodes.n[i];
+    char** lst = NULL; 
+    for (size_t j = 0; j < n->len_rf; j++){
+      printf("[xApp]: registered node %lu ran func id = %d \n ", j, n->rf[j].id);
+      if(n->rf[j].id == KPM_ran_function){
+        lst = lst_kpm_measurement(&n->rf[j].defn.kpm);
+      }   
+    }
 
     ////////////
     // START KPM
@@ -340,7 +362,10 @@ int main(int argc, char *argv[])
     kpm_sub.ad = calloc(1, sizeof(kpm_act_def_t));
     assert(kpm_sub.ad != NULL && "Memory exhausted");
 
+    *kpm_sub.ad = gen_act_def(lst);
 
+
+/*
     switch (n->id.type)
     {
     case ngran_gNB: ;
@@ -364,11 +389,18 @@ int main(int argc, char *argv[])
     default:
       assert(false && "NG-RAN Type not yet implemented");
     }
-    
-    const int KPM_ran_function = 2;
+ */
+
 
     kpm_handle[i] = report_sm_xapp_api(&nodes.n[i].id, KPM_ran_function, &kpm_sub, sm_cb_kpm);
     assert(kpm_handle[i].success == true);
+
+    if(lst != NULL){
+      for(size_t i = 0; lst[i] != NULL; ++i){
+        free(lst[i]);
+      }
+      free(lst);
+    }
   }
 
   sleep(10);

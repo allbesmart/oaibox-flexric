@@ -50,16 +50,14 @@ static
 void read_e2_setup_kpm(void* data)
 {
   assert(data != NULL);
-  kpm_e2_setup_t* kpm = (kpm_e2_setup_t*)data;
-  kpm->ran_func_def = fill_rnd_kpm_ran_func_def(); 
+  //kpm_e2_setup_t* kpm = (kpm_e2_setup_t*)data;
 }
 
 static
 void read_e2_setup_rc(void* data)
 {
   assert(data != NULL);
-  rc_e2_setup_t* rc = (rc_e2_setup_t*)data;
-  rc->ran_func_def = fill_rc_ran_func_def(); 
+  //rc_e2_setup_t* rc = (rc_e2_setup_t*)data;
 }
 
 #ifdef E2AP_V1
@@ -411,16 +409,16 @@ int main(int argc, char *argv[])
   //Init the xApp
   init_xapp_api(&args);
 
-  e2_node_arr_t nodes = e2_nodes_xapp_api();
-  defer({ free_e2_node_arr(&nodes); });
+  e2_node_arr_xapp_t nodes = e2_nodes_xapp_api();
+  defer({ free_e2_node_arr_xapp(&nodes); });
 
   assert(nodes.len > 0);
 
   printf("Connected E2 nodes = %d\n", nodes.len );
 
-  e2_node_connected_t* n = &nodes.n[0];
+  e2_node_connected_xapp_t* n = &nodes.n[0];
   for(size_t i = 0; i < n->len_rf; ++i)
-    printf("Registered ran func id = %d \n ", n->ack_rf[i].id );
+    printf("Registered ran func id = %d \n ", n->rf[i].id );
 
   const char* period = "5_ms";
   // returns a handle

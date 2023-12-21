@@ -31,7 +31,7 @@
 #include "../rnd/fill_rnd_data_tc.h"                  
 #include "../rnd/fill_rnd_data_kpm.h"                  
 #include "../rnd/fill_rnd_data_slice.h"                  
-#include "../rnd/fill_rnd_data_e2_setup_req.h"                  
+#include "../rnd/fill_rnd_data_e2_setup_req.h"
 
 #include <assert.h>
 #include <ctype.h>
@@ -283,7 +283,7 @@ int main(int argc, char *argv[])
 
   const uint16_t h7 = report_service_near_ric_api(id, KPM_ran_func_id, &kpm_sub);
 
-  /// RAN Control Subscription 
+  /// RAN Control Subscription
   const uint16_t RC_ran_func_id = 3;
 
   rc_sub_data_t rc_sub = {0};

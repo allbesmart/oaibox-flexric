@@ -38,7 +38,13 @@ label_info_lst_t kpm_dec_label_info_asn(const MeasurementLabel_t * meas_label_as
     }
 
     if (meas_label_asn->sliceID != NULL) {
-        assert(false && "not implemented");
+      label_info.sliceID = calloc(1, sizeof(*label_info.sliceID));
+      memcpy(&label_info.sliceID->sST, meas_label_asn->sliceID->sST.buf, meas_label_asn->sliceID->sST.size);
+
+      if(meas_label_asn->sliceID->sD != NULL){
+        label_info.sliceID->sD = calloc(1, sizeof(uint32_t));
+        BUFFER_TO_INT24(meas_label_asn->sliceID->sD->buf, *label_info.sliceID->sD);
+      }
     }
     if (meas_label_asn->fiveQI != NULL) {
         label_info.fiveQI = calloc(1, sizeof(uint8_t));

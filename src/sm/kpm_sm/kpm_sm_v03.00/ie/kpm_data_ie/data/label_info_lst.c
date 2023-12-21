@@ -60,9 +60,10 @@ void free_label_info(label_info_lst_t *l)
     free(l->noLabel);
   if (l->plmn_id)
     free(l->plmn_id);
- 
+
   if (l->sliceID != NULL) {
-    assert(false && "not implemented");
+    free_s_nssai_e2sm(l->sliceID);
+    free(l->sliceID);
   }
 	if (l->fiveQI != NULL) {
     free(l->fiveQI);
@@ -139,8 +140,8 @@ bool eq_label_info(const label_info_lst_t *l1, const label_info_lst_t *l2)
   if (eq_e2sm_plmn(l1->plmn_id, l2->plmn_id) != true)
     return false;
 
-  assert(l1->sliceID == NULL && "Not implemented");
-  assert(l2->sliceID == NULL && "Not implemented");
+  if (eq_s_nssai_e2sm(l1->sliceID, l2->sliceID) != true)
+    return false;
 
   if(l1->fiveQI != NULL || l2->fiveQI != NULL){
     if(l1->fiveQI == NULL || l2->fiveQI == NULL)

@@ -31,7 +31,7 @@
 #include "../rnd/fill_rnd_data_tc.h"                  
 #include "../rnd/fill_rnd_data_kpm.h"                  
 #include "../rnd/fill_rnd_data_slice.h"                  
-#include "../rnd/fill_rnd_data_e2_setup_req.h"                  
+#include "../rnd/fill_rnd_data_e2_setup_req.h"
 
 #include <assert.h>
 #include <ctype.h>
@@ -48,7 +48,7 @@ void read_e2_setup_kpm(void* data)
 {
   assert(data != NULL);
   kpm_e2_setup_t* kpm = (kpm_e2_setup_t*)data;
-  kpm->ran_func_def = fill_rnd_kpm_ran_func_def(); 
+  kpm->ran_func_def = fill_rnd_kpm_ran_func_def();
 }
 
 static
@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
 
   const uint16_t h7 = report_service_near_ric_api(id, KPM_ran_func_id, &kpm_sub);
 
-  /// RAN Control Subscription 
+  /// RAN Control Subscription
   const uint16_t RC_ran_func_id = 3;
 
   rc_sub_data_t rc_sub = {0};

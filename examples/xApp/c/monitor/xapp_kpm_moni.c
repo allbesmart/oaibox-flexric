@@ -77,6 +77,10 @@ void sm_cb_kpm(sm_ag_if_rd_t const* rd)
       case GNB_DU_UE_ID_E2SM:
         printf("UE ID type = gNB-DU, gnb_cu_ue_f1ap = %u\n", msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb_du.gnb_cu_ue_f1ap);
         break;
+
+      case GNB_CU_UP_UE_ID_E2SM:
+        printf("UE ID type = gNB-CU-UP, gnb_cu_cp_ue_e1ap = %u\n", msg_frm_3->meas_report_per_ue[i].ue_meas_report_lst.gnb_cu_up.gnb_cu_cp_ue_e1ap);
+        break;
       
       default:
         assert(false && "UE ID type not yet implemented");
@@ -376,6 +380,8 @@ int main(int argc, char *argv[])
       const char *act_enb[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 32.425
       *kpm_sub.ad = gen_act_def(act_enb);
       break;
+
+    case ngran_gNB_CUUP: ;
     case ngran_gNB_CU: ;
       const char *act_gnb_cu[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", NULL}; // 3GPP TS 28.552
       *kpm_sub.ad = gen_act_def(act_gnb_cu);
@@ -385,6 +391,9 @@ int main(int argc, char *argv[])
       const char *act_gnb_du[] = {"DRB.RlcSduDelayDl", "DRB.UEThpDl", "DRB.UEThpUl", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 28.552
       *kpm_sub.ad = gen_act_def(act_gnb_du);
       break;
+
+    case ngran_gNB_CUCP: ;
+      continue;
     
     default:
       assert(false && "NG-RAN Type not yet implemented");
@@ -407,7 +416,8 @@ int main(int argc, char *argv[])
 
   for(int i = 0; i < nodes.len; ++i){
     // Remove the handle previously returned
-    rm_report_sm_xapp_api(kpm_handle[i].u.handle);
+    if (kpm_handle[i].success == true)
+      rm_report_sm_xapp_api(kpm_handle[i].u.handle);
   }
 
   if(nodes.len > 0){

@@ -488,6 +488,8 @@ e2ap_msg_t e2ap_dec_e42_subscription_request(const struct E2AP_PDU* pdu)
   assert(node_src->value.present == E42RICsubscriptionRequest_IEs__value_PR_GlobalE2node_ID);
   if (node_src->value.choice.GlobalE2node_ID.present == GlobalE2node_ID_PR_gNB) {
     assert(node_src->value.choice.GlobalE2node_ID.present == GlobalE2node_ID_PR_gNB);
+    // This is an abuse but the standard does not define how to 
+    // differentiate between ngran_gNB_CU, ngran_gNB_CUCP and ngran_gNB
     id->type = ngran_gNB;
 
     GlobalE2node_gNB_ID_t *e2gnb = node_src->value.choice.GlobalE2node_ID.choice.gNB;
@@ -496,11 +498,7 @@ e2ap_msg_t e2ap_dec_e42_subscription_request(const struct E2AP_PDU* pdu)
     id->nb_id = cp_bit_string_to_gnb_id(e2gnb->global_gNB_ID.gnb_id.choice.gnb_ID);
 
     if (e2gnb->gNB_CU_UP_ID) {
-  // This is an abuse but the standard does not define how to 
-  // differentiate between ngran_gNB_CU and ngran_gNB
-  // Here we do not know if it is a real CUUP or a CU. Assuming CU
-      //id->type = ngran_gNB_CUUP;
-      id->type = ngran_gNB_CU;
+      id->type = ngran_gNB_CUUP;
       id->cu_du_id = calloc(1, sizeof(uint64_t));
       assert(id->cu_du_id  != NULL && "memory exhausted");
       asn_INTEGER2ulong(e2gnb->gNB_CU_UP_ID, id->cu_du_id);

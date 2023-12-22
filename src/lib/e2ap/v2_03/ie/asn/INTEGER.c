@@ -360,9 +360,13 @@ asn_imax2INTEGER(INTEGER_t *st, intmax_t value) {
 		}
 		break;
 	}
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
 	/* Copy the integer body */
-	for(bp = buf, pend1 += add; p != pend1; p += add)
+	for(pstart = p, bp = buf, pend1 += add; p != pend1; p += add)
 		*bp++ = *p;
+#pragma GCC diagnostic pop
 
 	if(st->buf) FREEMEM(st->buf);
 	st->buf = buf;
@@ -481,9 +485,13 @@ asn_int642INTEGER(INTEGER_t *st, int64_t value) {
 		}
 		break;
 	}
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
 	/* Copy the integer body */
 	for(pstart = p, bp = buf, pend1 += add; p != pend1; p += add)
 		*bp++ = *p;
+#pragma GCC diagnostic pop
 
 	if(st->buf) FREEMEM(st->buf);
 	st->buf = buf;

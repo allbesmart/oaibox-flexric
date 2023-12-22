@@ -1370,7 +1370,7 @@ E2nodeComponentConfigAddition_ItemIEs_t* e2ap_enc_node_component_conf_addition(c
 
 E2AP_PDU_t* e2ap_enc_setup_request_asn_pdu(const e2_setup_request_t* sr)
 {
-  assert(sr->id.type == ngran_gNB || sr->id.type == ngran_gNB_CU || sr->id.type == ngran_gNB_CUUP || sr->id.type == ngran_gNB_DU || sr->id.type == ngran_eNB);
+  assert(sr->id.type == ngran_gNB || sr->id.type == ngran_gNB_CU || sr->id.type == ngran_gNB_CUCP || sr->id.type == ngran_gNB_CUUP || sr->id.type == ngran_gNB_DU || sr->id.type == ngran_eNB);
   assert(sr->len_rf <= (size_t)MAX_NUM_RAN_FUNC_ID);
 
   // Message Type. Mandatory

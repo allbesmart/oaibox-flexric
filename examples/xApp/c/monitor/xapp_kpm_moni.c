@@ -369,26 +369,26 @@ int main(int argc, char *argv[])
     *kpm_sub.ad = gen_act_def(lst);
 
 
-/*
+
     switch (n->id.type)
     {
     case ngran_gNB: ;
-      const char *act_gnb[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", "DRB.RlcSduDelayDl", "DRB.UEThpDl", "DRB.UEThpUl", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 28.552
+      char *act_gnb[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", "DRB.RlcSduDelayDl", "DRB.UEThpDl", "DRB.UEThpUl", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 28.552
       *kpm_sub.ad = gen_act_def(act_gnb);
       break;
     case ngran_eNB: ;
-      const char *act_enb[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 32.425
+      char *act_enb[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 32.425
       *kpm_sub.ad = gen_act_def(act_enb);
       break;
 
     case ngran_gNB_CUUP: ;
     case ngran_gNB_CU: ;
-      const char *act_gnb_cu[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", NULL}; // 3GPP TS 28.552
+      char *act_gnb_cu[] = {"DRB.PdcpSduVolumeDL", "DRB.PdcpSduVolumeUL", NULL}; // 3GPP TS 28.552
       *kpm_sub.ad = gen_act_def(act_gnb_cu);
       break;
 
     case ngran_gNB_DU: ;
-      const char *act_gnb_du[] = {"DRB.RlcSduDelayDl", "DRB.UEThpDl", "DRB.UEThpUl", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 28.552
+      char *act_gnb_du[] = {"DRB.RlcSduDelayDl", "DRB.UEThpDl", "DRB.UEThpUl", "RRU.PrbTotDl", "RRU.PrbTotUl", NULL}; // 3GPP TS 28.552
       *kpm_sub.ad = gen_act_def(act_gnb_du);
       break;
 
@@ -398,7 +398,7 @@ int main(int argc, char *argv[])
     default:
       assert(false && "NG-RAN Type not yet implemented");
     }
- */
+
 
 
     kpm_handle[i] = report_sm_xapp_api(&nodes.n[i].id, KPM_ran_function, &kpm_sub, sm_cb_kpm);

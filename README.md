@@ -47,6 +47,10 @@ Below is the list of features available in this version divided per component an
   make install
   ```
 
+- GCC (gcc-10, gcc-12, or gcc-13)
+
+  gcc-11 is not currently supported.
+
 - Flatbuffer encoding(optional). 
   
   We also provide a flatbuffers encoding/decoding scheme as alternative to ASN.1. In case you want to use it, follow the
@@ -118,8 +122,7 @@ There are some tests you can run. Precisely:
 ./build/examples/ric/nearRT-RIC
 # terminal 3
 ./build/examples/xApp/c/monitor/xapp_gtp_mac_rlc_pdcp_moni
-```
-
+```documentation
 1.5 Docker (optional step)
 
 We build regularly FlexRIC using docker files for Ubuntu20 and Ubuntu22. You can find the Dockerfile at 

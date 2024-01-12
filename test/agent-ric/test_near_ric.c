@@ -132,9 +132,10 @@ bool read_ind_rc(void* ind)
 #ifdef E2AP_V1
 #elif defined(E2AP_V2) || defined(E2AP_V3)
 static
-void read_e2_setup_ran(void* data)
+void read_e2_setup_ran(void* data, const ngran_node_t node_type)
 {
   assert(data != NULL);
+  assert(node_type >=0 && node_type <= 10 && "Unknown E2 node type");
 
   arr_node_component_config_add_t* dst = (arr_node_component_config_add_t*)data;
   dst->len_cca = 1;

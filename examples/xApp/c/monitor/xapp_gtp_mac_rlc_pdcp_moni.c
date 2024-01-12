@@ -148,9 +148,10 @@ int main(int argc, char *argv[])
       printf("Registered node %d ran func id = %d \n ", i, n->rf[j].id);
 
     if(n->id.type == ngran_gNB || n->id.type == ngran_eNB){
-      mac_ctrl_req_data_t wr = {.hdr.dummy = 1, .msg.action = 42 };
-      sm_ans_xapp_t const a = control_sm_xapp_api(&nodes.n[i].id, 142, &wr);
-      assert(a.success == true);
+      // MAC Control is not yet implemented in OAI RAN
+      // mac_ctrl_req_data_t wr = {.hdr.dummy = 1, .msg.action = 42 };
+      // sm_ans_xapp_t const a = control_sm_xapp_api(&nodes.n[i].id, 142, &wr);
+      // assert(a.success == true);
 
       mac_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 142, (void*)i_0, sm_cb_mac);
       assert(mac_handle[i].success == true);
@@ -164,7 +165,7 @@ int main(int argc, char *argv[])
       gtp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 148, (void*)i_3, sm_cb_gtp);
       assert(gtp_handle[i].success == true);
 
-    } else if(n->id.type ==  ngran_gNB_CU ){
+    } else if(n->id.type ==  ngran_gNB_CU || n->id.type ==  ngran_gNB_CUUP){
       pdcp_handle[i] = report_sm_xapp_api(&nodes.n[i].id, 144, (void*)i_2, sm_cb_pdcp);
       assert(pdcp_handle[i].success == true);
 

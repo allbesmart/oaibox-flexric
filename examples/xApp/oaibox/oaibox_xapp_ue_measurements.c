@@ -24,6 +24,7 @@ int16_t ticker = 0;
 uint64_t    current_timestamp;
 struct timeval  localized_timestamp;
 
+int sockfd;
 #define ADDRESS "127.0.0.1"
 #define PORT 6969
 
@@ -130,7 +131,7 @@ int main(int argc, char* argv[])
 
 
     // TODO: please GOD make this verify if connection goes down...
-    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
         printf("OAIBOX: socket creation failed...\n");
     } else {

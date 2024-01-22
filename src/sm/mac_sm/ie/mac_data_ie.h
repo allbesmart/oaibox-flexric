@@ -127,7 +127,15 @@ typedef struct
   uint8_t ul_mcs1;
   uint8_t dl_mcs2; 
   uint8_t ul_mcs2; 
-  int8_t phr; 
+  int8_t phr;
+
+  int pcmax;
+  uint8_t pmi_cqi_ri;
+  uint8_t pmi_cqi_X1;
+  uint8_t pmi_cqi_X2;
+  float raw_rssi;
+  uint8_t cqi;
+  long rsrp;
 
 } mac_ue_stats_impl_t;
 

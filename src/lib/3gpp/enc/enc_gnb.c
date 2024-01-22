@@ -36,7 +36,7 @@ UEID_GNB_t* enc_gNB_UE_asn(const gnb_e2sm_t* gnb)
   // GUAMI
   MCC_MNC_TO_PLMNID(gnb->guami.plmn_id.mcc, gnb->guami.plmn_id.mnc, gnb->guami.plmn_id.mnc_digit_len, &gnb_asn->guami.pLMNIdentity);
   
-  gnb_asn->guami.aMFRegionID = cp_amf_region_id_to_bit_string(gnb->guami.amf_region_id);
+  gnb_asn->guami.aMFRegionID = cp_amf_set_id_to_bit_string(gnb->guami.amf_region_id);
 
   gnb_asn->guami.aMFSetID = cp_amf_set_id_to_bit_string(gnb->guami.amf_set_id);
 

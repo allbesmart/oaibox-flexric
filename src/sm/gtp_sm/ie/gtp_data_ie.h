@@ -91,6 +91,14 @@ typedef struct {
   uint32_t teidgnb; // tunnel id from gnb
   uint8_t qfi; // QoS flow indicator
   uint8_t teidupf; // tunnel id from upf
+
+    //ue context stats
+    bool ue_context_has_mqr;
+    uint32_t ue_context_rrc_ue_id;
+    uint32_t ue_context_rnti_t;
+    long ue_context_mqr_rsrp;
+    double ue_context_mqr_rsrq;
+    double ue_context_mqr_sinr;
 } gtp_ngu_t_stats_t; 
 
 typedef struct {

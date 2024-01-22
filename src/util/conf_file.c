@@ -392,6 +392,9 @@ fr_args_t init_fr_args(int argc, char* argv[])
   assert(is_directory(args.libs_dir) == true && "Did you forget to: sudo make install ?");
   assert(is_regular_file(args.conf_file) == true && "Did you forget to: sudo make install ?");
 
+  setbuf(stdout, NULL);
+  setbuf(stderr, NULL);
+
   printf("[UTIL]: Setting the config -c file to %s\n",args.conf_file);
   printf("[UTIL]: Setting path -p for the shared libraries to %s\n",args.libs_dir);
 

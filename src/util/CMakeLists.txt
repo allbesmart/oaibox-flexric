@@ -54,3 +54,6 @@ add_library(e2_ngran_obj OBJECT
                          ngran_types.c
                          )
 
+add_library(hashtable OBJECT
+        hashtable/hashtable.c
+)

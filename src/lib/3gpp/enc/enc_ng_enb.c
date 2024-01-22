@@ -25,7 +25,7 @@ UEID_NG_ENB_t * enc_ng_eNB_UE_asn(const ng_enb_e2sm_t * ng_enb)
 
     MCC_MNC_TO_PLMNID(ng_enb->guami.plmn_id.mcc, ng_enb->guami.plmn_id.mnc, ng_enb->guami.plmn_id.mnc_digit_len, &ng_enb_asn->guami.pLMNIdentity);
 
-    ng_enb_asn->guami.aMFRegionID = cp_amf_region_id_to_bit_string(ng_enb->guami.amf_region_id);
+    ng_enb_asn->guami.aMFRegionID = cp_amf_set_id_to_bit_string(ng_enb->guami.amf_region_id);
 
     ng_enb_asn->guami.aMFSetID = cp_amf_set_id_to_bit_string(ng_enb->guami.amf_set_id);
 

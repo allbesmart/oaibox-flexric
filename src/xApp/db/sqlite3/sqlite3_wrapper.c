@@ -1243,6 +1243,7 @@ int rc_acc = 0;
 
 void write_db_sqlite3(sqlite3* db, global_e2_node_id_t const* id, sm_ag_if_rd_t const* ag_rd)
 {
+  return;
   assert(db != NULL);
   assert(ag_rd != NULL);
   assert(ag_rd->type == INDICATION_MSG_AGENT_IF_ANS_V0);

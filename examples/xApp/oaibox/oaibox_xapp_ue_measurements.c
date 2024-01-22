@@ -3,6 +3,7 @@
 #include "../../../src/util/time_now_us.h"
 #include "../../../src/util/hashtable/hashtable.h"
 
+#include <arpa/inet.h> // inet_addr()
 #include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -10,6 +11,10 @@
 #include <time.h>
 #include <unistd.h>
 #include <math.h>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <unistd.h> // read(), write(), close()
+
 
 #define TICK_INTERVAL 10
 #define UPDATE_INTERVAL 1000
@@ -105,6 +110,7 @@ static void sm_cb_gtp(sm_ag_if_rd_t const* rd)
                 sprintf(&buffer[strlen(buffer)], "}\n");
 
                 printf("%s\n", buffer);
+                ret = write(sockfd, buffer, strlen(buffer));
             }
         }
     }

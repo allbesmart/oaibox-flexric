@@ -29,7 +29,7 @@ int sockfd;
 #define PORT 6969
 
 static bool keepRunning = true;
-void intHandler(int n) {
+void intHandler() {
     keepRunning = false;
 }
 
@@ -54,7 +54,7 @@ static void sm_cb_mac(sm_ag_if_rd_t const* rd)
         pthread_mutex_lock(&mac_stats_mutex);
         mac_ue_stats_impl_t *ue_mac_stats = malloc(sizeof(*ue_mac_stats));
         *ue_mac_stats = rd->ind.mac.msg.ue_stats[i];
-        hashtable_rc_t ret = hashtable_insert(ue_mac_stats_by_rnti_ht, rd->ind.mac.msg.ue_stats[i].rnti, ue_mac_stats);
+        hashtable_insert(ue_mac_stats_by_rnti_ht, rd->ind.mac.msg.ue_stats[i].rnti, ue_mac_stats);
         pthread_mutex_unlock(&mac_stats_mutex);
     }
 }
@@ -68,7 +68,7 @@ static void sm_cb_gtp(sm_ag_if_rd_t const* rd)
     ticker += TICK_INTERVAL;
     if(ticker >= UPDATE_INTERVAL) {
         ticker = 0;
-        for (int ue_idx = 0; ue_idx < rd->ind.gtp.msg.len; ue_idx++) {
+        for (uint32_t ue_idx = 0; ue_idx < rd->ind.gtp.msg.len; ue_idx++) {
             // Get updated mac stats of UE by RNTI
             pthread_mutex_lock(&mac_stats_mutex);
             void *data = NULL;
@@ -80,7 +80,7 @@ static void sm_cb_gtp(sm_ag_if_rd_t const* rd)
                 mac_ue_stats_impl_t ue_mac_stats = *(mac_ue_stats_impl_t *)data;
 
                 char buffer[8191] = {0};
-                sprintf(buffer, "{\"ue_id\": %lu,\"timestamp\": %ju,", rd->ind.gtp.msg.ngut[ue_idx].ue_context_rrc_ue_id, now / 1000);
+                sprintf(buffer, "{\"ue_id\": %u,\"timestamp\": %ju,", rd->ind.gtp.msg.ngut[ue_idx].ue_context_rrc_ue_id, now / 1000);
 
                 write_mac_stats(buffer, ue_mac_stats);
 
@@ -210,7 +210,7 @@ int main(int argc, char* argv[])
         free(gtp_handle);
     }
 
-    hashtable_destroy(ue_mac_stats_by_rnti_ht);
+    hashtable_destroy(&ue_mac_stats_by_rnti_ht);
 
     // Stop the xApp
     while (try_stop_xapp_api() == false)

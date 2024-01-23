@@ -61,7 +61,7 @@ char *hashtable_rc_code2string(hashtable_rc_t rcP)
  * hash_free_int_func() is used when this hashtable is used to store int values as data (pointer = value).
  */
 
-void hash_free_int_func(void *memoryP) {}
+//void hash_free_int_func(void *memoryP) {}
 
 //-------------------------------------------------------------------------------------------------------------------------------
 /*

@@ -93,6 +93,7 @@ static void sm_cb_gtp(sm_ag_if_rd_t const* rd)
                 float pusch_snr = ue_mac_stats.pusch_snr;
 
                 if (rd->ind.gtp.msg.ngut[ue_idx].ue_context_has_mqr) {
+                    rsrq = rd->ind.gtp.msg.ngut[ue_idx].ue_context_mqr_rsrp;
                     rsrq = rd->ind.gtp.msg.ngut[ue_idx].ue_context_mqr_rsrq;
                     sinr = rd->ind.gtp.msg.ngut[ue_idx].ue_context_mqr_sinr;
                 }
